@@ -55,6 +55,13 @@ class HealthBar {
         this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
     }
 
+    move(x,y)
+    {
+        this.x = x;
+        this.y = y;
+        this.draw()
+    }
+
     destroy()
     {
         this.bar.destroy()
