@@ -1,5 +1,4 @@
-function enemyCollision(player, enemy)
+function enemyCollision(weapon, enemy)
 {
-    enemy.damage(2)
-  
+    if(attacking) enemy.damage(2)
 }

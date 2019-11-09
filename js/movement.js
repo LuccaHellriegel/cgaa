@@ -1,9 +1,4 @@
 function checkMovement(scene){
-    input.on('pointermove', function (pointer) {
-        let cursor = pointer;
-        let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-        player.rotation = angle
-    }, scene);
 
 if (cursors.left.isDown)
 {
