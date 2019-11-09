@@ -6,12 +6,12 @@ class EnemyCircle extends Phaser.Physics.Arcade.Sprite {
         this.setTexture('character');
         scene.add.existing(this);
 
-        this.hp = new HealthBar(scene, x-26, y-38);
-        console.log(this.hp)
+        this.hp = new HealthBar(scene, x-26, y-38, 46, 12);
     }
 
     preUpdate (time, delta)
     {
+        //TODO: might be able to push move to hp class?
         this.hp.move(this.x-26, this.y-38)
         super.preUpdate(time, delta);
     }

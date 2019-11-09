@@ -1,13 +1,15 @@
 class HealthBar {
 
-    constructor (scene, x, y)
+    constructor (scene, x, y, healthLength, healthWidth)
     {
         this.bar = new Phaser.GameObjects.Graphics(scene);
 
         this.x = x;
         this.y = y;
         this.value = 100;
-        this.p = 46 / 100;
+        this.healthWidth = healthWidth
+        this.healthLength = healthLength
+        this.p = healthLength / 100;
 
         this.draw();
 
@@ -33,13 +35,14 @@ class HealthBar {
         this.bar.clear();
 
         //  BG
+        //TODO: make +4 variable
         this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x, this.y, 50, 16);
+        this.bar.fillRect(this.x, this.y, this.healthLength+4, this.healthWidth+4);
 
         //  Health
 
         this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x + 2, this.y + 2, 46, 12);
+        this.bar.fillRect(this.x + 2, this.y + 2, this.healthLength, this.healthWidth);
 
         if (this.value < 30)
         {
@@ -55,6 +58,7 @@ class HealthBar {
         this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
     }
 
+    //TODO: might be able to replace this with containers
     move(x,y)
     {
         this.x = x;
@@ -67,4 +71,10 @@ class HealthBar {
         this.bar.destroy()
     }
 
+}
+
+class PlayerHealthBar extends HealthBar {
+    constructor(scene, x, y){
+        super(scene, x, y, 3* 46, 3* 12)
+    }
 }

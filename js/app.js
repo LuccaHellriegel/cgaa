@@ -16,6 +16,8 @@
         }
     };
 
+    //TODO: var to let and const
+    //TODO: eslint
     var player;
     var weapon;
     var enemies;
@@ -28,15 +30,21 @@
 
     function preload ()
     {
+        //TODO: more accurate hitboxes
         this.load.spritesheet("character", "./assets/circle.png", {frameWidth: 64, frameHeight: 64})
         this.load.spritesheet("weapon", "./assets/randWeapon.png", {frameWidth:64, frameHeight: 64})
     }
 
     function create ()
     {
-        player = this.physics.add.sprite(100, 450, 'character');
+        //TODO: player class
+        //TODO: container for player and weapon?
+        player = new PlayerCircle(this,100,450)
+        this.physics.world.enable(player)
+        //this.physics.add.sprite(100, 450, 'character');
         weapon = this.physics.add.sprite(130,420, "weapon");
 
+        //TODO: does not change back to idle
         this.anims.create({
             key: 'attack',
             frames: this.anims.generateFrameNumbers('weapon', [0,1]),
@@ -66,9 +74,10 @@
 
         input.on('pointermove', function (pointer) {
             let cursor = pointer;
+            //TODO: wrong angle (45% off)
             let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
             player.rotation = angle
-            weapon.rotation = angle
+
         }, this);
                
         input.on('pointerdown', function(){
@@ -84,8 +93,16 @@
         }, this)
     }
 
+    //TODO: Model view controller? 
+    function updateWeaponPlace(){
+        var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(player.x+30, player.y-30), player.x, player.y, player.rotation)
+        weapon.setPosition(point.x,point.y)
+        weapon.rotation = player.rotation
+    }
+
+
     function update ()
     {
-        weapon.setPosition(player.x+30,player.y-30)
+        updateWeaponPlace()
         checkMovement(this)
     }
