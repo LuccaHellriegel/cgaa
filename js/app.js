@@ -5,7 +5,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                debug: false
+                debug: true
             }
         },
         scene: {
@@ -24,11 +24,12 @@
         this.load.spritesheet("weapon", "./assets/randWeapon.png", {frameWidth:64, frameHeight: 64})
     }
 
+    //TODO: where to put this? 
     function generateCircleTexture(hexColor, title, radius, scene){
         var graphics = scene.add.graphics({ fillStyle: { color: hexColor } });
         var circle = new Phaser.Geom.Circle(50, 50, radius);
         graphics.fillCircleShape(circle);
-        graphics.generateTexture(title,120,120);
+        graphics.generateTexture(title,4*radius,4*radius);
         graphics.destroy()
     
     }
@@ -40,7 +41,9 @@
 
         generateCircleTexture(0x6495ED, "blueCircle", 30, this)
         game.player = new UnitHBWithWeapon(this,"blueCircle",playerGroup, 100,450, playerWeaponGroup)
-   
+        //TODO: hitbox is still not accurate
+        game.player.setCircle(30,30,30)
+
         createAnims(this.anims)
         
         this.cameras.main.startFollow(game.player);

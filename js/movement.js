@@ -4,6 +4,7 @@ function setupMovement(input, cameras, time){
         //TODO: wrong angle (45% off)
         let angle = Phaser.Math.Angle.Between(game.player.x, game.player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
         game.player.rotation = angle
+        game.player.body.rotation = angle
 
     }, this);
            
@@ -11,7 +12,7 @@ function setupMovement(input, cameras, time){
 }
 
 function checkMovement(){
-//TODO: WASD
+//TODO: want to be able to use two keys at the same time    
 //TODO: sometimes the cursors hangs
 if (game.cursors.left.isDown)
 {

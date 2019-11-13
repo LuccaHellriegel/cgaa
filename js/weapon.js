@@ -9,3 +9,14 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
         this.attacking = false
     }
 }
+
+//TODO: need to create spritesheet from this then
+function generateRandWeapon(hexColor, title, radius, scene){
+        var graphics = scene.add.graphics({ fillStyle: { color: hexColor } });
+        var circle = new Phaser.Geom.Circle(50, 50, radius);
+        graphics.fillCircleShape(circle);
+        graphics.generateTexture(title,4*radius,4*radius);
+        graphics.destroy()
+    
+    }
+}
