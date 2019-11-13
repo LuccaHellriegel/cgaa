@@ -35,21 +35,10 @@
         createAnims(this.anims)
         
         this.cameras.main.startFollow(game.player);
-        const enemies = this.physics.add.group();
-        const enemyWeapons = this.physics.add.group();
         
-        var graphics = this.add.graphics({ fillStyle: { color: 0xff0000 } });
-        var circle = new Phaser.Geom.Circle(50, 50, 30);
-        graphics.fillCircleShape(circle);
-        graphics.generateTexture("circle",120,120);
-        graphics.destroy()
-
-        for (let index = 0; index < 2; index++) {
-            new RedEnemy(this,"circle",enemies,(index*70)+12,200, enemyWeapons)
-        }
-       
-        this.physics.add.overlap(playerWeaponGroup, enemies, enemyCollision, null, this);
+        const enemyWeapons = generateRedEnemyCircles(this, 5,30, playerWeaponGroup)
         this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
+
         game.cursors = this.input.keyboard.createCursorKeys();
         setupMovement(this.input, this.cameras, this.time)
     }
