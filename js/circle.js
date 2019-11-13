@@ -71,6 +71,13 @@ class CircleHBWithWeapon extends CircleWithHealthBar {
     }
 }
 
+class AgressiveCircle extends CircleHBWithWeapon {
+    constructor (scene, texture, physicsGroup, x, y){
+        super(scene, texture, physicsGroup, x, y)
+        this.weapon.attacking = false
+    }
+}
+
 
  //TODO: make AI check in preUpdate
  //If distance to player <

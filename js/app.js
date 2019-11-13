@@ -18,12 +18,9 @@
     //TODO: var to let and const
     //TODO: eslint
     var player;
-    var weapon;
     var enemies;
     var cursors;
     var game = new Phaser.Game(config);
-
-    var attacking = false
 
     function preload ()
     {
@@ -35,7 +32,7 @@
     function create ()
     {
         let playerGroup = this.physics.add.group();
-        player = new CircleHBWithWeapon(this,"character",playerGroup, 100,450)
+        player = new AgressiveCircle(this,"character",playerGroup, 100,450)
         //this.physics.world.enable(player)
    
         createAnims(this.anims)

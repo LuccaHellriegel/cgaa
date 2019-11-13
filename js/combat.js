@@ -1,6 +1,8 @@
+const attackQueue = []
+
 function enemyCollision(weapon, enemy)
 {
-    if(attacking) enemy.damage(2)
+    if(weapon.attacking) enemy.damage(2)
 }
 
 //TODO: enemy attack

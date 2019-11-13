@@ -8,12 +8,12 @@ function setupMovement(input, cameras, time){
     }, this);
            
     input.on('pointerdown', function(){
-        if(!attacking){               
-        attacking = true
+        if(!player.weapon.attacking){               
+            player.weapon.attacking = true
         player.weapon.anims.play("attack")
-        time.delayedCall(1000, function(){
+        time.delayedCall(100, function(){
             player.weapon.anims.play('idle');
-            attacking = false;
+            player.weapon.attacking = false;
         }, null, this)
     }
 
