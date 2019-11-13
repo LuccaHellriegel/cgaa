@@ -32,11 +32,7 @@ function generateRedEnemyCircles(scene, count, radius, playerWeaponGroup){
     const enemies = scene.physics.add.group();
     const enemyWeapons = scene.physics.add.group();
 
-    var graphics = scene.add.graphics({ fillStyle: { color: 0xff0000 } });
-    var circle = new Phaser.Geom.Circle(50, 50, radius);
-    graphics.fillCircleShape(circle);
-    graphics.generateTexture("redCircle",120,120);
-    graphics.destroy()
+    generateCircleTexture(0xff0000, "redCircle", radius, scene)
 
     for (let index = 0; index < count; index++) {
         new Enemy(scene,"redCircle",enemies,(index*70)+12,200, enemyWeapons)

@@ -21,16 +21,25 @@
 
     function preload ()
     {
-        //TODO: more accurate hitboxes
-        this.load.spritesheet("character", "./assets/circle.png", {frameWidth: 64, frameHeight: 64})
         this.load.spritesheet("weapon", "./assets/randWeapon.png", {frameWidth:64, frameHeight: 64})
+    }
+
+    function generateCircleTexture(hexColor, title, radius, scene){
+        var graphics = scene.add.graphics({ fillStyle: { color: hexColor } });
+        var circle = new Phaser.Geom.Circle(50, 50, radius);
+        graphics.fillCircleShape(circle);
+        graphics.generateTexture(title,120,120);
+        graphics.destroy()
+    
     }
 
     function create ()
     {
         let playerGroup = this.physics.add.group();
         let playerWeaponGroup = this.physics.add.group()
-        game.player = new UnitHBWithWeapon(this,"character",playerGroup, 100,450, playerWeaponGroup)
+
+        generateCircleTexture(0x6495ED, "blueCircle", 30, this)
+        game.player = new UnitHBWithWeapon(this,"blueCircle",playerGroup, 100,450, playerWeaponGroup)
    
         createAnims(this.anims)
         
@@ -39,7 +48,11 @@
         const enemyWeapons = generateRedEnemyCircles(this, 5,30, playerWeaponGroup)
         this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
 
-        game.cursors = this.input.keyboard.createCursorKeys();
+        game.cursors = this.cursors = this.input.keyboard.addKeys(
+            {up:Phaser.Input.Keyboard.KeyCodes.W,
+            down:Phaser.Input.Keyboard.KeyCodes.S,
+            left:Phaser.Input.Keyboard.KeyCodes.A,
+            right:Phaser.Input.Keyboard.KeyCodes.D});
         setupMovement(this.input, this.cameras, this.time)
     }
 

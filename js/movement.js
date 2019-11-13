@@ -12,7 +12,7 @@ function setupMovement(input, cameras, time){
 
 function checkMovement(){
 //TODO: WASD
-//TODO: sometimes the cursors hang
+//TODO: sometimes the cursors hangs
 if (game.cursors.left.isDown)
 {
     game.player.setVelocityX(-160);
