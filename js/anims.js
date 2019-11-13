@@ -2,9 +2,8 @@ function createAnims(anims){
     anims.create({
         key: 'attack',
         frames: anims.generateFrameNumbers('weapon', [0,1]),
-        frameRate: 50,
+        frameRate: 10,
         repeat: 0,
-
     });
 
     //TODO: does not change back to idle
@@ -13,6 +12,5 @@ function createAnims(anims){
         frames: anims.generateFrameNumbers('weapon', [0]),
         frameRate: 50,
         repeat: 0,
-
     });
 }
