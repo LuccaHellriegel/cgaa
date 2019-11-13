@@ -2,49 +2,38 @@ function setupMovement(input, cameras, time){
     input.on('pointermove', function (pointer) {
         let cursor = pointer;
         //TODO: wrong angle (45% off)
-        let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-        player.rotation = angle
+        let angle = Phaser.Math.Angle.Between(game.player.x, game.player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
+        game.player.rotation = angle
 
     }, this);
            
-    input.on('pointerdown', function(){
-        if(!player.weapon.attacking){               
-            player.weapon.attacking = true
-        player.weapon.anims.play("attack")
-        time.delayedCall(100, function(){
-            player.weapon.anims.play('idle');
-            player.weapon.attacking = false;
-            player.weapon.alreadyAttacked = []
-        }, null, this)
-    }
-
-    }, this)
+    input.on('pointerdown', function(){game.player.attack()}, this)
 }
 
-function checkMovement(scene){
-
-if (cursors.left.isDown)
+function checkMovement(){
+//TODO: WASD
+if (game.cursors.left.isDown)
 {
-    player.setVelocityX(-160);
-
-}
-else if (cursors.right.isDown)
-{
-    player.setVelocityX(160);
+    game.player.setVelocityX(-160);
 
 }
-else if (cursors.up.isDown)
+else if (game.cursors.right.isDown)
 {
-    player.setVelocityY(-160);
+    game.player.setVelocityX(160);
 
 }
-else if (cursors.down.isDown)
+else if (game.cursors.up.isDown)
 {
-    player.setVelocityY(160);
+    game.player.setVelocityY(-160);
+
+}
+else if (game.cursors.down.isDown)
+{
+    game.player.setVelocityY(160);
 
 }
 else {
-    player.setVelocityX(0);
-    player.setVelocityY(0);
+    game.player.setVelocityX(0);
+    game.player.setVelocityY(0);
 }
 }

@@ -14,19 +14,17 @@ class CircleWithHealthBar extends Circle {
     constructor (scene, texture, physicsGroup, x, y){
         super(scene, texture, physicsGroup, x, y)
         this.healthbar = new HealthBar(scene, x-26, y-38, 46, 12);
-    }
-    
-    flee() 
-    {
-       this.setVelocityY(-100)
-    }
-    
+    }   
+
     damage (amount)
     {
-        this.flee()
         if (this.healthbar.decrease(amount))
         {
+            if(this === game.player){
+                game.player.healthbar.value = 100
+            } else {
             this.destroy()
+            }
         }
     }
 
@@ -34,12 +32,6 @@ class CircleWithHealthBar extends Circle {
     {
         super.destroy()
         this.healthbar.destroy()
-    }
-
-     flee() 
-    {
-       this.setVelocityY(-100)
-       this.rotation = this.rotation-5
     }
 
     preUpdate (time, delta)
@@ -52,9 +44,22 @@ class CircleWithHealthBar extends Circle {
 }
 
 class CircleHBWithWeapon extends CircleWithHealthBar {
-    constructor (scene, texture, physicsGroup, x, y){
+    constructor (scene, texture, physicsGroup, x, y, weaponGroup){
         super(scene, texture, physicsGroup, x, y)
-        this.weapon = new Weapon(scene, x+30,y-30, "weapon");
+        this.weapon = new Weapon(scene, x+30,y-30, "weapon", weaponGroup);
+    }
+
+    attack(){
+        if(!this.weapon.attacking){
+            this.weapon.attacking = true
+            this.weapon.anims.play("attack")
+            let weapon = this.weapon
+            game.scene.scenes[0].time.delayedCall(100, function(){
+                weapon.anims.play('idle');
+                weapon.attacking = false;
+                weapon.alreadyAttacked = []
+            }, null, this.scene)
+        }
     }
 
     preUpdate (time, delta)
