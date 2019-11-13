@@ -1,8 +1,7 @@
-
     var config = {
         type: Phaser.AUTO,
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         physics: {
             default: 'arcade',
             arcade: {
@@ -37,13 +36,11 @@
 
     function create ()
     {
-        //TODO: player class
-        //TODO: container for player and weapon?
-        player = new PlayerCircle(this,100,450)
-        this.physics.world.enable(player)
-        //this.physics.add.sprite(100, 450, 'character');
-        weapon = this.physics.add.sprite(130,420, "weapon");
+        let playerGroup = this.physics.add.group();
+        player = new CircleHBWithWeapon(this,"character",playerGroup, 100,450)
+        //this.physics.world.enable(player)
 
+        //TODO: export anims to anims.js
         //TODO: does not change back to idle
         this.anims.create({
             key: 'attack',
@@ -64,10 +61,10 @@
         this.cameras.main.startFollow(player);
         enemies = this.physics.add.group();
         for (let index = 0; index < 2; index++) {
-            enemies.add(new EnemyCircle(this,(index*70)+12,200))
+            new CircleHBWithWeapon(this,"character",enemies,(index*70)+12,200)
         }
        
-        this.physics.add.overlap(weapon, enemies, enemyCollision, null, this);
+        this.physics.add.overlap(player.weapon, enemies, enemyCollision, null, this);
         input = this.input
         cursors = this.input.keyboard.createCursorKeys();
         cameras = this.cameras
@@ -83,9 +80,9 @@
         input.on('pointerdown', function(){
             if(!attacking){               
             attacking = true
-            weapon.anims.play("attack")
+            player.weapon.anims.play("attack")
             this.time.delayedCall(1000, function(){
-                weapon.anims.play('idle');
+                player.weapon.anims.play('idle');
                 attacking = false;
             }, null, this)
         }
@@ -93,16 +90,7 @@
         }, this)
     }
 
-    //TODO: Model view controller? 
-    function updateWeaponPlace(){
-        var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(player.x+30, player.y-30), player.x, player.y, player.rotation)
-        weapon.setPosition(point.x,point.y)
-        weapon.rotation = player.rotation
-    }
-
-
     function update ()
     {
-        updateWeaponPlace()
         checkMovement(this)
     }
