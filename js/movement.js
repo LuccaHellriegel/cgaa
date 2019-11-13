@@ -14,6 +14,7 @@ function setupMovement(input, cameras, time){
         time.delayedCall(100, function(){
             player.weapon.anims.play('idle');
             player.weapon.attacking = false;
+            player.weapon.alreadyAttacked = []
         }, null, this)
     }
 

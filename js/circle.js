@@ -3,6 +3,7 @@ class Circle extends Phaser.Physics.Arcade.Sprite {
     {
         super(scene, x, y)
         this.setTexture(texture)
+        this.id = '_' + Math.random().toString(36).substr(2, 9);
         scene.add.existing(this)
         physicsGroup.add(this)
     }
@@ -53,7 +54,7 @@ class CircleWithHealthBar extends Circle {
 class CircleHBWithWeapon extends CircleWithHealthBar {
     constructor (scene, texture, physicsGroup, x, y){
         super(scene, texture, physicsGroup, x, y)
-        this.weapon = scene.physics.add.sprite(x+30,y-30, "weapon");
+        this.weapon = new Weapon(scene, x+30,y-30, "weapon");
     }
 
     preUpdate (time, delta)
@@ -70,14 +71,6 @@ class CircleHBWithWeapon extends CircleWithHealthBar {
         this.weapon.destroy()
     }
 }
-
-class AgressiveCircle extends CircleHBWithWeapon {
-    constructor (scene, texture, physicsGroup, x, y){
-        super(scene, texture, physicsGroup, x, y)
-        this.weapon.attacking = false
-    }
-}
-
 
  //TODO: make AI check in preUpdate
  //If distance to player <

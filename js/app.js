@@ -32,7 +32,7 @@
     function create ()
     {
         let playerGroup = this.physics.add.group();
-        player = new AgressiveCircle(this,"character",playerGroup, 100,450)
+        player = new CircleHBWithWeapon(this,"character",playerGroup, 100,450)
         //this.physics.world.enable(player)
    
         createAnims(this.anims)
