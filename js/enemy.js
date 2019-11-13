@@ -1,4 +1,4 @@
-class Enemy extends CircleHBWithWeapon {
+class Enemy extends UnitHBWithWeapon {
     constructor (scene, texture, physicsGroup, x, y, weaponGroup, physics){
         super(scene, texture, physicsGroup, x, y, weaponGroup)
         this.hasBeenAttacked = false;
@@ -14,7 +14,9 @@ class Enemy extends CircleHBWithWeapon {
                 + game.scene.scenes[0].cameras.main.scrollX, game.player.y 
                 + game.scene.scenes[0].cameras.main.scrollY)
             this.rotation = angle
+            if(Phaser.Math.Distance.Between(this.x,this.y, game.player.x, game.player.y) < 100){
             this.attack()
+            }
         }
         
 
@@ -23,5 +25,12 @@ class Enemy extends CircleHBWithWeapon {
     damage(amount){
         super.damage(amount)
         this.hasBeenAttacked = true;
+    }
+}
+
+class RedEnemy extends Enemy {
+    constructor(scene, texture, physicsGroup, x, y, weaponGroup, physics){
+        super(scene, texture, physicsGroup, x, y, weaponGroup)
+        //this.setTint(0xff0000)
     }
 }

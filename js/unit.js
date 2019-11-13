@@ -1,4 +1,4 @@
-class Circle extends Phaser.Physics.Arcade.Sprite {
+class Unit extends Phaser.Physics.Arcade.Sprite {
     constructor (scene, texture, physicsGroup, x, y)
     {
         super(scene, x, y)
@@ -10,7 +10,7 @@ class Circle extends Phaser.Physics.Arcade.Sprite {
 
 }
 
-class CircleWithHealthBar extends Circle {
+class UnitWithHealthBar extends Unit {
     constructor (scene, texture, physicsGroup, x, y){
         super(scene, texture, physicsGroup, x, y)
         this.healthbar = new HealthBar(scene, x-26, y-38, 46, 12);
@@ -20,6 +20,7 @@ class CircleWithHealthBar extends Circle {
     {
         if (this.healthbar.decrease(amount))
         {
+            //TODO: respawn
             if(this === game.player){
                 game.player.healthbar.value = 100
             } else {
@@ -43,7 +44,7 @@ class CircleWithHealthBar extends Circle {
 
 }
 
-class CircleHBWithWeapon extends CircleWithHealthBar {
+class UnitHBWithWeapon extends UnitWithHealthBar {
     constructor (scene, texture, physicsGroup, x, y, weaponGroup){
         super(scene, texture, physicsGroup, x, y)
         this.weapon = new Weapon(scene, x+30,y-30, "weapon", weaponGroup);
@@ -76,6 +77,3 @@ class CircleHBWithWeapon extends CircleWithHealthBar {
         this.weapon.destroy()
     }
 }
-
- //TODO: make AI check in preUpdate
- //If distance to player <

@@ -30,15 +30,22 @@
     {
         let playerGroup = this.physics.add.group();
         let playerWeaponGroup = this.physics.add.group()
-        game.player = new CircleHBWithWeapon(this,"character",playerGroup, 100,450, playerWeaponGroup)
+        game.player = new UnitHBWithWeapon(this,"character",playerGroup, 100,450, playerWeaponGroup)
    
         createAnims(this.anims)
         
         this.cameras.main.startFollow(game.player);
         const enemies = this.physics.add.group();
         const enemyWeapons = this.physics.add.group();
+        
+        var graphics = this.add.graphics({ fillStyle: { color: 0xff0000 } });
+        var circle = new Phaser.Geom.Circle(50, 50, 30);
+        graphics.fillCircleShape(circle);
+        graphics.generateTexture("circle",120,120);
+        graphics.destroy()
+
         for (let index = 0; index < 2; index++) {
-            new Enemy(this,"character",enemies,(index*70)+12,200, enemyWeapons)
+            new RedEnemy(this,"circle",enemies,(index*70)+12,200, enemyWeapons)
         }
        
         this.physics.add.overlap(playerWeaponGroup, enemies, enemyCollision, null, this);
