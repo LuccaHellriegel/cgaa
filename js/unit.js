@@ -12,6 +12,7 @@ class Unit extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, physicsGroup) {
         super(scene, x, y)
         this.setTexture(texture)
+        this.physicsGroup = physicsGroup
         this.id = '_' + Math.random().toString(36).substr(2, 9);
 
         scene.add.existing(this)
@@ -26,6 +27,7 @@ class Circle extends Unit {
         super(scene, x, y, texture, physicsGroup)
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
         this.polygon = new CirclePolygon(x, y, 30)
+        this.setCircle(30)
     }
     damage(amount) {
         if (this.healthbar.decrease(amount)) {
@@ -57,6 +59,7 @@ class CircleWithRandWeapon extends Circle {
     constructor(scene, x, y, texture, physicsGroup, weaponGroup) {
         super(scene, x, y, texture, physicsGroup)
         this.weapon = new RandWeapon(scene, x + 30, y - 30, weaponGroup);
+        this.weaponGroup = weaponGroup
     }
     attack() {
         if (!this.weapon.attacking) {

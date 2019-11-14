@@ -13,10 +13,10 @@ import {
     checkMovement
 } from "./movement";
 import {
-    CircleWithRandWeapon
-} from "./unit";
+    Player
+} from "./player";
 import {
-    doDamage, considerDamage
+    initCombat
 } from "./combat";
 
 let config = {
@@ -41,15 +41,11 @@ function create() {
 
     generate(this)
     createAnims(this.anims)
-
-    let playerGroup = this.physics.add.group();
-    let playerWeaponGroup = this.physics.add.group()
     
-    this.player = new CircleWithRandWeapon(this, 100, 450, "blueCircle", playerGroup, playerWeaponGroup)
-    this.player.setCircle(30) 
-    const enemyWeapons = spawnRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
-    //TODO: better structure for the overlaps
-    this.physics.add.overlap(enemyWeapons, playerGroup, doDamage, null, this);
+    this.player = new Player(this)
+    this.enemies = spawnRedEnemyCircles(this, 1)
+
+    initCombat(this)
 
     this.cameras.main.startFollow(this.player);
 
