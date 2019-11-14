@@ -5,26 +5,28 @@ import {
     HealthBar
 } from "./healthbar";
 import {
-    Weapon
+    RandWeapon
 } from "./weapon";
 
 class Unit extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, texture, physicsGroup, x, y) {
+    constructor(scene, x, y, texture, physicsGroup) {
         super(scene, x, y)
         this.setTexture(texture)
         this.id = '_' + Math.random().toString(36).substr(2, 9);
+
         scene.add.existing(this)
         physicsGroup.add(this)
     }
 
 }
 
-class UnitWithHealthBar extends Unit {
-    constructor(scene, texture, physicsGroup, x, y) {
-        super(scene, texture, physicsGroup, x, y)
+class Circle extends Unit {
+    constructor(scene, x, y, texture, physicsGroup) {
+        //TODO: add radius here
+        super(scene, x, y, texture, physicsGroup)
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
+        this.polygon = new CirclePolygon(x, y, 30)
     }
-
     damage(amount) {
         if (this.healthbar.decrease(amount)) {
             //TODO: respawn
@@ -44,22 +46,23 @@ class UnitWithHealthBar extends Unit {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         this.healthbar.move(this.x - 26, this.y - 38)
+        //TODO: make radius as option
+        //TODO: make setter for CirclePolygon
+        this.polygon = new CirclePolygon(this.x, this.y, 30)
 
     }
-
 }
 
-class UnitHBWithWeapon extends UnitWithHealthBar {
-    constructor(scene, texture, physicsGroup, x, y, weaponGroup) {
-        super(scene, texture, physicsGroup, x, y)
-        this.weapon = new Weapon(scene, x + 30, y - 30, "randWeapon", weaponGroup);
+class CircleWithRandWeapon extends Circle {
+    constructor(scene, x, y, texture, physicsGroup, weaponGroup) {
+        super(scene, x, y, texture, physicsGroup)
+        this.weapon = new RandWeapon(scene, x + 30, y - 30, weaponGroup);
     }
-
     attack() {
         if (!this.weapon.attacking) {
-            this.weapon.attacking = true          
+            this.weapon.attacking = true
             this.weapon.anims.play("attack")
-            
+
         }
     }
 
@@ -77,21 +80,6 @@ class UnitHBWithWeapon extends UnitWithHealthBar {
     }
 }
 
-class AggressiveCircle extends UnitHBWithWeapon {
-    constructor(scene, texture, physicsGroup, x, y, weaponGroup) {
-        super(scene, texture, physicsGroup, x, y, weaponGroup)
-        this.polygon = new CirclePolygon(x, y, 30)
-    }
-
-    preUpdate(time, delta) {
-        super.preUpdate(time, delta)
-        //TODO: make radius as option
-        //TODO: make setter for Circle
-        this.polygon = new CirclePolygon(this.x, this.y, 30)
-    }
-
-}
-
 module.exports = {
-    AggressiveCircle
+    CircleWithRandWeapon
 }

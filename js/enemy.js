@@ -1,14 +1,14 @@
 import {
-    AggressiveCircle
+    CircleWithRandWeapon
 } from "./unit";
 import {
     doDamage,
     considerDamage
 } from "./combat";
 
-class EnemyCircle extends AggressiveCircle {
-    constructor(scene, texture, physicsGroup, x, y, weaponGroup, player) {
-        super(scene, texture, physicsGroup, x, y, weaponGroup)
+class EnemyCircle extends CircleWithRandWeapon {
+    constructor(scene, x, y, texture, physicsGroup, weaponGroup, player) {
+        super(scene, x, y, texture, physicsGroup, weaponGroup)
         this.hasBeenAttacked = false;
         this.player = player
     }
@@ -41,7 +41,7 @@ function spawnRedEnemyCircles(scene, count, radius, playerWeaponGroup, player) {
     const enemyWeapons = scene.physics.add.group();   
 
     for (let index = 0; index < count; index++) {
-        new EnemyCircle(scene, "redCircle", enemies, (index * 70) + 12, 200, enemyWeapons, player).setCircle(radius)
+        new EnemyCircle(scene, (index * 70) + 12, 200,  "redCircle", enemies, enemyWeapons, player).setCircle(radius)
     }
     scene.physics.add.overlap(playerWeaponGroup, enemies, doDamage, considerDamage, scene);
     return enemyWeapons
