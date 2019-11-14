@@ -1,6 +1,5 @@
 import {
-    AggressiveCircle,
-    generateCircleTexture
+    AggressiveCircle
 } from "./unit";
 import {
     doDamage,
@@ -37,11 +36,9 @@ class EnemyCircle extends AggressiveCircle {
     }
 }
 
-function generateRedEnemyCircles(scene, count, radius, playerWeaponGroup, player) {
+function spawnRedEnemyCircles(scene, count, radius, playerWeaponGroup, player) {
     const enemies = scene.physics.add.group();
-    const enemyWeapons = scene.physics.add.group();
-
-    generateCircleTexture(0xff0000, "redCircle", radius, scene)
+    const enemyWeapons = scene.physics.add.group();   
 
     for (let index = 0; index < count; index++) {
         new EnemyCircle(scene, "redCircle", enemies, (index * 70) + 12, 200, enemyWeapons, player).setCircle(radius)
@@ -51,5 +48,5 @@ function generateRedEnemyCircles(scene, count, radius, playerWeaponGroup, player
 }
 
 module.exports = {
-    generateRedEnemyCircles
+    spawnRedEnemyCircles
 }

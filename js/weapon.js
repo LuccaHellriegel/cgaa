@@ -37,24 +37,6 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-function generateRandWeapon(hexColor, scene) {
-    let graphics = scene.add.graphics({
-        fillStyle: {
-            color: hexColor
-        }
-    });
-    graphics.fillRect(27, 0, 10, 64);
-    graphics.fillRect(64 + 27, 0, 10, 64)
-    graphics.fillRect(64, 0, 64, 20)
-    graphics.generateTexture("randWeapon", 128, 64);
-    graphics.destroy()
-
-    //add frames to texture
-    scene.textures.list.randWeapon.add(1, 0, 0, 0, 64, 64)
-    scene.textures.list.randWeapon.add(2, 0, 64, 0, 64, 64)
-}
-
 module.exports = {
-    Weapon,
-    generateRandWeapon
+    Weapon
 }

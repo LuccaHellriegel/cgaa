@@ -1,20 +1,19 @@
 import Phaser from "phaser";
 import {
-    generateRandWeapon
-} from "./weapon";
+    generate
+} from "./generate";
 import {
     createAnims
 } from "./anims";
 import {
-    generateRedEnemyCircles
+    spawnRedEnemyCircles
 } from "./enemy";
 import {
     setupMovement,
     checkMovement
 } from "./movement";
 import {
-    AggressiveCircle,
-    generateCircleTexture
+    AggressiveCircle
 } from "./unit";
 import {
     doDamage, considerDamage
@@ -40,8 +39,7 @@ let game = new Phaser.Game(config);
 
 function create() {
 
-    generateRandWeapon(0x6495ED, this)
-    generateCircleTexture(0x6495ED, "blueCircle", 30, this)
+    generate(this)
     createAnims(this.anims)
 
     let playerGroup = this.physics.add.group();
@@ -49,7 +47,7 @@ function create() {
 
     this.player = new AggressiveCircle(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
     this.player.setCircle(30) 
-    const enemyWeapons = generateRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
+    const enemyWeapons = spawnRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
     //TODO: better structure for the overlaps
     this.physics.add.overlap(enemyWeapons, playerGroup, doDamage, null, this);
 
@@ -67,8 +65,4 @@ function create() {
 
 function update() {
     checkMovement(this)
-}
-
-module.exports = {
-    generateCircleTexture
 }

@@ -92,20 +92,6 @@ class AggressiveCircle extends UnitHBWithWeapon {
 
 }
 
-//TODO: where to put this? 
-//TODO: why not juste fill in graphics? Why use additional object?
-function generateCircleTexture(hexColor, title, radius, scene) {
-    let graphics = scene.add.graphics({
-        fillStyle: {
-            color: hexColor
-        }
-    });
-    graphics.fillCircle(radius, radius, radius);
-    graphics.generateTexture(title, 2 * radius, 2 * radius);
-    graphics.destroy()
-}
-
 module.exports = {
-    AggressiveCircle,
-    generateCircleTexture
+    AggressiveCircle
 }
