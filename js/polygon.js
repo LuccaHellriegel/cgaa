@@ -1,4 +1,4 @@
-var shapeWord = {
+let shapeWord = {
     line: "line",
     point: "point",
     circle: "circle",
@@ -26,7 +26,7 @@ class RectPolygon {
     }
 
     rotate(angle, unit) {
-        var newPoints = []
+        let newPoints = []
         this.points.forEach(point => {
             let x1 = point.x - unit.x;
             let y1 = point.y - unit.y;

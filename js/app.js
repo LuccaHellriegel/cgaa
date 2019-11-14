@@ -17,10 +17,10 @@ import {
     generateCircleTexture
 } from "./unit";
 import {
-    enemyCollision, overlap
+    doDamage, considerDamage
 } from "./combat";
 
-var config = {
+let config = {
     type: Phaser.AUTO,
     width: 1280,
     height: 720,
@@ -36,18 +36,16 @@ var config = {
     }
 };
 
-//TODO: var to let and const
-//TODO: eslint
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 
 function create() {
 
     generateRandWeapon(0x6495ED, this)
+    generateCircleTexture(0x6495ED, "blueCircle", 30, this)
 
     let playerGroup = this.physics.add.group();
     let playerWeaponGroup = this.physics.add.group()
 
-    generateCircleTexture(0x6495ED, "blueCircle", 30, this)
     this.player = new AggressiveCircle(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
     this.player.setCircle(30)
 
@@ -57,7 +55,7 @@ function create() {
 
     const enemyWeapons = generateRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
     //TODO: better structure for the overlaps
-    this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
+    this.physics.add.overlap(enemyWeapons, playerGroup, doDamage, null, this);
 
     this.cursors = this.input.keyboard.addKeys({
         up: Phaser.Input.Keyboard.KeyCodes.W,

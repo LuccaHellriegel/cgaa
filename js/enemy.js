@@ -3,8 +3,8 @@ import {
     generateCircleTexture
 } from "./unit";
 import {
-    enemyCollision,
-    overlap
+    doDamage,
+    considerDamage
 } from "./combat";
 
 class EnemyCircle extends AggressiveCircle {
@@ -46,7 +46,7 @@ function generateRedEnemyCircles(scene, count, radius, playerWeaponGroup, player
     for (let index = 0; index < count; index++) {
         new EnemyCircle(scene, "redCircle", enemies, (index * 70) + 12, 200, enemyWeapons, player).setCircle(radius)
     }
-    scene.physics.add.overlap(playerWeaponGroup, enemies, enemyCollision, overlap, scene);
+    scene.physics.add.overlap(playerWeaponGroup, enemies, doDamage, considerDamage, scene);
     return enemyWeapons
 }
 

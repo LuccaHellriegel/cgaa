@@ -38,18 +38,18 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
 }
 
 function generateRandWeapon(hexColor, scene) {
-    var graphics = scene.add.graphics({
+    let graphics = scene.add.graphics({
         fillStyle: {
             color: hexColor
         }
     });
 
-    var rect = new Phaser.Geom.Rectangle(27, 0, 10, 64);
+    let rect = new Phaser.Geom.Rectangle(27, 0, 10, 64);
     graphics.fillRectShape(rect);
 
     rect = new Phaser.Geom.Rectangle(64 + 27, 0, 10, 64);
     graphics.fillRectShape(rect);
-    var rect_too = new Phaser.Geom.Rectangle(64, 0, 64, 20);
+    let rect_too = new Phaser.Geom.Rectangle(64, 0, 64, 20);
     graphics.fillRectShape(rect_too);
     graphics.generateTexture("randWeapon", 128, 64);
     graphics.destroy()

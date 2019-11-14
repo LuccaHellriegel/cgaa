@@ -65,7 +65,7 @@ class UnitHBWithWeapon extends UnitWithHealthBar {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta)
-        var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
+        let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
         this.weapon.setPosition(point.x, point.y)
         this.weapon.setRotation(this.rotation)
         this.weapon.movePolygon()
@@ -95,12 +95,12 @@ class AggressiveCircle extends UnitHBWithWeapon {
 //TODO: where to put this? 
 //TODO: why not juste fill in graphics? Why use additional object?
 function generateCircleTexture(hexColor, title, radius, scene) {
-    var graphics = scene.add.graphics({
+    let graphics = scene.add.graphics({
         fillStyle: {
             color: hexColor
         }
     });
-    var circle = new Phaser.Geom.Circle(radius, radius, radius);
+    let circle = new Phaser.Geom.Circle(radius, radius, radius);
     graphics.fillCircleShape(circle);
     graphics.generateTexture(title, 2 * radius, 2 * radius);
     graphics.destroy()
