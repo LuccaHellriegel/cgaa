@@ -100,11 +100,9 @@ function generateCircleTexture(hexColor, title, radius, scene) {
             color: hexColor
         }
     });
-    let circle = new Phaser.Geom.Circle(radius, radius, radius);
-    graphics.fillCircleShape(circle);
+    graphics.fillCircle(radius, radius, radius);
     graphics.generateTexture(title, 2 * radius, 2 * radius);
     graphics.destroy()
-
 }
 
 module.exports = {

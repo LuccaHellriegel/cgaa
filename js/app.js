@@ -42,20 +42,18 @@ function create() {
 
     generateRandWeapon(0x6495ED, this)
     generateCircleTexture(0x6495ED, "blueCircle", 30, this)
+    createAnims(this.anims)
 
     let playerGroup = this.physics.add.group();
     let playerWeaponGroup = this.physics.add.group()
 
     this.player = new AggressiveCircle(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
-    this.player.setCircle(30)
-
-    createAnims(this.anims)
-
-    this.cameras.main.startFollow(this.player);
-
+    this.player.setCircle(30) 
     const enemyWeapons = generateRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
     //TODO: better structure for the overlaps
     this.physics.add.overlap(enemyWeapons, playerGroup, doDamage, null, this);
+
+    this.cameras.main.startFollow(this.player);
 
     this.cursors = this.input.keyboard.addKeys({
         up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -64,6 +62,7 @@ function create() {
         right: Phaser.Input.Keyboard.KeyCodes.D
     });
     setupMovement(this.input, this.cameras, this.player)
+    
 }
 
 function update() {

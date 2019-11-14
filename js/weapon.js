@@ -43,14 +43,9 @@ function generateRandWeapon(hexColor, scene) {
             color: hexColor
         }
     });
-
-    let rect = new Phaser.Geom.Rectangle(27, 0, 10, 64);
-    graphics.fillRectShape(rect);
-
-    rect = new Phaser.Geom.Rectangle(64 + 27, 0, 10, 64);
-    graphics.fillRectShape(rect);
-    let rect_too = new Phaser.Geom.Rectangle(64, 0, 64, 20);
-    graphics.fillRectShape(rect_too);
+    graphics.fillRect(27, 0, 10, 64);
+    graphics.fillRect(64 + 27, 0, 10, 64)
+    graphics.fillRect(64, 0, 64, 20)
     graphics.generateTexture("randWeapon", 128, 64);
     graphics.destroy()
 
