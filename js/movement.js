@@ -3,9 +3,7 @@ function setupMovement(input, cameras, player) {
         let cursor = pointer;
         //TODO: wrong angle (45% off)
         let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-        player.rotation = angle
-        player.body.rotation = angle
-
+        player.setRotation(angle)
     }, this);
 
     input.on('pointerdown', function () {

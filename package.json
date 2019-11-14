@@ -13,6 +13,6 @@
   "license": "",
   "dependencies": {
     "phaser": "^3.20.1",
-    "sat": "^0.8.0"
+    "polygon-collision": "0.0.1"
   }
 }

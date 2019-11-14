@@ -1,16 +1,20 @@
+import collision from "polygon-collision";
 function enemyCollision(weapon, enemy) {
-    if (weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id)) {
-        weapon.alreadyAttacked.push(enemy.id)
-        enemy.damage(5)
 
-    }
+    weapon.alreadyAttacked.push(enemy.id)
+    enemy.damage(5)
+
 }
 
+//TODO: other name
 function overlap(weapon, enemy) {
-    var boundsA = weapon.getBounds();
-    var boundsB = enemy.getBounds();
-
-    console.log(Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB));
+    // console.log(weapon)
+    // console.log(enemy)
+    // console.log("here")
+    // console.log(collision(weapon.polygon, enemy.polygon)) 
+    return collision(weapon.polygon, enemy.polygon) 
+    && weapon.attacking 
+    && !weapon.alreadyAttacked.includes(enemy.id)
 
 }
 

@@ -1,4 +1,7 @@
 import {
+    CirclePolygon
+} from "./polygon"
+import {
     HealthBar
 } from "./healthbar";
 import {
@@ -54,14 +57,9 @@ class UnitHBWithWeapon extends UnitWithHealthBar {
 
     attack() {
         if (!this.weapon.attacking) {
-            this.weapon.attacking = true
+            this.weapon.attacking = true          
             this.weapon.anims.play("attack")
-            let weapon = this.weapon
-            this.scene.time.delayedCall(100, function () {
-                weapon.anims.play('idle');
-                weapon.attacking = false;
-                weapon.alreadyAttacked = []
-            }, null, this.scene)
+            
         }
     }
 
@@ -69,13 +67,29 @@ class UnitHBWithWeapon extends UnitWithHealthBar {
         super.preUpdate(time, delta)
         var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
         this.weapon.setPosition(point.x, point.y)
-        this.weapon.rotation = this.rotation
+        this.weapon.setRotation(this.rotation)
+        this.weapon.movePolygon()
     }
 
     destroy() {
         super.destroy()
         this.weapon.destroy()
     }
+}
+
+class AggressiveCircle extends UnitHBWithWeapon {
+    constructor(scene, texture, physicsGroup, x, y, weaponGroup) {
+        super(scene, texture, physicsGroup, x, y, weaponGroup)
+        this.polygon = new CirclePolygon(x, y, 30)
+    }
+
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta)
+        //TODO: make radius as option
+        //TODO: make setter for Circle
+        this.polygon = new CirclePolygon(this.x, this.y, 30)
+    }
+
 }
 
 //TODO: where to put this? 
@@ -94,6 +108,6 @@ function generateCircleTexture(hexColor, title, radius, scene) {
 }
 
 module.exports = {
-    UnitHBWithWeapon,
+    AggressiveCircle,
     generateCircleTexture
 }

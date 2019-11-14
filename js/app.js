@@ -13,11 +13,11 @@ import {
     checkMovement
 } from "./movement";
 import {
-    UnitHBWithWeapon,
+    AggressiveCircle,
     generateCircleTexture
 } from "./unit";
 import {
-    enemyCollision
+    enemyCollision, overlap
 } from "./combat";
 
 var config = {
@@ -48,15 +48,15 @@ function create() {
     let playerWeaponGroup = this.physics.add.group()
 
     generateCircleTexture(0x6495ED, "blueCircle", 30, this)
-    this.player = new UnitHBWithWeapon(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
-    //TODO: hitbox is still not accurate
+    this.player = new AggressiveCircle(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
     this.player.setCircle(30)
 
     createAnims(this.anims)
 
     this.cameras.main.startFollow(this.player);
 
-    const enemyWeapons = generateRedEnemyCircles(this, 5, 30, playerWeaponGroup, this.player)
+    const enemyWeapons = generateRedEnemyCircles(this, 1, 30, playerWeaponGroup, this.player)
+    //TODO: better structure for the overlaps
     this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
 
     this.cursors = this.input.keyboard.addKeys({
