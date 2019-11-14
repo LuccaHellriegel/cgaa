@@ -47,7 +47,7 @@ class UnitWithHealthBar extends Unit {
 class UnitHBWithWeapon extends UnitWithHealthBar {
     constructor (scene, texture, physicsGroup, x, y, weaponGroup){
         super(scene, texture, physicsGroup, x, y)
-        this.weapon = new Weapon(scene, x+30,y-30, "weapon", weaponGroup);
+        this.weapon = new Weapon(scene, x+30,y-30, "randWeapon", weaponGroup);
     }
 
     attack(){

@@ -9,7 +9,6 @@
             }
         },
         scene: {
-            preload: preload,
             create: create,
             update: update
         }
@@ -19,30 +18,29 @@
     //TODO: eslint
     var game = new Phaser.Game(config);
 
-    function preload ()
-    {
-        this.load.spritesheet("weapon", "./assets/randWeapon.png", {frameWidth:64, frameHeight: 64})
-    }
-
     //TODO: where to put this? 
+    //TODO: why not juste fill in graphics? Why use additional object?
     function generateCircleTexture(hexColor, title, radius, scene){
         var graphics = scene.add.graphics({ fillStyle: { color: hexColor } });
-        var circle = new Phaser.Geom.Circle(50, 50, radius);
+        var circle = new Phaser.Geom.Circle(radius, radius, radius);
         graphics.fillCircleShape(circle);
-        graphics.generateTexture(title,4*radius,4*radius);
+        graphics.generateTexture(title,2*radius,2*radius);
         graphics.destroy()
     
     }
 
     function create ()
     {
+
+        generateRandWeapon(0x6495ED, this)
+
         let playerGroup = this.physics.add.group();
         let playerWeaponGroup = this.physics.add.group()
 
         generateCircleTexture(0x6495ED, "blueCircle", 30, this)
         game.player = new UnitHBWithWeapon(this,"blueCircle",playerGroup, 100,450, playerWeaponGroup)
         //TODO: hitbox is still not accurate
-        game.player.setCircle(30,30,30)
+        game.player.setCircle(30)
 
         createAnims(this.anims)
         

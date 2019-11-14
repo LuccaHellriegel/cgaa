@@ -35,7 +35,7 @@ function generateRedEnemyCircles(scene, count, radius, playerWeaponGroup){
     generateCircleTexture(0xff0000, "redCircle", radius, scene)
 
     for (let index = 0; index < count; index++) {
-        new Enemy(scene,"redCircle",enemies,(index*70)+12,200, enemyWeapons).setCircle(radius, radius, radius)
+        new Enemy(scene,"redCircle",enemies,(index*70)+12,200, enemyWeapons).setCircle(radius)
     }
     scene.physics.add.overlap(playerWeaponGroup, enemies, enemyCollision, null, scene);
     return enemyWeapons
