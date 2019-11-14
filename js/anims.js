@@ -17,3 +17,7 @@ function createAnims(anims){
         repeat: 0,
     });
 }
+
+module.exports = {
+    createAnims
+}

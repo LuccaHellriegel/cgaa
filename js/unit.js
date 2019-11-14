@@ -1,6 +1,12 @@
+import {
+    HealthBar
+} from "./healthbar";
+import {
+    Weapon
+} from "./weapon";
+
 class Unit extends Phaser.Physics.Arcade.Sprite {
-    constructor (scene, texture, physicsGroup, x, y)
-    {
+    constructor(scene, texture, physicsGroup, x, y) {
         super(scene, x, y)
         this.setTexture(texture)
         this.id = '_' + Math.random().toString(36).substr(2, 9);
@@ -11,51 +17,47 @@ class Unit extends Phaser.Physics.Arcade.Sprite {
 }
 
 class UnitWithHealthBar extends Unit {
-    constructor (scene, texture, physicsGroup, x, y){
+    constructor(scene, texture, physicsGroup, x, y) {
         super(scene, texture, physicsGroup, x, y)
-        this.healthbar = new HealthBar(scene, x-26, y-38, 46, 12);
-    }   
+        this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
+    }
 
-    damage (amount)
-    {
-        if (this.healthbar.decrease(amount))
-        {
+    damage(amount) {
+        if (this.healthbar.decrease(amount)) {
             //TODO: respawn
-            if(this === game.player){
-                game.player.healthbar.value = 100
+            if (this === this.scene.player) {
+                this.scene.player.healthbar.value = 100
             } else {
-            this.destroy()
+                this.destroy()
             }
         }
     }
 
-    destroy()
-    {
+    destroy() {
         super.destroy()
         this.healthbar.destroy()
     }
 
-    preUpdate (time, delta)
-    {
+    preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        this.healthbar.move(this.x-26, this.y-38)     
-        
+        this.healthbar.move(this.x - 26, this.y - 38)
+
     }
 
 }
 
 class UnitHBWithWeapon extends UnitWithHealthBar {
-    constructor (scene, texture, physicsGroup, x, y, weaponGroup){
+    constructor(scene, texture, physicsGroup, x, y, weaponGroup) {
         super(scene, texture, physicsGroup, x, y)
-        this.weapon = new Weapon(scene, x+30,y-30, "randWeapon", weaponGroup);
+        this.weapon = new Weapon(scene, x + 30, y - 30, "randWeapon", weaponGroup);
     }
 
-    attack(){
-        if(!this.weapon.attacking){
+    attack() {
+        if (!this.weapon.attacking) {
             this.weapon.attacking = true
             this.weapon.anims.play("attack")
             let weapon = this.weapon
-            game.scene.scenes[0].time.delayedCall(100, function(){
+            this.scene.time.delayedCall(100, function () {
                 weapon.anims.play('idle');
                 weapon.attacking = false;
                 weapon.alreadyAttacked = []
@@ -63,17 +65,35 @@ class UnitHBWithWeapon extends UnitWithHealthBar {
         }
     }
 
-    preUpdate (time, delta)
-    {
-        super.preUpdate(time,delta)
-        var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x+30, this.y-30), this.x, this.y, this.rotation)
-        this.weapon.setPosition(point.x,point.y)
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta)
+        var point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
+        this.weapon.setPosition(point.x, point.y)
         this.weapon.rotation = this.rotation
     }
 
-    destroy () 
-    {
+    destroy() {
         super.destroy()
         this.weapon.destroy()
     }
+}
+
+//TODO: where to put this? 
+//TODO: why not juste fill in graphics? Why use additional object?
+function generateCircleTexture(hexColor, title, radius, scene) {
+    var graphics = scene.add.graphics({
+        fillStyle: {
+            color: hexColor
+        }
+    });
+    var circle = new Phaser.Geom.Circle(radius, radius, radius);
+    graphics.fillCircleShape(circle);
+    graphics.generateTexture(title, 2 * radius, 2 * radius);
+    graphics.destroy()
+
+}
+
+module.exports = {
+    UnitHBWithWeapon,
+    generateCircleTexture
 }

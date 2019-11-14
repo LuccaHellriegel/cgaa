@@ -1,41 +1,40 @@
-function setupMovement(input, cameras, time){
+function setupMovement(input, cameras, player) {
     input.on('pointermove', function (pointer) {
         let cursor = pointer;
         //TODO: wrong angle (45% off)
-        let angle = Phaser.Math.Angle.Between(game.player.x, game.player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-        game.player.rotation = angle
-        game.player.body.rotation = angle
+        let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
+        player.rotation = angle
+        player.body.rotation = angle
 
     }, this);
-           
-    input.on('pointerdown', function(){game.player.attack()}, this)
+
+    input.on('pointerdown', function () {
+        player.attack()
+    }, this)
 }
 
-function checkMovement(){
-//TODO: want to be able to use two keys at the same time    
-//TODO: sometimes the cursors hangs
-if (game.cursors.left.isDown)
-{
-    game.player.setVelocityX(-160);
+function checkMovement(scene) {
+    //TODO: want to be able to use two keys at the same time    
+    //TODO: sometimes the cursors hangs
+    if (scene.cursors.left.isDown) {
+        scene.player.setVelocityX(-160);
 
-}
-else if (game.cursors.right.isDown)
-{
-    game.player.setVelocityX(160);
+    } else if (scene.cursors.right.isDown) {
+        scene.player.setVelocityX(160);
 
-}
-else if (game.cursors.up.isDown)
-{
-    game.player.setVelocityY(-160);
+    } else if (scene.cursors.up.isDown) {
+        scene.player.setVelocityY(-160);
 
-}
-else if (game.cursors.down.isDown)
-{
-    game.player.setVelocityY(160);
+    } else if (scene.cursors.down.isDown) {
+        scene.player.setVelocityY(160);
 
+    } else {
+        scene.player.setVelocityX(0);
+        scene.player.setVelocityY(0);
+    }
 }
-else {
-    game.player.setVelocityX(0);
-    game.player.setVelocityY(0);
-}
+
+module.exports = {
+    setupMovement,
+    checkMovement
 }

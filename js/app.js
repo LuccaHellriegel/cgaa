@@ -1,63 +1,77 @@
-    var config = {
-        type: Phaser.AUTO,
-        width: 1280,
-        height: 720,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                debug: true
-            }
-        },
-        scene: {
-            create: create,
-            update: update
+import Phaser from "phaser";
+import {
+    generateRandWeapon
+} from "./weapon";
+import {
+    createAnims
+} from "./anims";
+import {
+    generateRedEnemyCircles
+} from "./enemy";
+import {
+    setupMovement,
+    checkMovement
+} from "./movement";
+import {
+    UnitHBWithWeapon,
+    generateCircleTexture
+} from "./unit";
+import {
+    enemyCollision
+} from "./combat";
+
+var config = {
+    type: Phaser.AUTO,
+    width: 1280,
+    height: 720,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true
         }
-    };
-
-    //TODO: var to let and const
-    //TODO: eslint
-    var game = new Phaser.Game(config);
-
-    //TODO: where to put this? 
-    //TODO: why not juste fill in graphics? Why use additional object?
-    function generateCircleTexture(hexColor, title, radius, scene){
-        var graphics = scene.add.graphics({ fillStyle: { color: hexColor } });
-        var circle = new Phaser.Geom.Circle(radius, radius, radius);
-        graphics.fillCircleShape(circle);
-        graphics.generateTexture(title,2*radius,2*radius);
-        graphics.destroy()
-    
+    },
+    scene: {
+        create: create,
+        update: update
     }
+};
 
-    function create ()
-    {
+//TODO: var to let and const
+//TODO: eslint
+var game = new Phaser.Game(config);
 
-        generateRandWeapon(0x6495ED, this)
+function create() {
 
-        let playerGroup = this.physics.add.group();
-        let playerWeaponGroup = this.physics.add.group()
+    generateRandWeapon(0x6495ED, this)
 
-        generateCircleTexture(0x6495ED, "blueCircle", 30, this)
-        game.player = new UnitHBWithWeapon(this,"blueCircle",playerGroup, 100,450, playerWeaponGroup)
-        //TODO: hitbox is still not accurate
-        game.player.setCircle(30)
+    let playerGroup = this.physics.add.group();
+    let playerWeaponGroup = this.physics.add.group()
 
-        createAnims(this.anims)
-        
-        this.cameras.main.startFollow(game.player);
-        
-        const enemyWeapons = generateRedEnemyCircles(this, 5,30, playerWeaponGroup)
-        this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
+    generateCircleTexture(0x6495ED, "blueCircle", 30, this)
+    this.player = new UnitHBWithWeapon(this, "blueCircle", playerGroup, 100, 450, playerWeaponGroup)
+    //TODO: hitbox is still not accurate
+    this.player.setCircle(30)
 
-        game.cursors = this.cursors = this.input.keyboard.addKeys(
-            {up:Phaser.Input.Keyboard.KeyCodes.W,
-            down:Phaser.Input.Keyboard.KeyCodes.S,
-            left:Phaser.Input.Keyboard.KeyCodes.A,
-            right:Phaser.Input.Keyboard.KeyCodes.D});
-        setupMovement(this.input, this.cameras, this.time)
-    }
+    createAnims(this.anims)
 
-    function update ()
-    {
-        checkMovement()
-    }
+    this.cameras.main.startFollow(this.player);
+
+    const enemyWeapons = generateRedEnemyCircles(this, 5, 30, playerWeaponGroup, this.player)
+    this.physics.add.overlap(enemyWeapons, playerGroup, enemyCollision, null, this);
+
+    this.cursors = this.input.keyboard.addKeys({
+        up: Phaser.Input.Keyboard.KeyCodes.W,
+        down: Phaser.Input.Keyboard.KeyCodes.S,
+        left: Phaser.Input.Keyboard.KeyCodes.A,
+        right: Phaser.Input.Keyboard.KeyCodes.D
+    });
+    setupMovement(this.input, this.cameras, this.player)
+}
+
+function update() {
+    checkMovement(this)
+}
+
+module.exports = {
+    generateCircleTexture
+}
