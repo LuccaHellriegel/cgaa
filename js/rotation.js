@@ -8,6 +8,9 @@ function findRectCenter(points) {
 }
 
 function rotateRect(points,rotation) {
+    //we want clockwise rotation
+    rotation = -rotation
+    
     let centerPoint = findRectCenter(points)       
 
     let newPoints = []
