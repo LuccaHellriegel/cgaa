@@ -1,5 +1,5 @@
 import {
-    RectPolygon
+    RectPolygon, CompositeRectPolygon
 } from "./polygon"
 
 class Weapon extends Phaser.Physics.Arcade.Sprite {
@@ -29,9 +29,8 @@ class RandWeapon extends Weapon {
         //TODO: variable for each weapon
         let polygonX = x - 32
         let polygonY = y - 32
-        //TODO: multi rect polygon
         //TODO: polygon per frame
-        this.polygon = new RectPolygon(polygonX + 27, polygonY, 10, 64)
+        this.polygon = new CompositeRectPolygon([[polygonX + 27, polygonY, 10, 64], [polygonX + 27, polygonY, 64, 20]])
     }
     movePolygon() {
         this.polygon.setPosition(this.x, this.y)

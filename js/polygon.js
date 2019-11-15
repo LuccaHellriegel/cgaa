@@ -81,7 +81,7 @@ class CompositeRectPolygon {
     constructor(config) {
         this.rects = []
         config.forEach(rectConfig => {
-            this.rects.push(new RectPolygon(rectConfig.x, rectConfig.y, rectConfig.width, rectConfig.height))
+            this.rects.push(new RectPolygon(rectConfig[0], rectConfig[1], rectConfig[2], rectConfig[3]))
         })
     }
     setPosition(x, y) {
