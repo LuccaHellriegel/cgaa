@@ -36,6 +36,20 @@ function rotateRect(points,rotation) {
     return newPoints
 }
 
+function rotatePlayerToMouse(player, cursor, cameras){
+    let rotation = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
+    //Phaser uses degree=0 for the right positon
+    //we want degree=0 if mouse is on top
+    player.setRotation(rotation + (Math.PI / 180) * 90)
+}
+
+function rotateWeaponToUnit(unit){
+    let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(unit.x + 30, unit.y - 30), unit.x, unit.y, unit.rotation)
+    unit.weapon.setPosition(point.x, point.y)
+    unit.weapon.setRotation(unit.rotation)
+    unit.weapon.movePolygon()
+}
+
 module.exports = {
-    rotateRect, findRectCenter
+    rotateRect, findRectCenter, rotatePlayerToMouse, rotateWeaponToUnit
 }

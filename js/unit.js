@@ -7,6 +7,7 @@ import {
 import {
     RandWeapon
 } from "./weapon";
+import { rotateWeaponToUnit} from "./rotation"
 
 class Unit extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, physicsGroup) {
@@ -71,10 +72,7 @@ class CircleWithRandWeapon extends Circle {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta)
-        let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
-        this.weapon.setPosition(point.x, point.y)
-        this.weapon.setRotation(this.rotation)
-        this.weapon.movePolygon()
+        rotateWeaponToUnit(this)
     }
 
     destroy() {
@@ -84,5 +82,5 @@ class CircleWithRandWeapon extends Circle {
 }
 
 module.exports = {
-    CircleWithRandWeapon
+    CircleWithRandWeapon, Circle
 }

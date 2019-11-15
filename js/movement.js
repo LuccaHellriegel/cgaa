@@ -1,9 +1,9 @@
+import {rotatePlayerToMouse} from "./rotation"
+
 function setupMovement(input, cameras, player) {
     input.on('pointermove', function (pointer) {
         let cursor = pointer;
-        //TODO: wrong angle (45% off)
-        let angle = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-        player.setRotation(angle)
+        rotatePlayerToMouse(player,cursor,cameras)
     }, this);
 
     input.on('pointerdown', function () {
