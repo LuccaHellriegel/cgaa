@@ -1,3 +1,5 @@
+import {rotateRect} from "./rotation"
+
 let shapeWord = {
     line: "line",
     point: "point",
@@ -25,21 +27,8 @@ class RectPolygon {
         ]
     }
 
-    rotate(angle, unit) {
-        let newPoints = []
-        this.points.forEach(point => {
-            let x1 = point.x - unit.x;
-            let y1 = point.y - unit.y;
-
-            let temp_x1 = x1 * Math.cos(angle) - y1 * Math.sin(angle)
-            let temp_y1 = x1 * Math.sin(angle) + y1 * Math.cos(angle)
-            newPoints.push({
-                x: temp_x1 + unit.x,
-                y: temp_y1 + unit.y
-            })
-        });
-        this.points = newPoints
-
+    rotate(rotation) {
+        this.points = rotateRect(this.points, rotation)
     }
 }
 
