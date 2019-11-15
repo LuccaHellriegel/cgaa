@@ -9,7 +9,8 @@ function findRectCenter(points) {
 
 function rotateRect(points,centerPoint,rotation) {
     //we want clockwise rotation
-    rotation = -rotation  
+    //TODO: why does this now lead to correct rotation on screen but wrong one in the test?
+    //rotation = -rotation  
 
     let newPoints = []
     points.forEach(point => {

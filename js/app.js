@@ -59,6 +59,26 @@ function create() {
     
 }
 
+function drawPolygons(scene,points){
+    let offset = 0
+    let graphics = scene.add.graphics({
+        fillStyle: {
+            color: 0xFF00FF
+        }
+    });
+    graphics.lineStyle(5, 0xFF00FF, 1.0);
+    graphics.beginPath();
+graphics.moveTo(points[0].x+offset, points[0].y+offset);
+graphics.lineTo(points[0].x+offset, points[0].y+offset);
+graphics.lineTo(points[1].x+offset, points[1].y+offset);
+graphics.lineTo(points[2].x+offset, points[2].y+offset);
+graphics.lineTo(points[3].x+offset, points[3].y+offset);
+graphics.closePath();
+graphics.strokePath();
+}
+
 function update() {
+    drawPolygons(this,this.player.weapon.polygon.points)
+
     checkMovement(this)
 }

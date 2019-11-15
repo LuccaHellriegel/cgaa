@@ -17,7 +17,5 @@ function initCombat(scene){
 }
 
 module.exports = {
-    doDamage,
-    considerDamage,
     initCombat
 }

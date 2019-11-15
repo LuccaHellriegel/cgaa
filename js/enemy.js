@@ -1,10 +1,6 @@
 import {
-    CircleWithRandWeapon
+    CircleWithRandWeapon, Circle
 } from "./unit";
-import {
-    doDamage,
-    considerDamage
-} from "./combat";
 
 class EnemyCircle extends CircleWithRandWeapon {
     constructor(scene, x, y, texture, physicsGroup, weaponGroup) {
@@ -16,7 +12,6 @@ class EnemyCircle extends CircleWithRandWeapon {
         super.preUpdate(time, delta);
         if (this.hasBeenAttacked) {
             this.scene.physics.moveToObject(this, this.scene.player, 100);
-            //TODO: fix angle of weapon
             let angle = Phaser.Math.Angle.Between(this.x, this.y, this.scene.player.x +
                 this.scene.cameras.main.scrollX, this.scene.player.y +
                 this.scene.cameras.main.scrollY)
