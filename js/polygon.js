@@ -1,4 +1,6 @@
-import {rotateRect} from "./rotation"
+import {
+    rotateRect
+} from "./rotation"
 
 let shapeWord = {
     line: "line",
@@ -18,36 +20,36 @@ class RectPolygon {
         this.points = this.createPoints()
     }
 
-    createPoints(){
+    createPoints() {
         let x = this.x - (this.width / 2)
         let y = this.y - (this.height / 2)
         let width = this.width
         let height = this.height
         return [{
-            x: x,
-            y: y
-        }, {
-            x: x + width,
-            y: y
-        },
-        {
-            x: x + width,
-            y: y + height
-        }, {
-            x: x,
-            y: y + height
-        }
-    ]
+                x: x,
+                y: y
+            }, {
+                x: x + width,
+                y: y
+            },
+            {
+                x: x + width,
+                y: y + height
+            }, {
+                x: x,
+                y: y + height
+            }
+        ]
     }
 
-    movePoints(diffX, diffY){
+    movePoints(diffX, diffY) {
         this.points.forEach(point => {
             point.x += diffX
             point.y += diffY
         })
     }
 
-    setPosition(x,y) {
+    setPosition(x, y) {
         let diffX = this.x - x
         let diffY = this.y - y
         this.movePoints(diffX, diffY)
@@ -56,7 +58,48 @@ class RectPolygon {
     }
 
     rotate(rotation) {
-        this.points = rotateRect(this.createPoints(), {centerX: this.x, centerY: this.y}, rotation)
+        this.points = rotateRect(this.createPoints(), {
+            centerX: this.x,
+            centerY: this.y
+        }, rotation)
+    }
+
+    draw(graphics, offset) {
+        graphics.lineStyle(5, 0xFF00FF, 1.0);
+        graphics.beginPath();
+        graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
+        graphics.lineTo(this.points[0].x + offset, this.points[0].y + offset);
+        graphics.lineTo(this.points[1].x + offset, this.points[1].y + offset);
+        graphics.lineTo(this.points[2].x + offset, this.points[2].y + offset);
+        graphics.lineTo(this.points[3].x + offset, this.points[3].y + offset);
+        graphics.closePath();
+        graphics.strokePath();
+    }
+}
+
+class CompositeRectPolygon {
+    constructor(config) {
+        this.rects = []
+        config.forEach(rectConfig => {
+            this.rects.push(new RectPolygon(rectConfig.x, rectConfig.y, rectConfig.width, rectConfig.height))
+        })
+    }
+    setPosition(x, y) {
+        this.rects.forEach(rect => {
+            rect.setPosition(x, y)
+        })
+    }
+
+    rotate(rotation) {
+        this.rects.forEach(rect => {
+            rect.rotate(rotation)
+        })
+    }
+
+    draw(graphics,offset){
+        this.rects.forEach(rect => {
+            rect.draw(graphics, offset)
+        })
     }
 }
 
@@ -75,5 +118,6 @@ class CirclePolygon {
 
 module.exports = {
     RectPolygon,
-    CirclePolygon
+    CirclePolygon,
+    CompositeRectPolygon
 }
