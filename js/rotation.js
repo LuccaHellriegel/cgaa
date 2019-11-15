@@ -7,11 +7,9 @@ function findRectCenter(points) {
     }
 }
 
-function rotateRect(points,rotation) {
+function rotateRect(points,centerPoint,rotation) {
     //we want clockwise rotation
-    rotation = -rotation
-    
-    let centerPoint = findRectCenter(points)       
+    rotation = -rotation  
 
     let newPoints = []
     points.forEach(point => {
@@ -38,8 +36,8 @@ function rotateRect(points,rotation) {
 
 function rotatePlayerToMouse(player, cursor, cameras){
     let rotation = Phaser.Math.Angle.Between(player.x, player.y, cursor.x + cameras.main.scrollX, cursor.y + cameras.main.scrollY)
-    //Phaser uses degree=0 for the right positon
-    //we want degree=0 if mouse is on top
+    //Phaser uses degree=0 for the start positon
+    //we want degree=0 if mouse is on top (otherwise -90)
     player.setRotation(rotation + (Math.PI / 180) * 90)
 }
 
