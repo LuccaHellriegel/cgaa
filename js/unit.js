@@ -39,6 +39,7 @@ class Circle extends Unit {
     }
     damage(amount) {
         this.anims.play("damage")
+        this.scene.sound.play("damage");
         if (this.healthbar.decrease(amount)) {
             //TODO: respawn
             if (this === this.scene.player) {

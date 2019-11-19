@@ -18,6 +18,7 @@ import {
 import {
     initCombat
 } from "./combat";
+import damage from "/assets/audio/damage.mp3";
 
 let config = {
     type: Phaser.AUTO,
@@ -30,12 +31,17 @@ let config = {
         }
     },
     scene: {
+        preload: preload,
         create: create,
         update: update
     }
 };
 
 let game = new Phaser.Game(config);
+
+function preload(){
+    this.load.audio("damage", damage);
+}
 
 function create() {
 
