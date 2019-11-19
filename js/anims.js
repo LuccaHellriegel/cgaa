@@ -5,6 +5,12 @@ function createAnims(anims){
         frameRate: 10,
         repeat: 0,
     });
+    anims.create({
+        key: 'idle',
+        frames: anims.generateFrameNumbers('randWeapon', { start: 1, end: 1 }),
+        frameRate: 10,
+        repeat: 0,
+    });
 }
 
 module.exports = {

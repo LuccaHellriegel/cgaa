@@ -32,6 +32,8 @@ function generate(scene){
     generateCircleTexture(0xff0000, "redCircle", 30, scene)
 }
 
+//TODO: generate pair of weapon and corresponding polygon (polygon-store?)
+
 module.exports = {
     generate
 }

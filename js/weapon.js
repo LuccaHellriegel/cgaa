@@ -1,7 +1,8 @@
 import {
-    RectPolygon, CompositeRectPolygon
+    CompositeRectPolygon
 } from "./polygon"
 
+//TODO: deactivate acracde body once everything is switched to polygon
 class Weapon extends Phaser.Physics.Arcade.Sprite {
     //TODO: make param ordering for other extended sprites like this
     constructor(scene, x, y, texture, weaponGroup) {
@@ -15,11 +16,10 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
         this.on('animationcomplete_attack', function () {
-            //weapon.anims.play('idle');
+            this.anims.play('idle');
             this.attacking = false;
             this.alreadyAttacked = []
         }, this)
-
     }
 }
 
@@ -27,12 +27,13 @@ class RandWeapon extends Weapon {
     constructor(scene, x, y, weaponGroup) {
         super(scene, x, y, "randWeapon", weaponGroup)
         //TODO: variable for each weapon
-        let polygonX = x - 32
-        let polygonY = y - 32
         //TODO: polygon per frame
-        this.polygon = new CompositeRectPolygon([[polygonX + 27, polygonY, 10, 64], [polygonX + 27, polygonY, 64, 20]])
+        this.polygon = new CompositeRectPolygon([[x, y, 10, 64]])
+        this.polygonArr = [new CompositeRectPolygon([[x, y, 10, 64]]) , new CompositeRectPolygon([[x, y, 10, 64], [x, y -22, 64, 20]])]
     }
+    //TODO: move -> update
     movePolygon() {
+        this.polygon = this.polygonArr[parseInt(this.frame.name)-1]
         this.polygon.setPosition(this.x, this.y)
         this.polygon.rotate(this.rotation)
     }

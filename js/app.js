@@ -66,7 +66,6 @@ function update() {
             color: 0xFF00FF
         }
     });
-    this.player.weapon.polygon.draw(graphics,offset)
-
+    //this.player.weapon.polygon.draw(graphics,offset)
     checkMovement(this)
 }
