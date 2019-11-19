@@ -5,8 +5,14 @@ function generateCircleTexture(hexColor, title, radius, scene) {
         }
     });
     graphics.fillCircle(radius, radius, radius);
-    graphics.generateTexture(title, 2 * radius, 2 * radius);
+    graphics.fillCircle(3*radius, radius, radius);
+    graphics.fillStyle(0xF08080)
+    graphics.fillCircle(3*radius, radius, 2*(radius/3));
+    graphics.generateTexture(title, 4 * radius, 2 * radius);
     graphics.destroy()
+
+    scene.textures.list[title].add(1, 0, 0, 0, 2 * radius, 2 * radius)
+    scene.textures.list[title].add(2, 0, 2*radius, 0, 2 * radius, 2 * radius)
 }
 
 function generateRandWeapon(hexColor, scene) {

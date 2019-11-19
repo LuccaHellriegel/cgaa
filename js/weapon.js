@@ -16,7 +16,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
         this.on('animationcomplete_attack', function () {
-            this.anims.play('idle');
+            this.anims.play('idleWeapon');
             this.attacking = false;
             this.alreadyAttacked = []
         }, this)

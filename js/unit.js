@@ -29,8 +29,16 @@ class Circle extends Unit {
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
         this.polygon = new CirclePolygon(x, y, 30)
         this.setCircle(30)
+        this.on('animationcomplete', function (anim, frame) {
+            this.emit('animationcomplete_' + anim.key, anim, frame);
+        }, this);
+        //TODO: anim based on circle color
+        this.on('animationcomplete_damage', function () {
+            this.anims.play('idleCircle');
+        }, this)
     }
     damage(amount) {
+        this.anims.play("damage")
         if (this.healthbar.decrease(amount)) {
             //TODO: respawn
             if (this === this.scene.player) {

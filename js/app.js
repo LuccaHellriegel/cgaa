@@ -45,6 +45,7 @@ function create() {
     this.player = new Player(this)
     this.enemies = spawnRedEnemyCircles(this, 1)
 
+    this.physics.add.collider(this.player, this.enemies);
     initCombat(this)
 
     this.cameras.main.startFollow(this.player);

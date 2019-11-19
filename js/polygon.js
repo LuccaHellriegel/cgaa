@@ -58,6 +58,7 @@ class RectPolygon {
         this.y = y
     }
 
+    //TODO: rotate weapon around circle polygon, we would save setting the position first
     rotateWithCenter(rotation, centerX, centerY) {
         this.points = rotateRect(this.createPoints(), {
             centerX: centerX,
