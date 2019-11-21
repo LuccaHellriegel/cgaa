@@ -8,14 +8,20 @@ export class EnemyCircle extends CircleWithRandWeapon {
     }
 
     moveAndTurnToPlayer() {
-        this.scene.physics.moveToObject(this, this.scene.player, 100);
-        let newRotation = Phaser.Math.Angle.Between(this.x, this.y, this.scene.player.x +
-            this.scene.cameras.main.scrollX, this.scene.player.y +
-            this.scene.cameras.main.scrollY);
-        this.setRotation(newRotation);
+        let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius = 30 + 30 + 64
+        let distanceToPlayerSmallEnough = Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius
+        if (!distanceToPlayerSmallEnough) {
+            this.scene.physics.moveToObject(this, this.scene.player, 100);
+        } else {
+            this.setVelocity(0, 0)
+        }
+
+        let newRotation = Phaser.Math.Angle.Between(this.x, this.y, this.scene.player.x , this.scene.player.y);
+        let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90
+        this.setRotation(newRotation + correctionForPhasersMinus90DegreeTopPostion);
     }
 
-    attackPlayer(){
+    attackPlayer() {
         this.moveAndTurnToPlayer()
         let weaponReachesPlayer = this.weapon.polygon.checkForCollision(this.scene.player)
         if (weaponReachesPlayer) {
@@ -24,8 +30,8 @@ export class EnemyCircle extends CircleWithRandWeapon {
     }
 
     preUpdate(time, delta) {
-        super.preUpdate(time, delta);
         if (this.hasBeenAttacked) this.attackPlayer()
+        super.preUpdate(time, delta);
     }
 
     damage(amount) {
