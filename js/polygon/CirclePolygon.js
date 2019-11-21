@@ -17,11 +17,7 @@ export class CirclePolygon {
     }
 
     draw(graphics, offset){
-        graphics.lineStyle(5, 0xFF00FF, 1.0);
-        graphics.beginPath();
-        graphics.moveTo(this.x+offset, this.y+offset);
-        graphics.fillCircle(this.x, this.y, this.r)
-        graphics.closePath();
-        graphics.strokePath();
+        graphics.fillStyle(0xFF00FF);
+        graphics.fillCircle(this.points[0].x+offset, this.points[0].y+offset, this.r)
     }
 }
