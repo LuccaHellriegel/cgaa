@@ -1,5 +1,4 @@
-//TODO: have central graphics object if debugModus to be able to clean before each frame
-let debugModus = false
+let debugModus = true
 
 let gameConfig = {
     type: Phaser.AUTO,
