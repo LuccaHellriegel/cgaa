@@ -9,7 +9,7 @@ function considerDamage(weapon, enemy) {
     && !weapon.alreadyAttacked.includes(enemy.id)
 }
 
-function initCombat(scene){
+function setupCombat(scene){
     //TODO: replace this with custom polygon overlap for better performance
     scene.physics.add.overlap(scene.enemies[0].weaponGroup, scene.player.physicsGroup, doDamage, considerDamage, scene);
     scene.physics.add.overlap(scene.player.weaponGroup, scene.enemies[0].physicsGroup, doDamage, considerDamage, scene);
@@ -17,5 +17,5 @@ function initCombat(scene){
 }
 
 module.exports = {
-    initCombat
+    setupCombat
 }
