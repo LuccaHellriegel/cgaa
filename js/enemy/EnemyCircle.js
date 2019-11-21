@@ -25,7 +25,7 @@ export class EnemyCircle extends CircleWithRandWeapon {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        if (this.hasBeenAttacked) attackPlayer()
+        if (this.hasBeenAttacked) this.attackPlayer()
     }
 
     damage(amount) {

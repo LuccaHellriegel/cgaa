@@ -1,7 +1,3 @@
-import {
-    rotatePlayerToMouse
-} from "./rotation"
-
 export class PlayerMovement {
     constructor(player, scene) {
         this.left;
@@ -10,7 +6,7 @@ export class PlayerMovement {
         this.down
         this.player = player
         this.cursors = this.createKeyboardInput(scene)
-        this.setupPointerEvents(scene.input, scene.cameras, scene.player);
+        this.setupPointerEvents(scene.input);
     }
 
     createKeyboardInput(scene){
@@ -22,14 +18,13 @@ export class PlayerMovement {
         });
     }
 
-    setupPointerEvents(input, cameras, player) {
+    setupPointerEvents(input) {
         input.on('pointermove', function (pointer) {
-            let cursor = pointer;
-            rotatePlayerToMouse(player, cursor, cameras)
+            this.player.rotatePlayerTowardsMouse(pointer)
         }, this);
     
         input.on('pointerdown', function () {
-            player.attack()
+            this.player.attack()
         }, this)
     }
 
