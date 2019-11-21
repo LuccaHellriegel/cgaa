@@ -2,9 +2,6 @@ import {
     RandWeapon
 } from "../weapon/RandWeapon";
 import {
-    rotateWeaponToUnit
-} from "../rotation";
-import {
     Circle
 } from "./Circle";
 import {debugModus} from "../config"
@@ -37,9 +34,16 @@ export class CircleWithRandWeapon extends Circle {
         this.polygon.draw(this.graphics, this.scene.polygonOffset)
     }
 
+    rotateWeaponAroundCircle(){
+        let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(this.x + 30, this.y - 30), this.x, this.y, this.rotation)
+        this.weapon.setPosition(point.x, point.y)
+        this.weapon.setRotation(this.rotation)
+        this.weapon.updatePolygon()
+    }
+
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        rotateWeaponToUnit(this);
+        this.rotateWeaponAroundCircle()
 
         if (debugModus) this.draw()
     }
