@@ -16,8 +16,8 @@ export class CompositeRectPolygon {
         return {firstX,firstY}
     }
 
-    //first rect is the anchor point for all the rects
     setPosition(x, y) {
+        //first rect is the anchor point for all the rects
         let {firstX, firstY} = this.getFirstRectXY()
         let diffX = x - firstX;
         let diffY = y - firstY;
@@ -43,6 +43,7 @@ export class CompositeRectPolygon {
             rect.draw(graphics, offset);
         });
     }
+    
     checkForCollision(other) {
         for (let index = 0; index < this.rects.length; index++) {
             if (collision(this.rects[index], other.polygon))

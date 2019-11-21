@@ -18,13 +18,14 @@ export class HealthBar {
         this.draw();
         return (this.value === 0);
     }
-    draw() {
-        this.bar.clear();
-        //  BG
-        //TODO: make +4 variable
+
+    drawBackground(){
         this.bar.fillStyle(0x000000);
+        //TODO: make +4 variable
         this.bar.fillRect(this.x, this.y, this.healthLength + 4, this.healthWidth + 4);
-        //  Health
+    }
+
+    drawHealth(){
         this.bar.fillStyle(0xffffff);
         this.bar.fillRect(this.x + 2, this.y + 2, this.healthLength, this.healthWidth);
         if (this.value < 30) {
@@ -34,6 +35,11 @@ export class HealthBar {
         }
         let d = Math.floor(this.p * this.value);
         this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
+    }
+    draw() {
+        this.bar.clear();
+        this.drawBackground();
+        this.drawHealth();
     }
     //TODO: might be able to replace this with containers
     move(x, y) {

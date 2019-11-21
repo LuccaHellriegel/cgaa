@@ -1,8 +1,11 @@
 //require -> import
 let expect = require('chai').expect;
-let polygon = require("../js/polygon")
-let RectPolygon = polygon.RectPolygon
-let CompositeRectPolygon = polygon.CompositeRectPolygon
+import {
+    RectPolygon
+} from "../js/polygon/RectPolygon";
+import {
+    CompositeRectPolygon
+} from "../js/polygon/CompositeRectPolygon"
 
 describe('Polygon for Sprites', function () {
     describe('Rotate RectPolygon', function () {

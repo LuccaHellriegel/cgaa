@@ -6,9 +6,8 @@ import { Weapon } from "./Weapon"
 export class RandWeapon extends Weapon {
     constructor(scene, x, y, weaponGroup) {
         super(scene, x, y, "randWeapon", weaponGroup)
-        //TODO: variable for each weapon
         this.polygon = new CompositeRectPolygon([[x, y, 10, 64]])
-        this.polygonArr = [new CompositeRectPolygon([[x, y, 10, 64]]) , new CompositeRectPolygon([[x, y, 10, 64], [x, y -22, 64, 20]])]
+        this.polygonArr = [this.polygon , new CompositeRectPolygon([[x, y, 10, 64], [x, y -22, 64, 20]])]
     }
 
     movePolygon(){

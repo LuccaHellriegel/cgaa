@@ -8,9 +8,15 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
         weaponGroup.add(this);
         this.alreadyAttacked = [];
         this.attacking = false;
+
+        this.setupAnimEvents()
+    }
+
+    setupAnimEvents(){
         this.on('animationcomplete', function (anim, frame) {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
+        
         this.on('animationcomplete_attack', function () {
             this.anims.play('idleWeapon');
             this.attacking = false;

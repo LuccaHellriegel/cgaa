@@ -1,5 +1,7 @@
 let expect = require('chai').expect;
-let RectPolygon = require("../js/polygon").RectPolygon
+import {
+    RectPolygon
+} from "../js/polygon/RectPolygon";
 let findRectCenter = require("../js/rotation").findRectCenter
 
 describe('Rotation for Polygons', function () {

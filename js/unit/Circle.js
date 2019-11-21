@@ -8,6 +8,10 @@ export class Circle extends Unit {
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
         this.polygon = new CirclePolygon(x, y, 30);
         this.setCircle(30);
+        this.setupAnimEvents()
+    }
+
+    setupAnimEvents(){
         this.on('animationcomplete', function (anim, frame) {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
@@ -16,6 +20,7 @@ export class Circle extends Unit {
             this.anims.play('idleCircle');
         }, this);
     }
+    
     damage(amount) {
         this.anims.play("damage");
         //this.scene.sound.play("damage");
@@ -37,7 +42,6 @@ export class Circle extends Unit {
         super.preUpdate(time, delta);
         this.healthbar.move(this.x - 26, this.y - 38);
         //TODO: make radius as option
-        //TODO: make setter for CirclePolygon
-        this.polygon = new CirclePolygon(this.x, this.y, 30);
+        this.polygon.setPosition(this.x,this.y)
     }
 }
