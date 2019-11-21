@@ -10,6 +10,7 @@ export class HealthBar {
         this.draw();
         scene.add.existing(this.bar);
     }
+
     decrease(amount) {
         this.value -= amount;
         if (this.value < 0) {
@@ -19,13 +20,12 @@ export class HealthBar {
         return (this.value === 0);
     }
 
-    drawBackground(){
+    drawBackground() {
         this.bar.fillStyle(0x000000);
-        //TODO: make +4 variable
         this.bar.fillRect(this.x, this.y, this.healthLength + 4, this.healthWidth + 4);
     }
 
-    drawHealth(){
+    drawHealth() {
         this.bar.fillStyle(0xffffff);
         this.bar.fillRect(this.x + 2, this.y + 2, this.healthLength, this.healthWidth);
         if (this.value < 30) {
@@ -36,17 +36,19 @@ export class HealthBar {
         let d = Math.floor(this.p * this.value);
         this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
     }
+
     draw() {
         this.bar.clear();
         this.drawBackground();
         this.drawHealth();
     }
-    //TODO: might be able to replace this with containers
+
     move(x, y) {
         this.x = x;
         this.y = y;
         this.draw();
     }
+
     destroy() {
         this.bar.destroy();
     }

@@ -13,8 +13,10 @@ function createWeaponAnims(anims){
 }
 
 function createCircleAnims(anims){
-    createNonRepeatingAnim(anims, "idleCircle", "redCircle", 1, 1, 10)
-    createNonRepeatingAnim(anims, "damage", "redCircle", 1, 2, 10)
+    createNonRepeatingAnim(anims, "idle-redCircle", "redCircle", 1, 1, 10)
+    createNonRepeatingAnim(anims, "damage-redCircle", "redCircle", 1, 2, 10)
+    createNonRepeatingAnim(anims, "idle-blueCircle", "blueCircle", 1, 1, 10)
+    createNonRepeatingAnim(anims, "damage-blueCircle", "blueCircle", 1, 2, 10)
 }
 
 function createAnims(anims){

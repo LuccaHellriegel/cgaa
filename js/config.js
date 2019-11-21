@@ -1,7 +1,7 @@
-let debugModus = true
+let debugModus = false
 
 let gameConfig = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     width: 1280,
     height: 720,
     physics: {

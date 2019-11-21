@@ -8,7 +8,7 @@ export class EnemyCircle extends CircleWithRandWeapon {
     }
 
     moveAndTurnToPlayer() {
-        let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius = 30 + 30 + 64
+        let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius = 30 + 30 + 32
         let distanceToPlayerSmallEnough = Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius
         if (!distanceToPlayerSmallEnough) {
             this.scene.physics.moveToObject(this, this.scene.player, 100);

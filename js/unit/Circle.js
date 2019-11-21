@@ -15,17 +15,15 @@ export class Circle extends Unit {
         this.on('animationcomplete', function (anim, frame) {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
-        //TODO: anim based on circle color
         this.on('animationcomplete_damage', function () {
-            this.anims.play('idleCircle');
+            this.anims.play('idle-'+this.texture.key);
         }, this);
     }
     
     damage(amount) {
-        this.anims.play("damage");
+        this.anims.play("damage-"+this.texture.key);
         //this.scene.sound.play("damage");
         if (this.healthbar.decrease(amount)) {
-            //TODO: respawn
             if (this === this.scene.player) {
                 this.scene.player.healthbar.value = 100;
             }
