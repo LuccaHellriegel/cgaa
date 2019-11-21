@@ -46,7 +46,7 @@ function rotateWeaponToUnit(unit){
     let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(unit.x + 30, unit.y - 30), unit.x, unit.y, unit.rotation)
     unit.weapon.setPosition(point.x, point.y)
     unit.weapon.setRotation(unit.rotation)
-    unit.weapon.movePolygon()
+    unit.weapon.updatePolygon()
 }
 
 module.exports = {

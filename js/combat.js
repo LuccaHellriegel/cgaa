@@ -4,7 +4,7 @@ function doDamage(weapon, enemy) {
 }
 
 function considerDamage(weapon, enemy) {
-    return weapon.polygon.collision(enemy)
+    return weapon.polygon.checkForCollision(enemy)
     && weapon.attacking 
     && !weapon.alreadyAttacked.includes(enemy.id)
 }
