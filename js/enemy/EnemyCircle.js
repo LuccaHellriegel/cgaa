@@ -15,14 +15,17 @@ export class EnemyCircle extends CircleWithRandWeapon {
         this.setRotation(angle);
     }
 
+    attackPlayer(){
+        this.moveAndTurnToPlayer()
+        let playerIsCloseEnough = Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < 100
+        if (playerIsCloseEnough) {
+            this.attack();
+        }
+    }
+
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        if (this.hasBeenAttacked) {
-            this.moveAndTurnToPlayer()
-            if (Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < 100) {
-                this.attack();
-            }
-        }
+        if (this.hasBeenAttacked) attackPlayer()
     }
 
     damage(amount) {

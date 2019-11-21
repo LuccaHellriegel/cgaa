@@ -1,5 +1,4 @@
 import { EnemyCircle } from "./EnemyCircle";
-import { CircleWithRandWeapon } from "../unit/CircleWithRandWeapon";
 
 function spawnRedEnemyCircles(scene, count) {
     const enemies = []
