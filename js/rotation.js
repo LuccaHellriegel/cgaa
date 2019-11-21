@@ -1,12 +1,3 @@
-function findRectCenter(points) {
-    let centerX = (points[0].x + points[2].x) / 2
-    let centerY = (points[0].y + points[2].y) / 2
-    return {
-        centerX: centerX,
-        centerY: centerY
-    }
-}
-
 function rotateRect(points,centerPoint,rotation) {
     //we want clockwise rotation
     //TODO: why does this now lead to correct rotation on screen but wrong one (counter-clockwise) in the test?
