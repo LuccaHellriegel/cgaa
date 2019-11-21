@@ -1,3 +1,4 @@
+//require -> import
 let expect = require('chai').expect;
 let polygon = require("../js/polygon")
 let RectPolygon = polygon.RectPolygon
