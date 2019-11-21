@@ -3,7 +3,6 @@ import { generate } from "../generate";
 import { createAnims } from "../anims";
 import { spawnRedEnemyCircles } from "../enemy/enemies";
 import { Player } from "../Player";
-import { setupCombat } from "../combat";
 import {debugModus} from "../config"
 import { PlayerMovement } from "../PlayerMovement";
 
@@ -22,7 +21,6 @@ export function create() {
     generate(this);
     createAnims(this.anims);
     createUnits(this)
-    setupCombat(this);
     setupPlayer(this)
 
     if(debugModus){ this.polygonOffset = 0

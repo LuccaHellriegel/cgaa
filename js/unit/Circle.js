@@ -6,6 +6,7 @@ export class Circle extends Unit {
         //TODO: add radius here
         super(scene, x, y, texture, physicsGroup);
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
+        //TODO: polygon has a few pixel offset, screen offset?
         this.polygon = new CirclePolygon(x, y, 30);
         this.setCircle(30);
         this.setupAnimEvents()
