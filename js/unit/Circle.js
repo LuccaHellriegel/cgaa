@@ -16,7 +16,7 @@ export class Circle extends Unit {
         this.on('animationcomplete', function (anim, frame) {
             this.emit('animationcomplete_' + anim.key, anim, frame);
         }, this);
-        this.on('animationcomplete_damage', function () {
+        this.on('animationcomplete_damage-'+this.texture.key, function () {
             this.anims.play('idle-'+this.texture.key);
         }, this);
     }
