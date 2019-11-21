@@ -9,10 +9,10 @@ export class EnemyCircle extends CircleWithRandWeapon {
 
     moveAndTurnToPlayer() {
         this.scene.physics.moveToObject(this, this.scene.player, 100);
-        let angle = Phaser.Math.Angle.Between(this.x, this.y, this.scene.player.x +
+        let newRotation = Phaser.Math.Angle.Between(this.x, this.y, this.scene.player.x +
             this.scene.cameras.main.scrollX, this.scene.player.y +
             this.scene.cameras.main.scrollY);
-        this.setRotation(angle);
+        this.setRotation(newRotation);
     }
 
     attackPlayer(){
