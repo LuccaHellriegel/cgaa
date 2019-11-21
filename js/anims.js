@@ -1,29 +1,25 @@
-function createAnims(anims){
+function createNonRepeatingAnim(anims, key, texture, start, end, frameRate){
     anims.create({
-        key: 'idleWeapon',
-        frames: anims.generateFrameNumbers('randWeapon', { start: 1, end: 1 }),
-        frameRate: 10,
+        key: key,
+        frames: anims.generateFrameNumbers(texture, { start: start, end: end }),
+        frameRate: frameRate,
         repeat: 0,
     });
-    anims.create({
-        key: 'attack',
-        frames: anims.generateFrameNumbers('randWeapon', { start: 1, end: 2 }),
-        frameRate: 10,
-        repeat: 0,
-    });
+}
 
-    anims.create({
-        key: 'idleCircle',
-        frames: anims.generateFrameNumbers('redCircle', { start: 1, end: 1 }),
-        frameRate: 10,
-        repeat: 0,
-    });
-    anims.create({
-        key: 'damage',
-        frames: anims.generateFrameNumbers('redCircle', { start: 1, end: 2 }),
-        frameRate: 10,
-        repeat: 0,
-    });
+function createWeaponAnims(anims){
+    createNonRepeatingAnim(anims, "idleWeapon", "randWeapon", 1, 1, 10)
+    createNonRepeatingAnim(anims, "attack", "randWeapon", 1, 2, 10)
+}
+
+function createCircleAnims(anims){
+    createNonRepeatingAnim(anims, "idleCircle", "redCircle", 1, 1, 10)
+    createNonRepeatingAnim(anims, "damage", "redCircle", 1, 2, 10)
+}
+
+function createAnims(anims){
+    createWeaponAnims(anims)
+    createCircleAnims(anims)
 }
 
 module.exports = {
