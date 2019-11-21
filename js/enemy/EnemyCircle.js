@@ -17,8 +17,8 @@ export class EnemyCircle extends CircleWithRandWeapon {
 
     attackPlayer(){
         this.moveAndTurnToPlayer()
-        let playerIsCloseEnough = Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < 100
-        if (playerIsCloseEnough) {
+        let weaponReachesPlayer = this.weapon.polygon.checkForCollision(this.scene.player)
+        if (weaponReachesPlayer) {
             this.attack();
         }
     }
