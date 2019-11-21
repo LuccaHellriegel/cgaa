@@ -4,7 +4,7 @@ import {
 import {
     Circle
 } from "./Circle";
-import {debugModus} from "../config"
+import {debugModus} from "../app/config"
 
 export class CircleWithRandWeapon extends Circle {
     constructor(scene, x, y, texture, physicsGroup, weaponGroup) {

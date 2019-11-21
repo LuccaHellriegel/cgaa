@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import {
     gameConfig
-} from "./config";
+} from "./app/config";
 import { preload } from "./app/preload";
 import { create } from "./app/create";
 import { update } from "./app/update";

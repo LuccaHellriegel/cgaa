@@ -1,10 +1,9 @@
-import Phaser from "phaser";
-import { generate } from "../generate";
-import { createAnims } from "../anims";
+import { generate } from "../graphic/generate";
+import { createAnims } from "../graphic/anims";
 import { spawnRedEnemyCircles } from "../enemy/enemies";
-import { Player } from "../Player";
-import {debugModus} from "../config"
-import { PlayerMovement } from "../PlayerMovement";
+import { Player } from "../player/Player";
+import {debugModus} from "./config"
+import { PlayerMovement } from "../player/PlayerMovement";
 
 function createUnits(scene){
     scene.player = new Player(scene);

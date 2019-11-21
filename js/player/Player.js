@@ -1,6 +1,6 @@
 import {
     CircleWithRandWeapon
-} from "./unit/CircleWithRandWeapon";
+} from "../unit/CircleWithRandWeapon";
 export class Player extends CircleWithRandWeapon {
     constructor(scene){
         super(scene, 100, 450, "blueCircle",  

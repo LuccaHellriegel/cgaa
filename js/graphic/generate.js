@@ -15,6 +15,7 @@ function generateCircleTexture(hexColor, title, radius, scene) {
     scene.textures.list[title].add(2, 0, 2*radius, 0, 2 * radius, 2 * radius)
 }
 
+//TODO: slight (few pixel) overlap between frames?
 function generateRandWeapon(hexColor, scene) {
     let graphics = scene.add.graphics({
         fillStyle: {
@@ -37,8 +38,6 @@ function generate(scene){
     generateCircleTexture(0x6495ED, "blueCircle", 30, scene)
     generateCircleTexture(0xff0000, "redCircle", 30, scene)
 }
-
-//TODO: generate pair of weapon and corresponding polygon (polygon-store?)
 
 module.exports = {
     generate
