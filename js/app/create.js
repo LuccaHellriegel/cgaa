@@ -16,12 +16,12 @@ function setupPlayer(scene){
     scene.playerMovement = new PlayerMovement(scene.player, scene)
 }
 
-export function create() {
-    generate(this);
-    createAnims(this.anims);
-    createUnits(this)
-    setupPlayer(this)
+export function createFunc(scene) {
+    generate(scene);
+    createAnims(scene.anims);
+    createUnits(scene)
+    setupPlayer(scene)
 
-    if(debugModus){ this.polygonOffset = 0
+    if(debugModus){ scene.polygonOffset = 0
     }
 }

@@ -2,17 +2,12 @@ import Phaser from "phaser";
 import {
     gameConfig
 } from "./app/config";
-import { preload } from "./app/preload";
-import { create } from "./app/create";
-import { update } from "./app/update";
+import { Gameplay } from "./app/gameplay";
+import { HUD } from "./ui/hud";
 
 function makeGame(){
     let gameConfigWithScene = gameConfig
-    gameConfigWithScene.scene = {
-        preload: preload,
-        create: create,
-        update: update
-    }
+    gameConfigWithScene.scene = [ Gameplay, HUD ]
     
     let game = new Phaser.Game(gameConfigWithScene);
 }

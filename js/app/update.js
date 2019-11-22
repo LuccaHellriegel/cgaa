@@ -23,7 +23,7 @@ function checkWeaponOverlap(scene){
     }
 }
 
-export function update() {
-    this.playerMovement.update()
-    checkWeaponOverlap(this)
+export function updateFunc(scene) {
+    scene.playerMovement.update()
+    checkWeaponOverlap(scene)
 }
