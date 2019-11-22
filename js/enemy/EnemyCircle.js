@@ -1,10 +1,14 @@
 import {
     CircleWithRandWeapon
 } from "../unit/CircleWithRandWeapon";
+import {
+    HealthBar
+} from "../unit/HealthBar";
 export class EnemyCircle extends CircleWithRandWeapon {
     constructor(scene, x, y, texture, physicsGroup, weaponGroup) {
         super(scene, x, y, texture, physicsGroup, weaponGroup);
         this.hasBeenAttacked = false;
+        this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
     }
 
     moveAndTurnToPlayer() {
@@ -29,13 +33,23 @@ export class EnemyCircle extends CircleWithRandWeapon {
         }
     }
 
-    preUpdate(time, delta) {
-        if (this.hasBeenAttacked) this.attackPlayer()
-        super.preUpdate(time, delta);
+    damage(amount){
+        super.damage(amount)
+        this.hasBeenAttacked = true;
+        if (this.healthbar.decrease(amount)) {
+            this.destroy();
+        }
     }
 
-    damage(amount) {
-        super.damage(amount);
-        this.hasBeenAttacked = true;
+    destroy() {
+        super.destroy();
+        this.healthbar.destroy();
     }
+
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta);
+        this.healthbar.move(this.x - 26, this.y - 38);
+        if (this.hasBeenAttacked) this.attackPlayer()
+    }
+
 }
