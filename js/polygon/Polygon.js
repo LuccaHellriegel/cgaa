@@ -27,4 +27,15 @@ export class Polygon {
         this.x = x;
         this.y = y;
     }
+
+    draw(graphics, offset) {
+        graphics.lineStyle(5, 0xFF00FF, 1.0);
+        graphics.beginPath();
+        graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
+        for (let index = 0; index < this.points.length; index++) {
+            graphics.lineTo(this.points[index].x + offset, this.points[index].y + offset);
+        }
+        graphics.closePath();
+        graphics.strokePath();
+    }
 }

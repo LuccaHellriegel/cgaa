@@ -63,15 +63,4 @@ export class RectPolygon extends Polygon {
         this.rotateRect(rotation, this.x, this.y)
     }
 
-    draw(graphics, offset) {
-        graphics.lineStyle(5, 0xFF00FF, 1.0);
-        graphics.beginPath();
-        graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
-        graphics.lineTo(this.points[0].x + offset, this.points[0].y + offset);
-        graphics.lineTo(this.points[1].x + offset, this.points[1].y + offset);
-        graphics.lineTo(this.points[2].x + offset, this.points[2].y + offset);
-        graphics.lineTo(this.points[3].x + offset, this.points[3].y + offset);
-        graphics.closePath();
-        graphics.strokePath();
-    }
 }
