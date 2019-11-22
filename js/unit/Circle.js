@@ -4,13 +4,13 @@ import {
 import {
     Unit
 } from "./Unit";
+import {normalCircleRadius} from "../graphic/generate"
 export class Circle extends Unit {
     constructor(scene, x, y, texture, physicsGroup) {
-        //TODO: add radius here
         super(scene, x, y, texture, physicsGroup);
         //TODO: polygon has a few pixel offset, screen offset?
-        this.polygon = new CirclePolygon(x + scene.cameras.main.scrollX, y + scene.cameras.main.scrollY, 30);
-        this.setCircle(30);
+        this.polygon = new CirclePolygon(x + scene.cameras.main.scrollX, y + scene.cameras.main.scrollY, normalCircleRadius);
+        this.setCircle(normalCircleRadius);
         this.setupAnimEvents()
     }
 
