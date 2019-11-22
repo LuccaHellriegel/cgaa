@@ -1,13 +1,13 @@
 import {
-    CompositeRectPolygon
-} from "../polygon/CompositeRectPolygon"
+    CompositePolygon
+} from "../polygon/CompositePolygon"
 import { Weapon } from "./Weapon"
 
 export class RandWeapon extends Weapon {
     constructor(scene, x, y, weaponGroup) {
         super(scene, x, y, "randWeapon", weaponGroup)
-        this.polygon = new CompositeRectPolygon([[x, y, 10, 64]])
-        this.polygonArr = [this.polygon , new CompositeRectPolygon([[x, y, 10, 64], [x, y -22, 64, 20]])]
+        this.polygon = new CompositePolygon([[x, y, 10, 64, "rect"]])
+        this.polygonArr = [this.polygon , new CompositePolygon([[x, y, 10, 64,"rect"], [x, y -22, 64, 20,"rect"]])]
     }
 
     movePolygon(){
