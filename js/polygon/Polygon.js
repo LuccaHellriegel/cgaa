@@ -28,8 +28,42 @@ export class Polygon {
         this.y = y;
     }
 
+    rotatePoints(rotation, centerX, centerY) { 
+        let originalPoints = this.createUnrotatedPoints()  
+        let newPoints = []
+        originalPoints.forEach(point => {
+            let x1 = point.x - centerX;
+            let y1 = point.y - centerY;
+    
+            let temp_x1 = x1 * Math.cos(rotation) - y1 * Math.sin(rotation)
+            let temp_y1 = x1 * Math.sin(rotation) + y1 * Math.cos(rotation)
+    
+            //TODO: choose precision on more than intuition?
+            let x = Math.round((temp_x1 + centerX + Number.EPSILON) * 10000) / 10000
+            let y = Math.round((temp_y1 + centerY + Number.EPSILON) * 10000) / 10000
+    
+            if (x == -0) x = 0
+            if (y == -0) y = 0
+    
+            newPoints.push({
+                x: x,
+                y: y
+            })
+        });
+        this.points = newPoints
+    }
+
+    //TODO: rotate weapon around circle polygon, we would save setting the position first
+    rotateWithCenter(rotation, centerX, centerY) {
+        this.rotatePoints(rotation, centerX, centerY)
+    }
+
+    rotate(rotation) {
+        this.rotatePoints(rotation, this.x, this.y)
+    }
+
     draw(graphics, offset) {
-        graphics.lineStyle(5, 0xFF00FF, 1.0);
+        graphics.lineStyle(2, 0xFF00FF, 1.0);
         graphics.beginPath();
         graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
         for (let index = 0; index < this.points.length; index++) {
