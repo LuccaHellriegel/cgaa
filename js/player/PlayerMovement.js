@@ -6,7 +6,6 @@ export class PlayerMovement {
         this.down
         this.player = player
         this.cursors = this.createKeyboardInput(scene)
-        this.setupPointerEvents(scene.input);
     }
 
     createKeyboardInput(scene){
@@ -16,16 +15,6 @@ export class PlayerMovement {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
-    }
-
-    setupPointerEvents(input) {
-        input.on('pointermove', function (pointer) {
-            this.player.rotatePlayerTowardsMouse(pointer)
-        }, this);
-    
-        input.on('pointerdown', function () {
-            this.player.attack()
-        }, this)
     }
 
     updateButtonStates() {
