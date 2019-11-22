@@ -1,4 +1,4 @@
-import { shapeWord } from "./polygon";
+import { shapeWord } from "./Polygon";
 export class CirclePolygon {
     constructor(x, y, radius) {
         this.type = shapeWord.circle;

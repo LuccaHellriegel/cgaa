@@ -1,13 +1,10 @@
-import { shapeWord } from "./polygon";
-export class RectPolygon {
+import { Polygon } from "./Polygon";
+export class RectPolygon extends Polygon {
     constructor(x, y, width, height) {
-        this.type = shapeWord.polygon;
-        //This is the center point
-        this.x = x;
-        this.y = y;
+        super(x,y,[])
         this.width = width;
         this.height = height;
-        this.points = this.createUnrotatedPoints();
+        this.points = this.createUnrotatedPoints()
     }
 
     createUnrotatedPoints() {
@@ -30,21 +27,6 @@ export class RectPolygon {
             y: y + height
         }
         ];
-    }
-
-    movePoints(diffX, diffY) {
-        this.points.forEach((point, index, array) => {
-            array[index].x += diffX;
-            array[index].y += diffY;
-        });
-    }
-
-    setPosition(x, y) {
-        let diffX = x - this.x;
-        let diffY = y - this.y;
-        this.movePoints(diffX, diffY);
-        this.x = x;
-        this.y = y;
     }
 
     rotateRect(rotation, centerX, centerY) { 
