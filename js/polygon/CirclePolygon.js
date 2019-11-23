@@ -1,4 +1,6 @@
-import { shapeWord } from "./Polygon";
+import {
+    shapeWord
+} from "./Polygon";
 export class CirclePolygon {
     constructor(x, y, radius) {
         this.type = shapeWord.circle;
@@ -6,18 +8,22 @@ export class CirclePolygon {
             x: x,
             y: y
         }];
+        this.x = x
+        this.y = y
         this.r = radius;
     }
 
-    setPosition(x,y){
+    setPosition(x, y) {
         this.points = [{
             x: x,
             y: y
         }];
+        this.x = x
+        this.y = y
     }
 
-    draw(graphics, offset){
+    draw(graphics, offset) {
         graphics.fillStyle(0xFF00FF);
-        graphics.fillCircle(this.points[0].x+offset, this.points[0].y+offset, this.r)
+        graphics.fillCircle(this.points[0].x + offset, this.points[0].y + offset, this.r)
     }
 }
