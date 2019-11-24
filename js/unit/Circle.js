@@ -4,7 +4,12 @@ import {
 import {
     Unit
 } from "./Unit";
-import {normalCircleRadius} from "../graphic/generate"
+import {
+    normalCircleRadius
+} from "../graphic/generate"
+import {
+    debugModus
+} from "../app/config"
 export class Circle extends Unit {
     constructor(scene, x, y, texture, physicsGroup) {
         super(scene, x, y, texture, physicsGroup);
@@ -12,6 +17,13 @@ export class Circle extends Unit {
         this.polygon = new CirclePolygon(x + scene.cameras.main.scrollX, y + scene.cameras.main.scrollY, normalCircleRadius);
         this.setCircle(normalCircleRadius);
         this.setupAnimEvents()
+
+        if (debugModus) this.graphics = scene.add.graphics({
+            fillStyle: {
+                color: 0xFF00FF
+            }
+        });
+
     }
 
     setupAnimEvents() {
@@ -30,12 +42,20 @@ export class Circle extends Unit {
 
         if (isPlayer) {
             this.scene.events.emit("playerDamaged")
-        } 
+        }
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         //TODO: make radius as option
         this.polygon.setPosition(this.x, this.y)
+
+        if (debugModus) this.draw()
+
+    }
+
+    draw() {
+        this.graphics.clear()
+        this.polygon.draw(this.graphics, this.scene.polygonOffset)
     }
 }
