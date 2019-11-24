@@ -62,13 +62,23 @@ export class Polygon {
         this.rotatePoints(rotation, this.x, this.y)
     }
 
+    getLowestHighestY(){
+        let lowestY = Infinity
+        let highestY = -Infinity
+        this.points.forEach(point => {
+            if(point.y < lowestY) lowestY = point.y
+            if(point.y > highestY) highestY = point.y 
+        })
+        return {lowestY, highestY}
+    }
+
     draw(graphics, offset) {
-        graphics.lineStyle(2, 0xFF00FF, 1.0);
         graphics.beginPath();
         graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
         for (let index = 0; index < this.points.length; index++) {
             graphics.lineTo(this.points[index].x + offset, this.points[index].y + offset);
         }
+        graphics.fillPath();
         graphics.closePath();
         graphics.strokePath();
     }

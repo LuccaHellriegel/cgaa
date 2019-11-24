@@ -64,6 +64,21 @@ export class CompositePolygon {
         }
     }
 
+    //TODO: always have 0,0 as the map origin, otherwise this does not work
+    getHeight() {
+        let lowestYInComp = Infinity
+        let highestYInComp = -Infinity
+        this.polygons.forEach(polygon => {
+            let {
+                lowestY,
+                highestY
+            } = polygon.getLowestHighestY()
+            if(lowestYInComp > lowestY) lowestYInComp = lowestY
+            if(highestYInComp < highestY) highestYInComp = highestY
+        })
+        return highestYInComp-lowestYInComp
+    }
+
     draw(graphics, offset) {
         this.polygons.forEach(polygon => {
             polygon.draw(graphics, offset);
