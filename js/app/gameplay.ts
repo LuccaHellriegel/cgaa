@@ -1,4 +1,6 @@
-import { preloadFunc } from "./preload";
+import damage from "../../assets/audio/damage.mp3";
+import hit from "../../assets/audio/hit.mp3";
+import step from "../../assets/audio/step.mp3";
 import { createFunc } from "./create";
 import { updateFunc } from "./update";
 import {Player} from "../player/Player";
@@ -17,7 +19,9 @@ export class Gameplay extends Phaser.Scene {
     }
 
     preload(){
-        preloadFunc(this)
+        this.load.audio("damage", damage);
+        this.load.audio("hit", hit);
+        this.load.audio("step", step);
     }
     
     create(){
