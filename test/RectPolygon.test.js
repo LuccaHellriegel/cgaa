@@ -5,6 +5,8 @@ import {
     RectPolygon
 } from "../js/polygon/RectPolygon";
 
+describe("Test RectPolygon", function () {
+
 describe('Rotate RectPolygon', function () {
     it('When the RectPolygon is rotated 180 degrees, it is top down', () => {
         let rectPolygon = new RectPolygon(5, 5, 10, 10)
@@ -53,4 +55,6 @@ describe("Move RectPolygon", function () {
         expect(rectPolygon.points[2]).to.deep.equal(newPoints[2]);
         expect(rectPolygon.points[3]).to.deep.equal(newPoints[3]);
     })
+})
+
 })

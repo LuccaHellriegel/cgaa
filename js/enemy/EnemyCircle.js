@@ -2,6 +2,9 @@ import {
     CircleWithRandWeapon
 } from "../unit/CircleWithRandWeapon";
 import {
+    CircleWithChainWeapon
+} from "../unit/CircleWithChainWeapon";
+import {
     HealthBar
 } from "../unit/HealthBar";
 import {normalCircleRadius} from "../graphic/generate"
@@ -17,7 +20,7 @@ export class EnemyCircle extends CircleWithRandWeapon {
         let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius = normalCircleRadius + normalCircleRadius + 32
         let distanceToPlayerSmallEnough = Phaser.Math.Distance.Between(this.x, this.y, this.scene.player.x, this.scene.player.y) < radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius
         if (!distanceToPlayerSmallEnough) {
-            this.scene.physics.moveToObject(this, this.scene.player, 100);
+            this.scene.physics.moveToObject(this, this.scene.player, 160);
         } else {
             this.setVelocity(0, 0)
         }
@@ -29,17 +32,18 @@ export class EnemyCircle extends CircleWithRandWeapon {
 
     attackPlayer() {
         this.moveAndTurnToPlayer()
-        let weaponReachesPlayer = this.weapon.polygon.checkForCollision(this.scene.player)
+        let weaponReachesPlayer = this.weapon.polygon.checkForCollision(this.scene.player.polygon)
         if (weaponReachesPlayer) {
             this.attack();
         }
     }
 
     damage(amount){
-        super.damage(amount)
-        this.hasBeenAttacked = true;
         if (this.healthbar.decrease(amount)) {
             this.destroy();
+        } else {
+        super.damage(amount)
+        this.hasBeenAttacked = true;
         }
     }
 

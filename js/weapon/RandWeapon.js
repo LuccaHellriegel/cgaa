@@ -1,26 +1,23 @@
 import {
     CompositePolygon
 } from "../polygon/CompositePolygon"
-import { Weapon } from "./Weapon"
+import {
+    PolygonWeapon
+} from "./PolygonWeapon"
+import {
+    normalCircleRadius
+} from "../graphic/generate"
 
-export class RandWeapon extends Weapon {
+export class RandWeapon extends PolygonWeapon {
     constructor(scene, x, y, weaponGroup) {
-        super(scene, x, y, "randWeapon", weaponGroup)
-        this.polygon = new CompositePolygon([[x, y, 10, 64, "rect"]])
-        this.polygonArr = [this.polygon , new CompositePolygon([[x, y, 10, 64,"rect"], [x, y -22, 64, 20,"rect"]])]
-    }
+        let polygonArr = [new CompositePolygon([
+            [x, y, 10, 64, "rect"]
+        ]), new CompositePolygon([
+            [x, y, 10, 64, "rect"],
+            [x, y - 22, 64, 20, "rect"]
+        ])]
 
-    movePolygon(){
-        this.polygon.setPosition(this.x, this.y)
-        this.polygon.rotate(this.rotation)
-    }
-
-    setPolygonForFrame(){
-        this.polygon = this.polygonArr[parseInt(this.frame.name)-1]
-    }
-
-    updatePolygon() {
-        this.setPolygonForFrame()
-        this.movePolygon()
+        let offSetArr = [[normalCircleRadius,-normalCircleRadius],[normalCircleRadius,-normalCircleRadius]]
+        super(scene, x, y, "randWeapon", weaponGroup, polygonArr, offSetArr)
     }
 }

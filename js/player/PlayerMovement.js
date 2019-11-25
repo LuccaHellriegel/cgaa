@@ -27,22 +27,22 @@ export class PlayerMovement {
     updatePlayerVelocity() {
         if (this.left) {
             //scene.sound.play("step");
-            this.player.setVelocityX(-160);
+            this.player.setVelocityX(-180);
         }
 
         if (this.right) {
             //scene.sound.play("step");
-            this.player.setVelocityX(160);
+            this.player.setVelocityX(180);
         }
 
         if (this.up) {
             //scene.sound.play("step");
-            this.player.setVelocityY(-160);
+            this.player.setVelocityY(-180);
         }
 
         if (this.down) {
             //scene.sound.play("step");
-            this.player.setVelocityY(160);
+            this.player.setVelocityY(180);
         }
 
         let noButtonDown = !this.left && !this.right && !this.up && !this.down

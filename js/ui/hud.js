@@ -27,7 +27,6 @@ export class HUD extends Phaser.Scene {
         let screenWidth = 1280
         let healthBarWidth = 46
         let topLeftXHealthBar = screenWidth - healthBarWidth
-        console.log(topLeftXHealthBar)
         return topLeftXHealthBar
     }
 
@@ -35,8 +34,6 @@ export class HUD extends Phaser.Scene {
         let screenLength = 720
         let healthBarLength = 12
         let topLeftYHealthBar = screenLength - healthBarLength
-        console.log(topLeftYHealthBar)
-
         return topLeftYHealthBar
     }
 }

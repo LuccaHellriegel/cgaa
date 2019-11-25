@@ -20,51 +20,36 @@ export class CompositePolygon {
                 this.polygons.push(new CirclePolygon(polygonConfig[0], polygonConfig[1], polygonConfig[2]));
             }
         });
+        this.calculateAndSetCenter()
     }
 
-    getFirstPolygonXY() {
-        let firstX = this.polygons[0].x
-        let firstY = this.polygons[0].y
-        return {
-            firstX,
-            firstY
-        }
+    calculateAndSetCenter(){
+        let centerPoint = this.calculateCenterPoint()
+        this.centerX = centerPoint[0]
+        this.centerY = centerPoint[1]
     }
 
     setPosition(x, y) {
-        //first polygon is the anchor point for all the polygons
-        let {
-            firstX,
-            firstY
-        } = this.getFirstPolygonXY()
-        let diffX = x - firstX;
-        let diffY = y - firstY;
+        let diffX = x - this.centerX;
+        let diffY = y -  this.centerY;
+        this.centerX = x
+        this.centerY = y
 
-        this.polygons[0].setPosition(x, y)
-
-        for (let index = 1; index < this.polygons.length; index++) {
+        for (let index = 0; index < this.polygons.length; index++) {
             let polygon = this.polygons[index];
             polygon.setPosition(polygon.x + diffX, polygon.y + diffY);
         }
     }
 
     rotate(rotation) {
-        let {
-            firstX,
-            firstY
-        } = this.getFirstPolygonXY()
         for (let index = 0; index < this.polygons.length; index++) {
             let polygon = this.polygons[index];
-            if (polygon.type !== "circle") {
-                polygon.rotateWithCenter(rotation, firstX, firstY);
-            } else {
-                let point = Phaser.Math.RotateAround(new Phaser.Geom.Point(polygon.points[0].x, polygon.points[0].y), firstX, firstY, rotation)
-                polygon.setPosition(point.x, point.y)
-            }
+            polygon.rotateWithCenter(rotation, this.centerX, this.centerY);
         }
     }
 
     //TODO: always have 0,0 as the map origin, otherwise this does not work
+    //TODO: calculate height once?
     getHeight() {
         let lowestYInComp = Infinity
         let highestYInComp = -Infinity
@@ -79,16 +64,50 @@ export class CompositePolygon {
         return highestYInComp-lowestYInComp
     }
 
+    getWidth(){
+        let lowestXInComp = Infinity
+        let highestXInComp = -Infinity
+        this.polygons.forEach(polygon => {
+            let {
+                lowestX,
+                highestX
+            } = polygon.getLowestHighestX()
+            if(lowestXInComp > lowestX) lowestXInComp = lowestX
+            if(highestXInComp < highestX) highestXInComp = highestX
+        })
+        return highestXInComp-lowestXInComp
+    }
+
+    calculateCenterPoint(){
+        let centerPointsOfPolygons = []
+        this.polygons.forEach(polygon => {
+            //console.log(polygon.calculateCenterPoint())
+            centerPointsOfPolygons.push(polygon.calculateCenterPoint())
+        })
+        var x = centerPointsOfPolygons.map(x => x[0]);
+        var y = centerPointsOfPolygons.map(x => x[1]);
+        var cx = (Math.min(...x) + Math.max(...x)) / 2;
+        var cy = (Math.min(...y) + Math.max(...y)) / 2;
+        return [cx, cy];
+    }
+
     draw(graphics, offset) {
         this.polygons.forEach(polygon => {
             polygon.draw(graphics, offset);
         });
     }
 
+    //TODO: exchange collision with sat-js for broader applicability (only circle + polygon is supported, thats why I need the bounding box)
     checkForCollision(other) {
         for (let index = 0; index < this.polygons.length; index++) {
-            if (collision(this.polygons[index], other.polygon))
-                return true;
+
+            let collided = false
+
+            if(this.polygons[index].type === "circle" && other.type === "circle"){
+                collided = this.polygons[index].checkForCollisonWithOtherCircle(other)
+            } else {collided = collision(this.polygons[index], other)}
+
+            if(collided) return true
         }
         return false;
     }

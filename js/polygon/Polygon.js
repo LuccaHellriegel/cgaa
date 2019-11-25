@@ -6,13 +6,31 @@ export let shapeWord = {
 };
 
 export class Polygon {
-    constructor(x, y,points) {
+    constructor(x, y, points) {
         this.type = shapeWord.polygon;
         this.x = x;
         this.y = y;
         this.points = points
     }
-    
+
+    pointsToArr(){
+        let pointsArr = []
+        this.points.forEach(point => {
+            pointsArr.push([point.x,point.y])
+        })
+        return pointsArr
+
+    }
+
+    calculateCenterPoint() {
+        let pointsArr = this.pointsToArr()
+        var x = pointsArr.map(x => x[0]);
+        var y = pointsArr.map(x => x[1]);
+        var cx = (Math.min(...x) + Math.max(...x)) / 2;
+        var cy = (Math.min(...y) + Math.max(...y)) / 2;
+        return [cx, cy];
+    }
+
     movePoints(diffX, diffY) {
         this.points.forEach((point, index, array) => {
             array[index].x += diffX;
@@ -28,23 +46,24 @@ export class Polygon {
         this.y = y;
     }
 
-    rotatePoints(rotation, centerX, centerY) { 
-        let originalPoints = this.createUnrotatedPoints()  
+    rotatePoints(rotation, centerX, centerY) {
+        //TODO: this function is not defined on this level
+        let originalPoints = this.createUnrotatedPoints()
         let newPoints = []
         originalPoints.forEach(point => {
             let x1 = point.x - centerX;
             let y1 = point.y - centerY;
-    
+
             let temp_x1 = x1 * Math.cos(rotation) - y1 * Math.sin(rotation)
             let temp_y1 = x1 * Math.sin(rotation) + y1 * Math.cos(rotation)
-    
+
             //TODO: choose precision on more than intuition?
             let x = Math.round((temp_x1 + centerX + Number.EPSILON) * 10000) / 10000
             let y = Math.round((temp_y1 + centerY + Number.EPSILON) * 10000) / 10000
-    
+
             if (x == -0) x = 0
             if (y == -0) y = 0
-    
+
             newPoints.push({
                 x: x,
                 y: y
@@ -62,15 +81,40 @@ export class Polygon {
         this.rotatePoints(rotation, this.x, this.y)
     }
 
-    getLowestHighestY(){
+    getLowestHighestY() {
         let lowestY = Infinity
         let highestY = -Infinity
         this.points.forEach(point => {
-            if(point.y < lowestY) lowestY = point.y
-            if(point.y > highestY) highestY = point.y 
+            if (point.y < lowestY) lowestY = point.y
+            if (point.y > highestY) highestY = point.y
         })
-        return {lowestY, highestY}
+        return {
+            lowestY,
+            highestY
+        }
     }
+
+    getLowestHighestX() {
+        let lowestX = Infinity
+        let highestX = -Infinity
+        this.points.forEach(point => {
+            if (point.x < lowestX) lowestX = point.x
+            if (point.x > highestX) highestX = point.x
+        })
+        return {
+            lowestX,
+            highestX
+        }
+    }
+
+    // toSATFormat(){
+    //     let newSATPoints = []
+        
+    //     this.points.forEach(point => {
+    //         newSATPoints.push(SAT.Vector(point.x,point.y))
+    //     })
+    //     return new SAT.Polygon(newSATPoints[0], newSATPoints);
+    // }
 
     draw(graphics, offset) {
         graphics.beginPath();

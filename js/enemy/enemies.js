@@ -6,7 +6,7 @@ function spawnRedEnemyCircles(scene, count) {
     const enemyWeapons = scene.physics.add.group();   
 
     for (let index = 0; index < count; index++) {
-        enemies.push(new EnemyCircle(scene, (index * 70) + 12, 200,  "redCircle", enemyPhysics, enemyWeapons))
+        enemies.push(new EnemyCircle(scene, (index * 70) + 120, 200,  "redCircle", enemyPhysics, enemyWeapons))
     }
     return enemies
 }
