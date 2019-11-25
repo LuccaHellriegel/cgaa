@@ -1,5 +1,10 @@
 import {Weapon} from "./Weapon"
+import { CompositePolygon } from "../polygon/CompositePolygon";
+
 export class PolygonWeapon extends Weapon {
+    polygon: CompositePolygon;
+    polygonArr: CompositePolygon[];
+
     constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
         super(scene, x, y, texture, weaponGroup, offSetArr);
         this.polygon = polygonArr[0]

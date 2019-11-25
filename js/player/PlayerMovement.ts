@@ -1,4 +1,13 @@
+import { Player } from "./Player";
+
 export class PlayerMovement {
+    left: Boolean;
+    right: Boolean;
+    up: Boolean;
+    down: Boolean;
+    player: Player;
+    cursors: any;
+
     constructor(player, scene) {
         this.left;
         this.right

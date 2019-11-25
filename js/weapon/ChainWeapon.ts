@@ -8,6 +8,13 @@ import {
     normalCircleRadius
 } from "../graphic/generate"
 export class ChainWeapon extends PolygonWeapon {
+    numberOfSmallCircles: number
+    numberOfBiggerCircles: number
+    arrowWidth: number
+    arrowHeight: number
+    biggerCirclesRadius: number
+    smallerCirclesRadius: number
+
     constructor(scene, x, y, weaponGroup, numberOfSmallCircles, numberOfBiggerCircles) {       
         //TODO: this is undefined, why?
         //console.log(normalCircleRadius)

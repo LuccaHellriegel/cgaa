@@ -1,5 +1,8 @@
 import { Polygon } from "./Polygon";
 export class ArrowHeadPolygon extends Polygon{
+    width: number;
+    height: number;
+
     constructor(x, y, width, height) {
         super(x,y,[])
         this.width = width;

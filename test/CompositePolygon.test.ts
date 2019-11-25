@@ -5,6 +5,7 @@ import {
 import {
     CompositePolygon
 } from "../js/polygon/CompositePolygon"
+import { Point } from "../js/app/alias";
 
 describe("Test CompositePolygon", function () {
 
@@ -37,11 +38,9 @@ describe("Move CompositePolygon", function () {
             [5, 5, 10, 10, "rect"]
         ])
         let oldPoints = compositePolygon.polygons[0].points
-        let newPoints = []
+        let newPoints: Point[] = []
         oldPoints.forEach(point => {
-            let newPoint = {}
-            newPoint.x = point.x + 10
-            newPoint.y = point.y
+            let newPoint: Point = {x: point.x + 10, y: point.y}
             newPoints.push(newPoint)
         });
         compositePolygon.setPosition(10+5, 0+5)
@@ -55,11 +54,9 @@ describe("Move CompositePolygon", function () {
             [5, 5, 10, 10, "rect"]
         ])
         let oldPoints = compositePolygon.polygons[0].points
-        let newPoints = []
+        let newPoints : Point[] = []
         oldPoints.forEach(point => {
-            let newPoint = {}
-            newPoint.x = point.x + 10
-            newPoint.y = point.y
+            let newPoint: Point = {x: point.x + 10, y: point.y}
             newPoints.push(newPoint)
         });
         compositePolygon.setPosition(10+5, 0+5)

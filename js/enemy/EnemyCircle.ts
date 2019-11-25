@@ -8,9 +8,13 @@ import {
     HealthBar
 } from "../unit/HealthBar";
 import {normalCircleRadius} from "../graphic/generate"
+import {Gameplay} from "../app/gameplay"
 
 export class EnemyCircle extends CircleWithRandWeapon {
-    constructor(scene, x, y, texture, physicsGroup, weaponGroup) {
+    hasBeenAttacked: boolean;
+    healthbar: HealthBar;
+
+    constructor(scene:Gameplay, x, y, texture, physicsGroup, weaponGroup) {
         super(scene, x, y, texture, physicsGroup, weaponGroup);
         this.hasBeenAttacked = false;
         this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);

@@ -4,6 +4,7 @@ import {
 import {
     RectPolygon
 } from "../js/polygon/RectPolygon";
+import { Point } from "../js/app/alias";
 
 describe("Test RectPolygon", function () {
 
@@ -42,11 +43,9 @@ describe("Move RectPolygon", function () {
     it("When the RectPolygon is moved 10 pixels to the right, the points are also moved that way", () => {
         let rectPolygon = new RectPolygon(5, 5, 10, 10)
         let oldPoints = rectPolygon.points
-        let newPoints = []
+        let newPoints: Point[] = []
         oldPoints.forEach(point => {
-            let newPoint = {}
-            newPoint.x = point.x + 10
-            newPoint.y = point.y
+            let newPoint: Point = {x: point.x + 10, y: point.y}
             newPoints.push(newPoint)
         });
         rectPolygon.setPosition(10 + 5, 0 + 5)

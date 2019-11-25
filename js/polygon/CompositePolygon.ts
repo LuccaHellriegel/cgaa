@@ -8,7 +8,12 @@ import {
 import {
     CirclePolygon
 } from "./CirclePolygon";
+import { Polygon } from "./Polygon";
 export class CompositePolygon {
+    polygons: Polygon[];
+    centerX: number;
+    centerY: number;
+
     constructor(config) {
         this.polygons = [];
         config.forEach(polygonConfig => {
@@ -79,7 +84,7 @@ export class CompositePolygon {
     }
 
     calculateCenterPoint(){
-        let centerPointsOfPolygons = []
+        let centerPointsOfPolygons : number[][]= []
         this.polygons.forEach(polygon => {
             //console.log(polygon.calculateCenterPoint())
             centerPointsOfPolygons.push(polygon.calculateCenterPoint())
@@ -101,11 +106,12 @@ export class CompositePolygon {
     checkForCollision(other) {
         for (let index = 0; index < this.polygons.length; index++) {
 
+            let currentPolygon = this.polygons[index]
             let collided = false
 
-            if(this.polygons[index].type === "circle" && other.type === "circle"){
-                collided = this.polygons[index].checkForCollisonWithOtherCircle(other)
-            } else {collided = collision(this.polygons[index], other)}
+            if(currentPolygon.type === "circle" && other.type === "circle"){
+                collided = (currentPolygon as CirclePolygon).checkForCollisonWithOtherCircle(other)
+            } else {collided = collision(currentPolygon, other)}
 
             if(collided) return true
         }

@@ -1,6 +1,6 @@
-let debugModus = false
+export let debugModus = false
 
-let gameConfig = {
+export let gameConfig = {
     type: Phaser.WEBGL,
     width: 1280,
     height: 720,
@@ -9,7 +9,6 @@ let gameConfig = {
         arcade: {
             debug: debugModus
         }
-    }
+    },
+    scene: {}
 };
-
-module.exports = {debugModus, gameConfig}

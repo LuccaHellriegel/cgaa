@@ -1,4 +1,10 @@
 export class Weapon extends Phaser.Physics.Arcade.Sprite {
+    attacking: boolean;
+    alreadyAttacked: string[];
+    unitOffSetX: number;
+    unitOffSetY: number;
+    offSetArr: number[][];
+
     constructor(scene, x, y, texture, weaponGroup,offSetArr) {
         super(scene, x, y, texture);
         scene.add.existing(this);

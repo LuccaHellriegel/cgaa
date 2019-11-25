@@ -1,6 +1,6 @@
 import { EnemyCircle } from "./EnemyCircle";
 
-function spawnRedEnemyCircles(scene, count) {
+export function spawnRedEnemyCircles(scene, count) {
     const enemies = []
     const enemyPhysics = scene.physics.add.group();
     const enemyWeapons = scene.physics.add.group();   
@@ -9,8 +9,4 @@ function spawnRedEnemyCircles(scene, count) {
         enemies.push(new EnemyCircle(scene, (index * 70) + 120, 200,  "redCircle", enemyPhysics, enemyWeapons))
     }
     return enemies
-}
-
-module.exports = {
-    spawnRedEnemyCircles
 }

@@ -1,4 +1,12 @@
 export class HealthBar {
+    bar: Phaser.GameObjects.Graphics;
+    x: number;
+    y: number;
+    value: number;
+    healthWidth: number;
+    healthLength: number;
+    p: number;
+
     constructor(scene, x, y, healthWidth, healthLength) {
         this.bar = new Phaser.GameObjects.Graphics(scene);
         this.x = x;

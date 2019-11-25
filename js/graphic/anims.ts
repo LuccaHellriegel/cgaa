@@ -21,11 +21,7 @@ function createCircleAnims(anims){
     createNonRepeatingAnim(anims, "damage-blueCircle", "blueCircle", 1, 2, 10)
 }
 
-function createAnims(anims){
+export function createAnims(anims){
     createWeaponAnims(anims)
     createCircleAnims(anims)
-}
-
-module.exports = {
-    createAnims
 }

@@ -4,7 +4,9 @@ import {
 import {
     CircleWithRandWeapon
 } from "../unit/CircleWithRandWeapon";
+import {Weapon} from "../weapon/Weapon"
 export class Player extends CircleWithChainWeapon {
+    weapon: Weapon;
     constructor(scene){
         super(scene, 100, 450, "blueCircle",  
         scene.physics.add.group(), scene.physics.add.group())

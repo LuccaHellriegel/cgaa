@@ -1,3 +1,5 @@
+import {Point} from "../app/alias"
+
 export let shapeWord = {
     line: "line",
     point: "point",
@@ -6,6 +8,11 @@ export let shapeWord = {
 };
 
 export class Polygon {
+    type: string;
+    x: number;
+    y: number;
+    points: Point[];
+
     constructor(x, y, points) {
         this.type = shapeWord.polygon;
         this.x = x;
@@ -14,7 +21,7 @@ export class Polygon {
     }
 
     pointsToArr(){
-        let pointsArr = []
+        let pointsArr: number[][] = []
         this.points.forEach(point => {
             pointsArr.push([point.x,point.y])
         })
@@ -49,7 +56,7 @@ export class Polygon {
     rotatePoints(rotation, centerX, centerY) {
         //TODO: this function is not defined on this level
         let originalPoints = this.createUnrotatedPoints()
-        let newPoints = []
+        let newPoints: Point[] = []
         originalPoints.forEach(point => {
             let x1 = point.x - centerX;
             let y1 = point.y - centerY;
@@ -70,6 +77,9 @@ export class Polygon {
             })
         });
         this.points = newPoints
+    }
+    createUnrotatedPoints() {
+       return this.points
     }
 
     //TODO: rotate weapon around circle polygon, we would save setting the position first
@@ -106,15 +116,6 @@ export class Polygon {
             highestX
         }
     }
-
-    // toSATFormat(){
-    //     let newSATPoints = []
-        
-    //     this.points.forEach(point => {
-    //         newSATPoints.push(SAT.Vector(point.x,point.y))
-    //     })
-    //     return new SAT.Polygon(newSATPoints[0], newSATPoints);
-    // }
 
     draw(graphics, offset) {
         graphics.beginPath();

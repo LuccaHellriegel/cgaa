@@ -1,5 +1,8 @@
 import {Circle} from "./Circle"
+import { Weapon } from "../weapon/Weapon";
 export class CircleWithWeapon extends Circle {
+    weapon: Weapon;
+
     constructor(scene, x, y, texture, physicsGroup, weapon) {
         super(scene, x, y, texture, physicsGroup)
         this.weapon = weapon

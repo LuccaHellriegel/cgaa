@@ -1,6 +1,7 @@
 import {ChainWeapon} from "../weapon/ChainWeapon"
+import { CompositePolygon } from "../polygon/CompositePolygon";
 
-const normalCircleRadius = 30
+export const normalCircleRadius = 30
 
 //TODO: use polygon classes for drawing
 function generateCircleTexture(hexColor, title, radius, scene) {
@@ -59,7 +60,7 @@ function generateChainWeapon(hexColor, scene) {
     let chainWeapon = new ChainWeapon(scene,startCenterX,startCenterY,weaponGroup,5,2)
     startCenterY -= biggerThanWeapon   
 
-    let finalPolygonHeight = chainWeapon.polygonArr[2].getHeight()
+    let finalPolygonHeight = (chainWeapon.polygonArr[2] as CompositePolygon).getHeight()
     startCenterY += finalPolygonHeight
     chainWeapon.polygon.setPosition(startCenterX,startCenterY)
     chainWeapon.polygon.draw(graphics,0)   
@@ -88,13 +89,9 @@ function generateChainWeapon(hexColor, scene) {
 
 
 
-function generate(scene){
+export function generate(scene){
     generateRandWeapon(0x6495ED, scene)
     generateCircleTexture(0x6495ED, "blueCircle", normalCircleRadius, scene)
     generateCircleTexture(0xff0000, "redCircle", normalCircleRadius, scene)
     generateChainWeapon(0xff0000,scene)
-}
-
-module.exports = {
-    generate, normalCircleRadius
 }
