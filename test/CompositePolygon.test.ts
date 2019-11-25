@@ -9,7 +9,7 @@ import { Point } from "../js/app/alias";
 
 describe("Test CompositePolygon", function () {
 
-describe("Move CompositePolygon", function () {
+describe("Move singular CompositePolygon", function () {
     it('When the singular CompositePolygon is moved 10 pixels to the right, its centerPoint is 10 pixels to the right', () => {
         let compositePolygon = new CompositePolygon([
             [5, 5, 10, 10, "rect"]
@@ -66,6 +66,33 @@ describe("Move CompositePolygon", function () {
         expect(compositePolygon.polygons[0].points[2]).to.deep.equal(newPoints[0]);
         expect(compositePolygon.polygons[0].points[3]).to.deep.equal(newPoints[1]);
     });
+})
+
+describe("Move dual CompositePolygon", function () {
+    it('When the dual CompositePolygon is moved 10 pixels to the right, its points are 10 pixels to the right', () => {
+        let compositePolygon = new CompositePolygon([
+            [5, 5, 10, 10, "rect"], [10, 10, 20, 10, "rect"]
+        ])
+        let oldPoints = compositePolygon.polygons[0].points
+        let newPointsOne: Point[] = []
+        oldPoints.forEach(point => {
+            let newPoint: Point = {x: point.x + 10, y: point.y}
+            newPointsOne.push(newPoint)
+        });
+
+        oldPoints = compositePolygon.polygons[1].points
+        let newPointsTwo: Point[] = []
+        oldPoints.forEach(point => {
+            let newPoint: Point = {x: point.x + 10, y: point.y}
+            newPointsTwo.push(newPoint)
+        });
+
+        compositePolygon.setPosition(10+compositePolygon.centerX, compositePolygon.centerY)
+        expect(compositePolygon.polygons[0].points).to.deep.equal(newPointsOne);
+        expect(compositePolygon.polygons[1].points).to.deep.equal(newPointsTwo);
+
+    });
+
 })
 
 })

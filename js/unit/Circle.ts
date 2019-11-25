@@ -1,6 +1,6 @@
 import { CirclePolygon } from "../polygon/CirclePolygon";
 import { Unit } from "./Unit";
-import { normalCircleRadius } from "../graphic/generate";
+import { normalCircleRadius } from "../app/sizes";
 import { debugModus } from "../app/config";
 import { Gameplay } from "../app/gameplay";
 

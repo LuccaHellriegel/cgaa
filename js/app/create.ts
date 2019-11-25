@@ -1,4 +1,3 @@
-import { generate } from "../graphic/generate";
 import { createAnims } from "../graphic/anims";
 import { spawnRedEnemyCircles } from "../enemy/enemies";
 import { Player } from "../player/Player";
@@ -18,7 +17,6 @@ function setupPlayer(scene: Gameplay){
 }
 
 export function createFunc(scene: Gameplay) {
-    generate(scene);
     createAnims(scene.anims);
     createUnits(scene)
     setupPlayer(scene)

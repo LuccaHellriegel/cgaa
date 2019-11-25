@@ -7,7 +7,7 @@ import {
 import {
     HealthBar
 } from "../unit/HealthBar";
-import {normalCircleRadius} from "../graphic/generate"
+import {normalCircleRadius} from "../app/sizes"
 import {Gameplay} from "../app/gameplay"
 
 export class EnemyCircle extends CircleWithRandWeapon {

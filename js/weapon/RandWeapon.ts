@@ -6,7 +6,7 @@ import {
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../graphic/generate"
+} from "../app/sizes"
 
 export class RandWeapon extends PolygonWeapon {
     constructor(scene, x, y, weaponGroup) {

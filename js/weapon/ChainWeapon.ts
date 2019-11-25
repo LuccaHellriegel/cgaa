@@ -6,7 +6,7 @@ import {
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../graphic/generate"
+} from "../app/sizes"
 export class ChainWeapon extends PolygonWeapon {
     numberOfSmallCircles: number
     numberOfBiggerCircles: number
