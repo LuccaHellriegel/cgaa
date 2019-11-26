@@ -1,9 +1,9 @@
 import {
     CircleWithChainWeapon
-} from "../unit/CircleWithChainWeapon";
+} from "../unit/circle/CircleWithChainWeapon";
 import {
     CircleWithRandWeapon
-} from "../unit/CircleWithRandWeapon";
+} from "../unit/circle/CircleWithRandWeapon";
 import {Weapon} from "../weapon/Weapon"
 export class Player extends CircleWithChainWeapon {
     weapon: Weapon;

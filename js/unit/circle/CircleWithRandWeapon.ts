@@ -1,7 +1,7 @@
 import {
     RandWeapon
-} from "../weapon/RandWeapon";
-import {debugModus} from "../app/config"
+} from "../../weapon/RandWeapon";
+import {debugModus} from "../../app/config"
 import { CircleWithWeapon } from "./CircleWithWeapon";
 
 export class CircleWithRandWeapon extends CircleWithWeapon {

@@ -1,5 +1,5 @@
 import { createAnims } from "../graphic/anims";
-import { spawnRedEnemyCircles } from "../enemy/enemies";
+import { spawnRedEnemyCircles } from "../unit/enemy/enemies";
 import { Player } from "../player/Player";
 import {debugModus} from "./config"
 import { PlayerMovement } from "../player/PlayerMovement";

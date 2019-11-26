@@ -16,6 +16,7 @@ export class Gameplay extends Phaser.Scene {
   enemies: any[];
   playerMovement: PlayerMovement;
   polygonOffset: number;
+  physics: any;
 
   constructor() {
     super("Gameplay");

@@ -1,5 +1,5 @@
 import {Circle} from "./Circle"
-import { Weapon } from "../weapon/Weapon";
+import { Weapon } from "../../weapon/Weapon";
 export class CircleWithWeapon extends Circle {
     weapon: Weapon;
 
