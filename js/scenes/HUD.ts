@@ -43,6 +43,7 @@ export class HUD extends Phaser.Scene {
                 playerSoulCount = 0
                 playerSoulCountText.setText(playerSoulCount.toString())
                 playerHealthBar.value = 100
+                playerHealthBar.decrease(0)
             }
 
         }, this);
