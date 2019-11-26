@@ -2,7 +2,7 @@ import { CircleWithRandWeapon } from "./CircleWithRandWeapon";
 import { CircleWithChainWeapon } from "./CircleWithChainWeapon";
 import { HealthBar } from "../../graphic/HealthBar";
 import { normalCircleRadius } from "../../app/sizes";
-import { Gameplay } from "../../app/gameplay";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class EnemyCircle extends CircleWithChainWeapon {
   hasBeenAttacked: boolean;

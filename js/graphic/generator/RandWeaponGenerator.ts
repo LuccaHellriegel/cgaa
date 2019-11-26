@@ -1,4 +1,4 @@
-import { Gameplay } from "../../app/gameplay";
+import { Gameplay } from "../../scenes/Gameplay";
 import { RandWeapon } from "../../units/weapons/RandWeapon";
 import { WeaponGenerator } from "./WeaponGenerator";
 

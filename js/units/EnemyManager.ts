@@ -1,4 +1,4 @@
-import { Gameplay } from "../app/gameplay";
+import { Gameplay } from "../scenes/Gameplay";
 import { EnemyCircle } from "./circles/EnemyCircle";
 
 export class EnemyManager {

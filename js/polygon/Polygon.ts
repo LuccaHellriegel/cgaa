@@ -1,4 +1,4 @@
-import {Point} from "../app/alias"
+import {Point} from "./Point"
 
 export let shapeWord = {
     line: "line",

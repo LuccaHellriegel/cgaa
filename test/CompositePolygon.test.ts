@@ -5,7 +5,7 @@ import {
 import {
     CompositePolygon
 } from "../js/polygon/CompositePolygon"
-import { Point } from "../js/app/alias";
+import { Point } from "../js/polygon/Point";
 
 describe("Test CompositePolygon", function () {
 

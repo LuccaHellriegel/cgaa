@@ -1,5 +1,5 @@
 import { Generator } from "./Generator";
-import { Gameplay } from "../../app/gameplay";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class WeaponGenerator extends Generator {
     tempWeaponGroup: Phaser.Physics.Arcade.Group;

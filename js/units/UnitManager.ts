@@ -1,4 +1,4 @@
-import { Gameplay } from "../app/gameplay";
+import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
 import { EnemyManager } from "./EnemyManager";
 

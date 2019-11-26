@@ -2,12 +2,11 @@ import { CirclePolygon } from "../../polygon/CirclePolygon";
 import { Unit } from "../Unit";
 import { normalCircleRadius } from "../../app/sizes";
 import { debugModus } from "../../app/config";
-import { Gameplay } from "../../app/gameplay";
-import { Graphics } from "../../app/alias";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class Circle extends Unit {
   polygon: CirclePolygon;
-  graphics: Graphics
+  graphics: Phaser.GameObjects.Graphics
 
   constructor(scene: Gameplay, x, y, texture, physicsGroup) {
     super(scene, x, y, texture, physicsGroup);

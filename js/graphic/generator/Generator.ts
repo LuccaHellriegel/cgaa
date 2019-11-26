@@ -1,4 +1,4 @@
-import { Gameplay } from "../../app/gameplay";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class Generator {
     graphics: Phaser.GameObjects.Graphics;

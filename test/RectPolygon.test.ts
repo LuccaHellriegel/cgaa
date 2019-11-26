@@ -4,7 +4,7 @@ import {
 import {
     RectPolygon
 } from "../js/polygon/RectPolygon";
-import { Point } from "../js/app/alias";
+import { Point } from "../js/polygon/Point";
 
 describe("Test RectPolygon", function () {
 

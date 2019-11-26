@@ -1,8 +1,7 @@
-import { Gameplay } from "../app/gameplay";
-import { Group } from "../app/alias";
+import { Gameplay } from "../scenes/Gameplay";
 
 export class Unit extends Phaser.Physics.Arcade.Sprite {
-    physicsGroup: Group;
+    physicsGroup: Phaser.Physics.Arcade.Group;
     id: string;
     scene: Gameplay;
 

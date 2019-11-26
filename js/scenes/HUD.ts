@@ -1,5 +1,5 @@
-import { HealthBar } from "../HealthBar";
-import { CompositePolygon } from "../../polygon/CompositePolygon";
+import { HealthBar } from "../graphic/HealthBar";
+import { CompositePolygon } from "../polygon/CompositePolygon";
 
 export class HUD extends Phaser.Scene {
 
