@@ -13,6 +13,9 @@ export class EnemyCircle extends CircleWithChainWeapon {
     this.hasBeenAttacked = false;
     this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
     this.setCollideWorldBounds(true);
+    //TODO: change this back once I figure out how to prevent push-clipping
+    //TODO: If I walk across the immovable Circle, I get push-clipped
+    this.setImmovable(true)
   }
 
   moveAndTurnToPlayer() {
@@ -56,7 +59,8 @@ export class EnemyCircle extends CircleWithChainWeapon {
   }
 
   damage(amount) {
-    this.scene.events.emit("enemyDamaged", amount);
+    //TODO: this is a hack, dont know why scene is undefined sometimes when another EC is destroyed prior
+    if(this.scene) this.scene.events.emit("enemyDamaged", amount);
     if (this.healthbar.decrease(amount)) {
       this.destroy();
     } else {

@@ -7,6 +7,7 @@ export class AreaCreator {
     this.scene = scene;
   }
 
+  //TODO: can push other Sprite into wall
   private bounceCallback(unit, rect) {
     let x = unit.x;
     let y = unit.y;
@@ -21,8 +22,6 @@ export class AreaCreator {
 
   createArea() {
     let ractArea = new RectArea(this.scene, 20, 18, 0, 0);
-    //TODO: enemy collider for rectArea
-    //TODO: can clip through areas if going from the edge with two buttons pressed
     this.scene.physics.add.collider(
       this.scene.player.physicsGroup,
       ractArea.rects[0].physicsGroup,

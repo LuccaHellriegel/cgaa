@@ -1,7 +1,6 @@
 import {
     ChainWeapon
 } from "../weapons/ChainWeapon";
-import {normalCircleRadius} from "../../app/sizes"
 import { CircleWithWeapon } from "./CircleWithWeapon";
 
 //TODO: replace CircleWithXWeapon with static methods on CircleWithWeapon

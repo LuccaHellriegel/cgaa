@@ -4,28 +4,53 @@ import { EnemyCircle } from "./circles/EnemyCircle";
 export class EnemyManager {
   scene: Gameplay;
   enemyCount: number;
+  timedEvent: any;
+  enemyPhysics: any;
+  enemyWeapons: any;
   constructor(scene: Gameplay) {
     this.scene = scene;
     this.enemyCount = 1;
+    this.enemyPhysics = this.scene.physics.add.group();
+    this.enemyWeapons = this.scene.physics.add.group();
+
+    this.timedEvent = scene.time.addEvent({
+      delay: 1000,
+      callback: this.onEvent,
+      callbackScope: this
+    });
   }
 
+  onEvent() {
+    this.scene.unitManager.enemies = this.scene.unitManager.enemies.concat(
+      this.createEnemies()
+    );
+    this.timedEvent.reset({
+      delay: Phaser.Math.Between(100, 5000),
+      callback: this.onEvent,
+      callbackScope: this,
+      repeat: 1
+    });
+  }
+
+  //TODO: dont spawn on top of other enemies
   createEnemies() {
     const enemies = [];
-    const enemyPhysics = this.scene.physics.add.group();
-    const enemyWeapons = this.scene.physics.add.group();
+
+    let randX = Phaser.Math.Between(100, 1000);
+    let randY = Phaser.Math.Between(100, 1000);
 
     for (let index = 0; index < this.enemyCount; index++) {
       enemies.push(
         new EnemyCircle(
           this.scene,
-          index * 70 + 120,
-          200,
+          randX,
+          randY,
           "redCircle",
-          enemyPhysics,
-          enemyWeapons
+          this.enemyPhysics,
+          this.enemyWeapons
         )
       );
     }
-    return enemies
+    return enemies;
   }
 }

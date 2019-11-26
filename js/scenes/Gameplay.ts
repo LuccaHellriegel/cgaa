@@ -16,6 +16,7 @@ export class Gameplay extends Phaser.Scene {
   polygonOffset: number;
   physics: any;
   unitManager: UnitManager;
+  time: any;
 
   constructor() {
     super("Gameplay");

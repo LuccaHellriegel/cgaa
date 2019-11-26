@@ -13,12 +13,15 @@ export class UnitManager {
   spawnUnits() {
     new Player(this.scene).setup();
     this.enemies = new EnemyManager(this.scene).createEnemies();
-    this.scene.physics.add.collider(this.scene.player, this.enemies);
+    this.scene.physics.add.collider(
+      this.scene.player.physicsGroup,
+      this.enemies[0].physicsGroup
+    );
   }
 
-  private doDamage(weapon, enemy) {
+  private doDamage(weapon, enemy, amount: number) {
     weapon.alreadyAttacked.push(enemy.id);
-    enemy.damage(5);
+    enemy.damage(amount);
   }
 
   private considerDamage(weapon, enemy) {
@@ -35,10 +38,10 @@ export class UnitManager {
       let enemy = this.enemies[index];
       let enemyWeapon = enemy.weapon;
       if (this.considerDamage(playerWeapon, enemy)) {
-        this.doDamage(playerWeapon, enemy);
+        this.doDamage(playerWeapon, enemy, 50);
       }
       if (this.considerDamage(enemyWeapon, this.scene.player)) {
-        this.doDamage(enemyWeapon, this.scene.player);
+        this.doDamage(enemyWeapon, this.scene.player, 20);
       }
     }
   }

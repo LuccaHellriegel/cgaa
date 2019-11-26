@@ -28,6 +28,7 @@ export class HUD extends Phaser.Scene {
         let ourGame = this.scene.get('Gameplay');
 
         ourGame.events.on('enemyDamaged', function (amount) {
+            //TODO: decouple damageAmount from soulCount, because if I attack 50 and only 10 lives -> only 10 souls
             playerSoulCount += amount
             playerSoulCountText.setText(playerSoulCount.toString())
 
@@ -36,7 +37,11 @@ export class HUD extends Phaser.Scene {
 
         ourGame.events.on('playerDamaged', function () {
 
+            //TODO: decrease based on attacker
             if(playerHealthBar.decrease(2)){
+                ourGame.scene.restart()
+                playerSoulCount = 0
+                playerSoulCountText.setText(playerSoulCount.toString())
                 playerHealthBar.value = 100
             }
 
