@@ -4,7 +4,7 @@ import { HealthBar } from "../../graphic/HealthBar";
 import { normalCircleRadius } from "../../app/sizes";
 import { Gameplay } from "../../scenes/Gameplay";
 
-export class EnemyCircle extends CircleWithChainWeapon {
+export class EnemyCircleWithRandWeapon extends CircleWithRandWeapon {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
 

@@ -1,5 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { EnemyCircle } from "./circles/EnemyCircle";
+import { EnemyCircleWithChainWeapon } from "./circles/EnemyCircleWithChainWeapon";
+import { EnemyCircleWithRandWeapon } from "./circles/EnemyCircleWithRandWeapon";
 
 export class EnemyManager {
   scene: Gameplay;
@@ -39,9 +40,11 @@ export class EnemyManager {
     let randX = Phaser.Math.Between(100, 1000);
     let randY = Phaser.Math.Between(100, 1000);
 
+    let EnemyCircleClass = Phaser.Math.Between(0,1) === 0 ? EnemyCircleWithChainWeapon : EnemyCircleWithRandWeapon
+
     for (let index = 0; index < this.enemyCount; index++) {
       enemies.push(
-        new EnemyCircle(
+        new EnemyCircleClass(
           this.scene,
           randX,
           randY,
