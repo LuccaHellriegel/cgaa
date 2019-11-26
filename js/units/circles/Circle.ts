@@ -1,10 +1,10 @@
 import { CirclePolygon } from "../../polygon/CirclePolygon";
-import { Unit } from "../Unit";
+import { BaseSprite } from "../../graphic/BaseSprite";
 import { normalCircleRadius } from "../../app/sizes";
 import { debugModus } from "../../app/config";
 import { Gameplay } from "../../scenes/Gameplay";
 
-export class Circle extends Unit {
+export class Circle extends BaseSprite {
   polygon: CirclePolygon;
   graphics: Phaser.GameObjects.Graphics
 
