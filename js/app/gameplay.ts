@@ -45,7 +45,7 @@ export class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    this.generate()
+    this.generate();
     createFunc(this);
   }
 
