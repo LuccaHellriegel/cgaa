@@ -1,6 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 
-export class Unit extends Phaser.Physics.Arcade.Sprite {
+export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
     physicsGroup: Phaser.Physics.Arcade.Group;
     id: string;
     scene: Gameplay;
