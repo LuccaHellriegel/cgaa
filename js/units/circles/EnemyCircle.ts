@@ -1,6 +1,6 @@
-import { CircleWithRandWeapon } from "../circle/CircleWithRandWeapon";
-import { CircleWithChainWeapon } from "../circle/CircleWithChainWeapon";
-import { HealthBar } from "../HealthBar";
+import { CircleWithRandWeapon } from "./CircleWithRandWeapon";
+import { CircleWithChainWeapon } from "./CircleWithChainWeapon";
+import { HealthBar } from "../../graphic/HealthBar";
 import { normalCircleRadius } from "../../app/sizes";
 import { Gameplay } from "../../app/gameplay";
 

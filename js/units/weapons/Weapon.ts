@@ -1,4 +1,4 @@
-export class Weapon extends Phaser.Physics.Arcade.Sprite {
+export abstract class Weapon extends Phaser.Physics.Arcade.Sprite {
     attacking: boolean;
     alreadyAttacked: string[];
     unitOffSetX: number;

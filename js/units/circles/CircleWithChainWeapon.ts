@@ -1,6 +1,6 @@
 import {
     ChainWeapon
-} from "../../weapon/ChainWeapon";
+} from "../weapons/ChainWeapon";
 import {normalCircleRadius} from "../../app/sizes"
 import { CircleWithWeapon } from "./CircleWithWeapon";
 

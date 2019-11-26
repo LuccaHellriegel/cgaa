@@ -1,5 +1,5 @@
 import { Gameplay } from "../../app/gameplay";
-import { ChainWeapon } from "../../weapon/ChainWeapon";
+import { ChainWeapon } from "../../units/weapons/ChainWeapon";
 import { WeaponGenerator } from "./WeaponGenerator";
 
 export class ChainWeaponGenerator extends WeaponGenerator{

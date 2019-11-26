@@ -1,12 +1,12 @@
 import {
     CompositePolygon
-} from "../polygon/CompositePolygon"
+} from "../../polygon/CompositePolygon"
 import {
     PolygonWeapon
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../app/sizes"
+} from "../../app/sizes"
 
 export class RandWeapon extends PolygonWeapon {
     constructor(scene, x, y, weaponGroup) {

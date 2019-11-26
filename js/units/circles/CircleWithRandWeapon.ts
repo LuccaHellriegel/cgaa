@@ -1,6 +1,6 @@
 import {
     RandWeapon
-} from "../../weapon/RandWeapon";
+} from "../weapons/RandWeapon";
 import {debugModus} from "../../app/config"
 import { CircleWithWeapon } from "./CircleWithWeapon";
 

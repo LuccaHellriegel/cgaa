@@ -3,7 +3,7 @@ import {
     gameConfig
 } from "./app/config";
 import { Gameplay } from "./app/gameplay";
-import { HUD } from "./ui/hud";
+import { HUD } from "./graphic/ui/hud";
 
 function makeGame(){
     let gameConfigWithScene = gameConfig

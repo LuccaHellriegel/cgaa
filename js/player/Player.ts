@@ -1,15 +1,22 @@
 import {
     CircleWithChainWeapon
-} from "../unit/circle/CircleWithChainWeapon";
+} from "../units/circles/CircleWithChainWeapon";
 import {
     CircleWithRandWeapon
-} from "../unit/circle/CircleWithRandWeapon";
-import {Weapon} from "../weapon/Weapon"
+} from "../units/circles/CircleWithRandWeapon";
+import {Weapon} from "../units/weapons/Weapon"
+import { PlayerMovement } from "./PlayerMovement";
 export class Player extends CircleWithChainWeapon {
     weapon: Weapon;
     constructor(scene){
         super(scene, 100, 450, "blueCircle",  
         scene.physics.add.group(), scene.physics.add.group())
+    }
+
+    setup(){
+        this.scene.player = this
+        this.scene.cameras.main.startFollow(this.scene.player);
+        this.scene.playerMovement = new PlayerMovement(this.scene.player, this.scene)
         this.setupPointerEvents()
     }
 

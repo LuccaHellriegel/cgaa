@@ -9,6 +9,9 @@ import { RandWeaponGenerator } from "../graphic/generator/RandWeaponGenerator";
 import { ChainWeaponGenerator } from "../graphic/generator/ChainWeaponGenerator";
 import { CircleGenerator } from "../graphic/generator/CircleGenerator";
 import { normalCircleRadius } from "./sizes";
+import { debugModus } from "./config";
+import { createAnims } from "../graphic/anims";
+import { UnitManager } from "../units/UnitManager";
 
 //TODO: useless *Func to {create:create}
 export class Gameplay extends Phaser.Scene {
@@ -17,6 +20,7 @@ export class Gameplay extends Phaser.Scene {
   playerMovement: PlayerMovement;
   polygonOffset: number;
   physics: any;
+  unitManager: UnitManager;
 
   constructor() {
     super("Gameplay");
@@ -47,10 +51,17 @@ export class Gameplay extends Phaser.Scene {
 
   create() {
     this.generate();
-    createFunc(this);
+    createAnims(this.anims);
+
+    this.unitManager = new UnitManager(this)
+    this.unitManager.spawnUnits()
+
+    if(debugModus){ this.polygonOffset = 0
+    }
   }
 
   update() {
-    updateFunc(this);
+    this.playerMovement.update()
+    this.unitManager.checkWeaponOverlap()
   }
 }
