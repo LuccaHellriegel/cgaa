@@ -13,7 +13,7 @@ export class HUD extends Phaser.Scene {
     {
         let playerHealthBar = new HealthBar(this, this.calculatehealthBarXWrtScreen(), this.calculatehealthBarYWrtScreen(), 46, 12);
 
-        let playerSoulCount = 300
+        let playerSoulCount = 0
 
         let graphics = this.add.graphics({
             fillStyle: {
@@ -23,7 +23,7 @@ export class HUD extends Phaser.Scene {
         let playerSoulCountGraphic = new CompositePolygon([[300,300,50,25, "rect"], [300,300,25,50, "rect"]])
         playerSoulCountGraphic.setPosition( this.calculatehealthBarXWrtScreen()-30, this.calculatehealthBarYWrtScreen() - 20)
         playerSoulCountGraphic.draw(graphics,0)
-        let playerSoulCountText = this.add.text(playerSoulCountGraphic.centerX-17, playerSoulCountGraphic.centerY-12, '300', { font: '20px Verdana', fill: '#ADFF2F' });
+        let playerSoulCountText = this.add.text(playerSoulCountGraphic.centerX-17, playerSoulCountGraphic.centerY-12, '0', { font: '20px Verdana', fill: '#ADFF2F' });
 
         let ourGame = this.scene.get('Gameplay');
 

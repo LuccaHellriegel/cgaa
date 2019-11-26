@@ -13,6 +13,7 @@ export abstract class Weapon extends Phaser.Physics.Arcade.Sprite {
         this.attacking = false;
         this.setSize(1, 1)
         this.disableBody()
+        this.setCollideWorldBounds(true);
         this.setupAnimEvents()
         this.unitOffSetX = offSetArr[0][0]
         this.unitOffSetY = offSetArr[0][1]

@@ -3,13 +3,11 @@ import hit from "../../assets/audio/hit.mp3";
 import step from "../../assets/audio/step.mp3";
 import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
-import { RandWeaponGenerator } from "../graphic/generator/RandWeaponGenerator";
-import { ChainWeaponGenerator } from "../graphic/generator/ChainWeaponGenerator";
-import { CircleGenerator } from "../graphic/generator/CircleGenerator";
-import { normalCircleRadius } from "../app/sizes";
 import { debugModus } from "../app/config";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../units/UnitManager";
+import { GeneratorManager } from "../graphic/generator/GeneratorManager";
+import { AreaCreator } from "../graphic/areas/AreaCreator";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
@@ -22,24 +20,7 @@ export class Gameplay extends Phaser.Scene {
   constructor() {
     super("Gameplay");
   }
-
-  private generate() {
-    new RandWeaponGenerator(0x6495ed, this).generate();
-    new CircleGenerator(
-      0x6495ed,
-      this,
-      "blueCircle",
-      normalCircleRadius
-    ).generate();
-    new CircleGenerator(
-      0xff0000,
-      this,
-      "redCircle",
-      normalCircleRadius
-    ).generate();
-    new ChainWeaponGenerator(0xff0000, this).generate();
-  }
-
+ 
   preload() {
     this.load.audio("damage", damage);
     this.load.audio("hit", hit);
@@ -47,11 +28,17 @@ export class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    this.generate();
+    this.physics.world.setBounds(0, 0, 2000, 2000);
+    this.physics.world.setFPS(120)
+
+
+    new GeneratorManager(this).executeGeneration()
     createAnims(this.anims);
 
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()
+
+    new AreaCreator(this).createArea()
 
     if(debugModus){ this.polygonOffset = 0
     }

@@ -7,6 +7,7 @@ export let shapeWord = {
     polygon: "polygon",
 };
 
+//TODO: evaluate if I can use Polygon Shape Game Object instead of my classes
 export class Polygon {
     type: string;
     x: number;

@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 
-export class Generator {
+export abstract class Generator {
     graphics: Phaser.GameObjects.Graphics;
     scene: Gameplay;
     constructor(hexColor: number, scene: Gameplay){

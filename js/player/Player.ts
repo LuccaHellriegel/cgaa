@@ -11,6 +11,7 @@ export class Player extends CircleWithChainWeapon {
     constructor(scene){
         super(scene, 100, 450, "blueCircle",  
         scene.physics.add.group(), scene.physics.add.group())
+        this.setCollideWorldBounds(true);
     }
 
     setup(){

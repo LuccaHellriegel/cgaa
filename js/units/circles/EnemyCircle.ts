@@ -12,6 +12,7 @@ export class EnemyCircle extends CircleWithChainWeapon {
     super(scene, x, y, texture, physicsGroup, weaponGroup);
     this.hasBeenAttacked = false;
     this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
+    this.setCollideWorldBounds(true);
   }
 
   moveAndTurnToPlayer() {
