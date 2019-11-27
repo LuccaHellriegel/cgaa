@@ -7,7 +7,7 @@ import { debugModus } from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../units/UnitManager";
 import { GeneratorManager } from "../graphic/generator/GeneratorManager";
-import { AreaCreator } from "../env/areas/AreaCreator";
+import { AreaManager } from "../env/areas/AreaManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
@@ -39,7 +39,7 @@ export class Gameplay extends Phaser.Scene {
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()
 
-    new AreaCreator(this).createArea()
+    new AreaManager(this).createArea()
 
     if(debugModus){ this.polygonOffset = 0
     }

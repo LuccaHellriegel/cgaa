@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { RectArea } from "./RectArea";
+import { WallArea } from "./WallArea";
 
-export class AreaCreator {
+export class AreaManager {
   scene: Gameplay;
   constructor(scene: Gameplay) {
     this.scene = scene;
@@ -21,7 +21,7 @@ export class AreaCreator {
   }
 
   createArea() {
-    let ractArea = new RectArea(this.scene, 20, 18, 0, 0);
+    let ractArea = new WallArea(this.scene, 20, 18, 0, 0);
     this.scene.physics.add.collider(
       this.scene.player.physicsGroup,
       ractArea.rects[0].physicsGroup,
