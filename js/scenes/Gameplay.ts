@@ -3,7 +3,7 @@ import hit from "../../assets/audio/hit.mp3";
 import step from "../../assets/audio/step.mp3";
 import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
-import { debugModus } from "../global";
+import { debugModus, worldWidth, worldHeight } from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../units/UnitManager";
 import { GeneratorManager } from "../graphic/generator/GeneratorManager";
@@ -14,9 +14,7 @@ export class Gameplay extends Phaser.Scene {
   enemies: any[];
   playerMovement: PlayerMovement;
   polygonOffset: number;
-  physics: any;
   unitManager: UnitManager;
-  time: any;
 
   constructor() {
     super("Gameplay");
@@ -29,7 +27,6 @@ export class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    this.physics.world.setBounds(0, 0, 2000, 2000);
     this.physics.world.setFPS(120)
 
 
@@ -39,7 +36,8 @@ export class Gameplay extends Phaser.Scene {
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()
 
-    new AreaManager(this).createArea()
+    let areaManager = new AreaManager(this)
+    this.physics.world.setBounds(0, 0,areaManager.wallAreas[0].getWidth()*3,areaManager.wallAreas[0].getHeight()*3);
 
     if(debugModus){ this.polygonOffset = 0
     }

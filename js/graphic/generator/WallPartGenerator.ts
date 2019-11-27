@@ -7,12 +7,12 @@ export class WallPartGenerator extends Generator {
 
   constructor(scene: Gameplay) {
     super(0xa9a9a9, scene);
-    this.wallPart = new RectPolygon(30, 30, 60, 60);
+    this.wallPart = new RectPolygon(40, 40, 80, 80);
   }
 
   generate() {
     this.wallPart.draw(this.graphics, 0);
-    this.graphics.generateTexture("wallPart", 60, 60);
+    this.graphics.generateTexture("wallPart", 80, 80);
     this.destroyUsedObjects()
 }
 
