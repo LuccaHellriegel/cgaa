@@ -34,7 +34,7 @@ export class AreaManager {
         this.scene,
         20,
         19,
-        this.wallAreas[0].getWidth() * 2,
+        this.wallAreas[0].width * 2,
         0,
         9
       )
@@ -45,7 +45,7 @@ export class AreaManager {
         20,
         19,
         0,
-        this.wallAreas[0].getHeight() * 2,
+        this.wallAreas[0].height * 2,
         9
       )
     );
@@ -54,8 +54,8 @@ export class AreaManager {
         this.scene,
         20,
         19,
-        this.wallAreas[0].getWidth() * 2,
-        this.wallAreas[0].getHeight() * 2,
+        this.wallAreas[0].width * 2,
+        this.wallAreas[0].height * 2,
         9
       )
     );

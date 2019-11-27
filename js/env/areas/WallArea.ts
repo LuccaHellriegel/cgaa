@@ -8,6 +8,9 @@ export class WallArea {
   numberOfXRects: any;
   numberOfYRects: any;
   scene: Gameplay;
+  width: number;
+  height: number
+
   constructor(
     scene: Gameplay,
     numberOfXRects,
@@ -21,13 +24,15 @@ export class WallArea {
     this.numberOfYRects = numberOfYRects;
 
     this.createWallSides(topLeftX, topLeftY);
+    this.width = this.calculateWidth()
+    this.height = this.calculateHeight()
   }
 
-  getWidth(){
+  private calculateWidth(){
     return this.numberOfXRects*this.parts[0].width
   }
 
-  getHeight(){
+  private calculateHeight(){
     return (this.numberOfYRects+1)*this.parts[0].height
   }
 

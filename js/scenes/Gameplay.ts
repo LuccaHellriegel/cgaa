@@ -34,7 +34,7 @@ export class Gameplay extends Phaser.Scene {
     new GeneratorManager(this).executeGeneration()
     createAnims(this.anims);
     this.areaManager = new AreaManager(this)
-    this.physics.world.setBounds(0, 0,this.areaManager.wallAreas[0].getWidth()*3,this.areaManager.wallAreas[0].getHeight()*3);
+    this.physics.world.setBounds(0, 0,this.areaManager.wallAreas[0].width*3,this.areaManager.wallAreas[0].height*3);
 
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()
