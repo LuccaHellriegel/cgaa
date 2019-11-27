@@ -5,6 +5,8 @@ import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../../global";
 
 export class BuildingGenerator extends Generator {
   rectBuilding: RectPolygon;
+  rectBuildingInnerRect: RectPolygon;
+
   constructor(scene: Gameplay) {
     super(0xa9a9a9, scene);
     this.rectBuilding = new RectPolygon(
@@ -13,10 +15,18 @@ export class BuildingGenerator extends Generator {
       rectBuildingHalfWidth * 2,
       rectBuildinghalfHeight * 2
     );
+    this.rectBuildingInnerRect = new RectPolygon(
+      rectBuildingHalfWidth,
+      rectBuildinghalfHeight,
+      (rectBuildingHalfWidth-20) * 2,
+      (rectBuildinghalfHeight-20) * 2
+    );
   }
 
   generate() {
     this.rectBuilding.draw(this.graphics, 0);
+    this.graphics.fillStyle(0x00008b)
+    this.rectBuildingInnerRect.draw(this.graphics,0)
     this.graphics.generateTexture(
       "rectBuilding",
       rectBuildingHalfWidth * 2,
