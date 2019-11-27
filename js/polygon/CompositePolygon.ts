@@ -13,6 +13,8 @@ export class CompositePolygon {
     polygons: Polygon[];
     centerX: number;
     centerY: number;
+    height: number;
+    width: number;
 
     constructor(config) {
         this.polygons = [];
@@ -26,6 +28,8 @@ export class CompositePolygon {
             }
         });
         this.calculateAndSetCenter()
+        this.height = this.calculateHeight()
+        this.width = this.calculateWidth()
     }
 
     calculateAndSetCenter(){
@@ -53,9 +57,7 @@ export class CompositePolygon {
         }
     }
 
-    //TODO: always have 0,0 as the map origin, otherwise this does not work
-    //TODO: calculate height once?
-    getHeight() {
+    private calculateHeight() {
         let lowestYInComp = Infinity
         let highestYInComp = -Infinity
         this.polygons.forEach(polygon => {
@@ -69,7 +71,7 @@ export class CompositePolygon {
         return highestYInComp-lowestYInComp
     }
 
-    getWidth(){
+    private calculateWidth(){
         let lowestXInComp = Infinity
         let highestXInComp = -Infinity
         this.polygons.forEach(polygon => {

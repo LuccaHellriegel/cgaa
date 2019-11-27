@@ -60,7 +60,7 @@ export class EnemyCircle extends CircleWithWeapon {
     );
     //TODO: is dependedant on circle radius
     let weaponsLastPolygonReachesPlayer =
-      this.weapon.polygonArr[this.weapon.polygonArr.length - 1].getHeight() +
+      this.weapon.polygonArr[this.weapon.polygonArr.length - 1].height +
         30 >
       distanceBetweenPlayerAndEnemy;
     if (weaponsLastPolygonReachesPlayer) {

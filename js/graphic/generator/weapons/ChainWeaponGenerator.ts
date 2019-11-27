@@ -24,15 +24,15 @@ export class ChainWeaponGenerator extends WeaponGenerator{
     }
 
     setPolygonMeasurementsForEasierPositioning(){
-        this.arrowHeadWidth = this.chainWeapon.polygon.getWidth()
+        this.arrowHeadWidth = this.chainWeapon.polygon.width
 
-        this.arrowHeadPolygonHeight = this.chainWeapon.polygon.getHeight()
-        this.middlePolygonHeight = this.chainWeapon.polygonArr[1].getHeight()
-        this.finalPolygonHeight = this.chainWeapon.polygonArr[2].getHeight()
+        this.arrowHeadPolygonHeight = this.chainWeapon.polygon.height
+        this.middlePolygonHeight = this.chainWeapon.polygonArr[1].height
+        this.finalPolygonHeight = this.chainWeapon.polygonArr[2].height
     }
 
     setPositionsForWeaponPolygonsForDrawing(){
-        let newX = this.chainWeapon.polygon.getWidth() / 2
+        let newX = this.chainWeapon.polygon.width / 2
 
         let newY = this.finalPolygonHeight - this.arrowHeadPolygonHeight / 2
         this.chainWeapon.polygon.setPosition(newX,newY)

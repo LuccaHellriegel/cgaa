@@ -41,9 +41,9 @@ export class ChainWeapon extends PolygonWeapon {
     }
 
     setOffSetArr(){
-        this.offSetArr = [[0,-30-(this.polygon.getHeight() / 2)], 
-            [0,-30-(this.polygonArr[1].getHeight() / 2)], 
-            [0,-30-(this.polygonArr[2].getHeight() / 2)]]
+        this.offSetArr = [[0,-30-(this.polygon.height / 2)], 
+            [0,-30-(this.polygonArr[1].height / 2)], 
+            [0,-30-(this.polygonArr[2].height / 2)]]
     }
 
     createPolygons() {

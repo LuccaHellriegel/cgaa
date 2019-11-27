@@ -29,11 +29,11 @@ export class RandWeaponGenerator extends WeaponGenerator {
   }
 
   setPolygonMeasurementsForEasierPositioning() {
-    this.idlePolygonWidth = this.randWeapon.polygon.getWidth();
-    this.idlePolygonHeight = this.randWeapon.polygon.getHeight();
+    this.idlePolygonWidth = this.randWeapon.polygon.width;
+    this.idlePolygonHeight = this.randWeapon.polygon.height;
 
-    this.attackPolygonWidth = this.randWeapon.polygonArr[1].getWidth();
-    this.attackPolygonHeight = this.randWeapon.polygonArr[1].getHeight();
+    this.attackPolygonWidth = this.randWeapon.polygonArr[1].width;
+    this.attackPolygonHeight = this.randWeapon.polygonArr[1].height;
   }
 
   setPositionsForWeaponPolygonsForDrawing() {
