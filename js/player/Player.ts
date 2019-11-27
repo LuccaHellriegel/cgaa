@@ -10,6 +10,7 @@ export class Player extends CircleWithWeapon {
     }
 
     setup(){
+        this.unitType = "player"
         this.scene.player = this
         this.scene.cameras.main.startFollow(this.scene.player);
         this.scene.playerMovement = new PlayerMovement(this.scene.player, this.scene)

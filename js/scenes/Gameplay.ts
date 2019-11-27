@@ -7,7 +7,7 @@ import { debugModus } from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../units/UnitManager";
 import { GeneratorManager } from "../graphic/generator/GeneratorManager";
-import { AreaCreator } from "../graphic/areas/AreaCreator";
+import { AreaCreator } from "../env/areas/AreaCreator";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;

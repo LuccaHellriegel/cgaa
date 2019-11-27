@@ -58,8 +58,6 @@ export class EnemyCircle extends CircleWithWeapon {
   }
 
   damage(amount) {
-    //TODO: this is a hack, dont know why scene is undefined sometimes when another EC is destroyed prior
-    if(this.scene) this.scene.events.emit("enemyDamaged", amount);
     if (this.healthbar.decrease(amount)) {
       this.destroy();
     } else {

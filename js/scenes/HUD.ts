@@ -1,65 +1,72 @@
 import { HealthBar } from "../graphic/HealthBar";
 import { CompositePolygon } from "../polygon/CompositePolygon";
+import { PlayerHealthBar } from "../player/PlayerHealthBar";
+import { SymmetricCrossPolygon } from "../polygon/SymmetricCrossPolygon";
 
 export class HUD extends Phaser.Scene {
+  playerHealthBar: PlayerHealthBar;
+  ourGame: any;
+  playerSoulCount: number;
+  playerSoulCountText: Phaser.GameObjects.Text;
 
-    constructor ()
-    {
-        super({ key: 'HUD', active: true });
+  constructor() {
+    super({ key: "HUD", active: true });
+  }
 
-    }
+  private setupEventListeners() {
+    this.ourGame.events.on(
+      "damage-player",
+      function(amount) {
+        //TODO: decrease based on attacker
+        if (this.playerHealthBar.decrease(amount)) {
+          this.ourGame.scene.restart();
+          this.playerSoulCount = 0;
+          this.playerSoulCountText.setText(this.playerSoulCount.toString());
+          this.playerHealthBar.value = 100;
+          this.playerHealthBar.decrease(0);
+        }
+      },
+      this
+    );
 
-    create ()
-    {
-        let playerHealthBar = new HealthBar(this, this.calculatehealthBarXWrtScreen(), this.calculatehealthBarYWrtScreen(), 46, 12);
+    this.ourGame.events.on(
+      "damage-circle",
+      function(amount) {
+        //TODO: decouple damageAmount from soulCount, because if I attack 50 and only 10 lives -> only 10 souls
+        this.playerSoulCount += amount;
+        this.playerSoulCountText.setText(this.playerSoulCount.toString());
+      },
+      this
+    );
+  }
 
-        let playerSoulCount = 0
+  create() {
+    this.playerHealthBar = new PlayerHealthBar(this);
 
-        let graphics = this.add.graphics({
-            fillStyle: {
-                color: 0x228B22
-            }
-        });
-        let playerSoulCountGraphic = new CompositePolygon([[300,300,50,25, "rect"], [300,300,25,50, "rect"]])
-        playerSoulCountGraphic.setPosition( this.calculatehealthBarXWrtScreen()-30, this.calculatehealthBarYWrtScreen() - 20)
-        playerSoulCountGraphic.draw(graphics,0)
-        let playerSoulCountText = this.add.text(playerSoulCountGraphic.centerX-17, playerSoulCountGraphic.centerY-12, '0', { font: '20px Verdana', fill: '#ADFF2F' });
+    this.playerSoulCount = 0;
 
-        let ourGame = this.scene.get('Gameplay');
+    let graphics = this.add.graphics({
+      fillStyle: {
+        color: 0x228b22
+      }
+    });
 
-        ourGame.events.on('enemyDamaged', function (amount) {
-            //TODO: decouple damageAmount from soulCount, because if I attack 50 and only 10 lives -> only 10 souls
-            playerSoulCount += amount
-            playerSoulCountText.setText(playerSoulCount.toString())
+    let playerSoulCountGraphic = new SymmetricCrossPolygon(
+      this.playerHealthBar.x - 30,
+      this.playerHealthBar.y - 20,
+      50,
+      25
+    );
 
-        }, this);
+    playerSoulCountGraphic.draw(graphics, 0);
+    this.playerSoulCountText = this.add.text(
+      playerSoulCountGraphic.x - 17,
+      playerSoulCountGraphic.y - 12,
+      "0",
+      { font: "20px Verdana", fill: "#ADFF2F" }
+    );
 
-
-        ourGame.events.on('playerDamaged', function () {
-
-            //TODO: decrease based on attacker
-            if(playerHealthBar.decrease(2)){
-                ourGame.scene.restart()
-                playerSoulCount = 0
-                playerSoulCountText.setText(playerSoulCount.toString())
-                playerHealthBar.value = 100
-                playerHealthBar.decrease(0)
-            }
-
-        }, this);
-    }
-
-    calculatehealthBarXWrtScreen(){
-        let screenWidth = 1280
-        let healthBarWidth = 46
-        let topLeftXHealthBar = screenWidth - healthBarWidth
-        return topLeftXHealthBar
-    }
-
-    calculatehealthBarYWrtScreen(){
-        let screenLength = 720
-        let healthBarLength = 12
-        let topLeftYHealthBar = screenLength - healthBarLength
-        return topLeftYHealthBar
-    }
+    this.ourGame = this.scene.get("Gameplay");
+    this.setupEventListeners()
+  }
 }

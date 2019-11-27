@@ -7,6 +7,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 export abstract class Circle extends BaseSprite {
   polygon: CirclePolygon;
   graphics: Phaser.GameObjects.Graphics
+  unitType: string;
 
   constructor(scene: Gameplay, x, y, texture, physicsGroup) {
     super(scene, x, y, texture, physicsGroup);
@@ -16,6 +17,7 @@ export abstract class Circle extends BaseSprite {
       y + scene.cameras.main.scrollY,
       normalCircleRadius
     );
+    this.unitType = "circle"
     this.setCircle(normalCircleRadius);
     this.setupAnimEvents();
 
@@ -46,12 +48,7 @@ export abstract class Circle extends BaseSprite {
 
   damage(amount) {
     this.anims.play("damage-" + this.texture.key);
-
-    let isPlayer = this.id === this.scene.player.id;
-
-    if (isPlayer) {
-      this.scene.events.emit("playerDamaged");
-    }
+    this.scene.events.emit("damage-"+this.unitType, amount);
   }
 
   preUpdate(time, delta) {
