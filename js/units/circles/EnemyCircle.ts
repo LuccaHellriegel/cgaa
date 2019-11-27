@@ -1,5 +1,5 @@
 import { HealthBar } from "../../graphic/HealthBar";
-import { normalCircleRadius } from "../../app/sizes";
+import { normalCircleRadius } from "../../global";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
 

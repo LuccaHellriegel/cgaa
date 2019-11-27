@@ -1,9 +1,21 @@
 import Phaser from "phaser";
-import {
-    gameConfig
-} from "./app/config";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
+import { debugModus } from "./global";
+
+let gameConfig = {
+    type: Phaser.WEBGL,
+    width: 1280,
+    height: 720,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: debugModus
+        }
+    },
+    scene: {}
+};
+
 
 function makeGame(){
     let gameConfigWithScene = gameConfig

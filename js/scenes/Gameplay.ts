@@ -3,7 +3,7 @@ import hit from "../../assets/audio/hit.mp3";
 import step from "../../assets/audio/step.mp3";
 import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
-import { debugModus } from "../app/config";
+import { debugModus } from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../units/UnitManager";
 import { GeneratorManager } from "../graphic/generator/GeneratorManager";

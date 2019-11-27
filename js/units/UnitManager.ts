@@ -1,6 +1,7 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
 import { EnemyManager } from "./EnemyManager";
+import { playerStartX, playerStartY, playerTextureName } from "../global";
 
 export class UnitManager {
   scene: Gameplay;
@@ -11,7 +12,7 @@ export class UnitManager {
   }
 
   spawnUnits() {
-    Player.withChainWeapon(this.scene, 100, 450, "blueCircle",  
+    Player.withChainWeapon(this.scene, playerStartX, playerStartY, playerTextureName,  
     this.scene.physics.add.group(), this.scene.physics.add.group())
     this.enemies = new EnemyManager(this.scene).createEnemies();
     this.scene.physics.add.collider(
