@@ -10,9 +10,9 @@ export class WallAreaWithHoles extends WallArea {
     topLeftY, holePosition
   ) {
     super(scene, numberOfXRects, numberOfYRects, topLeftX, topLeftY);
-    this.rects[holePosition].destroy()
-    this.rects[numberOfXRects+holePosition-1].destroy()
-    this.rects[numberOfXRects+numberOfYRects+holePosition].destroy()
-    this.rects[numberOfXRects+numberOfYRects+numberOfXRects+holePosition-1].destroy()
+    this.parts[holePosition].destroy()
+    this.parts[numberOfXRects+holePosition-1].destroy()
+    this.parts[numberOfXRects+numberOfYRects+holePosition].destroy()
+    this.parts[numberOfXRects+numberOfYRects+numberOfXRects+holePosition-1].destroy()
   }
 }

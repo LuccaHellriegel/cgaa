@@ -1,20 +1,32 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
-import { EnemyManager } from "./EnemyManager";
+import { EnemyService } from "./EnemyService";
 import { playerStartX, playerStartY, playerTextureName } from "../global";
 
 export class UnitManager {
   scene: Gameplay;
   enemies: any[];
+  enemyPhysics: Phaser.Physics.Arcade.Group;
+  enemyWeapons: Phaser.Physics.Arcade.Group;
 
   constructor(scene: Gameplay) {
     this.scene = scene;
+    this.enemyPhysics = this.scene.physics.add.group();
+    this.enemyWeapons = this.scene.physics.add.group();
   }
 
   spawnUnits() {
     Player.withChainWeapon(this.scene, playerStartX, playerStartY, playerTextureName,  
     this.scene.physics.add.group(), this.scene.physics.add.group())
-    this.enemies = new EnemyManager(this.scene).createEnemies();
+    
+
+    let enemyPhysics = this.scene.physics.add.group()
+    let enemyWeapons = this.scene.physics.add.group()
+    this.scene.areaManager.wallAreas.forEach(wallArea => {
+      EnemyService.populateArea( wallArea, enemyPhysics, enemyWeapons)
+
+    })
+
     this.scene.physics.add.collider(
       this.scene.player.physicsGroup,
       this.enemies[0].physicsGroup

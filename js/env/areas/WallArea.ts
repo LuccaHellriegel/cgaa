@@ -3,11 +3,11 @@ import { WallPart } from "./WallPart";
 import { wallPartRadius } from "../../global";
 
 export class WallArea {
-  rects: WallPart[] = [];
+  parts: WallPart[] = [];
   physicsGroup: any;
   numberOfXRects: any;
   numberOfYRects: any;
-  scene: any;
+  scene: Gameplay;
   constructor(
     scene: Gameplay,
     numberOfXRects,
@@ -24,11 +24,11 @@ export class WallArea {
   }
 
   getWidth(){
-    return this.numberOfXRects*this.rects[0].width
+    return this.numberOfXRects*this.parts[0].width
   }
 
   getHeight(){
-    return (this.numberOfYRects+1)*this.rects[0].height
+    return (this.numberOfYRects+1)*this.parts[0].height
   }
 
   private createWallSide(
@@ -41,7 +41,7 @@ export class WallArea {
     let y = topLeftCenterY;
     for (let index = 0; index < numberOfRects; index++) {
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
-      this.rects.push(curRect);
+      this.parts.push(curRect);
       if (movingCoordinate === "x") {
         x += 2*wallPartRadius;
       } else {
@@ -56,13 +56,13 @@ export class WallArea {
 
     this.createWallSide(x, y, this.numberOfXRects, "x");
 
-    let lastRect = this.rects[this.rects.length - 1];
+    let lastRect = this.parts[this.parts.length - 1];
     let lastXRectX = lastRect.x;
 
     x = topLeftX + wallPartRadius;
     this.createWallSide(x, y, this.numberOfYRects, "y");
 
-    lastRect = this.rects[this.rects.length - 1];
+    lastRect = this.parts[this.parts.length - 1];
     let lastYRectY = lastRect.y;
 
     y = lastYRectY + 2*wallPartRadius;

@@ -15,6 +15,7 @@ export class Gameplay extends Phaser.Scene {
   playerMovement: PlayerMovement;
   polygonOffset: number;
   unitManager: UnitManager;
+  areaManager: AreaManager;
 
   constructor() {
     super("Gameplay");
@@ -32,13 +33,14 @@ export class Gameplay extends Phaser.Scene {
 
     new GeneratorManager(this).executeGeneration()
     createAnims(this.anims);
+    this.areaManager = new AreaManager(this)
+    this.physics.world.setBounds(0, 0,this.areaManager.wallAreas[0].getWidth()*3,this.areaManager.wallAreas[0].getHeight()*3);
 
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()
+    this.areaManager.setupAreaColliders()
 
-    let areaManager = new AreaManager(this)
-    this.physics.world.setBounds(0, 0,areaManager.wallAreas[0].getWidth()*3,areaManager.wallAreas[0].getHeight()*3);
-
+    
     if(debugModus){ this.polygonOffset = 0
     }
   }

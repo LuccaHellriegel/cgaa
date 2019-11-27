@@ -1,16 +1,17 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { WallArea } from "./WallArea";
 import { WallAreaWithHoles } from "./WallAreaWithHoles";
+import { wallPartRadius } from "../../global";
 
 export class AreaManager {
   scene: Gameplay;
   wallAreas: WallArea[];
+  borderWall: WallArea;
   constructor(scene: Gameplay) {
     this.scene = scene;
-    this.wallAreas = []
+    this.wallAreas = [];
 
-    this.createWallAreas()
-    this.setupAreaColliders();
+    this.createWallAreas();
   }
 
   //TODO: can push other Sprite into wall
@@ -28,32 +29,62 @@ export class AreaManager {
 
   private createWallAreas() {
     this.wallAreas.push(new WallAreaWithHoles(this.scene, 20, 19, 0, 0, 9));
-    this.wallAreas.push(new WallAreaWithHoles(this.scene, 20, 19, this.wallAreas[0].getWidth()*2, 0, 9));
-    this.wallAreas.push(new WallAreaWithHoles(this.scene, 20, 19, 0, this.wallAreas[0].getHeight()*2, 9));
-    this.wallAreas.push(new WallAreaWithHoles(this.scene, 20, 19, this.wallAreas[0].getWidth()*2, this.wallAreas[0].getHeight()*2, 9));
-    
-    this.wallAreas.push(new WallArea(this.scene, 62, 61, -80, -80));
+    this.wallAreas.push(
+      new WallAreaWithHoles(
+        this.scene,
+        20,
+        19,
+        this.wallAreas[0].getWidth() * 2,
+        0,
+        9
+      )
+    );
+    this.wallAreas.push(
+      new WallAreaWithHoles(
+        this.scene,
+        20,
+        19,
+        0,
+        this.wallAreas[0].getHeight() * 2,
+        9
+      )
+    );
+    this.wallAreas.push(
+      new WallAreaWithHoles(
+        this.scene,
+        20,
+        19,
+        this.wallAreas[0].getWidth() * 2,
+        this.wallAreas[0].getHeight() * 2,
+        9
+      )
+    );
 
+    this.borderWall = new WallArea(
+      this.scene,
+      62,
+      61,
+      -2 * wallPartRadius,
+      -2 * wallPartRadius
+    );
   }
 
-  private setupAreaColliders() {
+  setupAreaColliders() {
     this.wallAreas.forEach(wallArea => {
       this.scene.physics.add.collider(
         this.scene.player.physicsGroup,
-        wallArea.rects[0].physicsGroup,
+        wallArea.parts[0].physicsGroup,
         this.bounceCallback,
         null,
         this
       );
       this.scene.physics.add.collider(
         this.scene.unitManager.enemies[0].physicsGroup,
-        wallArea.rects[0].physicsGroup,
+        wallArea.parts[0].physicsGroup,
         this.bounceCallback,
         null,
         this
       );
-    })
-
+    });
   }
-
 }

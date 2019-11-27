@@ -7,14 +7,21 @@ export class EnemyCircle extends CircleWithWeapon {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
 
-  private constructor(scene: Gameplay, x, y, texture, physicsGroup, weaponGroup) {
+  private constructor(
+    scene: Gameplay,
+    x,
+    y,
+    texture,
+    physicsGroup: Phaser.Physics.Arcade.Group,
+    weaponGroup: Phaser.Physics.Arcade.Group
+  ) {
     super(scene, x, y, texture, physicsGroup, weaponGroup);
     this.hasBeenAttacked = false;
     this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
     this.setCollideWorldBounds(true);
     //TODO: change this back once I figure out how to prevent push-clipping
     //TODO: If I walk across the immovable Circle, I get push-clipped
-    this.setImmovable(true)
+    this.setImmovable(true);
   }
 
   moveAndTurnToPlayer() {
@@ -46,12 +53,16 @@ export class EnemyCircle extends CircleWithWeapon {
   attackPlayer() {
     this.moveAndTurnToPlayer();
     let distanceBetweenPlayerAndEnemy = Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        this.scene.player.x,
-        this.scene.player.y)
-    //TODO: is dependedant on circle radius    
-    let weaponsLastPolygonReachesPlayer = this.weapon.polygonArr[this.weapon.polygonArr.length -1].getHeight()+30 > distanceBetweenPlayerAndEnemy
+      this.x,
+      this.y,
+      this.scene.player.x,
+      this.scene.player.y
+    );
+    //TODO: is dependedant on circle radius
+    let weaponsLastPolygonReachesPlayer =
+      this.weapon.polygonArr[this.weapon.polygonArr.length - 1].getHeight() +
+        30 >
+      distanceBetweenPlayerAndEnemy;
     if (weaponsLastPolygonReachesPlayer) {
       this.attack();
     }
