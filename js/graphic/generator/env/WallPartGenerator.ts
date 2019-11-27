@@ -1,6 +1,6 @@
-import { Generator } from "./Generator";
-import { Gameplay } from "../../scenes/Gameplay";
-import { RectPolygon } from "../../polygon/RectPolygon";
+import { Generator } from "../Generator";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { RectPolygon } from "../../../polygon/RectPolygon";
 
 export class WallPartGenerator extends Generator {
   wallPart: RectPolygon;

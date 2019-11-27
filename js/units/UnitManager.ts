@@ -1,7 +1,7 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
-import { EnemyService } from "./EnemyService";
 import { playerStartX, playerStartY, playerTextureName } from "../global";
+import { AreaPopulator } from "./AreaPopulator";
 
 export class UnitManager {
   scene: Gameplay;
@@ -23,8 +23,7 @@ export class UnitManager {
     let enemyPhysics = this.scene.physics.add.group()
     let enemyWeapons = this.scene.physics.add.group()
     this.scene.areaManager.wallAreas.forEach(wallArea => {
-      EnemyService.populateArea( wallArea, enemyPhysics, enemyWeapons)
-
+      new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, wallArea.calculateBorderObject());
     })
 
     this.scene.physics.add.collider(

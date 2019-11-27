@@ -1,9 +1,10 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { RandWeaponGenerator } from "./weapons/RandWeaponGenerator";
-import { CircleGenerator } from "./CircleGenerator";
+import { CircleGenerator } from "./units/CircleGenerator";
 import { normalCircleRadius } from "../../global";
 import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
-import { WallPartGenerator } from "./WallPartGenerator";
+import { WallPartGenerator } from "./env/WallPartGenerator";
+import { BuildingGenerator } from "./env/BuildingGenerator";
 
 export class GeneratorManager {
   scene: Gameplay;
@@ -41,5 +42,6 @@ export class GeneratorManager {
 
   private generateEnvironment(){
       new WallPartGenerator(this.scene).generate()
+      new BuildingGenerator(this.scene).generate()
   }
 }

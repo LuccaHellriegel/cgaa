@@ -77,4 +77,12 @@ export class WallArea {
     x = lastXRectX;
     this.createWallSide(x, y, this.numberOfYRects, "y");
   }
+
+  calculateBorderObject(){
+    let borderX = this.parts[0].x + wallPartRadius;
+    let borderY = this.parts[0].y + wallPartRadius;
+    let borderWidth = this.width - 4* wallPartRadius;
+    let borderHeight = this.height - 4* wallPartRadius;
+    return { borderX, borderY, borderWidth, borderHeight };
+  }
 }
