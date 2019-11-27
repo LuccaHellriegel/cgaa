@@ -1,4 +1,4 @@
-import { BaseSprite } from "../BaseSprite";
+import { BaseSprite } from "../../graphic/BaseSprite";
 
 export class WallPart extends BaseSprite {
     x: any;
