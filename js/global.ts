@@ -1,6 +1,10 @@
 export const debugModus = false
 
 export const wallPartRadius = 40
+
+export const rectBuildingHalfWidth = (3*80) / 2
+export const rectBuildinghalfHeight = 80 / 2
+
 export const normalCircleRadius = 30
 
 export const playerTextureName = "blueCircle"

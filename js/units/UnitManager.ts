@@ -1,7 +1,7 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
 import { playerStartX, playerStartY, playerTextureName } from "../global";
-import { AreaPopulator } from "./AreaPopulator";
+import { AreaPopulator } from "../env/areas/AreaPopulator";
 
 export class UnitManager {
   scene: Gameplay;

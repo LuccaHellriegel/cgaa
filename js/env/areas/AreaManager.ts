@@ -2,6 +2,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { WallArea } from "./WallArea";
 import { WallAreaWithHoles } from "./WallAreaWithHoles";
 import { wallPartRadius } from "../../global";
+import { WallAreaWithHolesAndBuildings } from "./WallAreaWithHolesAndBuildings";
 
 export class AreaManager {
   scene: Gameplay;
@@ -28,9 +29,9 @@ export class AreaManager {
   }
 
   private createWallAreas() {
-    this.wallAreas.push(new WallAreaWithHoles(this.scene, 20, 19, 0, 0, 9));
+    this.wallAreas.push(new WallAreaWithHolesAndBuildings(this.scene, 20, 19, 0, 0, 9));
     this.wallAreas.push(
-      new WallAreaWithHoles(
+      new WallAreaWithHolesAndBuildings(
         this.scene,
         20,
         19,
@@ -40,7 +41,7 @@ export class AreaManager {
       )
     );
     this.wallAreas.push(
-      new WallAreaWithHoles(
+      new WallAreaWithHolesAndBuildings(
         this.scene,
         20,
         19,
@@ -50,7 +51,7 @@ export class AreaManager {
       )
     );
     this.wallAreas.push(
-      new WallAreaWithHoles(
+      new WallAreaWithHolesAndBuildings(
         this.scene,
         20,
         19,

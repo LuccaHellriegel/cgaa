@@ -1,17 +1,27 @@
 import { Generator } from "../Generator";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { RectPolygon } from "../../../polygon/RectPolygon";
+import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../../global";
 
 export class BuildingGenerator extends Generator {
-    rectBuilding: RectPolygon;
-    constructor(scene: Gameplay) {
-        super(0xa9a9a9, scene);
-        this.rectBuilding = new RectPolygon(40, 40, 3*80, 80);
-      }
-    
-      generate() {
-        this.rectBuilding.draw(this.graphics, 0);
-        this.graphics.generateTexture("rectBuilding", 3*80, 80);
-        this.destroyUsedObjects()
-    }
+  rectBuilding: RectPolygon;
+  constructor(scene: Gameplay) {
+    super(0xa9a9a9, scene);
+    this.rectBuilding = new RectPolygon(
+      rectBuildingHalfWidth,
+      rectBuildinghalfHeight,
+      rectBuildingHalfWidth * 2,
+      rectBuildinghalfHeight * 2
+    );
+  }
+
+  generate() {
+    this.rectBuilding.draw(this.graphics, 0);
+    this.graphics.generateTexture(
+      "rectBuilding",
+      rectBuildingHalfWidth * 2,
+      rectBuildinghalfHeight * 2
+    );
+    this.destroyUsedObjects();
+  }
 }

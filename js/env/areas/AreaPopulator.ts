@@ -1,6 +1,6 @@
-import { Gameplay } from "../scenes/Gameplay";
-import { EnemyCircle } from "./circles/EnemyCircle";
-import { normalCircleRadius } from "../global";
+import { Gameplay } from "../../scenes/Gameplay";
+import { EnemyCircle } from "../../units/circles/EnemyCircle";
+import { normalCircleRadius } from "../../global";
 
 export class AreaPopulator {
   scene: Gameplay;
@@ -39,7 +39,7 @@ export class AreaPopulator {
     });
   }
 
-  //TODO: dont spawn on top of other enemies
+  //TODO: dont spawn on top of other enemies and on buildings
   createEnemies() {
     const enemies = [];
 
