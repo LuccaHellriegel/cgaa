@@ -16,11 +16,9 @@ export class ChainWeapon extends PolygonWeapon {
     smallerCirclesRadius: number
 
     constructor(scene, x, y, weaponGroup, numberOfSmallCircles, numberOfBiggerCircles) {       
-        //TODO: this is undefined, why?
-        //console.log(normalCircleRadius)
         super(scene, x, y, "chainWeapon", weaponGroup,[
             []
-        ],[[0,-30],[0,-30],[0,-30]])
+        ],[[0,-normalCircleRadius],[0,-normalCircleRadius],[0,-normalCircleRadius]])
 
         this.numberOfSmallCircles = numberOfSmallCircles
         this.numberOfBiggerCircles = numberOfBiggerCircles
