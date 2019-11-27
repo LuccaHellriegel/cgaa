@@ -3,7 +3,6 @@ import { normalCircleRadius } from "../../app/sizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
 
-//TODO: remove code duplication (EnemyCircleWithRandWeapon) with better class structure 
 export class EnemyCircle extends CircleWithWeapon {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
