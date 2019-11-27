@@ -1,17 +1,12 @@
-import {
-    CircleWithChainWeapon
-} from "../units/circles/CircleWithChainWeapon";
-import {
-    CircleWithRandWeapon
-} from "../units/circles/CircleWithRandWeapon";
 import {Weapon} from "../units/weapons/Weapon"
 import { PlayerMovement } from "./PlayerMovement";
-export class Player extends CircleWithChainWeapon {
+import { CircleWithWeapon } from "../units/circles/CircleWithWeapon";
+export class Player extends CircleWithWeapon {
     weapon: Weapon;
-    constructor(scene){
-        super(scene, 100, 450, "blueCircle",  
-        scene.physics.add.group(), scene.physics.add.group())
+    private constructor(scene, x, y, texture, physicsGroup, weapon){
+        super(scene, x, y, texture, physicsGroup, weapon)
         this.setCollideWorldBounds(true);
+        this.setup()
     }
 
     setup(){

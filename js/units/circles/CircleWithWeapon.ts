@@ -1,5 +1,7 @@
 import {Circle} from "./Circle"
 import { Weapon } from "../weapons/Weapon";
+import { ChainWeapon } from "../weapons/ChainWeapon";
+import { RandWeapon } from "../weapons/RandWeapon";
 export class CircleWithWeapon extends Circle {
     weapon: Weapon;
 
@@ -36,6 +38,14 @@ export class CircleWithWeapon extends Circle {
     draw() {
         super.draw()
         this.weapon.polygon.draw(this.graphics, this.scene.polygonOffset)
+    }
+
+    static withChainWeapon(scene, x,y,texture, physicsGroup, weaponGroup){
+        return new this(scene, x, y, texture, physicsGroup, new ChainWeapon(scene, x, y, weaponGroup,5,2))
+    }
+
+    static withRandWeapon(scene, x,y,texture, physicsGroup, weaponGroup){
+        return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x , y, weaponGroup))
     }
 }
 

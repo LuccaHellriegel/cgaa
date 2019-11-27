@@ -11,7 +11,8 @@ export class UnitManager {
   }
 
   spawnUnits() {
-    new Player(this.scene).setup();
+    Player.withChainWeapon(this.scene, 100, 450, "blueCircle",  
+    this.scene.physics.add.group(), this.scene.physics.add.group())
     this.enemies = new EnemyManager(this.scene).createEnemies();
     this.scene.physics.add.collider(
       this.scene.player.physicsGroup,
