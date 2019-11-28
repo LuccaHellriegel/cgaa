@@ -9,7 +9,9 @@ export class WallArea {
   numberOfYRects: any;
   scene: Gameplay;
   width: number;
-  height: number
+  height: number;
+  x: any;
+  y: any;
 
   constructor(
     scene: Gameplay,
@@ -18,22 +20,26 @@ export class WallArea {
     topLeftX,
     topLeftY
   ) {
+    //TODO: make empty area for navigation (this x and y are center -> we decide were the unit is)
+    this.x = topLeftX + wallPartRadius * (numberOfXRects / 2);
+    this.y = topLeftY + wallPartRadius * (numberOfYRects / 2);
+
     this.scene = scene;
     this.physicsGroup = scene.physics.add.staticGroup();
     this.numberOfXRects = numberOfXRects;
     this.numberOfYRects = numberOfYRects;
 
     this.createWallSides(topLeftX, topLeftY);
-    this.width = this.calculateWidth()
-    this.height = this.calculateHeight()
+    this.width = this.calculateWidth();
+    this.height = this.calculateHeight();
   }
 
-  private calculateWidth(){
-    return this.numberOfXRects*this.parts[0].width
+  private calculateWidth() {
+    return this.numberOfXRects * this.parts[0].width;
   }
 
-  private calculateHeight(){
-    return (this.numberOfYRects+1)*this.parts[0].height
+  private calculateHeight() {
+    return (this.numberOfYRects + 1) * this.parts[0].height;
   }
 
   private createWallSide(
@@ -48,9 +54,9 @@ export class WallArea {
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
       this.parts.push(curRect);
       if (movingCoordinate === "x") {
-        x += 2*wallPartRadius;
+        x += 2 * wallPartRadius;
       } else {
-        y += 2*wallPartRadius;
+        y += 2 * wallPartRadius;
       }
     }
   }
@@ -70,7 +76,7 @@ export class WallArea {
     lastRect = this.parts[this.parts.length - 1];
     let lastYRectY = lastRect.y;
 
-    y = lastYRectY + 2*wallPartRadius;
+    y = lastYRectY + 2 * wallPartRadius;
     this.createWallSide(x, y, this.numberOfXRects, "x");
 
     y = topLeftY + wallPartRadius;
@@ -78,11 +84,31 @@ export class WallArea {
     this.createWallSide(x, y, this.numberOfYRects, "y");
   }
 
-  calculateBorderObject(){
+  calculateBorderObject() {
     let borderX = this.parts[0].x + wallPartRadius;
     let borderY = this.parts[0].y + wallPartRadius;
-    let borderWidth = this.width - 4* wallPartRadius;
-    let borderHeight = this.height - 4* wallPartRadius;
+    let borderWidth = this.width - 4 * wallPartRadius;
+    let borderHeight = this.height - 4 * wallPartRadius;
     return { borderX, borderY, borderWidth, borderHeight };
+  }
+
+  calculateWalkableArr() {
+    let walkableMap: number[][] = [];
+    for (let i = 0; i < this.numberOfYRects + 2; i++) {
+      let row: number[] = [];
+      for (let k = 0; k < this.numberOfXRects; k++) {
+        let curElement = 0;
+        if (
+          i === 0 ||
+          i === this.numberOfYRects + 1 ||
+          k === 0 ||
+          k === this.numberOfXRects - 1
+        )
+          curElement = 1;
+        row.push(curElement);
+      }
+      walkableMap.push(row);
+    }
+    return walkableMap;
   }
 }
