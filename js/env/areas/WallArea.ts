@@ -3,7 +3,7 @@ import { WallPart } from "./WallPart";
 import { wallPartRadius } from "../../global";
 
 export class WallArea {
-  parts: WallPart[] = [];
+  parts: WallPart[][] = [];
   physicsGroup: any;
   numberOfXRects: any;
   numberOfYRects: any;
@@ -20,9 +20,11 @@ export class WallArea {
     topLeftX,
     topLeftY
   ) {
+    let size = numberOfYRects + 2;
+    while (size--) this.parts[size] = [];
     //TODO: make empty area for navigation (this x and y are center -> we decide were the unit is)
-    this.x = topLeftX + wallPartRadius * (numberOfXRects / 2);
-    this.y = topLeftY + wallPartRadius * (numberOfYRects / 2);
+    this.x = topLeftX + 2 * wallPartRadius * (numberOfXRects / 2);
+    this.y = topLeftY + 2 * wallPartRadius * (numberOfYRects / 2);
 
     this.scene = scene;
     this.physicsGroup = scene.physics.add.staticGroup();
@@ -35,28 +37,35 @@ export class WallArea {
   }
 
   private calculateWidth() {
-    return this.numberOfXRects * this.parts[0].width;
+    return this.numberOfXRects * this.parts[0][0].width;
   }
 
   private calculateHeight() {
-    return (this.numberOfYRects + 1) * this.parts[0].height;
+    return (this.numberOfYRects + 1) * this.parts[0][0].height;
   }
 
   private createWallSide(
     topLeftCenterX,
     topLeftCenterY,
     numberOfRects,
-    movingCoordinate
+    wallSide
   ) {
     let x = topLeftCenterX;
     let y = topLeftCenterY;
     for (let index = 0; index < numberOfRects; index++) {
+      if (wallSide === "left" || wallSide === "right") y += 2 * wallPartRadius;
+
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
-      this.parts.push(curRect);
-      if (movingCoordinate === "x") {
+      if (wallSide === "top") {
+        this.parts[0].push(curRect);
         x += 2 * wallPartRadius;
+      } else if (wallSide === "bottom") {
+        this.parts[this.numberOfYRects + 1].push(curRect);
+        x += 2 * wallPartRadius;
+      } else if (wallSide === "left") {
+        this.parts[index + 1][0] = curRect;
       } else {
-        y += 2 * wallPartRadius;
+        this.parts[index + 1][this.numberOfXRects - 1] = curRect;
       }
     }
   }
@@ -65,28 +74,28 @@ export class WallArea {
     let x = topLeftX + wallPartRadius;
     let y = topLeftY + wallPartRadius;
 
-    this.createWallSide(x, y, this.numberOfXRects, "x");
+    this.createWallSide(x, y, this.numberOfXRects, "top");
 
-    let lastRect = this.parts[this.parts.length - 1];
+    let lastRect = this.parts[0][this.numberOfXRects - 1];
     let lastXRectX = lastRect.x;
 
     x = topLeftX + wallPartRadius;
-    this.createWallSide(x, y, this.numberOfYRects, "y");
+    this.createWallSide(x, y, this.numberOfYRects, "left");
 
-    lastRect = this.parts[this.parts.length - 1];
+    lastRect = this.parts[this.numberOfYRects][0];
     let lastYRectY = lastRect.y;
 
     y = lastYRectY + 2 * wallPartRadius;
-    this.createWallSide(x, y, this.numberOfXRects, "x");
+    this.createWallSide(x, y, this.numberOfXRects, "bottom");
 
     y = topLeftY + wallPartRadius;
     x = lastXRectX;
-    this.createWallSide(x, y, this.numberOfYRects, "y");
+    this.createWallSide(x, y, this.numberOfYRects, "right");
   }
 
   calculateBorderObject() {
-    let borderX = this.parts[0].x + wallPartRadius;
-    let borderY = this.parts[0].y + wallPartRadius;
+    let borderX = this.parts[0][0].x + wallPartRadius;
+    let borderY = this.parts[0][0].y + wallPartRadius;
     let borderWidth = this.width - 4 * wallPartRadius;
     let borderHeight = this.height - 4 * wallPartRadius;
     return { borderX, borderY, borderWidth, borderHeight };
@@ -97,14 +106,7 @@ export class WallArea {
     for (let i = 0; i < this.numberOfYRects + 2; i++) {
       let row: number[] = [];
       for (let k = 0; k < this.numberOfXRects; k++) {
-        let curElement = 0;
-        if (
-          i === 0 ||
-          i === this.numberOfYRects + 1 ||
-          k === 0 ||
-          k === this.numberOfXRects - 1
-        )
-          curElement = 1;
+        let curElement = this.parts[i][k] ? 1 : 0;
         row.push(curElement);
       }
       walkableMap.push(row);

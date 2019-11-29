@@ -1,5 +1,6 @@
 import { BaseSprite } from "../graphic/BaseSprite";
 
+//TODO: use Phaser Image to improve performance
 export class Building extends BaseSprite {
   x: number;
   y: number;

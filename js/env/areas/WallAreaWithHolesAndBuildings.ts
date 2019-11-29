@@ -1,7 +1,11 @@
 import { WallAreaWithHoles } from "./WallAreaWithHoles";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../Building";
-import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../global";
+import {
+  rectBuildingHalfWidth,
+  rectBuildinghalfHeight,
+  wallPartRadius
+} from "../../global";
 
 export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
   buildings: Building[];
@@ -22,16 +26,72 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
       topLeftY,
       holePosition
     );
-    let borderObject = this.calculateBorderObject();
-    let randX = Phaser.Math.Between(
-      borderObject.borderX + rectBuildingHalfWidth,
-      borderObject.borderX + borderObject.borderWidth - rectBuildingHalfWidth
-    );
-    let randY = Phaser.Math.Between(
-      borderObject.borderY + rectBuildinghalfHeight,
-      borderObject.borderY + borderObject.borderHeight - rectBuildinghalfHeight
-    );
 
-    new Building(scene, randX, randY, this.physicsGroup);
+    //TODO: add buildings to parts instead of here -> easier to reason about
+    this.buildings = [];
+    this.buildBuilding();
+  }
+
+  //TODO: dont spawn ontop of each other
+  private buildBuilding() {
+    let borderObject = this.calculateBorderObject();
+
+    let xMultiplier = Phaser.Math.Between(0, this.numberOfXRects - 5);
+    let additionalMovement =
+      xMultiplier === this.numberOfXRects - 2
+        ? -rectBuildingHalfWidth
+        : rectBuildingHalfWidth;
+    let randX =
+      borderObject.borderX +
+      xMultiplier * 2 * wallPartRadius +
+      additionalMovement;
+
+    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 2);
+    additionalMovement =
+      xMultiplier === this.numberOfXRects - 2
+        ? -rectBuildinghalfHeight
+        : rectBuildinghalfHeight;
+    let randY =
+      borderObject.borderY +
+      yMultiplier * 2 * wallPartRadius +
+      additionalMovement;
+
+    this.buildings.push(
+      new Building(this.scene, randX, randY, this.physicsGroup)
+    );
+  }
+
+  private markBuildingPosition(building: Building, map) {
+    let topLeftX = this.x - 2 * wallPartRadius * (this.numberOfXRects / 2);
+    let topLeftY = this.y - 2 * wallPartRadius * (this.numberOfYRects / 2);
+
+    for (let i = 0; i < this.numberOfYRects + 2; i++) {
+      for (let k = 0; k < this.numberOfXRects; k++) {
+        if (
+          building.x - rectBuildingHalfWidth === topLeftX &&
+          building.y - rectBuildinghalfHeight === topLeftY
+        ) {
+          //TODO: depends on the fact that the building is 3* the wallpart
+          map[i][k] = 1;
+          map[i][k + 1] = 1;
+          map[i][k + 2] = 1;
+          //break;
+        }
+        topLeftX += 2 * wallPartRadius;
+      }
+      topLeftY += 2 * wallPartRadius;
+
+      topLeftX = this.x - 2 * wallPartRadius * (this.numberOfXRects / 2);
+    }
+  }
+
+  //TODO: might need to store this for performance reasons (need it all the time -> unit navigation dynamically)
+  calculateWalkableArr() {
+    let mapWithoutBuilding = super.calculateWalkableArr();
+    this.buildings.forEach(building => {
+      this.markBuildingPosition(building, mapWithoutBuilding);
+    });
+
+    return mapWithoutBuilding;
   }
 }

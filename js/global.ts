@@ -1,5 +1,6 @@
 export const debugModus = false
 
+//TODO: this is not a radius, rename
 export const wallPartRadius = 40
 
 export const rectBuildingHalfWidth = (3*80) / 2
