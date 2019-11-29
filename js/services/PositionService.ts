@@ -7,6 +7,43 @@ import {
 export class PositionService {
   private constructor() {}
 
+  static snapXYToGrid(x, y) {
+    //TODO: check if we need to snap 
+    let ceilX = Math.ceil(x / wallPartRadius) * wallPartRadius;
+    let ceilY = Math.ceil(y / wallPartRadius) * wallPartRadius;
+    let floorX = Math.floor(x / wallPartRadius) * wallPartRadius;
+    let floorY = Math.floor(y / wallPartRadius) * wallPartRadius;
+
+    if((ceilX / wallPartRadius) % 2 === 0) ceilX = Infinity
+    if((ceilY / wallPartRadius) % 2 === 0) ceilY = Infinity
+    if((floorX / wallPartRadius) % 2 === 0) floorX = Infinity
+    if((floorY / wallPartRadius) % 2 === 0) floorY = Infinity
+
+    let diffCeilX = Math.abs(ceilX - x);
+    let diffFloorX = Math.abs(floorX - x);
+
+    let diffCeilY = Math.abs(ceilY - y);
+    let diffFloorY = Math.abs(floorY - y);
+
+    let newX;
+    let newY;
+
+
+    if (diffCeilX < diffFloorX) {
+      newX = ceilX;
+    } else {
+      newX = floorX;
+    }
+
+    if (diffCeilY < diffFloorY) {
+      newY = ceilY;
+    } else {
+      newY = floorY;
+    }
+    return {newX, newY };
+  }
+
+  //TODO: idea just calculate arr for all the points and then make distance check
   private static tryToFindRelativPosInWallArea(
     wallArea,
     x,
@@ -34,42 +71,23 @@ export class PositionService {
   }
 
   static findCurRelativePosInWallArea(wallArea, x, y) {
-    console.log(x / wallPartRadius, y / wallPartRadius)
     let topLeftX =
       wallArea.x - 2 * wallPartRadius * (wallArea.numberOfXRects / 2);
     let topLeftY =
       wallArea.y - 2 * wallPartRadius * ((wallArea.numberOfYRects + 2) / 2);
 
+      let {newX,newY} = this.snapXYToGrid(x,y)
+
     let relPos = this.tryToFindRelativPosInWallArea(
       wallArea,
-      x,
-      y,
+      newX,
+      newY,
       topLeftX,
       topLeftY
     );
 
-    if (relPos) return relPos
-
-    let ceilX = Math.ceil(x / wallPartRadius) * wallPartRadius;
-    let ceilY = Math.ceil(y / wallPartRadius) * wallPartRadius;
-    let floorX = Math.floor(x / wallPartRadius) * wallPartRadius;
-    let floorY = Math.floor(y / wallPartRadius) * wallPartRadius;
-
-    let xArr = [ceilX, floorX];
-    let yArr = [ceilY, floorY];
-    for (const newX in xArr) {
-      for (const newY in yArr) {
-        let relPos = this.tryToFindRelativPosInWallArea(
-          wallArea,
-          newX,
-          newY,
-          topLeftX,
-          topLeftY
-        );
-        if (relPos) return relPos;
-      }
-    }
-
+    if (relPos) return relPos;
+    
     throw "No relative position found for wallArea " +
       wallArea.x +
       " " +
