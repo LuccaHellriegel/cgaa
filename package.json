@@ -14,6 +14,7 @@
   "license": "",
   "dependencies": {
     "@babel/runtime": "^7.7.2",
+    "easystarjs": "^0.4.3",
     "phaser": "^3.20.1",
     "polygon-collision": "0.0.1"
   },

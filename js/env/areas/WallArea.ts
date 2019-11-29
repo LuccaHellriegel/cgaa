@@ -93,7 +93,7 @@ export class WallArea {
     this.createWallSide(x, y, this.numberOfYRects, "right");
   }
 
-  calculateRandValidTopLeftSpawnPosition(
+  calculateRandValidSpawnPosition(
     additionalMovementWidth,
     additionalMovementHeight
   ) {

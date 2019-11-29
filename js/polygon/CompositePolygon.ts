@@ -88,7 +88,6 @@ export class CompositePolygon {
     calculateCenterPoint(){
         let centerPointsOfPolygons : number[][]= []
         this.polygons.forEach(polygon => {
-            //console.log(polygon.calculateCenterPoint())
             centerPointsOfPolygons.push(polygon.calculateCenterPoint())
         })
         var x = centerPointsOfPolygons.map(x => x[0]);

@@ -34,7 +34,7 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
 
   //TODO: dont spawn ontop of each other
   private buildBuilding() {
-    let {randX, randY} = this.calculateRandValidTopLeftSpawnPosition(rectBuildingHalfWidth, rectBuildinghalfHeight)
+    let {randX, randY} = this.calculateRandValidSpawnPosition(rectBuildingHalfWidth, rectBuildinghalfHeight)
 
     this.buildings.push(
       new Building(this.scene, randX, randY, this.physicsGroup)
@@ -55,7 +55,7 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
           map[i][k] = 1;
           map[i][k + 1] = 1;
           map[i][k + 2] = 1;
-          //break;
+          break;
         }
         topLeftX += 2 * wallPartRadius;
       }

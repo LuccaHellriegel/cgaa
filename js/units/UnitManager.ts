@@ -1,29 +1,34 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
-import { playerStartX, playerStartY, playerTextureName } from "../global";
+import { playerStartX, playerStartY, playerTextureName, wallPartRadius } from "../global";
 import { AreaPopulator } from "../env/areas/AreaPopulator";
+import EasyStar from "easystarjs"
+import { PathfindingCircle } from "./circles/PathfindingCircle";
 
 export class UnitManager {
   scene: Gameplay;
   enemies: any[];
   enemyPhysics: Phaser.Physics.Arcade.Group;
   enemyWeapons: Phaser.Physics.Arcade.Group;
+  easyStar: any;
 
   constructor(scene: Gameplay) {
     this.scene = scene;
     this.enemyPhysics = this.scene.physics.add.group();
     this.enemyWeapons = this.scene.physics.add.group();
+    this.easyStar = new EasyStar.js();
+    let pathfindingCircle = new PathfindingCircle(scene,120,120,"blueCircle",this.enemyPhysics,this.easyStar)
+    pathfindingCircle.calculatePath(this.scene.areaManager.wallAreas[0])
   }
 
   spawnUnits() {
     Player.withChainWeapon(this.scene, playerStartX, playerStartY, playerTextureName,  
     this.scene.physics.add.group(), this.scene.physics.add.group())
-    
 
     let enemyPhysics = this.scene.physics.add.group()
     let enemyWeapons = this.scene.physics.add.group()
     this.scene.areaManager.wallAreas.forEach(wallArea => {
-      new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, wallArea.calculateBorderObject());
+      new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, wallArea);
     })
 
     this.scene.physics.add.collider(
