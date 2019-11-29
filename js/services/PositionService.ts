@@ -7,40 +7,44 @@ import {
 export class PositionService {
   private constructor() {}
 
+  private static snapCoordinateToGrid(coordinate) {
+    let ceil = Math.ceil(coordinate / wallPartRadius) * wallPartRadius;
+    let floor = Math.floor(coordinate / wallPartRadius) * wallPartRadius;
+
+    if ((ceil / wallPartRadius) % 2 === 0) ceil = Infinity;
+    if ((floor / wallPartRadius) % 2 === 0) floor = Infinity;
+
+    let diffCeil = Math.abs(ceil - coordinate);
+    let diffFloor = Math.abs(floor - coordinate);
+
+    if (diffCeil < diffFloor) {
+      return ceil;
+    } else {
+      return floor;
+    }
+  }
+
   static snapXYToGrid(x, y) {
-    //TODO: check if we need to snap 
-    let ceilX = Math.ceil(x / wallPartRadius) * wallPartRadius;
-    let ceilY = Math.ceil(y / wallPartRadius) * wallPartRadius;
-    let floorX = Math.floor(x / wallPartRadius) * wallPartRadius;
-    let floorY = Math.floor(y / wallPartRadius) * wallPartRadius;
+    let needToSnapX = x % wallPartRadius !== 0;
+    let needToSnapY = x % wallPartRadius !== 0;
 
-    if((ceilX / wallPartRadius) % 2 === 0) ceilX = Infinity
-    if((ceilY / wallPartRadius) % 2 === 0) ceilY = Infinity
-    if((floorX / wallPartRadius) % 2 === 0) floorX = Infinity
-    if((floorY / wallPartRadius) % 2 === 0) floorY = Infinity
-
-    let diffCeilX = Math.abs(ceilX - x);
-    let diffFloorX = Math.abs(floorX - x);
-
-    let diffCeilY = Math.abs(ceilY - y);
-    let diffFloorY = Math.abs(floorY - y);
+    if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 
     let newX;
     let newY;
 
-
-    if (diffCeilX < diffFloorX) {
-      newX = ceilX;
+    if (needToSnapX) {
+      newX = this.snapCoordinateToGrid(x);
     } else {
-      newX = floorX;
+      newX = x;
     }
 
-    if (diffCeilY < diffFloorY) {
-      newY = ceilY;
+    if (needToSnapY) {
+      newY = this.snapCoordinateToGrid(y);
     } else {
-      newY = floorY;
+      newY = y;
     }
-    return {newX, newY };
+    return { newX, newY };
   }
 
   //TODO: idea just calculate arr for all the points and then make distance check
@@ -76,7 +80,7 @@ export class PositionService {
     let topLeftY =
       wallArea.y - 2 * wallPartRadius * ((wallArea.numberOfYRects + 2) / 2);
 
-      let {newX,newY} = this.snapXYToGrid(x,y)
+    let { newX, newY } = this.snapXYToGrid(x, y);
 
     let relPos = this.tryToFindRelativPosInWallArea(
       wallArea,
@@ -87,7 +91,7 @@ export class PositionService {
     );
 
     if (relPos) return relPos;
-    
+
     throw "No relative position found for wallArea " +
       wallArea.x +
       " " +

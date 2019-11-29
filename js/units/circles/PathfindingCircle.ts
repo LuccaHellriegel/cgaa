@@ -66,7 +66,6 @@ export class PathfindingCircle extends EnemyCircle {
           console.log("Path was not found.");
         } else {
           this.path = path;
-          console.log(path);
         }
       }.bind(this)
     );

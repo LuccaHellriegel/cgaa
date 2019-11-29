@@ -30,6 +30,19 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
     //TODO: add buildings to parts instead of here -> easier to reason about
     this.buildings = [];
     this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+    this.buildBuilding();
+
   }
 
   //TODO: still not perfectly aligned
@@ -38,7 +51,7 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
     let {randX, randY} = this.calculateRandValidSpawnPosition(rectBuildingHalfWidth+2*wallPartRadius, rectBuildinghalfHeight+2*wallPartRadius)
 
     this.buildings.push(
-      new Building(this.scene, 7 * wallPartRadius, 5 * wallPartRadius, this.physicsGroup)
+      new Building(this.scene, randX, randY, this.physicsGroup)
     );
   }
 
