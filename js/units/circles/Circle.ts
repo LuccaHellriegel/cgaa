@@ -54,7 +54,7 @@ export abstract class Circle extends BaseSprite {
 
   findClosestsWallArea(wallAreas: WallArea[]) {
     let closesWallArea: WallArea;
-    let curDistance: number = -Infinity;
+    let curDistance: number = Infinity;
     wallAreas.forEach(wallArea => {
       let newDist = Phaser.Math.Distance.Between(
         this.x,
@@ -68,28 +68,6 @@ export abstract class Circle extends BaseSprite {
       }
     });
     return closesWallArea;
-  }
-
-  findCurRelativePosInWallArea(wallArea){
-    let topLeftX = wallArea.x - 2 * wallPartRadius * (wallArea.numberOfXRects / 2);
-    let topLeftY = wallArea.y - 2 * wallPartRadius * (wallArea.numberOfYRects / 2);
-
-    for (let i = 0; i < wallArea.numberOfYRects + 2; i++) {
-      for (let k = 0; k < wallArea.numberOfXRects; k++) {
-        if(i === 1 && k === 1){
-        }
-        if (
-          this.x - wallPartRadius === topLeftX &&
-          this.y - wallPartRadius === topLeftY
-        ) {
-          return {row: i, column: k}
-        }
-        topLeftX += 2 * wallPartRadius;
-      }
-      topLeftY += 2 * wallPartRadius;
-
-      topLeftX = wallArea.x - 2 * wallPartRadius * (wallArea.numberOfXRects / 2);
-    }
   }
 
   preUpdate(time, delta) {

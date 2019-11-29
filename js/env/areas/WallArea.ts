@@ -1,6 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { WallPart } from "./WallPart";
 import { wallPartRadius } from "../../global";
+import { GeometryService } from "../../services/GeometryService";
 
 export class WallArea {
   parts: WallPart[][] = [];
@@ -94,36 +95,92 @@ export class WallArea {
   }
 
   calculateRandValidSpawnPosition(
-    additionalMovementWidth,
-    additionalMovementHeight
+    requestedDistanceToWallXAxis,
+    requestedDistanceToWallYAxis
   ) {
+    if (
+      requestedDistanceToWallXAxis % wallPartRadius !== 0 ||
+      requestedDistanceToWallYAxis % wallPartRadius !== 0
+    )
+      throw "Requested ditance was not compatible to map grid";
+
     let borderObject = this.calculateBorderObject();
+    let numberOfRectsInBorder = 2;
 
-    let xMultiplier = Phaser.Math.Between(0, this.numberOfXRects - 5);
-    let edgeCorrection =
-      xMultiplier === this.numberOfXRects - 2
-        ? -additionalMovementWidth
-        : additionalMovementWidth;
+    let xMultiplier = Phaser.Math.Between(
+      0,
+      this.numberOfXRects - numberOfRectsInBorder - 1
+    );
+    let edgeCorrection = 0;
+
+    if (
+      wallPartRadius + xMultiplier * 2 * wallPartRadius <
+      requestedDistanceToWallXAxis
+    ) {
+      edgeCorrection =
+        requestedDistanceToWallXAxis - 
+        (wallPartRadius +
+        xMultiplier * 2 * wallPartRadius);
+    } else if (
+      borderObject.borderWidth -
+        (wallPartRadius +
+        xMultiplier * 2 * wallPartRadius) <
+        requestedDistanceToWallXAxis
+    ) {
+      edgeCorrection =
+      requestedDistanceToWallXAxis -
+        (borderObject.borderHeight -
+          (wallPartRadius +
+          xMultiplier * 2 * wallPartRadius));
+      edgeCorrection = -edgeCorrection;
+    }
     let randX =
-      borderObject.borderX + xMultiplier * 2 * wallPartRadius + edgeCorrection;
+      borderObject.borderX +
+      wallPartRadius +
+      xMultiplier * 2 * wallPartRadius +
+      edgeCorrection;
 
-    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 2);
-    edgeCorrection =
-      xMultiplier === this.numberOfXRects - 2
-        ? -additionalMovementHeight
-        : additionalMovementHeight;
+      //TODO: were are still 2*radius off, probably the edge cases
+    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects-1);
+    edgeCorrection = 0;
+    if (
+      wallPartRadius + yMultiplier * 2 * wallPartRadius <
+      requestedDistanceToWallYAxis
+    ) {
+      edgeCorrection =
+        requestedDistanceToWallYAxis -
+        (wallPartRadius +
+        yMultiplier * 2 * wallPartRadius);
+    } else if (
+      borderObject.borderHeight -
+       ( wallPartRadius +
+        yMultiplier * 2 * wallPartRadius) <
+      requestedDistanceToWallYAxis
+    ) {
+      edgeCorrection =
+        requestedDistanceToWallYAxis -
+        (borderObject.borderHeight -
+          (wallPartRadius +
+          yMultiplier * 2 * wallPartRadius));
+      edgeCorrection = -edgeCorrection;
+    }
+
+
     let randY =
-      borderObject.borderY + yMultiplier * 2 * wallPartRadius + edgeCorrection;
+      borderObject.borderY +
+      wallPartRadius +
+      yMultiplier * 2 * wallPartRadius +
+      edgeCorrection;
 
     return { randX, randY };
   }
 
   calculateBorderObject() {
-    let borderX = this.parts[0][0].x + wallPartRadius;
-    let borderY = this.parts[0][0].y + wallPartRadius;
-    let borderWidth = this.width - 4 * wallPartRadius;
-    let borderHeight = this.height - 4 * wallPartRadius;
-    return { borderX, borderY, borderWidth, borderHeight };
+    return GeometryService.calculateBorderObjectFromPartsAndSize(
+      this.parts,
+      this.width,
+      this.height
+    );
   }
 
   calculateWalkableArr() {

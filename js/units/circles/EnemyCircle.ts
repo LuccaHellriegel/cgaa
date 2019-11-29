@@ -2,20 +2,21 @@ import { HealthBar } from "../../graphic/HealthBar";
 import { normalCircleRadius } from "../../global";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
+import { PolygonWeapon } from "../weapons/PolygonWeapon";
 
 export class EnemyCircle extends CircleWithWeapon {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
 
-  private constructor(
+  constructor(
     scene: Gameplay,
     x,
     y,
     texture,
     physicsGroup: Phaser.Physics.Arcade.Group,
-    weaponGroup: Phaser.Physics.Arcade.Group
+    weapon: PolygonWeapon
   ) {
-    super(scene, x, y, texture, physicsGroup, weaponGroup);
+    super(scene, x, y, texture, physicsGroup, weapon);
     this.hasBeenAttacked = false;
     this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
     this.setCollideWorldBounds(true);

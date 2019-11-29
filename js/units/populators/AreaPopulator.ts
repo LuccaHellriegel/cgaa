@@ -10,5 +10,6 @@ export class AreaPopulator extends Populator {
     wallArea: WallArea
   ) {
     super(scene, enemyPhysics, enemyWeapons, wallArea);
+    this.onEvent();
   }
 }
