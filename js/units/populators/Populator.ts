@@ -1,27 +1,26 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { EnemyCircle } from "../../units/circles/EnemyCircle";
 import { normalCircleRadius } from "../../global";
-import { WallArea } from "./WallArea";
+import { EnemyCircle } from "../circles/EnemyCircle";
 
-export class AreaPopulator {
+export abstract class Populator {
+  enemyWeapons: Phaser.Physics.Arcade.Group;
   scene: Gameplay;
   enemyCount: number;
-  timedEvent: any;
   enemyPhysics: Phaser.Physics.Arcade.Group;
-  enemyWeapons: Phaser.Physics.Arcade.Group;
-  wallArea: WallArea;
+  populationReference: any;
+  timedEvent: Phaser.Time.TimerEvent;
 
   constructor(
     scene: Gameplay,
     enemyPhysics: Phaser.Physics.Arcade.Group,
     enemyWeapons: Phaser.Physics.Arcade.Group,
-    wallArea: WallArea
+    populationReference
   ) {
     this.scene = scene;
     this.enemyCount = 1;
     this.enemyPhysics = enemyPhysics;
     this.enemyWeapons = enemyWeapons;
-    this.wallArea = wallArea;
+    this.populationReference = populationReference;
 
     this.timedEvent = scene.time.addEvent({});
     this.onEvent();
@@ -45,7 +44,13 @@ export class AreaPopulator {
     const enemies = [];
 
     //TODO: switch too same idea as building spawning for easier pathfinding
-    let {randX, randY} = this.wallArea.calculateRandValidSpawnPosition(normalCircleRadius, normalCircleRadius)
+    let {
+      randX,
+      randY
+    } = this.populationReference.calculateRandValidSpawnPosition(
+      normalCircleRadius,
+      normalCircleRadius
+    );
 
     let EnemyCircleClass =
       Phaser.Math.Between(0, 1) === 0

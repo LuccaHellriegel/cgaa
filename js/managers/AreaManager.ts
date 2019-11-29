@@ -1,8 +1,8 @@
-import { Gameplay } from "../../scenes/Gameplay";
-import { WallArea } from "./WallArea";
-import { WallAreaWithHoles } from "./WallAreaWithHoles";
-import { wallPartRadius } from "../../global";
-import { WallAreaWithHolesAndBuildings } from "./WallAreaWithHolesAndBuildings";
+import { Gameplay } from "../scenes/Gameplay";
+import { WallArea } from "../env/areas/WallArea";
+import { WallAreaWithHoles } from "../env/areas/WallAreaWithHoles";
+import { wallPartRadius } from "../global";
+import { WallAreaWithHolesAndBuildings } from "../env/areas/WallAreaWithHolesAndBuildings";
 
 export class AreaManager {
   scene: Gameplay;

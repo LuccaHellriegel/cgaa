@@ -1,9 +1,9 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
 import { playerStartX, playerStartY, playerTextureName, wallPartRadius } from "../global";
-import { AreaPopulator } from "../env/areas/AreaPopulator";
+import { AreaPopulator } from "../units/populators/AreaPopulator";
 import EasyStar from "easystarjs"
-import { PathfindingCircle } from "./circles/PathfindingCircle";
+import { PathfindingCircle } from "../units/circles/PathfindingCircle";
 
 export class UnitManager {
   scene: Gameplay;

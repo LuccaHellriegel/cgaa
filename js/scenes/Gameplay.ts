@@ -5,9 +5,9 @@ import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
 import { debugModus, wallPartRadius} from "../global";
 import { createAnims } from "../graphic/anims";
-import { UnitManager } from "../units/UnitManager";
-import { GeneratorManager } from "../graphic/generator/GeneratorManager";
-import { AreaManager } from "../env/areas/AreaManager";
+import { UnitManager } from "../managers/UnitManager";
+import { GeneratorManager } from "../managers/GeneratorManager";
+import { AreaManager } from "../managers/AreaManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;

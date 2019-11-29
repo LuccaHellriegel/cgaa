@@ -1,10 +1,10 @@
-import { Gameplay } from "../../scenes/Gameplay";
-import { RandWeaponGenerator } from "./weapons/RandWeaponGenerator";
-import { CircleGenerator } from "./units/CircleGenerator";
-import { normalCircleRadius } from "../../global";
-import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
-import { WallPartGenerator } from "./env/WallPartGenerator";
-import { BuildingGenerator } from "./env/BuildingGenerator";
+import { Gameplay } from "../scenes/Gameplay";
+import { RandWeaponGenerator } from "../graphic/generator/weapons/RandWeaponGenerator";
+import { CircleGenerator } from "../graphic/generator/units/CircleGenerator";
+import { normalCircleRadius } from "../global";
+import { ChainWeaponGenerator } from "../graphic/generator/weapons/ChainWeaponGenerator";
+import { WallPartGenerator } from "../graphic/generator/env/WallPartGenerator";
+import { BuildingGenerator } from "../graphic/generator/env/BuildingGenerator";
 
 export class GeneratorManager {
   scene: Gameplay;
