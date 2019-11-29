@@ -6,7 +6,7 @@ import { PlayerMovement } from "../player/PlayerMovement";
 import { debugModus, wallPartRadius} from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../managers/UnitManager";
-import { GeneratorManager } from "../managers/GeneratorManager";
+import { GeneratorService } from "../services/GeneratorService";
 import { AreaManager } from "../managers/AreaManager";
 
 export class Gameplay extends Phaser.Scene {
@@ -30,8 +30,7 @@ export class Gameplay extends Phaser.Scene {
   create() {
     this.physics.world.setFPS(120)
 
-
-    new GeneratorManager(this).executeGeneration()
+    GeneratorService.executeGeneration(this)
     createAnims(this.anims);
     this.areaManager = new AreaManager(this)
     this.physics.world.setBounds(0, 0,this.areaManager.borderWall.width-4*wallPartRadius,this.areaManager.borderWall.width-4*wallPartRadius);

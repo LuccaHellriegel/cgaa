@@ -6,42 +6,40 @@ import { ChainWeaponGenerator } from "../graphic/generator/weapons/ChainWeaponGe
 import { WallPartGenerator } from "../graphic/generator/env/WallPartGenerator";
 import { BuildingGenerator } from "../graphic/generator/env/BuildingGenerator";
 
-export class GeneratorManager {
-  scene: Gameplay;
+export class GeneratorService {
 
-  constructor(scene: Gameplay) {
-    this.scene = scene;
+  private constructor() {
   }
 
-  executeGeneration() {
-      this.generateUnits()
-      this.generateWeapons()
-      this.generateEnvironment()
+  static executeGeneration(scene) {
+      this.generateUnits(scene)
+      this.generateWeapons(scene)
+      this.generateEnvironment(scene)
   }
 
 
-  private generateWeapons() {
-    new RandWeaponGenerator(0x6495ed, this.scene).generate();
-    new ChainWeaponGenerator(0xff0000, this.scene).generate();
+  private static generateWeapons(scene) {
+    new RandWeaponGenerator(0x6495ed, scene).generate();
+    new ChainWeaponGenerator(0xff0000, scene).generate();
   }
 
-  private generateUnits() {
+  private static generateUnits(scene) {
     new CircleGenerator(
       0x6495ed,
-      this.scene,
+      scene,
       "blueCircle",
       normalCircleRadius
     ).generate();
     new CircleGenerator(
       0xff0000,
-      this.scene,
+      scene,
       "redCircle",
       normalCircleRadius
     ).generate();
   }
 
-  private generateEnvironment(){
-      new WallPartGenerator(this.scene).generate()
-      new BuildingGenerator(this.scene).generate()
+  private static generateEnvironment(scene){
+      new WallPartGenerator(scene).generate()
+      new BuildingGenerator(scene).generate()
   }
 }
