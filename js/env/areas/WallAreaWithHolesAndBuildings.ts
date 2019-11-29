@@ -34,27 +34,7 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
 
   //TODO: dont spawn ontop of each other
   private buildBuilding() {
-    let borderObject = this.calculateBorderObject();
-
-    let xMultiplier = Phaser.Math.Between(0, this.numberOfXRects - 5);
-    let additionalMovement =
-      xMultiplier === this.numberOfXRects - 2
-        ? -rectBuildingHalfWidth
-        : rectBuildingHalfWidth;
-    let randX =
-      borderObject.borderX +
-      xMultiplier * 2 * wallPartRadius +
-      additionalMovement;
-
-    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 2);
-    additionalMovement =
-      xMultiplier === this.numberOfXRects - 2
-        ? -rectBuildinghalfHeight
-        : rectBuildinghalfHeight;
-    let randY =
-      borderObject.borderY +
-      yMultiplier * 2 * wallPartRadius +
-      additionalMovement;
+    let {randX, randY} = this.calculateRandValidTopLeftSpawnPosition(rectBuildingHalfWidth, rectBuildinghalfHeight)
 
     this.buildings.push(
       new Building(this.scene, randX, randY, this.physicsGroup)

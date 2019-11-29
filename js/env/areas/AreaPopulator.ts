@@ -43,6 +43,7 @@ export class AreaPopulator {
   createEnemies() {
     const enemies = [];
 
+    //TODO: switch too same idea as building spawning for easier pathfinding
     let randX = Phaser.Math.Between(this.borderObject.borderX+normalCircleRadius, this.borderObject.borderX+this.borderObject.borderWidth-normalCircleRadius);
     let randY = Phaser.Math.Between(this.borderObject.borderY+normalCircleRadius, this.borderObject.borderY+this.borderObject.borderHeight-normalCircleRadius);
 

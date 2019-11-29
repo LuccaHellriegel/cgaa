@@ -93,6 +93,31 @@ export class WallArea {
     this.createWallSide(x, y, this.numberOfYRects, "right");
   }
 
+  calculateRandValidTopLeftSpawnPosition(
+    additionalMovementWidth,
+    additionalMovementHeight
+  ) {
+    let borderObject = this.calculateBorderObject();
+
+    let xMultiplier = Phaser.Math.Between(0, this.numberOfXRects - 5);
+    let edgeCorrection =
+      xMultiplier === this.numberOfXRects - 2
+        ? -additionalMovementWidth
+        : additionalMovementWidth;
+    let randX =
+      borderObject.borderX + xMultiplier * 2 * wallPartRadius + edgeCorrection;
+
+    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 2);
+    edgeCorrection =
+      xMultiplier === this.numberOfXRects - 2
+        ? -additionalMovementHeight
+        : additionalMovementHeight;
+    let randY =
+      borderObject.borderY + yMultiplier * 2 * wallPartRadius + edgeCorrection;
+
+    return { randX, randY };
+  }
+
   calculateBorderObject() {
     let borderX = this.parts[0][0].x + wallPartRadius;
     let borderY = this.parts[0][0].y + wallPartRadius;
