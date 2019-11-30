@@ -1,11 +1,11 @@
-import { PositionService } from "../services/PositionService";
 import { BaseImage } from "../graphic/BaseImage";
+import { BuildingService } from "./BuildingService";
 
 export class Building extends BaseImage {
   validSpawnPositions: any[];
   constructor(scene, x, y, physicsGroup) {
     super(scene, x, y, "rectBuilding", physicsGroup);
-    this.validSpawnPositions = PositionService.calculateValidSpawnPositionAroundBuilding(
+    this.validSpawnPositions = BuildingService.calculateValidSpawnPositionAroundBuilding(
       this.x,
       this.y
     );

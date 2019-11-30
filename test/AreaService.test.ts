@@ -10,8 +10,7 @@ describe("Test AreaService", function() {
       let walkAbleArr = AreaService.calculateWalkableArr(
         1,
         1,
-        parts,
-        map => map
+        parts
       );
       let expectedWalkableArr = [[0]];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
@@ -26,8 +25,7 @@ describe("Test AreaService", function() {
       let walkAbleArr = AreaService.calculateWalkableArr(
         3,
         3,
-        parts,
-        map => map
+        parts
       );
       let expectedWalkableArr = [
         [0, 0, 0],
@@ -46,8 +44,7 @@ describe("Test AreaService", function() {
       let walkAbleArr = AreaService.calculateWalkableArr(
         3,
         3,
-        parts,
-        map => map
+        parts
       );
       let expectedWalkableArr = [
         [1, 1, 1],
@@ -98,8 +95,7 @@ describe("Test AreaService", function() {
       let walkAbleArr = AreaService.calculateWalkableArr(
         5,
         5,
-        parts,
-        map => map
+        parts
       );
       let expectedWalkableArr = [
         [1, 1, 1, 1, 1],
