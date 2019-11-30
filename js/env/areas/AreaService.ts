@@ -6,8 +6,7 @@ export class AreaService {
   static calculateWalkableArr(
     sizeOfXAxis,
     sizeOfYAxis,
-    parts: AreaPart[][],
-    furtherProcessingFunc
+    parts: AreaPart[][]
   ) {
     let walkableMap: number[][] = [];
     for (let i = 0; i < sizeOfYAxis; i++) {
@@ -18,6 +17,6 @@ export class AreaService {
       }
       walkableMap.push(row);
     }
-    return furtherProcessingFunc(walkableMap);
+    return walkableMap;
   }
 }

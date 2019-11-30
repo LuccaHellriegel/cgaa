@@ -53,9 +53,7 @@ export class PathfindingCircle extends EnemyCircle {
     let map = AreaService.calculateWalkableArr(
       wallArea.sizeOfXAxis,
       wallArea.sizeOfYAxis,
-      wallArea.parts,
-      (wallArea as WallAreaWithBuildings).markBuildingPositions.bind(wallArea)
-    );
+      wallArea.parts);
     this.easyStar.setGrid(map);
     this.easyStar.setAcceptableTiles([0]);
     let { row, column } = PositionService.findCurRelativePosInWallArea(

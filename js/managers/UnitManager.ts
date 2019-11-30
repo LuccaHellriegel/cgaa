@@ -52,13 +52,6 @@ export class UnitManager {
         }
       );
     });
-    // new BuildingPopulator(
-    //   this.scene,
-    //   enemyPhysics,
-    //   enemyWeapons,
-    //   this.scene.areaManager.wallAreas[0].buildings[0],
-    //   this.easyStar
-    // );
 
     this.scene.physics.add.collider(
       this.scene.player.physicsGroup,

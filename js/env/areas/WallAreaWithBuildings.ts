@@ -18,15 +18,8 @@ export class WallAreaWithBuildings extends WallArea {
     topLeftX,
     topLeftY
   ) {
-    super(
-      scene,
-      numberOfXRects,
-      numberOfYRects,
-      topLeftX,
-      topLeftY,
-    );
+    super(scene, numberOfXRects, numberOfYRects, topLeftX, topLeftY);
 
-    //TODO: add buildings to parts instead of here -> easier to reason about
     this.buildings = [];
     this.buildBuilding();
     this.buildBuilding();
@@ -43,14 +36,18 @@ export class WallAreaWithBuildings extends WallArea {
     this.buildBuilding();
   }
 
-  
-  //TODO: dont spawn ontop of each other
   private buildBuilding() {
     let { randX, randY } = this.calculateRandValidSpawnPosition(
       rectBuildingHalfWidth + 2 * wallPartRadius,
       rectBuildinghalfHeight + 2 * wallPartRadius
     );
-    while (PositionService.checkIfOnTopOfOtherBuildingOrSpawnArea(this.buildings,randX, randY)) {
+    while (
+      PositionService.checkIfOnTopOfOtherBuildingOrSpawnArea(
+        this.buildings,
+        randX,
+        randY
+      )
+    ) {
       let result = this.calculateRandValidSpawnPosition(
         rectBuildingHalfWidth + 2 * wallPartRadius,
         rectBuildinghalfHeight + 2 * wallPartRadius
@@ -58,22 +55,15 @@ export class WallAreaWithBuildings extends WallArea {
       randX = result.randX;
       randY = result.randY;
     }
-    this.buildings.push(
-      new Building(this.scene, randX, randY, this.physicsGroup)
-    );
+
+    let building = new Building(this.scene, randX, randY, this.physicsGroup);
+    this.addBuildingToParts(building);
+    this.buildings.push(building);
   }
 
-  markBuildingPositions(map){
-    this.buildings.forEach(building => {
-      this.markBuildingPosition(building, map);
-    });
-
-    return map;
-  }
-
-  private markBuildingPosition(building: Building, map) {
-    let x = this.topLeftX
-    let y = this.topLeftY
+  private addBuildingToParts(building: Building) {
+    let x = this.topLeftX;
+    let y = this.topLeftY;
 
     for (let i = 0; i < this.numberOfYRects + 2; i++) {
       for (let k = 0; k < this.numberOfXRects; k++) {
@@ -82,19 +72,18 @@ export class WallAreaWithBuildings extends WallArea {
           building.y - rectBuildinghalfHeight === y
         ) {
           //TODO: depends on the fact that the building is 3* the wallpart
-          map[i][k] = 1;
-          map[i][k + 1] = 1;
-          map[i][k + 2] = 1;
+          this.parts[i][k].updateContent(building);
+          this.parts[i][k+1].updateContent(building);
+          this.parts[i][k+2].updateContent(building);
           break;
         }
         x += 2 * wallPartRadius;
       }
       y += 2 * wallPartRadius;
 
-      x = this.topLeftX
+      x = this.topLeftX;
     }
   }
 
   //TODO: might need to store walkable arr for performance reasons (need it all the time -> unit navigation dynamically)
-
 }
