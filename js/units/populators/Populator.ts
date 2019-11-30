@@ -8,6 +8,7 @@ export abstract class Populator {
   enemyPhysics: Phaser.Physics.Arcade.Group;
   populationReference: any;
   timedEvent: Phaser.Time.TimerEvent;
+  enemyCount: number;
 
   constructor(
     scene: Gameplay,
@@ -19,21 +20,25 @@ export abstract class Populator {
     this.enemyPhysics = enemyPhysics;
     this.enemyWeapons = enemyWeapons;
     this.populationReference = populationReference;
+    this.enemyCount = 0;
 
     this.timedEvent = scene.time.addEvent({});
   }
 
   onEvent() {
-    let prevEnemies: any[] = this.scene.unitManager.enemies
-      ? this.scene.unitManager.enemies
-      : [];
-    this.scene.unitManager.enemies = prevEnemies.concat([this.createEnemy()]);
-    this.timedEvent.reset({
-      delay: Phaser.Math.Between(100, 5000),
-      callback: this.onEvent,
-      callbackScope: this,
-      repeat: 1
-    });
+    if (this.enemyCount !== 10) {
+      let prevEnemies: any[] = this.scene.unitManager.enemies
+        ? this.scene.unitManager.enemies
+        : [];
+      this.scene.unitManager.enemies = prevEnemies.concat([this.createEnemy()]);
+      this.enemyCount++;
+      this.timedEvent.reset({
+        delay: Phaser.Math.Between(100, 5000),
+        callback: this.onEvent,
+        callbackScope: this,
+        repeat: 1
+      });
+    }
   }
 
   chooseEnemyClass() {
@@ -42,7 +47,7 @@ export abstract class Populator {
       : EnemyCircle.withRandWeapon.bind(EnemyCircle);
   }
 
-  constructEnemy(randX, randY, enemyClass){
+  constructEnemy(randX, randY, enemyClass) {
     return enemyClass(
       this.scene,
       randX,
@@ -65,6 +70,6 @@ export abstract class Populator {
     );
     let EnemyCircleClass = this.chooseEnemyClass();
 
-    return this.constructEnemy(randX, randY, EnemyCircleClass)
+    return this.constructEnemy(randX, randY, EnemyCircleClass);
   }
 }
