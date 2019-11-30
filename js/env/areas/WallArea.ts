@@ -82,7 +82,7 @@ export class WallArea extends Area{
       } else if (wallSide === "left") {
         this.parts[index + 1][0].updateContent(curRect);
       } else {
-        this.parts[index + 1][this.numberOfXRects - 1].updateContent(curRect);
+        this.parts[index + 1][this.sizeOfXAxis - 1].updateContent(curRect);
       }
     }
   }
@@ -125,7 +125,7 @@ export class WallArea extends Area{
 
     let xMultiplier = Phaser.Math.Between(
       0,
-      this.numberOfXRects - numberOfRectsInBorder - 1
+      this.sizeOfXAxis - numberOfRectsInBorder - 1
     );
     let edgeCorrection = 0;
 
