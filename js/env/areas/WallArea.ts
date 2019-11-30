@@ -2,17 +2,14 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { WallPart } from "./WallPart";
 import { wallPartRadius } from "../../global";
 import { GeometryService } from "../../services/GeometryService";
+import { Area } from "./Area";
+import { AreaPart } from "./AreaPart";
 
-export class WallArea {
-  parts: WallPart[][] = [];
-  physicsGroup: any;
+export class WallArea extends Area{
   numberOfXRects: any;
   numberOfYRects: any;
-  scene: Gameplay;
   width: number;
   height: number;
-  x: any;
-  y: any;
 
   constructor(
     scene: Gameplay,
@@ -21,14 +18,8 @@ export class WallArea {
     topLeftX,
     topLeftY
   ) {
-    let size = numberOfYRects + 2;
-    while (size--) this.parts[size] = [];
-    //TODO: make empty area for navigation (this x and y are center -> we decide were the unit is)
-    this.x = topLeftX + 2 * wallPartRadius * (numberOfXRects / 2);
-    this.y = topLeftY + 2 * wallPartRadius * (numberOfYRects / 2);
+    super(scene,numberOfXRects, numberOfYRects +2, topLeftX, topLeftY, 2*wallPartRadius)
 
-    this.scene = scene;
-    this.physicsGroup = scene.physics.add.staticGroup();
     this.numberOfXRects = numberOfXRects;
     this.numberOfYRects = numberOfYRects;
 
@@ -40,11 +31,11 @@ export class WallArea {
   static withHolesAndBuildings() {}
 
   private makeHoles(holePosition) {
-    this.parts[0][holePosition].destroy();
+    this.parts[0][holePosition].deleteContent();
     //this.parts[0][holePosition] = 0
-    this.parts[holePosition][0].destroy();
-    this.parts[this.numberOfYRects + 1][holePosition].destroy();
-    this.parts[holePosition][this.numberOfXRects - 1].destroy();
+    this.parts[holePosition][0].deleteContent();
+    this.parts[this.numberOfYRects + 1][holePosition].deleteContent();
+    this.parts[holePosition][this.numberOfXRects - 1].deleteContent();
   }
 
   static withHoles(
@@ -87,15 +78,15 @@ export class WallArea {
 
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
       if (wallSide === "top") {
-        this.parts[0].push(curRect);
+        this.parts[0].push(new AreaPart(curRect,curRect.width,curRect.height));
         x += 2 * wallPartRadius;
       } else if (wallSide === "bottom") {
-        this.parts[this.numberOfYRects + 1].push(curRect);
+        this.parts[this.numberOfYRects + 1].push(new AreaPart(curRect,curRect.width,curRect.height));
         x += 2 * wallPartRadius;
       } else if (wallSide === "left") {
-        this.parts[index + 1][0] = curRect;
+        this.parts[index + 1][0] = new AreaPart(curRect,curRect.width,curRect.height);
       } else {
-        this.parts[index + 1][this.numberOfXRects - 1] = curRect;
+        this.parts[index + 1][this.numberOfXRects - 1] = new AreaPart(curRect,curRect.width,curRect.height);
       }
     }
   }
@@ -205,21 +196,4 @@ export class WallArea {
     );
   }
 
-  calculateWalkableArr() {
-    let walkableMap: number[][] = [];
-    for (let i = 0; i < this.numberOfYRects + 2; i++) {
-      let row: number[] = [];
-      for (let k = 0; k < this.numberOfXRects; k++) {
-        let curElement = this.parts[i][k] ? 1 : 0;
-
-        let wasDeleted = this.parts[i][k]&&(this.parts[i][k].scene === undefined);
-        if (wasDeleted) {
-          curElement = 0;
-        }
-        row.push(curElement);
-      }
-      walkableMap.push(row);
-    }
-    return walkableMap;
-  }
 }

@@ -63,6 +63,14 @@ export class WallAreaWithBuildings extends WallArea {
     );
   }
 
+  markBuildingPositions(map){
+    this.buildings.forEach(building => {
+      this.markBuildingPosition(building, map);
+    });
+
+    return map;
+  }
+
   private markBuildingPosition(building: Building, map) {
     let topLeftX = this.x - 2 * wallPartRadius * (this.numberOfXRects / 2);
     let topLeftY = this.y - 2 * wallPartRadius * (this.numberOfYRects / 2);
@@ -87,13 +95,6 @@ export class WallAreaWithBuildings extends WallArea {
     }
   }
 
-  //TODO: might need to store this for performance reasons (need it all the time -> unit navigation dynamically)
-  calculateWalkableArr() {
-    let mapWithoutBuilding = super.calculateWalkableArr();
-    this.buildings.forEach(building => {
-      this.markBuildingPosition(building, mapWithoutBuilding);
-    });
+  //TODO: might need to store walkable arr for performance reasons (need it all the time -> unit navigation dynamically)
 
-    return mapWithoutBuilding;
-  }
 }

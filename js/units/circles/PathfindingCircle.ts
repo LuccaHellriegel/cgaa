@@ -6,6 +6,8 @@ import { EnemyCircle } from "./EnemyCircle";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import EasyStar from "easystarjs";
 import { PositionService } from "../../services/PositionService";
+import { AreaService } from "../../env/areas/AreaService";
+import { WallAreaWithBuildings } from "../../env/areas/WallAreaWithBuildings";
 
 export class PathfindingCircle extends EnemyCircle {
   easyStar: EasyStar.js;
@@ -48,7 +50,12 @@ export class PathfindingCircle extends EnemyCircle {
   }
 
   calculatePath(wallArea: WallArea) {
-    let map = wallArea.calculateWalkableArr();
+    let map = AreaService.calculateWalkableArr(
+      wallArea.sizeOfXAxis,
+      wallArea.sizeOfYAxis,
+      wallArea.parts,
+      (wallArea as WallAreaWithBuildings).markBuildingPositions.bind(wallArea)
+    );
     this.easyStar.setGrid(map);
     this.easyStar.setAcceptableTiles([0]);
     let { row, column } = PositionService.findCurRelativePosInWallArea(
@@ -76,6 +83,7 @@ export class PathfindingCircle extends EnemyCircle {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.path && this.path[this.curPosInPath]) {
+      //TODO: make in relation to area position
       let x =
         this.path[this.curPosInPath].x * 2 * wallPartRadius + wallPartRadius;
       let y =
@@ -84,11 +92,11 @@ export class PathfindingCircle extends EnemyCircle {
         this.curPosInPath++;
       } else {
         //TODO: this is a hack, dont one why first point is crap
-        if (this.curPosInPath !== 0) {
-          this.scene.physics.moveTo(this, x, y, 160);
-        } else {
-          this.curPosInPath++;
-        }
+        //if (this.curPosInPath !== 0) {
+        this.scene.physics.moveTo(this, x, y, 160);
+        //} else {
+        //  this.curPosInPath++;
+        //}
       }
     } else if (this.path && this.curPosInPath >= this.path.length) {
       this.setVelocity(0, 0);

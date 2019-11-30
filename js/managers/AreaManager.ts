@@ -1,8 +1,7 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { WallArea } from "../env/areas/WallArea";
-import { WallAreaWithHoles } from "../env/areas/WallAreaWithHoles";
 import { wallPartRadius } from "../global";
-import { WallAreaWithHolesAndBuildings } from "../env/areas/WallAreaWithHolesAndBuildings";
+import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 
 export class AreaManager {
   scene: Gameplay;
@@ -29,37 +28,37 @@ export class AreaManager {
   }
 
   private createWallAreas() {
-    this.wallAreas.push(new WallAreaWithHolesAndBuildings(this.scene, 20, 18, 0, 0, 9));
-    this.wallAreas.push(
-      new WallAreaWithHolesAndBuildings(
-        this.scene,
-        20,
-        18,
-        this.wallAreas[0].width * 2,
-        0,
-        9
-      )
-    );
-    this.wallAreas.push(
-      new WallAreaWithHolesAndBuildings(
-        this.scene,
-        20,
-        18,
-        0,
-        this.wallAreas[0].height * 2,
-        9
-      )
-    );
-    this.wallAreas.push(
-      new WallAreaWithHolesAndBuildings(
-        this.scene,
-        20,
-        18,
-        this.wallAreas[0].width * 2,
-        this.wallAreas[0].height * 2,
-        9
-      )
-    );
+    this.wallAreas.push(WallAreaWithBuildings.withHoles(this.scene, 20, 18, 0, 0, 9));
+    // this.wallAreas.push(
+    //   WallAreaWithBuildings.withHoles(
+    //     this.scene,
+    //     20,
+    //     18,
+    //     this.wallAreas[0].width * 2,
+    //     0,
+    //     9
+    //   )
+    // );
+    // this.wallAreas.push(
+    //   WallAreaWithBuildings.withHoles(
+    //     this.scene,
+    //     20,
+    //     18,
+    //     0,
+    //     this.wallAreas[0].height * 2,
+    //     9
+    //   )
+    // );
+    // this.wallAreas.push(
+    //   WallAreaWithBuildings.withHoles(
+    //     this.scene,
+    //     20,
+    //     18,
+    //     this.wallAreas[0].width * 2,
+    //     this.wallAreas[0].height * 2,
+    //     9
+    //   )
+    // );
 
     this.borderWall = new WallArea(
       this.scene,
@@ -75,14 +74,14 @@ export class AreaManager {
     this.wallAreas.forEach(wallArea => {
       this.scene.physics.add.collider(
         this.scene.player.physicsGroup,
-        wallArea.parts[0][0].physicsGroup,
+        wallArea.physicsGroup,
         this.bounceCallback,
         null,
         this
       );
       this.scene.physics.add.collider(
         this.scene.unitManager.enemies[0].physicsGroup,
-        wallArea.parts[0][0].physicsGroup,
+        wallArea.physicsGroup,
         this.bounceCallback,
         null,
         this
