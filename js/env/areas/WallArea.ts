@@ -104,11 +104,6 @@ export class WallArea extends Area{
     requestedDistanceToWallXAxis,
     requestedDistanceToWallYAxis
   ) {
-    if (
-      requestedDistanceToWallXAxis % wallPartRadius !== 0 ||
-      requestedDistanceToWallYAxis % wallPartRadius !== 0
-    )
-      throw "Requested distance was not compatible to map grid";
 
     let borderObject = this.calculateBorderObject();
     let numberOfRectsInBorder = 2;
@@ -143,7 +138,6 @@ export class WallArea extends Area{
       xMultiplier * 2 * wallPartRadius +
       edgeCorrection;
 
-    //TODO: were are still 2*radius off, probably the edge cases
     let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis-2);
     edgeCorrection = 0;
     if (

@@ -13,6 +13,7 @@ export class PathfindingCircle extends EnemyCircle {
   easyStar: EasyStar.js;
   curPosInPath = 0;
   path;
+  curArea: WallArea;
   //TODO: better solution than passing the Class to Populator
   private constructor(
     scene: Gameplay,
@@ -45,8 +46,9 @@ export class PathfindingCircle extends EnemyCircle {
   }
 
   pathCallbackWithFindingArea() {
-    let wallArea = this.findClosestsWallArea(this.scene.areaManager.wallAreas);
-    this.calculatePath(wallArea);
+    //TODO: renamve to clostest area, and in areaManager too to areas
+    this.curArea = this.findClosestsWallArea(this.scene.areaManager.wallAreas);
+    this.calculatePath(this.curArea);
   }
 
   calculatePath(wallArea: WallArea) {
@@ -80,11 +82,10 @@ export class PathfindingCircle extends EnemyCircle {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.path && this.path[this.curPosInPath]) {
-      //TODO: make in relation to area position
       let x =
-        this.path[this.curPosInPath].x * 2 * wallPartRadius + wallPartRadius;
+      this.curArea.topLeftX + this.path[this.curPosInPath].x * 2 * wallPartRadius + wallPartRadius;
       let y =
-        this.path[this.curPosInPath].y * 2 * wallPartRadius + wallPartRadius;
+      this.curArea.topLeftY +this.path[this.curPosInPath].y * 2 * wallPartRadius + wallPartRadius;
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
         this.curPosInPath++;
       } else {

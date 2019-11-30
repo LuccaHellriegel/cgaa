@@ -30,11 +30,7 @@ export class WallAreaWithBuildings extends WallArea {
     this.buildBuilding();
     this.buildBuilding();
     this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
+
   }
 
   private buildBuilding() {

@@ -29,36 +29,36 @@ export class AreaManager {
 
   private createWallAreas() {
     this.wallAreas.push(WallAreaWithBuildings.withHoles(this.scene, 20, 18, 0, 0, 9));
-    // this.wallAreas.push(
-    //   WallAreaWithBuildings.withHoles(
-    //     this.scene,
-    //     20,
-    //     18,
-    //     this.wallAreas[0].width * 2,
-    //     0,
-    //     9
-    //   )
-    // );
-    // this.wallAreas.push(
-    //   WallAreaWithBuildings.withHoles(
-    //     this.scene,
-    //     20,
-    //     18,
-    //     0,
-    //     this.wallAreas[0].height * 2,
-    //     9
-    //   )
-    // );
-    // this.wallAreas.push(
-    //   WallAreaWithBuildings.withHoles(
-    //     this.scene,
-    //     20,
-    //     18,
-    //     this.wallAreas[0].width * 2,
-    //     this.wallAreas[0].height * 2,
-    //     9
-    //   )
-    // );
+    this.wallAreas.push(
+      WallAreaWithBuildings.withHoles(
+        this.scene,
+        20,
+        18,
+        this.wallAreas[0].width * 2,
+        0,
+        9
+      )
+    );
+    this.wallAreas.push(
+      WallAreaWithBuildings.withHoles(
+        this.scene,
+        20,
+        18,
+        0,
+        this.wallAreas[0].height * 2,
+        9
+      )
+    );
+    this.wallAreas.push(
+      WallAreaWithBuildings.withHoles(
+        this.scene,
+        20,
+        18,
+        this.wallAreas[0].width * 2,
+        this.wallAreas[0].height * 2,
+        9
+      )
+    );
 
     this.borderWall = new WallArea(
       this.scene,
