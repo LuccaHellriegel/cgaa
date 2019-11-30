@@ -6,6 +6,7 @@ import {
   rectBuildinghalfHeight,
   wallPartRadius
 } from "../../global";
+import { PositionService } from "../../services/PositionService";
 
 export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
   buildings: Building[];
@@ -42,14 +43,23 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
     this.buildBuilding();
     this.buildBuilding();
     this.buildBuilding();
-
   }
 
-  //TODO: still not perfectly aligned
+  
   //TODO: dont spawn ontop of each other
   private buildBuilding() {
-    let {randX, randY} = this.calculateRandValidSpawnPosition(rectBuildingHalfWidth+2*wallPartRadius, rectBuildinghalfHeight+2*wallPartRadius)
-
+    let { randX, randY } = this.calculateRandValidSpawnPosition(
+      rectBuildingHalfWidth + 2 * wallPartRadius,
+      rectBuildinghalfHeight + 2 * wallPartRadius
+    );
+    while (PositionService.checkIfOnTopOfOtherBuildingOrSpawnArea(this.buildings,randX, randY)) {
+      let result = this.calculateRandValidSpawnPosition(
+        rectBuildingHalfWidth + 2 * wallPartRadius,
+        rectBuildinghalfHeight + 2 * wallPartRadius
+      );
+      randX = result.randX;
+      randY = result.randY;
+    }
     this.buildings.push(
       new Building(this.scene, randX, randY, this.physicsGroup)
     );

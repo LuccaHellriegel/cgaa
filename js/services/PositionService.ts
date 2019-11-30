@@ -7,6 +7,7 @@ import {
 export class PositionService {
   private constructor() {}
 
+  //TODO: make a unit specific service for all calculation, as Phaser always needs a window, so I can never easily test it
   private static snapCoordinateToGrid(coordinate) {
     let ceil = Math.ceil(coordinate / wallPartRadius) * wallPartRadius;
     let floor = Math.floor(coordinate / wallPartRadius) * wallPartRadius;
@@ -137,4 +138,30 @@ export class PositionService {
 
     return validPositions.concat([leftFromBuilding, rightFromBuilding]);
   }
+
+  static checkIfOnTopOfOtherBuildingOrSpawnArea(buildings, randX, randY) {
+    for (let index = 0; index < buildings.length; index++) {
+      const building = buildings[index];
+      let diffX = Math.abs(building.x - randX);
+      let diffY = Math.abs(building.y - randY);
+      let inRowsOverOrUnderBuilding =
+        diffY >= 2*rectBuildinghalfHeight + 2 * wallPartRadius;
+      let leftOrRightFromBuilding =
+        diffX >= 2*rectBuildingHalfWidth + 2 * wallPartRadius;
+      if (!inRowsOverOrUnderBuilding && !leftOrRightFromBuilding) return true;
+    }
+
+    return false;
+  }
+
+  // static findOutRelPositionObjectToObject(x,y,x2,y2, objectWidth, objectHeight){
+  //  let xSmaller = x < x2
+  //  let ySmaller= y < y2
+  //  let diffX = Math.abs(x-x2)
+  //  let diffY = Math.abs(y-y2)
+
+  //  if(xSmaller&&ySmaller){
+
+  //  } else if()
+  // }
 }
