@@ -79,7 +79,6 @@ export class PathfindingCircle extends EnemyCircle {
     this.easyStar.calculate();
   }
 
-  //TODO: first goes down and then follows  the path (y is consistently something different than first point, but if I remove it, they dont arrive at their goal)
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.path && this.path[this.curPosInPath]) {
@@ -91,12 +90,7 @@ export class PathfindingCircle extends EnemyCircle {
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
         this.curPosInPath++;
       } else {
-        //TODO: this is a hack, dont one why first point is crap
-        //if (this.curPosInPath !== 0) {
         this.scene.physics.moveTo(this, x, y, 160);
-        //} else {
-        //  this.curPosInPath++;
-        //}
       }
     } else if (this.path && this.curPosInPath >= this.path.length) {
       this.setVelocity(0, 0);

@@ -9,6 +9,8 @@ export class Area {
   physicsGroup: Phaser.Physics.Arcade.StaticGroup;
   sizeOfXAxis: number;
   sizeOfYAxis: number;
+  topLeftX: any;
+  topLeftY: any;
 
   constructor(
     scene: Gameplay,
@@ -21,14 +23,19 @@ export class Area {
     this.scene = scene;
     this.physicsGroup = scene.physics.add.staticGroup();
 
-    let size = sizeYAxis;
-    while (size--) this.parts[size] = [];
+    for (let row = 0; row < sizeYAxis; row++) {
+      this.parts[row] = [];
+      for (let column = 0; column < sizeXAxis; column++) {
+        this.parts[row].push(new AreaPart(null));
+      }
+    }
 
     this.sizeOfXAxis = sizeXAxis;
     this.sizeOfYAxis = sizeYAxis;
+    this.topLeftX = topLeftX
+    this.topLeftY = topLeftY
 
     this.x = topLeftX + unitForPart * (sizeXAxis / 2);
     this.y = topLeftY + unitForPart * (sizeYAxis / 2);
   }
-
 }

@@ -72,14 +72,14 @@ export class WallAreaWithBuildings extends WallArea {
   }
 
   private markBuildingPosition(building: Building, map) {
-    let topLeftX = this.x - 2 * wallPartRadius * (this.numberOfXRects / 2);
-    let topLeftY = this.y - 2 * wallPartRadius * (this.numberOfYRects / 2);
+    let x = this.topLeftX
+    let y = this.topLeftY
 
     for (let i = 0; i < this.numberOfYRects + 2; i++) {
       for (let k = 0; k < this.numberOfXRects; k++) {
         if (
-          building.x - rectBuildingHalfWidth === topLeftX &&
-          building.y - rectBuildinghalfHeight === topLeftY
+          building.x - rectBuildingHalfWidth === x &&
+          building.y - rectBuildinghalfHeight === y
         ) {
           //TODO: depends on the fact that the building is 3* the wallpart
           map[i][k] = 1;
@@ -87,11 +87,11 @@ export class WallAreaWithBuildings extends WallArea {
           map[i][k + 2] = 1;
           break;
         }
-        topLeftX += 2 * wallPartRadius;
+        x += 2 * wallPartRadius;
       }
-      topLeftY += 2 * wallPartRadius;
+      y += 2 * wallPartRadius;
 
-      topLeftX = this.x - 2 * wallPartRadius * (this.numberOfXRects / 2);
+      x = this.topLeftX
     }
   }
 

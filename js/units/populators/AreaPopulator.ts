@@ -10,6 +10,7 @@ export class AreaPopulator extends Populator {
     wallArea: WallArea
   ) {
     super(scene, enemyPhysics, enemyWeapons, wallArea);
+    //TODO: dont spawn on top of other enemies or buildings if Area with building
     this.onEvent();
   }
 }

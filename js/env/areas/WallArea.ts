@@ -78,15 +78,15 @@ export class WallArea extends Area{
 
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
       if (wallSide === "top") {
-        this.parts[0].push(new AreaPart(curRect,curRect.width,curRect.height));
+        this.parts[0][index].updateContent(curRect)
         x += 2 * wallPartRadius;
       } else if (wallSide === "bottom") {
-        this.parts[this.numberOfYRects + 1].push(new AreaPart(curRect,curRect.width,curRect.height));
+        this.parts[this.numberOfYRects + 1][index].updateContent(curRect)
         x += 2 * wallPartRadius;
       } else if (wallSide === "left") {
-        this.parts[index + 1][0] = new AreaPart(curRect,curRect.width,curRect.height);
+        this.parts[index + 1][0].updateContent(curRect);
       } else {
-        this.parts[index + 1][this.numberOfXRects - 1] = new AreaPart(curRect,curRect.width,curRect.height);
+        this.parts[index + 1][this.numberOfXRects - 1].updateContent(curRect);
       }
     }
   }

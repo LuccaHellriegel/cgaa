@@ -3,7 +3,6 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../../env/Building";
 import { PathfindingCircle } from "../circles/PathfindingCircle";
 import EasyStar from "easystarjs"
-import { wallPartRadius } from "../../global";
 
 
 export class BuildingPopulator extends Populator {
@@ -24,6 +23,7 @@ export class BuildingPopulator extends Populator {
       }
 
       constructEnemy(randX, randY, enemyClass){
+
         return enemyClass(
           this.scene,
           randX,
