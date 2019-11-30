@@ -19,10 +19,8 @@ export class WallArea extends Area{
     topLeftY
   ) {
     super(scene,numberOfXRects, numberOfYRects, topLeftX, topLeftY, 2*wallPartRadius)
-
     this.createWallSides(topLeftX, topLeftY);
-    this.width = this.calculateWidth();
-    this.height = this.calculateHeight();
+
   }
 
   static withHolesAndBuildings() {}
@@ -51,14 +49,6 @@ export class WallArea extends Area{
     );
     wallArea.makeHoles(holePosition);
     return wallArea;
-  }
-
-  private calculateWidth() {
-    return this.sizeOfXAxis * this.parts[0][0].width;
-  }
-
-  private calculateHeight() {
-    return this.sizeOfYAxis * this.parts[0][0].height;
   }
 
   private createWallSide(

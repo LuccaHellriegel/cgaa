@@ -11,11 +11,13 @@ export class Area {
   sizeOfYAxis: number;
   topLeftX: any;
   topLeftY: any;
+  width: number;
+  height: number;
 
   constructor(
     scene: Gameplay,
-    sizeXAxis: number,
-    sizeYAxis: number,
+    sizeOfXAxis: number,
+    sizeOfYAxis: number,
     topLeftX,
     topLeftY,
     unitForPart
@@ -23,19 +25,22 @@ export class Area {
     this.scene = scene;
     this.physicsGroup = scene.physics.add.staticGroup();
 
-    for (let row = 0; row < sizeYAxis; row++) {
+    for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];
-      for (let column = 0; column < sizeXAxis; column++) {
+      for (let column = 0; column < sizeOfXAxis; column++) {
         this.parts[row].push(new AreaPart(null));
       }
     }
 
-    this.sizeOfXAxis = sizeXAxis;
-    this.sizeOfYAxis = sizeYAxis;
+    this.sizeOfXAxis = sizeOfXAxis;
+    this.sizeOfYAxis = sizeOfYAxis;
     this.topLeftX = topLeftX
     this.topLeftY = topLeftY
 
-    this.x = topLeftX + unitForPart * (sizeXAxis / 2);
-    this.y = topLeftY + unitForPart * (sizeYAxis / 2);
+    this.x = topLeftX + unitForPart * (sizeOfXAxis / 2);
+    this.y = topLeftY + unitForPart * (sizeOfYAxis / 2);
+
+    this.width = sizeOfXAxis * unitForPart
+    this.height = sizeOfYAxis * unitForPart
   }
 }
