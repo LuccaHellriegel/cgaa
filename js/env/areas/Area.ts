@@ -13,6 +13,7 @@ export class Area {
   topLeftY: any;
   width: number;
   height: number;
+  walkableArr: number[][];
 
   constructor(
     scene: Gameplay,
@@ -42,5 +43,19 @@ export class Area {
 
     this.width = sizeOfXAxis * unitForPart
     this.height = sizeOfYAxis * unitForPart
+
+    this.createEmptyWalkableArr()
+  }
+
+  private createEmptyWalkableArr(){
+    let walkableMap: number[][] = [];
+    for (let i = 0; i < this.sizeOfYAxis; i++) {
+      let row: number[] = [];
+      for (let k = 0; k < this.sizeOfXAxis; k++) {
+        row.push(0);
+      }
+      walkableMap.push(row);
+    }
+    this.walkableArr = walkableMap
   }
 }

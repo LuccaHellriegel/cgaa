@@ -5,9 +5,9 @@ import {
   rectBuildinghalfHeight,
   wallPartRadius
 } from "../../global";
-import { PositionService } from "../../services/PositionService";
 import { WallArea } from "./WallArea";
 import { BuildingService } from "../BuildingService";
+import { AreaService } from "./AreaService";
 
 export class WallAreaWithBuildings extends WallArea {
   buildings: Building[];
@@ -30,6 +30,13 @@ export class WallAreaWithBuildings extends WallArea {
     this.buildBuilding();
     this.buildBuilding();
     this.buildBuilding();
+
+    AreaService.updateWalkableArr(
+      this.sizeOfXAxis,
+      this.sizeOfYAxis,
+      this.parts,
+      this.walkableArr
+    );
 
   }
 

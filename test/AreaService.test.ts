@@ -7,11 +7,8 @@ describe("Test AreaService", function() {
     it("Empty single part map, everything is walkable", () => {
       let parts: AreaPart[][] = [[new AreaPart(null)]];
 
-      let walkAbleArr = AreaService.calculateWalkableArr(
-        1,
-        1,
-        parts
-      );
+      let walkAbleArr = [[0]];
+      AreaService.updateWalkableArr(1, 1, parts, walkAbleArr);
       let expectedWalkableArr = [[0]];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
     });
@@ -21,12 +18,13 @@ describe("Test AreaService", function() {
         [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
         [new AreaPart(null), new AreaPart(null), new AreaPart(null)]
       ];
+      let walkAbleArr = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ];
 
-      let walkAbleArr = AreaService.calculateWalkableArr(
-        3,
-        3,
-        parts
-      );
+      AreaService.updateWalkableArr(3, 3, parts, walkAbleArr);
       let expectedWalkableArr = [
         [0, 0, 0],
         [0, 0, 0],
@@ -40,12 +38,13 @@ describe("Test AreaService", function() {
         [new AreaPart({}), new AreaPart(null), new AreaPart({})],
         [new AreaPart({}), new AreaPart({}), new AreaPart({})]
       ];
+      let walkAbleArr = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ];
 
-      let walkAbleArr = AreaService.calculateWalkableArr(
-        3,
-        3,
-        parts
-      );
+      AreaService.updateWalkableArr(3, 3, parts, walkAbleArr);
       let expectedWalkableArr = [
         [1, 1, 1],
         [1, 0, 1],
@@ -91,12 +90,15 @@ describe("Test AreaService", function() {
           new AreaPart({})
         ]
       ];
+      let walkAbleArr = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+      ];
 
-      let walkAbleArr = AreaService.calculateWalkableArr(
-        5,
-        5,
-        parts
-      );
+      AreaService.updateWalkableArr(5, 5, parts, walkAbleArr);
       let expectedWalkableArr = [
         [1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1],

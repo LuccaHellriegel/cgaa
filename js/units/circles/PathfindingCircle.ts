@@ -52,10 +52,7 @@ export class PathfindingCircle extends EnemyCircle {
   }
 
   calculatePath(wallArea: WallArea) {
-    let map = AreaService.calculateWalkableArr(
-      wallArea.sizeOfXAxis,
-      wallArea.sizeOfYAxis,
-      wallArea.parts);
+    let map = wallArea.walkableArr;
     this.easyStar.setGrid(map);
     this.easyStar.setAcceptableTiles([0]);
     let { row, column } = PositionService.findCurRelativePosInWallArea(
@@ -83,9 +80,13 @@ export class PathfindingCircle extends EnemyCircle {
     super.preUpdate(time, delta);
     if (this.path && this.path[this.curPosInPath]) {
       let x =
-      this.curArea.topLeftX + this.path[this.curPosInPath].x * 2 * wallPartRadius + wallPartRadius;
+        this.curArea.topLeftX +
+        this.path[this.curPosInPath].x * 2 * wallPartRadius +
+        wallPartRadius;
       let y =
-      this.curArea.topLeftY +this.path[this.curPosInPath].y * 2 * wallPartRadius + wallPartRadius;
+        this.curArea.topLeftY +
+        this.path[this.curPosInPath].y * 2 * wallPartRadius +
+        wallPartRadius;
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
         this.curPosInPath++;
       } else {

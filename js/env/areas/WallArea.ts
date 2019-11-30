@@ -4,8 +4,9 @@ import { wallPartRadius } from "../../global";
 import { GeometryService } from "../../services/GeometryService";
 import { Area } from "./Area";
 import { AreaPart } from "./AreaPart";
+import { AreaService } from "./AreaService";
 
-export class WallArea extends Area{
+export class WallArea extends Area {
   numberOfXRects: any;
   numberOfYRects: any;
   width: number;
@@ -18,9 +19,21 @@ export class WallArea extends Area{
     topLeftX,
     topLeftY
   ) {
-    super(scene,numberOfXRects, numberOfYRects, topLeftX, topLeftY, 2*wallPartRadius)
+    super(
+      scene,
+      numberOfXRects,
+      numberOfYRects,
+      topLeftX,
+      topLeftY,
+      2 * wallPartRadius
+    );
     this.createWallSides(topLeftX, topLeftY);
-
+    AreaService.updateWalkableArr(
+      this.sizeOfXAxis,
+      this.sizeOfYAxis,
+      this.parts,
+      this.walkableArr
+    );
   }
 
   static withHolesAndBuildings() {}
@@ -28,7 +41,7 @@ export class WallArea extends Area{
   private makeHoles(holePosition) {
     this.parts[0][holePosition].deleteContent();
     this.parts[holePosition][0].deleteContent();
-    this.parts[this.sizeOfYAxis -1][holePosition].deleteContent();
+    this.parts[this.sizeOfYAxis - 1][holePosition].deleteContent();
     this.parts[holePosition][this.sizeOfXAxis - 1].deleteContent();
   }
 
@@ -48,6 +61,13 @@ export class WallArea extends Area{
       topLeftY
     );
     wallArea.makeHoles(holePosition);
+      //TODO: doubling here is not good, same problem as in WallAreaWithBuildings
+    AreaService.updateWalkableArr(
+      wallArea.sizeOfXAxis,
+      wallArea.sizeOfYAxis,
+      wallArea.parts,
+      wallArea.walkableArr
+    );
     return wallArea;
   }
 
@@ -64,10 +84,10 @@ export class WallArea extends Area{
 
       let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
       if (wallSide === "top") {
-        this.parts[0][index].updateContent(curRect)
+        this.parts[0][index].updateContent(curRect);
         x += 2 * wallPartRadius;
       } else if (wallSide === "bottom") {
-        this.parts[this.sizeOfYAxis -1][index].updateContent(curRect)
+        this.parts[this.sizeOfYAxis - 1][index].updateContent(curRect);
         x += 2 * wallPartRadius;
       } else if (wallSide === "left") {
         this.parts[index + 1][0].updateContent(curRect);
@@ -87,9 +107,9 @@ export class WallArea extends Area{
     let lastXRectX = lastRect.x;
 
     x = topLeftX + wallPartRadius;
-    this.createWallSide(x, y, this.sizeOfYAxis -2, "left");
+    this.createWallSide(x, y, this.sizeOfYAxis - 2, "left");
 
-    lastRect = this.parts[this.sizeOfYAxis -2][0];
+    lastRect = this.parts[this.sizeOfYAxis - 2][0];
     let lastYRectY = lastRect.y;
 
     y = lastYRectY + 2 * wallPartRadius;
@@ -97,14 +117,13 @@ export class WallArea extends Area{
 
     y = topLeftY + wallPartRadius;
     x = lastXRectX;
-    this.createWallSide(x, y, this.sizeOfYAxis-2, "right");
+    this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
 
   calculateRandValidSpawnPosition(
     requestedDistanceToWallXAxis,
     requestedDistanceToWallYAxis
   ) {
-
     let borderObject = this.calculateBorderObject();
     let numberOfRectsInBorder = 2;
 
@@ -138,7 +157,7 @@ export class WallArea extends Area{
       xMultiplier * 2 * wallPartRadius +
       edgeCorrection;
 
-    let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis-2);
+    let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis - 2);
     edgeCorrection = 0;
     if (
       wallPartRadius + yMultiplier * 2 * wallPartRadius <
@@ -175,5 +194,4 @@ export class WallArea extends Area{
       this.height
     );
   }
-
 }
