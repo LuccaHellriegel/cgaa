@@ -6,7 +6,7 @@ import { PlayerMovement } from "../player/PlayerMovement";
 import { debugModus, wallPartRadius} from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../managers/UnitManager";
-import { GeneratorService } from "../services/GeneratorService";
+import { GeneratorService } from "../graphic/generator/GeneratorService";
 import { AreaManager } from "../managers/AreaManager";
 
 export class Gameplay extends Phaser.Scene {
