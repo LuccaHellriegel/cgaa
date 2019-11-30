@@ -9,7 +9,7 @@ import {
 import { AreaPopulator } from "../units/populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { PathfindingCircle } from "../units/circles/PathfindingCircle";
-import { WallAreaWithHolesAndBuildings } from "../env/areas/WallAreaWithHolesAndBuildings";
+import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { BuildingPopulator } from "../units/populators/BuildingPopulator";
 
 export class UnitManager {
@@ -40,7 +40,7 @@ export class UnitManager {
     let enemyWeapons = this.scene.physics.add.group();
     this.scene.areaManager.wallAreas.forEach(wallArea => {
       new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, wallArea);
-      (wallArea as WallAreaWithHolesAndBuildings).buildings.forEach(
+      (wallArea as WallAreaWithBuildings).buildings.forEach(
         building => {
           new BuildingPopulator(
             this.scene,

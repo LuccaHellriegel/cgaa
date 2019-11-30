@@ -1,4 +1,3 @@
-import { WallAreaWithHoles } from "./WallAreaWithHoles";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../Building";
 import {
@@ -7,8 +6,9 @@ import {
   wallPartRadius
 } from "../../global";
 import { PositionService } from "../../services/PositionService";
+import { WallArea } from "./WallArea";
 
-export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
+export class WallAreaWithBuildings extends WallArea {
   buildings: Building[];
 
   constructor(
@@ -16,8 +16,7 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
     numberOfXRects,
     numberOfYRects,
     topLeftX,
-    topLeftY,
-    holePosition
+    topLeftY
   ) {
     super(
       scene,
@@ -25,7 +24,6 @@ export class WallAreaWithHolesAndBuildings extends WallAreaWithHoles {
       numberOfYRects,
       topLeftX,
       topLeftY,
-      holePosition
     );
 
     //TODO: add buildings to parts instead of here -> easier to reason about

@@ -1,7 +1,6 @@
 import { PositionService } from "../services/PositionService";
 import { BaseImage } from "../graphic/BaseImage";
 
-//TODO: use Phaser Image to improve performance
 export class Building extends BaseImage {
   validSpawnPositions: any[];
   constructor(scene, x, y, physicsGroup) {
@@ -14,7 +13,6 @@ export class Building extends BaseImage {
 
   calculateRandValidSpawnPosition() {
     let pos = Phaser.Math.Between(0, this.validSpawnPositions.length - 1);
-
     return this.validSpawnPositions[pos];
   }
 }

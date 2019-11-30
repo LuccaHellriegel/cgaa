@@ -37,6 +37,35 @@ export class WallArea {
     this.height = this.calculateHeight();
   }
 
+  static withHolesAndBuildings() {}
+
+  private makeHoles(holePosition) {
+    this.parts[0][holePosition].destroy();
+    //this.parts[0][holePosition] = 0
+    this.parts[holePosition][0].destroy();
+    this.parts[this.numberOfYRects + 1][holePosition].destroy();
+    this.parts[holePosition][this.numberOfXRects - 1].destroy();
+  }
+
+  static withHoles(
+    scene,
+    numberOfXRects,
+    numberOfYRects,
+    topLeftX,
+    topLeftY,
+    holePosition
+  ) {
+    let wallArea = new this(
+      scene,
+      numberOfXRects,
+      numberOfYRects,
+      topLeftX,
+      topLeftY
+    );
+    wallArea.makeHoles(holePosition);
+    return wallArea;
+  }
+
   private calculateWidth() {
     return this.numberOfXRects * this.parts[0][0].width;
   }
@@ -102,7 +131,7 @@ export class WallArea {
       requestedDistanceToWallXAxis % wallPartRadius !== 0 ||
       requestedDistanceToWallYAxis % wallPartRadius !== 0
     )
-      throw "Requested ditance was not compatible to map grid";
+      throw "Requested distance was not compatible to map grid";
 
     let borderObject = this.calculateBorderObject();
     let numberOfRectsInBorder = 2;
@@ -118,20 +147,17 @@ export class WallArea {
       requestedDistanceToWallXAxis
     ) {
       edgeCorrection =
-        requestedDistanceToWallXAxis - 
-        (wallPartRadius +
-        xMultiplier * 2 * wallPartRadius);
+        requestedDistanceToWallXAxis -
+        (wallPartRadius + xMultiplier * 2 * wallPartRadius);
     } else if (
       borderObject.borderWidth -
-        (wallPartRadius +
-        xMultiplier * 2 * wallPartRadius) <
-        requestedDistanceToWallXAxis
+        (wallPartRadius + xMultiplier * 2 * wallPartRadius) <
+      requestedDistanceToWallXAxis
     ) {
       edgeCorrection =
-      requestedDistanceToWallXAxis -
+        requestedDistanceToWallXAxis -
         (borderObject.borderHeight -
-          (wallPartRadius +
-          xMultiplier * 2 * wallPartRadius));
+          (wallPartRadius + xMultiplier * 2 * wallPartRadius));
       edgeCorrection = -edgeCorrection;
     }
     let randX =
@@ -140,8 +166,8 @@ export class WallArea {
       xMultiplier * 2 * wallPartRadius +
       edgeCorrection;
 
-      //TODO: were are still 2*radius off, probably the edge cases
-    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects-1);
+    //TODO: were are still 2*radius off, probably the edge cases
+    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 1);
     edgeCorrection = 0;
     if (
       wallPartRadius + yMultiplier * 2 * wallPartRadius <
@@ -149,22 +175,18 @@ export class WallArea {
     ) {
       edgeCorrection =
         requestedDistanceToWallYAxis -
-        (wallPartRadius +
-        yMultiplier * 2 * wallPartRadius);
+        (wallPartRadius + yMultiplier * 2 * wallPartRadius);
     } else if (
       borderObject.borderHeight -
-       ( wallPartRadius +
-        yMultiplier * 2 * wallPartRadius) <
+        (wallPartRadius + yMultiplier * 2 * wallPartRadius) <
       requestedDistanceToWallYAxis
     ) {
       edgeCorrection =
         requestedDistanceToWallYAxis -
         (borderObject.borderHeight -
-          (wallPartRadius +
-          yMultiplier * 2 * wallPartRadius));
+          (wallPartRadius + yMultiplier * 2 * wallPartRadius));
       edgeCorrection = -edgeCorrection;
     }
-
 
     let randY =
       borderObject.borderY +
@@ -189,6 +211,11 @@ export class WallArea {
       let row: number[] = [];
       for (let k = 0; k < this.numberOfXRects; k++) {
         let curElement = this.parts[i][k] ? 1 : 0;
+
+        let wasDeleted = this.parts[i][k]&&(this.parts[i][k].scene === undefined);
+        if (wasDeleted) {
+          curElement = 0;
+        }
         row.push(curElement);
       }
       walkableMap.push(row);
