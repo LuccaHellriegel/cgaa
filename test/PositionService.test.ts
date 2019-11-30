@@ -11,7 +11,7 @@ describe("Test PositionService", function() {
     it("There are only 12 valid positions", () => {
       let buildingX = 0 + 2 * wallPartRadius + rectBuildingHalfWidth;
       let buildingY = 0 + 2 * wallPartRadius + rectBuildinghalfHeight;
-      let validPositions = PositionService.calculateValidSpawnPositions(
+      let validPositions = PositionService.calculateValidSpawnPositionAroundBuilding(
         buildingX,
         buildingY
       );

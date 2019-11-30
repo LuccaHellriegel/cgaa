@@ -1,21 +1,22 @@
 import { BaseSprite } from "../graphic/BaseSprite";
 import { PositionService } from "../services/PositionService";
+import { Point } from "../polygon/Point";
 
 //TODO: use Phaser Image to improve performance
 export class Building extends BaseSprite {
-  x: number;
-  y: number;
+  validSpawnPositions: any[];
   constructor(scene, x, y, physicsGroup) {
     super(scene, x, y, "rectBuilding", physicsGroup);
     this.setImmovable(true);
+    this.validSpawnPositions = PositionService.calculateValidSpawnPositionAroundBuilding(
+      this.x,
+      this.y
+    );
   }
 
-  //TODO: still broken
   calculateRandValidSpawnPosition() {
-   
-    let validPositions = PositionService.calculateValidSpawnPositions(this.x, this.y)
-    let pos = Phaser.Math.Between(0,validPositions.length-1)
+    let pos = Phaser.Math.Between(0, this.validSpawnPositions.length - 1);
 
-    return validPositions[pos]
+    return this.validSpawnPositions[pos];
   }
 }

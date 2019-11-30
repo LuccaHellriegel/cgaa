@@ -104,7 +104,7 @@ export class PositionService {
   }
 
   //TODO: make more general or change name to building specific
-  static calculateValidSpawnPositions(buildingX, buildingY) {
+  static calculateValidSpawnPositionAroundBuilding(buildingX, buildingY) {
     let topLeftX = buildingX - rectBuildingHalfWidth;
     let topLeftY = buildingY - rectBuildinghalfHeight;
     let startXForRow = topLeftX - wallPartRadius;
