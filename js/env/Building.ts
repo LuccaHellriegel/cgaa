@@ -1,13 +1,11 @@
-import { BaseSprite } from "../graphic/BaseSprite";
 import { PositionService } from "../services/PositionService";
-import { Point } from "../polygon/Point";
+import { BaseImage } from "../graphic/BaseImage";
 
 //TODO: use Phaser Image to improve performance
-export class Building extends BaseSprite {
+export class Building extends BaseImage {
   validSpawnPositions: any[];
   constructor(scene, x, y, physicsGroup) {
     super(scene, x, y, "rectBuilding", physicsGroup);
-    this.setImmovable(true);
     this.validSpawnPositions = PositionService.calculateValidSpawnPositionAroundBuilding(
       this.x,
       this.y
