@@ -11,7 +11,7 @@ describe("Test PositionService", function() {
     it("Should be in the middle of the 3x3 area", function() {
       let x = 0 + 3 * wallPartRadius;
       let y = 0 + 3 * wallPartRadius;
-      let wallArea = { x: x, y: y, numberOfXRects: 3, numberOfYRects: 1 };
+      let wallArea = { x: x, y: y, sizeOfXAxis: 3, sizeOfYAxis: 3 };
       let { row, column } = PositionService.findCurRelativePosInWallArea(
         wallArea,
         x,
@@ -23,7 +23,7 @@ describe("Test PositionService", function() {
     it("Should be in middle left of the 3x3 area", function() {
       let x = 0 + 3 * wallPartRadius;
       let y = 0 + 3 * wallPartRadius;
-      let wallArea = { x: x, y: y, numberOfXRects: 3, numberOfYRects: 1 };
+      let wallArea = { x: x, y: y, sizeOfXAxis: 3, sizeOfYAxis: 3 };
       let { row, column } = PositionService.findCurRelativePosInWallArea(
         wallArea,
         wallPartRadius,
@@ -35,7 +35,7 @@ describe("Test PositionService", function() {
     it("Should be in the middle of the 5x5 area", function() {
       let x = 0 + 5 * wallPartRadius;
       let y = 0 + 5 * wallPartRadius;
-      let wallArea = { x: x, y: y, numberOfXRects: 5, numberOfYRects: 3 };
+      let wallArea = { x: x, y: y, sizeOfXAxis: 5, sizeOfYAxis: 5 };
       let { row, column } = PositionService.findCurRelativePosInWallArea(
         wallArea,
         x,
@@ -47,7 +47,7 @@ describe("Test PositionService", function() {
     it("Should be in the middle of the 5x5 area even it the starting position is not accurate", function() {
       let x = 0 + 5 * wallPartRadius;
       let y = 0 + 5 * wallPartRadius;
-      let wallArea = { x: x, y: y, numberOfXRects: 5, numberOfYRects: 3 };
+      let wallArea = { x: x, y: y, sizeOfXAxis: 5, sizeOfYAxis: 5 };
       let { row, column } = PositionService.findCurRelativePosInWallArea(
         wallArea,
         x - 7,

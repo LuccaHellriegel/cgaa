@@ -56,8 +56,8 @@ export class PositionService {
     topLeftX,
     topLeftY
   ) {
-    for (let i = 0; i < wallArea.numberOfYRects + 2; i++) {
-      for (let k = 0; k < wallArea.numberOfXRects; k++) {
+    for (let i = 0; i < wallArea.sizeOfYAxis; i++) {
+      for (let k = 0; k < wallArea.sizeOfXAxis; k++) {
         if (
           x - wallPartRadius === topLeftX &&
           y - wallPartRadius === topLeftY
@@ -69,7 +69,7 @@ export class PositionService {
       topLeftY += 2 * wallPartRadius;
 
       topLeftX =
-        wallArea.x - 2 * wallPartRadius * (wallArea.numberOfXRects / 2);
+        wallArea.x - 2 * wallPartRadius * (wallArea.sizeOfXAxis / 2);
     }
 
     return null;
@@ -77,9 +77,9 @@ export class PositionService {
 
   static findCurRelativePosInWallArea(wallArea, x, y) {
     let topLeftX =
-      wallArea.x - 2 * wallPartRadius * (wallArea.numberOfXRects / 2);
+      wallArea.x - 2 * wallPartRadius * (wallArea.sizeOfXAxis / 2);
     let topLeftY =
-      wallArea.y - 2 * wallPartRadius * ((wallArea.numberOfYRects + 2) / 2);
+      wallArea.y - 2 * wallPartRadius * ((wallArea.sizeOfYAxis) / 2);
 
     let { newX, newY } = this.snapXYToGrid(x, y);
 

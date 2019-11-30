@@ -18,10 +18,7 @@ export class WallArea extends Area{
     topLeftX,
     topLeftY
   ) {
-    super(scene,numberOfXRects, numberOfYRects +2, topLeftX, topLeftY, 2*wallPartRadius)
-
-    this.numberOfXRects = numberOfXRects;
-    this.numberOfYRects = numberOfYRects;
+    super(scene,numberOfXRects, numberOfYRects, topLeftX, topLeftY, 2*wallPartRadius)
 
     this.createWallSides(topLeftX, topLeftY);
     this.width = this.calculateWidth();
@@ -32,10 +29,9 @@ export class WallArea extends Area{
 
   private makeHoles(holePosition) {
     this.parts[0][holePosition].deleteContent();
-    //this.parts[0][holePosition] = 0
     this.parts[holePosition][0].deleteContent();
-    this.parts[this.numberOfYRects + 1][holePosition].deleteContent();
-    this.parts[holePosition][this.numberOfXRects - 1].deleteContent();
+    this.parts[this.sizeOfYAxis -1][holePosition].deleteContent();
+    this.parts[holePosition][this.sizeOfXAxis - 1].deleteContent();
   }
 
   static withHoles(
@@ -58,11 +54,11 @@ export class WallArea extends Area{
   }
 
   private calculateWidth() {
-    return this.numberOfXRects * this.parts[0][0].width;
+    return this.sizeOfXAxis * this.parts[0][0].width;
   }
 
   private calculateHeight() {
-    return (this.numberOfYRects + 1) * this.parts[0][0].height;
+    return this.sizeOfYAxis * this.parts[0][0].height;
   }
 
   private createWallSide(
@@ -81,7 +77,7 @@ export class WallArea extends Area{
         this.parts[0][index].updateContent(curRect)
         x += 2 * wallPartRadius;
       } else if (wallSide === "bottom") {
-        this.parts[this.numberOfYRects + 1][index].updateContent(curRect)
+        this.parts[this.sizeOfYAxis -1][index].updateContent(curRect)
         x += 2 * wallPartRadius;
       } else if (wallSide === "left") {
         this.parts[index + 1][0].updateContent(curRect);
@@ -95,23 +91,23 @@ export class WallArea extends Area{
     let x = topLeftX + wallPartRadius;
     let y = topLeftY + wallPartRadius;
 
-    this.createWallSide(x, y, this.numberOfXRects, "top");
+    this.createWallSide(x, y, this.sizeOfXAxis, "top");
 
-    let lastRect = this.parts[0][this.numberOfXRects - 1];
+    let lastRect = this.parts[0][this.sizeOfXAxis - 1];
     let lastXRectX = lastRect.x;
 
     x = topLeftX + wallPartRadius;
-    this.createWallSide(x, y, this.numberOfYRects, "left");
+    this.createWallSide(x, y, this.sizeOfYAxis -2, "left");
 
-    lastRect = this.parts[this.numberOfYRects][0];
+    lastRect = this.parts[this.sizeOfYAxis -2][0];
     let lastYRectY = lastRect.y;
 
     y = lastYRectY + 2 * wallPartRadius;
-    this.createWallSide(x, y, this.numberOfXRects, "bottom");
+    this.createWallSide(x, y, this.sizeOfXAxis, "bottom");
 
     y = topLeftY + wallPartRadius;
     x = lastXRectX;
-    this.createWallSide(x, y, this.numberOfYRects, "right");
+    this.createWallSide(x, y, this.sizeOfYAxis-2, "right");
   }
 
   calculateRandValidSpawnPosition(
@@ -158,7 +154,7 @@ export class WallArea extends Area{
       edgeCorrection;
 
     //TODO: were are still 2*radius off, probably the edge cases
-    let yMultiplier = Phaser.Math.Between(0, this.numberOfYRects - 1);
+    let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis-2);
     edgeCorrection = 0;
     if (
       wallPartRadius + yMultiplier * 2 * wallPartRadius <

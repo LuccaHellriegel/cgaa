@@ -7,6 +7,7 @@ import {
 } from "../../global";
 import { PositionService } from "../../services/PositionService";
 import { WallArea } from "./WallArea";
+import { BuildingService } from "../BuildingService";
 
 export class WallAreaWithBuildings extends WallArea {
   buildings: Building[];
@@ -42,7 +43,7 @@ export class WallAreaWithBuildings extends WallArea {
       rectBuildinghalfHeight + 2 * wallPartRadius
     );
     while (
-      PositionService.checkIfOnTopOfOtherBuildingOrSpawnArea(
+      BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         this.buildings,
         randX,
         randY
@@ -65,8 +66,8 @@ export class WallAreaWithBuildings extends WallArea {
     let x = this.topLeftX;
     let y = this.topLeftY;
 
-    for (let i = 0; i < this.numberOfYRects + 2; i++) {
-      for (let k = 0; k < this.numberOfXRects; k++) {
+    for (let i = 0; i < this.sizeOfYAxis; i++) {
+      for (let k = 0; k < this.sizeOfXAxis; k++) {
         if (
           building.x - rectBuildingHalfWidth === x &&
           building.y - rectBuildinghalfHeight === y
