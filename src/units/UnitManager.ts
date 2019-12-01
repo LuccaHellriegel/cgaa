@@ -1,10 +1,10 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { Player } from "../player/Player";
-import { AreaPopulator } from "../units/populators/AreaPopulator";
+import { Player } from "./Player";
+import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
-import { BuildingPopulator } from "../units/populators/BuildingPopulator";
-import { EnemyCircle } from "../units/circles/EnemyCircle";
+import { BuildingPopulator } from "./populators/BuildingPopulator";
+import { EnemyCircle } from "./circles/EnemyCircle";
 
 export class UnitManager {
   scene: Gameplay;

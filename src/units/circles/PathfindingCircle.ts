@@ -1,12 +1,9 @@
-import { Circle } from "./Circle";
 import { Gameplay } from "../../scenes/Gameplay";
-import { WallArea } from "../../env/areas/WallArea";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 import { EnemyCircle } from "./EnemyCircle";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import EasyStar from "easystarjs";
-import { PositionService } from "../../services/PositionService";
-import { Area } from "../../env/areas/Area";
+import { PositionService } from "../PositionService";
 
 export class PathfindingCircle extends EnemyCircle {
   easyStar: EasyStar.js;

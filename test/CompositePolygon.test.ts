@@ -4,8 +4,8 @@ import {
 
 import {
     CompositePolygon
-} from "../js/polygon/CompositePolygon"
-import { Point } from "../js/polygon/Point";
+} from "../src/polygon/CompositePolygon"
+import { Point } from "../src/polygon/Point";
 
 describe("Test CompositePolygon", function () {
 

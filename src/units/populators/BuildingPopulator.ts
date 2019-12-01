@@ -1,6 +1,6 @@
 import { Populator } from "./Populator";
 import { Gameplay } from "../../scenes/Gameplay";
-import { Building } from "../../env/Building";
+import { Building } from "../../env/buildings/Building";
 import { PathfindingCircle } from "../circles/PathfindingCircle";
 import EasyStar from "easystarjs";
 

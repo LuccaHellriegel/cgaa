@@ -1,6 +1,4 @@
 import {
-  rectBuildingHalfWidth,
-  rectBuildinghalfHeight,
   wallPartHalfSize
 } from "../globals/globalSizes";
 
@@ -90,19 +88,6 @@ export class PositionService {
       x +
       " " +
       y;
-  }
-
-  static findClosestArea(areas: any[], x, y) {
-    let closesArea;
-    let curDistance: number = Infinity;
-    areas.forEach(wallArea => {
-      let newDist = Math.hypot( wallArea.x-x, wallArea.y-y)
-      if (newDist < curDistance) {
-        closesArea = wallArea;
-        curDistance = newDist;
-      }
-    });
-    return closesArea;
   }
 
 }

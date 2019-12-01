@@ -3,7 +3,7 @@ import {
 } from "chai"
 import {
     ArrowHeadPolygon
-} from "../js/polygon/ArrowHeadPolygon"
+} from "../src/polygon/ArrowHeadPolygon"
 
 describe("Test ArrowHeadPolygon", function () {
 

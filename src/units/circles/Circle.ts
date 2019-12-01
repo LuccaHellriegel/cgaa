@@ -1,5 +1,5 @@
 import { CirclePolygon } from "../../polygon/CirclePolygon";
-import { BaseSprite } from "../../graphic/BaseSprite";
+import { BaseSprite } from "../../base/BaseSprite";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { debugModus } from "../../globals/globalConfig";
 import { Gameplay } from "../../scenes/Gameplay";

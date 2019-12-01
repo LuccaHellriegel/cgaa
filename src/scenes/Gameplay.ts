@@ -1,19 +1,19 @@
 // import damage from "../../assets/audio/damage.mp3";
 // import hit from "../../assets/audio/hit.mp3";
 // import step from "../../assets/audio/step.mp3";
-import { Player } from "../player/Player";
-import { PlayerMovement } from "../player/PlayerMovement";
+import { Player } from "../units/Player";
+import { MovementManager } from "../input/MovementManager";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { createAnims } from "../graphic/anims";
-import { UnitManager } from "../managers/UnitManager";
+import { UnitManager } from "../units/UnitManager";
 import { GeneratorService } from "../graphic/generator/GeneratorService";
-import { AreaManager } from "../managers/AreaManager";
+import { AreaManager } from "../env/AreaManager";
 import { debugModus } from "../globals/globalConfig";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
   enemies: any[];
-  playerMovement: PlayerMovement;
+  playerMovement: MovementManager;
   polygonOffset: number;
   unitManager: UnitManager;
   areaManager: AreaManager;

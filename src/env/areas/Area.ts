@@ -1,4 +1,3 @@
-import { Gameplay } from "../../scenes/Gameplay";
 import { AreaPart } from "./AreaPart";
 import { AreaService } from "./AreaService";
 

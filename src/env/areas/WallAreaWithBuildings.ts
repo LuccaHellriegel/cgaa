@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Building } from "../Building";
+import { Building } from "../buildings/Building";
 import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
@@ -7,7 +7,7 @@ import {
   rectBuildingInWallParts
 } from "../../globals/globalSizes";
 import { WallArea } from "./WallArea";
-import { BuildingService } from "../BuildingService";
+import { BuildingService } from "../buildings/BuildingService";
 
 export class WallAreaWithBuildings extends WallArea {
   buildings: Building[];

@@ -1,6 +1,6 @@
-import { Player } from "./Player";
+import { Player } from "../units/Player";
 
-export class PlayerMovement {
+export class MovementManager {
     left: Boolean;
     right: Boolean;
     up: Boolean;

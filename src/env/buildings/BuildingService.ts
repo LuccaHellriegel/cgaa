@@ -2,7 +2,7 @@ import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
   wallPartHalfSize
-} from "../globals/globalSizes";
+} from "../../globals/globalSizes";
 
 export class BuildingService {
   private constructor() {}

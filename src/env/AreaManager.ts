@@ -1,9 +1,9 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { WallArea } from "../env/areas/WallArea";
+import { WallArea } from "./areas/WallArea";
 import { wallPartHalfSize } from "../globals/globalSizes";
-import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
-import { Area } from "../env/areas/Area";
-import { AreaService } from "../env/areas/AreaService";
+import { WallAreaWithBuildings } from "./areas/WallAreaWithBuildings";
+import { Area } from "./areas/Area";
+import { AreaService } from "./areas/AreaService";
 
 export class AreaManager {
   scene: Gameplay;

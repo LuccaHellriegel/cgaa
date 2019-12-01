@@ -1,4 +1,4 @@
-import { BaseImage } from "../graphic/BaseImage";
+import { BaseImage } from "../../base/BaseImage";
 import { BuildingService } from "./BuildingService";
 
 export class Building extends BaseImage {

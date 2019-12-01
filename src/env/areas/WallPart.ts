@@ -1,4 +1,4 @@
-import { BaseImage } from "../../graphic/BaseImage";
+import { BaseImage } from "../../base/BaseImage";
 
 export class WallPart extends BaseImage {
   x: number;

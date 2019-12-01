@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { WallPart } from "./WallPart";
 import { wallPartHalfSize } from "../../globals/globalSizes";
-import { GeometryService } from "../../services/GeometryService";
+import { AreaService } from "../../services/AreaService";
 import { Area } from "./Area";
 import { AreaService } from "./AreaService";
 
@@ -175,7 +175,7 @@ export class WallArea extends Area {
   }
 
   calculateBorderObject() {
-    return GeometryService.calculateBorderObjectFromPartsAndSize(
+    return AreaService.calculateBorderObjectFromPartsAndSize(
       this.parts,
       this.width,
       this.height
