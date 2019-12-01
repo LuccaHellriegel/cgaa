@@ -1,9 +1,8 @@
 import { CirclePolygon } from "../../polygon/CirclePolygon";
 import { BaseSprite } from "../../graphic/BaseSprite";
-import { normalCircleRadius, wallPartRadius } from "../../global";
+import { normalCircleRadius } from "../../global";
 import { debugModus } from "../../global";
 import { Gameplay } from "../../scenes/Gameplay";
-import { WallArea } from "../../env/areas/WallArea";
 
 export abstract class Circle extends BaseSprite {
   polygon: CirclePolygon;
@@ -52,27 +51,8 @@ export abstract class Circle extends BaseSprite {
     this.scene.events.emit("damage-" + this.unitType, amount);
   }
 
-  findClosestsWallArea(wallAreas: WallArea[]) {
-    let closesWallArea: WallArea;
-    let curDistance: number = Infinity;
-    wallAreas.forEach(wallArea => {
-      let newDist = Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        wallArea.x,
-        wallArea.y
-      );
-      if (newDist < curDistance) {
-        closesWallArea = wallArea;
-        curDistance = newDist;
-      }
-    });
-    return closesWallArea;
-  }
-
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
-    //TODO: make radius as option
     this.polygon.setPosition(this.x, this.y);
 
     if (debugModus) this.draw();

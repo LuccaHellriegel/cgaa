@@ -3,15 +3,9 @@ import { WallPart } from "./WallPart";
 import { wallPartRadius } from "../../global";
 import { GeometryService } from "../../services/GeometryService";
 import { Area } from "./Area";
-import { AreaPart } from "./AreaPart";
 import { AreaService } from "./AreaService";
 
 export class WallArea extends Area {
-  numberOfXRects: any;
-  numberOfYRects: any;
-  width: number;
-  height: number;
-
   constructor(
     scene: Gameplay,
     numberOfXRects,
@@ -28,12 +22,7 @@ export class WallArea extends Area {
       2 * wallPartRadius
     );
     this.createWallSides(topLeftX, topLeftY);
-    AreaService.updateWalkableArr(
-      this.sizeOfXAxis,
-      this.sizeOfYAxis,
-      this.parts,
-      this.walkableArr
-    );
+
   }
 
   static withHolesAndBuildings() {}
@@ -61,13 +50,8 @@ export class WallArea extends Area {
       topLeftY
     );
     wallArea.makeHoles(holePosition);
-      //TODO: doubling here is not good, same problem as in WallAreaWithBuildings
-    AreaService.updateWalkableArr(
-      wallArea.sizeOfXAxis,
-      wallArea.sizeOfYAxis,
-      wallArea.parts,
-      wallArea.walkableArr
-    );
+    //TODO: doubling here is not good, same problem as in WallAreaWithBuildings
+    
     return wallArea;
   }
 

@@ -2,16 +2,20 @@ import { Gameplay } from "../scenes/Gameplay";
 import { WallArea } from "../env/areas/WallArea";
 import { wallPartRadius } from "../global";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
+import { Area } from "../env/areas/Area";
+import { AreaService } from "../env/areas/AreaService";
 
 export class AreaManager {
   scene: Gameplay;
-  wallAreas: WallArea[];
+  areas: Area[][];
   borderWall: WallArea;
+  walkableArr: number[][];
   constructor(scene: Gameplay) {
     this.scene = scene;
-    this.wallAreas = [];
+    this.areas = [];
 
-    this.createWallAreas();
+    this.createAreas();
+    this.calculateCumulativeWalkAbleArr();
   }
 
   //TODO: can push other Sprite into wall
@@ -27,39 +31,101 @@ export class AreaManager {
     unit.setVelocity(0, 0);
   }
 
-  private createWallAreas() {
-    this.wallAreas.push(WallAreaWithBuildings.withHoles(this.scene, 20, 18, 0, 0, 9));
-    this.wallAreas.push(
+  private createFirstRowOfAreas() {
+    let row: Area[] = [];
+    row.push(WallAreaWithBuildings.withHoles(this.scene, 20, 20, 0, 0, 9));
+    row.push(new Area(this.scene, 20, 20, row[0].width, 0, 2 * wallPartRadius));
+    row.push(
       WallAreaWithBuildings.withHoles(
         this.scene,
         20,
-        18,
-        this.wallAreas[0].width * 2,
+        20,
+        row[0].width * 2,
         0,
-        9
-      )
-    );
-    this.wallAreas.push(
-      WallAreaWithBuildings.withHoles(
-        this.scene,
-        20,
-        18,
-        0,
-        this.wallAreas[0].height * 2,
-        9
-      )
-    );
-    this.wallAreas.push(
-      WallAreaWithBuildings.withHoles(
-        this.scene,
-        20,
-        18,
-        this.wallAreas[0].width * 2,
-        this.wallAreas[0].height * 2,
         9
       )
     );
 
+    this.areas.push(row);
+  }
+
+  private createSecondRowOfAreas() {
+    let row: Area[] = [];
+    row.push(
+      new Area(
+        this.scene,
+        20,
+        20,
+        0,
+        this.areas[0][0].height,
+        2 * wallPartRadius
+      )
+    );
+    row.push(
+      new Area(
+        this.scene,
+        20,
+        20,
+        this.areas[0][0].width,
+        this.areas[0][0].height,
+        2 * wallPartRadius
+      )
+    );
+    row.push(
+      new Area(
+        this.scene,
+        20,
+        20,
+        2 * this.areas[0][0].width,
+        this.areas[0][0].height,
+        2 * wallPartRadius
+      )
+    );
+    this.areas.push(row);
+  }
+
+  private createThirdRowOfAreas() {
+    let row: Area[] = [];
+
+    row.push(
+      WallAreaWithBuildings.withHoles(
+        this.scene,
+        20,
+        20,
+        0,
+        this.areas[0][0].height * 2,
+        9
+      )
+    );
+
+    row.push(
+      new Area(
+        this.scene,
+        20,
+        20,
+        this.areas[0][0].width,
+        2 * this.areas[0][0].height,
+        2 * wallPartRadius
+      )
+    );
+
+    row.push(
+      WallAreaWithBuildings.withHoles(
+        this.scene,
+        20,
+        20,
+        this.areas[0][0].width * 2,
+        this.areas[0][0].height * 2,
+        9
+      )
+    );
+    this.areas.push(row);
+  }
+
+  private createAreas() {
+    this.createFirstRowOfAreas();
+    this.createSecondRowOfAreas();
+    this.createThirdRowOfAreas();
     this.borderWall = new WallArea(
       this.scene,
       62,
@@ -67,25 +133,38 @@ export class AreaManager {
       -2 * wallPartRadius,
       -2 * wallPartRadius
     );
-  
+  }
+
+  private calculateCumulativeWalkAbleArr() {
+    let walkableArrArr: number[][][][] = [];
+    this.areas.forEach(areaRow => {
+      let row: number[][][] = [];
+      areaRow.forEach(area => {
+        row.push(area.calculateWalkableArr());
+      });
+      walkableArrArr.push(row);
+    });
+    this.walkableArr = AreaService.createCumulativeWalkableArr(walkableArrArr);
   }
 
   setupAreaColliders() {
-    this.wallAreas.forEach(wallArea => {
-      this.scene.physics.add.collider(
-        this.scene.player.physicsGroup,
-        wallArea.physicsGroup,
-        this.bounceCallback,
-        null,
-        this
-      );
-      this.scene.physics.add.collider(
-        this.scene.unitManager.enemies[0].physicsGroup,
-        wallArea.physicsGroup,
-        this.bounceCallback,
-        null,
-        this
-      );
+    this.areas.forEach(areaRow => {
+      areaRow.forEach(area => {
+        this.scene.physics.add.collider(
+          this.scene.player.physicsGroup,
+          area.physicsGroup,
+          this.bounceCallback,
+          null,
+          this
+        );
+        this.scene.physics.add.collider(
+          this.scene.unitManager.enemies[0].physicsGroup,
+          area.physicsGroup,
+          this.bounceCallback,
+          null,
+          this
+        );
+      });
     });
   }
 }

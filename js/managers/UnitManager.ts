@@ -3,12 +3,10 @@ import { Player } from "../player/Player";
 import {
   playerStartX,
   playerStartY,
-  playerTextureName,
-  wallPartRadius
+  playerTextureName
 } from "../global";
 import { AreaPopulator } from "../units/populators/AreaPopulator";
 import EasyStar from "easystarjs";
-import { PathfindingCircle } from "../units/circles/PathfindingCircle";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { BuildingPopulator } from "../units/populators/BuildingPopulator";
 
@@ -38,19 +36,21 @@ export class UnitManager {
 
     let enemyPhysics = this.scene.physics.add.group();
     let enemyWeapons = this.scene.physics.add.group();
-    this.scene.areaManager.wallAreas.forEach(wallArea => {
-      new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, wallArea);
-      (wallArea as WallAreaWithBuildings).buildings.forEach(
-        building => {
-          new BuildingPopulator(
-            this.scene,
-            enemyPhysics,
-            enemyWeapons,
-            building,
-            this.easyStar
-          );
+    this.scene.areaManager.areas.forEach(areaRow => {
+      areaRow.forEach(area => {
+        if (area instanceof WallAreaWithBuildings) {
+          new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, area);
+          (area as WallAreaWithBuildings).buildings.forEach(building => {
+            new BuildingPopulator(
+              this.scene,
+              enemyPhysics,
+              enemyWeapons,
+              building,
+              this.easyStar
+            );
+          });
         }
-      );
+      });
     });
 
     this.scene.physics.add.collider(
@@ -72,6 +72,7 @@ export class UnitManager {
     );
   }
 
+  //TODO: might be faster to use big hitbox for circles and then fire this one, takes up 25% of performance time
   checkWeaponOverlap() {
     for (let index = 0; index < this.enemies.length; index++) {
       let playerWeapon = this.scene.player.weapon;

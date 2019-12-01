@@ -48,59 +48,61 @@ export class PositionService {
     return { newX, newY };
   }
 
-  //TODO: idea just calculate arr for all the points and then make distance check
-  private static tryToFindRelativPosInWallArea(
-    wallArea,
+  private static tryToFindRelativePosInArr(
+    walkableArr,
     x,
-    y,
-    topLeftX,
-    topLeftY
+    y
   ) {
-    for (let i = 0; i < wallArea.sizeOfYAxis; i++) {
-      for (let k = 0; k < wallArea.sizeOfXAxis; k++) {
+    //TODO: symmetrical arr is assumed
+
+    let curXInArr = 0
+    let curYInArr = 0
+    for (let i = 0; i < walkableArr.length; i++) {
+      for (let k = 0; k < walkableArr[0].length; k++) {
         if (
-          x - wallPartRadius === topLeftX &&
-          y - wallPartRadius === topLeftY
+          x - wallPartRadius === curXInArr &&
+          y - wallPartRadius === curYInArr
         ) {
           return { row: i, column: k };
         }
-        topLeftX += 2 * wallPartRadius;
+        curXInArr += 2 * wallPartRadius;
       }
-      topLeftY += 2 * wallPartRadius;
+      curYInArr += 2 * wallPartRadius;
 
-      topLeftX =
-        wallArea.x - 2 * wallPartRadius * (wallArea.sizeOfXAxis / 2);
+      curXInArr = 0
     }
 
     return null;
   }
 
-  static findCurRelativePosInWallArea(wallArea, x, y) {
-    let topLeftX =
-      wallArea.x - 2 * wallPartRadius * (wallArea.sizeOfXAxis / 2);
-    let topLeftY =
-      wallArea.y - 2 * wallPartRadius * ((wallArea.sizeOfYAxis) / 2);
-
+  static findCurRelativePosition(walkableArr: number[][], x, y) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
-    let relPos = this.tryToFindRelativPosInWallArea(
-      wallArea,
+    let relPos = this.tryToFindRelativePosInArr(
+      walkableArr,
       newX,
-      newY,
-      topLeftX,
-      topLeftY
+      newY
     );
 
     if (relPos) return relPos;
 
-    throw "No relative position found for wallArea " +
-      wallArea.x +
-      " " +
-      wallArea.y +
-      " and point " +
+    throw "No relative position found for point " +
       x +
       " " +
       y;
+  }
+
+  static findClosestArea(areas: any[], x, y) {
+    let closesArea;
+    let curDistance: number = Infinity;
+    areas.forEach(wallArea => {
+      let newDist = Math.hypot( wallArea.x-x, wallArea.y-y)
+      if (newDist < curDistance) {
+        closesArea = wallArea;
+        curDistance = newDist;
+      }
+    });
+    return closesArea;
   }
 
 }

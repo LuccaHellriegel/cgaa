@@ -1,5 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { AreaPart } from "./AreaPart";
+import { AreaService } from "./AreaService";
 
 export class Area {
   parts: AreaPart[][] = [];
@@ -13,7 +14,6 @@ export class Area {
   topLeftY: any;
   width: number;
   height: number;
-  walkableArr: number[][];
 
   constructor(
     scene: Gameplay,
@@ -23,6 +23,7 @@ export class Area {
     topLeftY,
     unitForPart
   ) {
+    //TODO: make physics Group as input, I just need one for env collision
     this.scene = scene;
     this.physicsGroup = scene.physics.add.staticGroup();
 
@@ -35,27 +36,17 @@ export class Area {
 
     this.sizeOfXAxis = sizeOfXAxis;
     this.sizeOfYAxis = sizeOfYAxis;
-    this.topLeftX = topLeftX
-    this.topLeftY = topLeftY
+    this.topLeftX = topLeftX;
+    this.topLeftY = topLeftY;
 
     this.x = topLeftX + unitForPart * (sizeOfXAxis / 2);
     this.y = topLeftY + unitForPart * (sizeOfYAxis / 2);
 
-    this.width = sizeOfXAxis * unitForPart
-    this.height = sizeOfYAxis * unitForPart
-
-    this.createEmptyWalkableArr()
+    this.width = sizeOfXAxis * unitForPart;
+    this.height = sizeOfYAxis * unitForPart;
   }
 
-  private createEmptyWalkableArr(){
-    let walkableMap: number[][] = [];
-    for (let i = 0; i < this.sizeOfYAxis; i++) {
-      let row: number[] = [];
-      for (let k = 0; k < this.sizeOfXAxis; k++) {
-        row.push(0);
-      }
-      walkableMap.push(row);
-    }
-    this.walkableArr = walkableMap
+  calculateWalkableArr() {
+    return AreaService.createWalkableArr(this.parts);
   }
 }

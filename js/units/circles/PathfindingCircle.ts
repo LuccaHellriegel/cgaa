@@ -6,14 +6,14 @@ import { EnemyCircle } from "./EnemyCircle";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import EasyStar from "easystarjs";
 import { PositionService } from "../../services/PositionService";
-import { AreaService } from "../../env/areas/AreaService";
-import { WallAreaWithBuildings } from "../../env/areas/WallAreaWithBuildings";
+import { Area } from "../../env/areas/Area";
 
 export class PathfindingCircle extends EnemyCircle {
   easyStar: EasyStar.js;
   curPosInPath = 0;
   path;
-  curArea: WallArea;
+  relativeGoalPositionRow: number = 29;
+  realtiveGoalPositionColumn: number = 29;
   //TODO: better solution than passing the Class to Populator
   private constructor(
     scene: Gameplay,
@@ -28,7 +28,7 @@ export class PathfindingCircle extends EnemyCircle {
     this.easyStar = easyStar;
     this.scene.time.addEvent({
       delay: 1000,
-      callback: this.pathCallbackWithFindingArea,
+      callback: this.calculatePathCallback,
       callbackScope: this
     });
   }
@@ -45,26 +45,24 @@ export class PathfindingCircle extends EnemyCircle {
     );
   }
 
-  pathCallbackWithFindingArea() {
-    //TODO: renamve to clostest area, and in areaManager too to areas
-    this.curArea = this.findClosestsWallArea(this.scene.areaManager.wallAreas);
-    this.calculatePath(this.curArea);
+  private calculatePathCallback() {
+    this.calculatePath(this.scene.areaManager.walkableArr);
   }
 
-  calculatePath(wallArea: WallArea) {
-    let map = wallArea.walkableArr;
+  calculatePath(walkableArr) {
+    let map = walkableArr;
     this.easyStar.setGrid(map);
     this.easyStar.setAcceptableTiles([0]);
-    let { row, column } = PositionService.findCurRelativePosInWallArea(
-      wallArea,
+    let { row, column } = PositionService.findCurRelativePosition(
+      walkableArr,
       this.x,
       this.y
     );
     this.easyStar.findPath(
       column,
       row,
-      19,
-      9,
+      this.realtiveGoalPositionColumn,
+      this.relativeGoalPositionRow,
       function(path) {
         if (path === null) {
           console.log("Path was not found.");
@@ -80,11 +78,11 @@ export class PathfindingCircle extends EnemyCircle {
     super.preUpdate(time, delta);
     if (this.path && this.path[this.curPosInPath]) {
       let x =
-        this.curArea.topLeftX +
+        0 +
         this.path[this.curPosInPath].x * 2 * wallPartRadius +
         wallPartRadius;
       let y =
-        this.curArea.topLeftY +
+       0 +
         this.path[this.curPosInPath].y * 2 * wallPartRadius +
         wallPartRadius;
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
@@ -93,7 +91,7 @@ export class PathfindingCircle extends EnemyCircle {
         this.scene.physics.moveTo(this, x, y, 160);
       }
     } else if (this.path && this.curPosInPath >= this.path.length) {
-      this.setVelocity(0, 0);
+      this.setVelocity(0,0)
     }
   }
 }

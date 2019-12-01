@@ -31,13 +31,6 @@ export class WallAreaWithBuildings extends WallArea {
     this.buildBuilding();
     this.buildBuilding();
 
-    AreaService.updateWalkableArr(
-      this.sizeOfXAxis,
-      this.sizeOfYAxis,
-      this.parts,
-      this.walkableArr
-    );
-
   }
 
   private buildBuilding() {
