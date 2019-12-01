@@ -1,5 +1,5 @@
 import {Weapon} from "./Weapon"
-import { CompositePolygon } from "../../polygon/CompositePolygon";
+import { CompositePolygon } from "../polygon/CompositePolygon";
 
 export abstract class PolygonWeapon extends Weapon {
     polygon: CompositePolygon;

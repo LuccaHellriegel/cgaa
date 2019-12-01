@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 import { EnemyCircle } from "./EnemyCircle";
-import { ChainWeapon } from "../weapons/ChainWeapon";
+import { ChainWeapon } from "../../weapons/ChainWeapon";
 import EasyStar from "easystarjs";
 import { PositionService } from "../PositionService";
 

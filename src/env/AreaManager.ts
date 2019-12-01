@@ -18,21 +18,16 @@ export class AreaManager {
     this.physicsGroup = scene.physics.add.staticGroup();
 
     this.createAreas();
+    scene.physics.world.setBounds(
+      0,
+      0,
+      this.borderWall.width - 4 * wallPartHalfSize,
+      this.borderWall.width - 4 * wallPartHalfSize
+    );
+
     this.calculateCumulativeWalkAbleArr();
   }
-
-  //TODO: can push other Sprite into wall
-  private bounceCallback(unit, rect) {
-    let x = unit.x;
-    let y = unit.y;
-    let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
-
-    let bounceBackDistance = 0.5;
-    let x1 = x + Math.cos(angle) * bounceBackDistance;
-    let y1 = y + Math.sin(angle) * bounceBackDistance;
-    unit.setPosition(x1, y1);
-    unit.setVelocity(0, 0);
-  }
+ 
 
   private toggleIfAreaConfigIsEmpty() {
     this.areaConfig.hasWalls = !this.areaConfig.hasWalls;
@@ -45,7 +40,6 @@ export class AreaManager {
     this.areaConfig.topLeftY = startingTopLeftY;
     let stepCount = 0;
     isEmptyArr.forEach(isEmpty => {
-      console.log(isEmpty)
       if (isEmpty) this.toggleIfAreaConfigIsEmpty();
       this.areaConfig.topLeftX += stepCount * rightStepValue;
       row.push(AreaFactory.createArea(this.areaConfig));
@@ -66,7 +60,7 @@ export class AreaManager {
       hasHoles: true,
       holePosition: 9,
       hasBuildings: true,
-      numbOfBuildings: 8,
+      numbOfBuildings: 1,
       scene: this.scene
     };
 
@@ -95,6 +89,19 @@ export class AreaManager {
     });
     this.walkableArr = AreaService.createCumulativeWalkableArr(walkableArrArr);
   }
+
+ //TODO: can push other Sprite into wall
+ private bounceCallback(unit, rect) {
+  let x = unit.x;
+  let y = unit.y;
+  let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
+
+  let bounceBackDistance = 0.5;
+  let x1 = x + Math.cos(angle) * bounceBackDistance;
+  let y1 = y + Math.sin(angle) * bounceBackDistance;
+  unit.setPosition(x1, y1);
+  unit.setVelocity(0, 0);
+}
 
   setupAreaColliders() {
     this.scene.physics.add.collider(this.scene.player.physicsGroup, this.physicsGroup, this.bounceCallback, null, this);

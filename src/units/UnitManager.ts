@@ -14,9 +14,12 @@ export class UnitManager {
 
   constructor(scene: Gameplay) {
     this.scene = scene;
+    scene.unitManager = this
     this.enemyPhysics = this.scene.physics.add.group();
     this.enemyWeapons = this.scene.physics.add.group();
     this.easyStar = new EasyStar.js();
+
+    this.spawnUnits()
   }
 
   spawnUnits() {
@@ -60,6 +63,7 @@ export class UnitManager {
   }
 
   private considerDamage(weapon, enemy) {
+    
     console.log("Collision: " + weapon.polygon.checkForCollision(enemy.polygon));
     console.log("Weapon attacking: " + weapon.attacking);
     console.log("Already attacked: " + weapon.alreadyAttacked.includes(enemy.id));

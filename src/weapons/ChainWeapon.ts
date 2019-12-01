@@ -1,12 +1,12 @@
 import {
     CompositePolygon
-} from "../../polygon/CompositePolygon"
+} from "../polygon/CompositePolygon"
 import {
     PolygonWeapon
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../../globals/globalSizes"
+} from "../globals/globalSizes"
 export class ChainWeapon extends PolygonWeapon {
     numberOfSmallCircles: number
     numberOfBiggerCircles: number

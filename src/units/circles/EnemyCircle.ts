@@ -2,7 +2,7 @@ import { HealthBar } from "../../ui/healthbars/HealthBar";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
-import { PolygonWeapon } from "../weapons/PolygonWeapon";
+import { PolygonWeapon } from "../../weapons/PolygonWeapon";
 
 export class EnemyCircle extends CircleWithWeapon {
   hasBeenAttacked: boolean;

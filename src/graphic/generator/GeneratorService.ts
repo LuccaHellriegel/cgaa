@@ -11,7 +11,7 @@ export class GeneratorService {
   private constructor() {
   }
 
-  static executeGeneration(scene) {
+  static generateTextures(scene) {
       this.generateUnits(scene)
       this.generateWeapons(scene)
       this.generateEnvironment(scene)

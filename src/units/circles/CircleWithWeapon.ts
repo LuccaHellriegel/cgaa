@@ -1,8 +1,8 @@
 import { Circle } from "./Circle";
-import { ChainWeapon } from "../weapons/ChainWeapon";
-import { RandWeapon } from "../weapons/RandWeapon";
-import { PolygonWeapon } from "../weapons/PolygonWeapon";
-import { Weapon } from "../weapons/Weapon";
+import { ChainWeapon } from "../../weapons/ChainWeapon";
+import { RandWeapon } from "../../weapons/RandWeapon";
+import { PolygonWeapon } from "../../weapons/PolygonWeapon";
+import { Weapon } from "../../weapons/Weapon";
 export class CircleWithWeapon extends Circle {
   weapon: PolygonWeapon;
 

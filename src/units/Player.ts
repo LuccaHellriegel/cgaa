@@ -5,7 +5,7 @@ import {
   playerStartY,
   playerTextureName
 } from "../globals/globalConfig";
-import { ChainWeapon } from "./weapons/ChainWeapon";
+import { ChainWeapon } from "../weapons/ChainWeapon";
 export class Player extends CircleWithWeapon {
   constructor(scene, physicsGroup, weapon) {
     super(
