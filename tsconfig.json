@@ -7,5 +7,5 @@
     "esModuleInterop": true,
     "types": ["phaser", "mocha"]
   },
-  "include": ["./js/**/*"]
+  "include": ["src/**/*"]
 }

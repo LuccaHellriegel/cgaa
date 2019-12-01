@@ -3,8 +3,8 @@ import {
   wallPartHalfSize,
   rectBuildingHalfWidth,
   rectBuildinghalfHeight
-} from "../js/global";
-import { BuildingService } from "../js/env/BuildingService";
+} from "../src/global";
+import { BuildingService } from "../src/env/BuildingService";
 
 describe("Test BuildingService", function() {
   describe("Calculate valid spawn positions around building", function() {

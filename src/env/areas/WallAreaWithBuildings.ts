@@ -3,7 +3,8 @@ import { Building } from "../Building";
 import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
-  wallPartHalfSize
+  wallPartHalfSize,
+  rectBuildingInWallParts
 } from "../../global";
 import { WallArea } from "./WallArea";
 import { BuildingService } from "../BuildingService";
@@ -21,15 +22,11 @@ export class WallAreaWithBuildings extends WallArea {
     super(scene, numberOfXRects, numberOfYRects, topLeftX, topLeftY);
 
     this.buildings = [];
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
-    this.buildBuilding();
 
+    let numberOfBuildings = 8
+    Array.from({ length: numberOfBuildings}, () => {
+      this.buildBuilding();
+    });
   }
 
   private buildBuilding() {
@@ -52,7 +49,12 @@ export class WallAreaWithBuildings extends WallArea {
       randY = result.randY;
     }
 
-    let building = new Building(this.scene, randX, randY, this.scene.areaManager.physicsGroup);
+    let building = new Building(
+      this.scene,
+      randX,
+      randY,
+      this.scene.areaManager.physicsGroup
+    );
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }
@@ -67,10 +69,9 @@ export class WallAreaWithBuildings extends WallArea {
           building.x - rectBuildingHalfWidth === x &&
           building.y - rectBuildinghalfHeight === y
         ) {
-          //TODO: depends on the fact that the building is 3* the wallpart
-          this.parts[i][k].updateContent(building);
-          this.parts[i][k+1].updateContent(building);
-          this.parts[i][k+2].updateContent(building);
+          for (let index = 0; index < rectBuildingInWallParts; index++) {
+            this.parts[i][k + index].updateContent(building);
+          }
           break;
         }
         x += 2 * wallPartHalfSize;

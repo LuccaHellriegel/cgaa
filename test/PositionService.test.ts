@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import {
   wallPartHalfSize
-} from "../js/global";
-import { PositionService } from "../js/services/PositionService";
+} from "../src/global";
+import { PositionService } from "../src/services/PositionService";
 
 describe("Test PositionService", function() {
   describe("Find relativ position in Area", function() {

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { wallPartHalfSize } from "../js/global";
-import { GeometryService } from "../js/services/GeometryService";
+import { wallPartHalfSize } from "../src/global";
+import { GeometryService } from "../src/services/GeometryService";
 
 describe("Test GeometryService", function() {
   describe("Calculate border object", function() {
