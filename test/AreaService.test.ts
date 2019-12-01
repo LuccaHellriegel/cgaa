@@ -7,8 +7,8 @@ describe("Test AreaService", function() {
     it("Empty single part map, everything is walkable", () => {
       let parts: AreaPart[][] = [[new AreaPart(null)]];
 
-      let walkAbleArr = [[0]];
-      AreaService.updateWalkableArr(1, 1, parts, walkAbleArr);
+      let walkAbleArr = AreaService.createWalkableArr(parts);
+
       let expectedWalkableArr = [[0]];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
     });
@@ -18,13 +18,8 @@ describe("Test AreaService", function() {
         [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
         [new AreaPart(null), new AreaPart(null), new AreaPart(null)]
       ];
-      let walkAbleArr = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ];
+      let walkAbleArr = AreaService.createWalkableArr(parts);
 
-      AreaService.updateWalkableArr(3, 3, parts, walkAbleArr);
       let expectedWalkableArr = [
         [0, 0, 0],
         [0, 0, 0],
@@ -38,13 +33,8 @@ describe("Test AreaService", function() {
         [new AreaPart({}), new AreaPart(null), new AreaPart({})],
         [new AreaPart({}), new AreaPart({}), new AreaPart({})]
       ];
-      let walkAbleArr = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ];
+      let walkAbleArr = AreaService.createWalkableArr(parts);
 
-      AreaService.updateWalkableArr(3, 3, parts, walkAbleArr);
       let expectedWalkableArr = [
         [1, 1, 1],
         [1, 0, 1],
@@ -90,15 +80,8 @@ describe("Test AreaService", function() {
           new AreaPart({})
         ]
       ];
-      let walkAbleArr = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
-      ];
+      let walkAbleArr = AreaService.createWalkableArr(parts);
 
-      AreaService.updateWalkableArr(5, 5, parts, walkAbleArr);
       let expectedWalkableArr = [
         [1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1],
@@ -107,6 +90,110 @@ describe("Test AreaService", function() {
         [1, 1, 1, 1, 1]
       ];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
+    });
+  });
+  describe("Calculate cumulative walkable map", function() {
+    it("1x1 areas with single field generate a joined 2x2 map", () => {
+      let area51 = [[1]];
+      let area52 = [[1]];
+      let area53 = [[1]];
+      let area54 = [[1]];
+      let walkAbleArrArr = [
+        [area51, area52],
+        [area53, area54]
+      ];
+      let expectedCumulativeMap = [
+        [1, 1],
+        [1, 1]
+      ];
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
+        walkAbleArrArr
+      );
+
+      expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
+    });
+    it("2 2x2 areas generate a joined 2x2 map", () => {
+      let area51 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let area52 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let walkAbleArrArr = [[area51, area52]];
+      let expectedCumulativeMap = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1]
+      ];
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
+        walkAbleArrArr
+      );
+      expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
+    });
+    it("4 2x2 areas generate a joined 4x4 map", () => {
+      let area51 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let area52 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let area53 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let area54 = [
+        [1, 1],
+        [1, 1]
+      ];
+      let walkAbleArrArr = [
+        [area51, area52],
+        [area53, area54]
+      ];
+      let expectedCumulativeMap = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [1, 1, 1, 1]
+      ];
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
+        walkAbleArrArr
+      );
+      expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
+    });
+    it("4 2x2 areas with 0 in them generate a joined 4x4 map", () => {
+      let area51 = [
+        [1, 1],
+        [1, 0]
+      ];
+      let area52 = [
+        [1, 0],
+        [1, 1]
+      ];
+      let area53 = [
+        [1, 1],
+        [0, 1]
+      ];
+      let area54 = [
+        [0, 1],
+        [1, 1]
+      ];
+      let walkAbleArrArr = [
+        [area51, area52],
+        [area53, area54]
+      ];
+      let expectedCumulativeMap = [
+        [1, 1, 1, 0],
+        [1, 0, 1, 1],
+        [1, 1, 0, 1],
+        [0, 1, 1, 1]
+      ];
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
+        walkAbleArrArr
+      );
+      expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
   });
 });

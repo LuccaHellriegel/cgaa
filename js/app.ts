@@ -14,6 +14,9 @@ let gameConfig = {
             debug: debugModus
         }
     },
+    scale: {
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
     scene: {}
 };
 

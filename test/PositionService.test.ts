@@ -1,19 +1,17 @@
 import { expect } from "chai";
 import {
-  wallPartRadius,
-  rectBuildingHalfWidth,
-  rectBuildinghalfHeight
+  wallPartRadius
 } from "../js/global";
 import { PositionService } from "../js/services/PositionService";
 
 describe("Test PositionService", function() {
-  describe("Find relativ position in WallArea", function() {
+  describe("Find relativ position in Area", function() {
     it("Should be in the middle of the 3x3 area", function() {
       let x = 0 + 3 * wallPartRadius;
       let y = 0 + 3 * wallPartRadius;
-      let wallArea = { x: x, y: y, sizeOfXAxis: 3, sizeOfYAxis: 3 };
-      let { row, column } = PositionService.findCurRelativePosInWallArea(
-        wallArea,
+      let walkableArr = [[0,0,0],[0,0,0],[0,0,0]];
+      let { row, column } = PositionService.findCurRelativePosition(
+        walkableArr,
         x,
         y
       );
@@ -21,11 +19,10 @@ describe("Test PositionService", function() {
       expect(column).to.equal(1);
     });
     it("Should be in middle left of the 3x3 area", function() {
-      let x = 0 + 3 * wallPartRadius;
       let y = 0 + 3 * wallPartRadius;
-      let wallArea = { x: x, y: y, sizeOfXAxis: 3, sizeOfYAxis: 3 };
-      let { row, column } = PositionService.findCurRelativePosInWallArea(
-        wallArea,
+      let walkableArr = [[0,0,0],[0,0,0],[0,0,0]];
+      let { row, column } = PositionService.findCurRelativePosition(
+        walkableArr,
         wallPartRadius,
         y
       );
@@ -34,24 +31,25 @@ describe("Test PositionService", function() {
     });
     it("Should be in the middle of the 5x5 area", function() {
       let x = 0 + 5 * wallPartRadius;
+
       let y = 0 + 5 * wallPartRadius;
-      let wallArea = { x: x, y: y, sizeOfXAxis: 5, sizeOfYAxis: 5 };
-      let { row, column } = PositionService.findCurRelativePosInWallArea(
-        wallArea,
+      let walkableArr = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+      let { row, column } = PositionService.findCurRelativePosition(
+        walkableArr,
         x,
         y
       );
       expect(row).to.equal(2);
       expect(column).to.equal(2);
     });
-    it("Should be in the middle of the 5x5 area even it the starting position is not accurate", function() {
+    it("Should be in the middle of the 5x5 area even if the starting position is not accurate", function() {
       let x = 0 + 5 * wallPartRadius;
       let y = 0 + 5 * wallPartRadius;
-      let wallArea = { x: x, y: y, sizeOfXAxis: 5, sizeOfYAxis: 5 };
-      let { row, column } = PositionService.findCurRelativePosInWallArea(
-        wallArea,
-        x - 7,
-        y - 7
+      let walkableArr = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
+      let { row, column } = PositionService.findCurRelativePosition(
+        walkableArr,
+        x -7,
+        y -7
       );
       expect(row).to.equal(2);
       expect(column).to.equal(2);
@@ -93,5 +91,19 @@ describe("Test PositionService", function() {
       expect(newY).to.equal(wallPartRadius);
     });
   });
+
+  describe("Find clostest area", function() {
+    it("One area available means it is closest", function() {
+      let areas = [{x: 0, y:0}]
+      let closestArea = PositionService.findClosestArea(areas,0,0)
+      expect(closestArea).to.equal(areas[0]);
+
+    })})
+    it("The area with dist 1 is closest", function() {
+      let areas = [{x: 1, y:0}, {x: 2, y:0}]
+      let closestArea = PositionService.findClosestArea(areas,0,0)
+      expect(closestArea).to.equal(areas[0]);
+
+    })
 
 });
