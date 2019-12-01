@@ -1,11 +1,10 @@
 export class AreaPart {
-  content: any;
+  content: any = null;
   width: number;
   height: number;
   x: any;
   y: any;
-  constructor(content) {
-    this.content = content;
+  constructor() {
   }
 
   updateContent(content){

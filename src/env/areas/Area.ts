@@ -26,7 +26,7 @@ export class Area {
     for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];
       for (let column = 0; column < sizeOfXAxis; column++) {
-        this.parts[row].push(new AreaPart(null));
+        this.parts[row].push(new AreaPart());
       }
     }
 

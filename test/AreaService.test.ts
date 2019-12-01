@@ -3,11 +3,10 @@ import { AreaService } from "../src/env/areas/AreaService";
 import { AreaPart } from "../src/env/areas/AreaPart";
 import { wallPartHalfSize } from "../src/globals/globalSizes";
 
-
 describe("Test AreaService", function() {
   describe("Calculate walkable map", function() {
     it("Empty single part map, everything is walkable", () => {
-      let parts: AreaPart[][] = [[new AreaPart(null)]];
+      let parts: AreaPart[][] = [[new AreaPart()]];
 
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -16,9 +15,9 @@ describe("Test AreaService", function() {
     });
     it("Empty 3x3 part map, everything is walkable", () => {
       let parts: AreaPart[][] = [
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)]
+        [new AreaPart(), new AreaPart(), new AreaPart()],
+        [new AreaPart(), new AreaPart(), new AreaPart()],
+        [new AreaPart(), new AreaPart(), new AreaPart()]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -32,7 +31,7 @@ describe("Test AreaService", function() {
     it("3x3 part map with border wall, only the middle is walkable", () => {
       let parts: AreaPart[][] = [
         [new AreaPart({}), new AreaPart({}), new AreaPart({})],
-        [new AreaPart({}), new AreaPart(null), new AreaPart({})],
+        [new AreaPart({}), new AreaPart(), new AreaPart({})],
         [new AreaPart({}), new AreaPart({}), new AreaPart({})]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
@@ -46,41 +45,11 @@ describe("Test AreaService", function() {
     });
     it("5x5 part map with border wall and building, only the empty spots are walkable", () => {
       let parts: AreaPart[][] = [
-        [
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({})
-        ],
-        [
-          new AreaPart({}),
-          new AreaPart(null),
-          new AreaPart(null),
-          new AreaPart(null),
-          new AreaPart({})
-        ],
-        [
-          new AreaPart({}),
-          new AreaPart(null),
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({})
-        ],
-        [
-          new AreaPart({}),
-          new AreaPart(null),
-          new AreaPart(null),
-          new AreaPart(null),
-          new AreaPart({})
-        ],
-        [
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({}),
-          new AreaPart({})
-        ]
+        [new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({})],
+        [new AreaPart({}), new AreaPart(), new AreaPart(), new AreaPart(), new AreaPart({})],
+        [new AreaPart({}), new AreaPart(), new AreaPart({}), new AreaPart({}), new AreaPart({})],
+        [new AreaPart({}), new AreaPart(), new AreaPart(), new AreaPart(), new AreaPart({})],
+        [new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({})]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -108,9 +77,7 @@ describe("Test AreaService", function() {
         [1, 1],
         [1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
-        walkAbleArrArr
-      );
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
 
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
@@ -128,9 +95,7 @@ describe("Test AreaService", function() {
         [1, 1, 1, 1],
         [1, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
-        walkAbleArrArr
-      );
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
     it("4 2x2 areas generate a joined 4x4 map", () => {
@@ -160,9 +125,7 @@ describe("Test AreaService", function() {
         [1, 1, 1, 1],
         [1, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
-        walkAbleArrArr
-      );
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
     it("4 2x2 areas with 0 in them generate a joined 4x4 map", () => {
@@ -192,9 +155,7 @@ describe("Test AreaService", function() {
         [1, 1, 0, 1],
         [0, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(
-        walkAbleArrArr
-      );
+      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
   });
