@@ -10,9 +10,12 @@ export class AreaManager {
   areas: Area[][];
   borderWall: WallArea;
   walkableArr: number[][];
+  physicsGroup: Phaser.Physics.Arcade.StaticGroup;
   constructor(scene: Gameplay) {
     this.scene = scene;
+    scene.areaManager = this
     this.areas = [];
+    this.physicsGroup = scene.physics.add.staticGroup();
 
     this.createAreas();
     this.calculateCumulativeWalkAbleArr();
@@ -34,7 +37,7 @@ export class AreaManager {
   private createFirstRowOfAreas() {
     let row: Area[] = [];
     row.push(WallAreaWithBuildings.withHoles(this.scene, 20, 20, 0, 0, 9));
-    row.push(new Area(this.scene, 20, 20, row[0].width, 0, 2 * wallPartRadius));
+    row.push(new Area(20, 20, row[0].width, 0, 2 * wallPartRadius));
     row.push(
       WallAreaWithBuildings.withHoles(
         this.scene,
@@ -51,19 +54,9 @@ export class AreaManager {
 
   private createSecondRowOfAreas() {
     let row: Area[] = [];
+    row.push(new Area(20, 20, 0, this.areas[0][0].height, 2 * wallPartRadius));
     row.push(
       new Area(
-        this.scene,
-        20,
-        20,
-        0,
-        this.areas[0][0].height,
-        2 * wallPartRadius
-      )
-    );
-    row.push(
-      new Area(
-        this.scene,
         20,
         20,
         this.areas[0][0].width,
@@ -73,7 +66,6 @@ export class AreaManager {
     );
     row.push(
       new Area(
-        this.scene,
         20,
         20,
         2 * this.areas[0][0].width,
@@ -100,7 +92,6 @@ export class AreaManager {
 
     row.push(
       new Area(
-        this.scene,
         20,
         20,
         this.areas[0][0].width,
@@ -148,23 +139,19 @@ export class AreaManager {
   }
 
   setupAreaColliders() {
-    this.areas.forEach(areaRow => {
-      areaRow.forEach(area => {
-        this.scene.physics.add.collider(
-          this.scene.player.physicsGroup,
-          area.physicsGroup,
-          this.bounceCallback,
-          null,
-          this
-        );
-        this.scene.physics.add.collider(
-          this.scene.unitManager.enemies[0].physicsGroup,
-          area.physicsGroup,
-          this.bounceCallback,
-          null,
-          this
-        );
-      });
-    });
+    this.scene.physics.add.collider(
+      this.scene.player.physicsGroup,
+      this.physicsGroup,
+      this.bounceCallback,
+      null,
+      this
+    );
+    this.scene.physics.add.collider(
+      this.scene.unitManager.enemies[0].physicsGroup,
+      this.physicsGroup,
+      this.bounceCallback,
+      null,
+      this
+    );
   }
 }

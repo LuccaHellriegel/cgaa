@@ -6,8 +6,6 @@ export class Area {
   parts: AreaPart[][] = [];
   x: any;
   y: any;
-  scene: Gameplay;
-  physicsGroup: Phaser.Physics.Arcade.StaticGroup;
   sizeOfXAxis: number;
   sizeOfYAxis: number;
   topLeftX: any;
@@ -16,16 +14,12 @@ export class Area {
   height: number;
 
   constructor(
-    scene: Gameplay,
     sizeOfXAxis: number,
     sizeOfYAxis: number,
     topLeftX,
     topLeftY,
     unitForPart
   ) {
-    //TODO: make physics Group as input, I just need one for env collision
-    this.scene = scene;
-    this.physicsGroup = scene.physics.add.staticGroup();
 
     for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];

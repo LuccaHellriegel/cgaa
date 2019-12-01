@@ -6,6 +6,7 @@ import { Area } from "./Area";
 import { AreaService } from "./AreaService";
 
 export class WallArea extends Area {
+  scene: Gameplay;
   constructor(
     scene: Gameplay,
     numberOfXRects,
@@ -14,15 +15,14 @@ export class WallArea extends Area {
     topLeftY
   ) {
     super(
-      scene,
       numberOfXRects,
       numberOfYRects,
       topLeftX,
       topLeftY,
       2 * wallPartRadius
     );
+    this.scene = scene;
     this.createWallSides(topLeftX, topLeftY);
-
   }
 
   static withHolesAndBuildings() {}
@@ -51,7 +51,7 @@ export class WallArea extends Area {
     );
     wallArea.makeHoles(holePosition);
     //TODO: doubling here is not good, same problem as in WallAreaWithBuildings
-    
+
     return wallArea;
   }
 
@@ -66,7 +66,12 @@ export class WallArea extends Area {
     for (let index = 0; index < numberOfRects; index++) {
       if (wallSide === "left" || wallSide === "right") y += 2 * wallPartRadius;
 
-      let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
+      let curRect = new WallPart(
+        this.scene,
+        x,
+        y,
+        this.scene.areaManager.physicsGroup
+      );
       if (wallSide === "top") {
         this.parts[0][index].updateContent(curRect);
         x += 2 * wallPartRadius;

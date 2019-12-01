@@ -7,7 +7,6 @@ import {
 } from "../../global";
 import { WallArea } from "./WallArea";
 import { BuildingService } from "../BuildingService";
-import { AreaService } from "./AreaService";
 
 export class WallAreaWithBuildings extends WallArea {
   buildings: Building[];
@@ -53,7 +52,7 @@ export class WallAreaWithBuildings extends WallArea {
       randY = result.randY;
     }
 
-    let building = new Building(this.scene, randX, randY, this.physicsGroup);
+    let building = new Building(this.scene, randX, randY, this.scene.areaManager.physicsGroup);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

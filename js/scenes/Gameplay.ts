@@ -32,7 +32,7 @@ export class Gameplay extends Phaser.Scene {
 
     GeneratorService.executeGeneration(this)
     createAnims(this.anims);
-    this.areaManager = new AreaManager(this)
+    new AreaManager(this)
     this.physics.world.setBounds(0, 0,this.areaManager.borderWall.width-4*wallPartRadius,this.areaManager.borderWall.width-4*wallPartRadius);
 
     this.unitManager = new UnitManager(this)

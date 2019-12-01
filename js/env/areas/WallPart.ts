@@ -1,6 +1,6 @@
-import { BaseSprite } from "../../graphic/BaseSprite";
+import { BaseImage } from "../../graphic/BaseImage";
 
-export class WallPart extends BaseSprite {
+export class WallPart extends BaseImage {
   x: number;
   y: number;
   constructor(scene, x, y, physicsGroup) {
