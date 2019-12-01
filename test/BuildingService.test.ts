@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import {
-  wallPartRadius,
+  wallPartHalfSize,
   rectBuildingHalfWidth,
   rectBuildinghalfHeight
 } from "../js/global";
@@ -9,27 +9,27 @@ import { BuildingService } from "../js/env/BuildingService";
 describe("Test BuildingService", function() {
   describe("Calculate valid spawn positions around building", function() {
     it("There are only 12 valid positions", () => {
-      let buildingX = 0 + 2 * wallPartRadius + rectBuildingHalfWidth;
-      let buildingY = 0 + 2 * wallPartRadius + rectBuildinghalfHeight;
+      let buildingX = 0 + 2 * wallPartHalfSize + rectBuildingHalfWidth;
+      let buildingY = 0 + 2 * wallPartHalfSize + rectBuildinghalfHeight;
       let validPositions = BuildingService.calculateValidSpawnPositionAroundBuilding(
         buildingX,
         buildingY
       );
       let realValidPositions = [
-        { randX: 0 + wallPartRadius, randY: 0 + wallPartRadius },
-        { randX: 0 + 3 * wallPartRadius, randY: 0 + wallPartRadius },
-        { randX: 0 + wallPartRadius, randY: 0 + 3 * wallPartRadius },
+        { randX: 0 + wallPartHalfSize, randY: 0 + wallPartHalfSize },
+        { randX: 0 + 3 * wallPartHalfSize, randY: 0 + wallPartHalfSize },
+        { randX: 0 + wallPartHalfSize, randY: 0 + 3 * wallPartHalfSize },
         {
-          randX: 0 + wallPartRadius + 4 * 2 * wallPartRadius,
-          randY: 0 + 3 * wallPartRadius
+          randX: 0 + wallPartHalfSize + 4 * 2 * wallPartHalfSize,
+          randY: 0 + 3 * wallPartHalfSize
         },
         {
-          randX: 0 + wallPartRadius,
-          randY: 0 + wallPartRadius + 2 * 2 * wallPartRadius
+          randX: 0 + wallPartHalfSize,
+          randY: 0 + wallPartHalfSize + 2 * 2 * wallPartHalfSize
         },
         {
-          randX: 0 + 3 * wallPartRadius,
-          randY: 0 + wallPartRadius + 2 * 2 * wallPartRadius
+          randX: 0 + 3 * wallPartHalfSize,
+          randY: 0 + wallPartHalfSize + 2 * 2 * wallPartHalfSize
         }
       ];
 
@@ -82,7 +82,7 @@ describe("Test BuildingService", function() {
     });
     it("New building is overlapping spawn area on the right, so yes ", function() {
       let buildings = [{ x: rectBuildingHalfWidth, y: rectBuildinghalfHeight }];
-      let randX = 3 * rectBuildingHalfWidth + wallPartRadius;
+      let randX = 3 * rectBuildingHalfWidth + wallPartHalfSize;
       let randY = rectBuildinghalfHeight;
       let isOnTop = BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         buildings,
@@ -105,7 +105,7 @@ describe("Test BuildingService", function() {
     it("New building is overlapping spawn area on the bottom, so yes ", function() {
       let buildings = [{ x: rectBuildingHalfWidth, y: rectBuildinghalfHeight }];
       let randX = rectBuildingHalfWidth;
-      let randY = 3 * rectBuildinghalfHeight + wallPartRadius;
+      let randY = 3 * rectBuildinghalfHeight + wallPartHalfSize;
       let isOnTop = BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         buildings,
         randX,
@@ -115,7 +115,7 @@ describe("Test BuildingService", function() {
     });
     it("New building is exactly far enough away to the right, so no ", function() {
       let buildings = [{ x: rectBuildingHalfWidth, y: rectBuildinghalfHeight }];
-      let randX = 3 * rectBuildingHalfWidth + 2 * wallPartRadius;
+      let randX = 3 * rectBuildingHalfWidth + 2 * wallPartHalfSize;
       let randY = rectBuildinghalfHeight;
       let isOnTop = BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         buildings,
@@ -126,7 +126,7 @@ describe("Test BuildingService", function() {
     });
     it("New building is more than far enough away to the right, so no ", function() {
       let buildings = [{ x: rectBuildingHalfWidth, y: rectBuildinghalfHeight }];
-      let randX = 3 * rectBuildingHalfWidth + 4 * wallPartRadius;
+      let randX = 3 * rectBuildingHalfWidth + 4 * wallPartHalfSize;
       let randY = rectBuildinghalfHeight;
       let isOnTop = BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         buildings,
@@ -138,7 +138,7 @@ describe("Test BuildingService", function() {
     it("New building is exactly far enough away to the bottom, so no ", function() {
       let buildings = [{ x: rectBuildingHalfWidth, y: rectBuildinghalfHeight }];
       let randX = rectBuildingHalfWidth;
-      let randY = 3 * rectBuildinghalfHeight + 2 * wallPartRadius;
+      let randY = 3 * rectBuildinghalfHeight + 2 * wallPartHalfSize;
       let isOnTop = BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
         buildings,
         randX,

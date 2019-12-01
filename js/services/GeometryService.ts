@@ -1,12 +1,12 @@
-import { wallPartRadius } from "../global";
+import { wallPartHalfSize } from "../global";
 
 export class GeometryService {
     private constructor(){}
     static calculateBorderObjectFromPartsAndSize(parts,width,height){
-        let borderX = parts[0][0].x + wallPartRadius;
-        let borderY = parts[0][0].y + wallPartRadius;
-        let borderWidth = width - 4 * wallPartRadius;
-        let borderHeight = height - 4 * wallPartRadius;
+        let borderX = parts[0][0].x + wallPartHalfSize;
+        let borderY = parts[0][0].y + wallPartHalfSize;
+        let borderWidth = width - 4 * wallPartHalfSize;
+        let borderHeight = height - 4 * wallPartHalfSize;
         return { borderX, borderY, borderWidth, borderHeight };
       } 
 }

@@ -1,7 +1,7 @@
 import { Circle } from "./Circle";
 import { Gameplay } from "../../scenes/Gameplay";
 import { WallArea } from "../../env/areas/WallArea";
-import { wallPartRadius } from "../../global";
+import { wallPartHalfSize } from "../../global";
 import { EnemyCircle } from "./EnemyCircle";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import EasyStar from "easystarjs";
@@ -79,12 +79,12 @@ export class PathfindingCircle extends EnemyCircle {
     if (this.path && this.path[this.curPosInPath]) {
       let x =
         0 +
-        this.path[this.curPosInPath].x * 2 * wallPartRadius +
-        wallPartRadius;
+        this.path[this.curPosInPath].x * 2 * wallPartHalfSize +
+        wallPartHalfSize;
       let y =
        0 +
-        this.path[this.curPosInPath].y * 2 * wallPartRadius +
-        wallPartRadius;
+        this.path[this.curPosInPath].y * 2 * wallPartHalfSize +
+        wallPartHalfSize;
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
         this.curPosInPath++;
       } else {

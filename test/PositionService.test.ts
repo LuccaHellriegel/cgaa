@@ -1,14 +1,14 @@
 import { expect } from "chai";
 import {
-  wallPartRadius
+  wallPartHalfSize
 } from "../js/global";
 import { PositionService } from "../js/services/PositionService";
 
 describe("Test PositionService", function() {
   describe("Find relativ position in Area", function() {
     it("Should be in the middle of the 3x3 area", function() {
-      let x = 0 + 3 * wallPartRadius;
-      let y = 0 + 3 * wallPartRadius;
+      let x = 0 + 3 * wallPartHalfSize;
+      let y = 0 + 3 * wallPartHalfSize;
       let walkableArr = [[0,0,0],[0,0,0],[0,0,0]];
       let { row, column } = PositionService.findCurRelativePosition(
         walkableArr,
@@ -19,20 +19,20 @@ describe("Test PositionService", function() {
       expect(column).to.equal(1);
     });
     it("Should be in middle left of the 3x3 area", function() {
-      let y = 0 + 3 * wallPartRadius;
+      let y = 0 + 3 * wallPartHalfSize;
       let walkableArr = [[0,0,0],[0,0,0],[0,0,0]];
       let { row, column } = PositionService.findCurRelativePosition(
         walkableArr,
-        wallPartRadius,
+        wallPartHalfSize,
         y
       );
       expect(row).to.equal(1);
       expect(column).to.equal(0);
     });
     it("Should be in the middle of the 5x5 area", function() {
-      let x = 0 + 5 * wallPartRadius;
+      let x = 0 + 5 * wallPartHalfSize;
 
-      let y = 0 + 5 * wallPartRadius;
+      let y = 0 + 5 * wallPartHalfSize;
       let walkableArr = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
       let { row, column } = PositionService.findCurRelativePosition(
         walkableArr,
@@ -43,8 +43,8 @@ describe("Test PositionService", function() {
       expect(column).to.equal(2);
     });
     it("Should be in the middle of the 5x5 area even if the starting position is not accurate", function() {
-      let x = 0 + 5 * wallPartRadius;
-      let y = 0 + 5 * wallPartRadius;
+      let x = 0 + 5 * wallPartHalfSize;
+      let y = 0 + 5 * wallPartHalfSize;
       let walkableArr = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
       let { row, column } = PositionService.findCurRelativePosition(
         walkableArr,
@@ -56,39 +56,39 @@ describe("Test PositionService", function() {
     });
     it("X and Y should be snapped back to 200", function() {
       let { newX, newY } = PositionService.snapXYToGrid(
-        5 * wallPartRadius - 7,
-        5 * wallPartRadius - 7
+        5 * wallPartHalfSize - 7,
+        5 * wallPartHalfSize - 7
       );
 
-      expect(newX).to.equal(5 * wallPartRadius);
-      expect(newY).to.equal(5 * wallPartRadius);
+      expect(newX).to.equal(5 * wallPartHalfSize);
+      expect(newY).to.equal(5 * wallPartHalfSize);
     });
     it("X and Y should remain 200", function() {
       let { newX, newY } = PositionService.snapXYToGrid(
-        5 * wallPartRadius,
-        5 * wallPartRadius
+        5 * wallPartHalfSize,
+        5 * wallPartHalfSize
       );
 
-      expect(newX).to.equal(5 * wallPartRadius);
-      expect(newY).to.equal(5 * wallPartRadius);
+      expect(newX).to.equal(5 * wallPartHalfSize);
+      expect(newY).to.equal(5 * wallPartHalfSize);
     });
     it("If X and Y is between tiles it should go to the closest (the right one)", function() {
       let { newX, newY } = PositionService.snapXYToGrid(
-        2 * wallPartRadius + 2,
-        wallPartRadius
+        2 * wallPartHalfSize + 2,
+        wallPartHalfSize
       );
 
-      expect(newX).to.equal(3 * wallPartRadius);
-      expect(newY).to.equal(wallPartRadius);
+      expect(newX).to.equal(3 * wallPartHalfSize);
+      expect(newY).to.equal(wallPartHalfSize);
     });
     it("If X and Y is between tiles it should go to the closest (the left one)", function() {
       let { newX, newY } = PositionService.snapXYToGrid(
-        2 * wallPartRadius - 2,
-        wallPartRadius
+        2 * wallPartHalfSize - 2,
+        wallPartHalfSize
       );
 
-      expect(newX).to.equal(wallPartRadius);
-      expect(newY).to.equal(wallPartRadius);
+      expect(newX).to.equal(wallPartHalfSize);
+      expect(newY).to.equal(wallPartHalfSize);
     });
   });
 

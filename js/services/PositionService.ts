@@ -1,7 +1,7 @@
 import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
-  wallPartRadius
+  wallPartHalfSize
 } from "../global";
 
 export class PositionService {
@@ -9,11 +9,11 @@ export class PositionService {
 
   //TODO: make a unit specific service for all calculation, as Phaser always needs a window, so I can never easily test it
   private static snapCoordinateToGrid(coordinate) {
-    let ceil = Math.ceil(coordinate / wallPartRadius) * wallPartRadius;
-    let floor = Math.floor(coordinate / wallPartRadius) * wallPartRadius;
+    let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
+    let floor = Math.floor(coordinate / wallPartHalfSize) * wallPartHalfSize;
 
-    if ((ceil / wallPartRadius) % 2 === 0) ceil = Infinity;
-    if ((floor / wallPartRadius) % 2 === 0) floor = Infinity;
+    if ((ceil / wallPartHalfSize) % 2 === 0) ceil = Infinity;
+    if ((floor / wallPartHalfSize) % 2 === 0) floor = Infinity;
 
     let diffCeil = Math.abs(ceil - coordinate);
     let diffFloor = Math.abs(floor - coordinate);
@@ -26,8 +26,8 @@ export class PositionService {
   }
 
   static snapXYToGrid(x, y) {
-    let needToSnapX = x % wallPartRadius !== 0;
-    let needToSnapY = x % wallPartRadius !== 0;
+    let needToSnapX = x % wallPartHalfSize !== 0;
+    let needToSnapY = x % wallPartHalfSize !== 0;
 
     if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 
@@ -60,14 +60,14 @@ export class PositionService {
     for (let i = 0; i < walkableArr.length; i++) {
       for (let k = 0; k < walkableArr[0].length; k++) {
         if (
-          x - wallPartRadius === curXInArr &&
-          y - wallPartRadius === curYInArr
+          x - wallPartHalfSize === curXInArr &&
+          y - wallPartHalfSize === curYInArr
         ) {
           return { row: i, column: k };
         }
-        curXInArr += 2 * wallPartRadius;
+        curXInArr += 2 * wallPartHalfSize;
       }
-      curYInArr += 2 * wallPartRadius;
+      curYInArr += 2 * wallPartHalfSize;
 
       curXInArr = 0
     }

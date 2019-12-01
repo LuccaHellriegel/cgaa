@@ -30,15 +30,13 @@ export class Area {
 
     this.sizeOfXAxis = sizeOfXAxis;
     this.sizeOfYAxis = sizeOfYAxis;
+
     this.topLeftX = topLeftX;
     this.topLeftY = topLeftY;
 
-    this.x = topLeftX + unitForPart * (sizeOfXAxis / 2);
-    this.y = topLeftY + unitForPart * (sizeOfYAxis / 2);
-
     this.width = sizeOfXAxis * unitForPart;
     this.height = sizeOfYAxis * unitForPart;
-  }
+  } 
 
   calculateWalkableArr() {
     return AreaService.createWalkableArr(this.parts);

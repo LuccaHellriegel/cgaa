@@ -3,7 +3,7 @@ import hit from "../../assets/audio/hit.mp3";
 import step from "../../assets/audio/step.mp3";
 import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
-import { debugModus, wallPartRadius} from "../global";
+import { debugModus, wallPartHalfSize} from "../global";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../managers/UnitManager";
 import { GeneratorService } from "../graphic/generator/GeneratorService";
@@ -33,7 +33,7 @@ export class Gameplay extends Phaser.Scene {
     GeneratorService.executeGeneration(this)
     createAnims(this.anims);
     new AreaManager(this)
-    this.physics.world.setBounds(0, 0,this.areaManager.borderWall.width-4*wallPartRadius,this.areaManager.borderWall.width-4*wallPartRadius);
+    this.physics.world.setBounds(0, 0,this.areaManager.borderWall.width-4*wallPartHalfSize,this.areaManager.borderWall.width-4*wallPartHalfSize);
 
     this.unitManager = new UnitManager(this)
     this.unitManager.spawnUnits()

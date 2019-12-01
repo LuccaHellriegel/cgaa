@@ -3,7 +3,7 @@ import { Building } from "../Building";
 import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
-  wallPartRadius
+  wallPartHalfSize
 } from "../../global";
 import { WallArea } from "./WallArea";
 import { BuildingService } from "../BuildingService";
@@ -34,8 +34,8 @@ export class WallAreaWithBuildings extends WallArea {
 
   private buildBuilding() {
     let { randX, randY } = this.calculateRandValidSpawnPosition(
-      rectBuildingHalfWidth + 2 * wallPartRadius,
-      rectBuildinghalfHeight + 2 * wallPartRadius
+      rectBuildingHalfWidth + 2 * wallPartHalfSize,
+      rectBuildinghalfHeight + 2 * wallPartHalfSize
     );
     while (
       BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
@@ -45,8 +45,8 @@ export class WallAreaWithBuildings extends WallArea {
       )
     ) {
       let result = this.calculateRandValidSpawnPosition(
-        rectBuildingHalfWidth + 2 * wallPartRadius,
-        rectBuildinghalfHeight + 2 * wallPartRadius
+        rectBuildingHalfWidth + 2 * wallPartHalfSize,
+        rectBuildinghalfHeight + 2 * wallPartHalfSize
       );
       randX = result.randX;
       randY = result.randY;
@@ -73,13 +73,11 @@ export class WallAreaWithBuildings extends WallArea {
           this.parts[i][k+2].updateContent(building);
           break;
         }
-        x += 2 * wallPartRadius;
+        x += 2 * wallPartHalfSize;
       }
-      y += 2 * wallPartRadius;
+      y += 2 * wallPartHalfSize;
 
       x = this.topLeftX;
     }
   }
-
-  //TODO: might need to store walkable arr for performance reasons (need it all the time -> unit navigation dynamically)
 }

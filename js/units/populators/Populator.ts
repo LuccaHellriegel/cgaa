@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { wallPartRadius } from "../../global";
+import { wallPartHalfSize } from "../../global";
 import { EnemyCircle } from "../circles/EnemyCircle";
 
 export abstract class Populator {
@@ -65,8 +65,8 @@ export abstract class Populator {
       randX,
       randY
     } = this.populationReference.calculateRandValidSpawnPosition(
-      wallPartRadius,
-      wallPartRadius
+      wallPartHalfSize,
+      wallPartHalfSize
     );
     let EnemyCircleClass = this.chooseEnemyClass();
 

@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { WallPart } from "./WallPart";
-import { wallPartRadius } from "../../global";
+import { wallPartHalfSize } from "../../global";
 import { GeometryService } from "../../services/GeometryService";
 import { Area } from "./Area";
 import { AreaService } from "./AreaService";
@@ -19,7 +19,7 @@ export class WallArea extends Area {
       numberOfYRects,
       topLeftX,
       topLeftY,
-      2 * wallPartRadius
+      2 * wallPartHalfSize
     );
     this.scene = scene;
     this.createWallSides(topLeftX, topLeftY);
@@ -50,8 +50,6 @@ export class WallArea extends Area {
       topLeftY
     );
     wallArea.makeHoles(holePosition);
-    //TODO: doubling here is not good, same problem as in WallAreaWithBuildings
-
     return wallArea;
   }
 
@@ -64,7 +62,7 @@ export class WallArea extends Area {
     let x = topLeftCenterX;
     let y = topLeftCenterY;
     for (let index = 0; index < numberOfRects; index++) {
-      if (wallSide === "left" || wallSide === "right") y += 2 * wallPartRadius;
+      if (wallSide === "left" || wallSide === "right") y += 2 * wallPartHalfSize;
 
       let curRect = new WallPart(
         this.scene,
@@ -74,10 +72,10 @@ export class WallArea extends Area {
       );
       if (wallSide === "top") {
         this.parts[0][index].updateContent(curRect);
-        x += 2 * wallPartRadius;
+        x += 2 * wallPartHalfSize;
       } else if (wallSide === "bottom") {
         this.parts[this.sizeOfYAxis - 1][index].updateContent(curRect);
-        x += 2 * wallPartRadius;
+        x += 2 * wallPartHalfSize;
       } else if (wallSide === "left") {
         this.parts[index + 1][0].updateContent(curRect);
       } else {
@@ -87,24 +85,24 @@ export class WallArea extends Area {
   }
 
   private createWallSides(topLeftX, topLeftY) {
-    let x = topLeftX + wallPartRadius;
-    let y = topLeftY + wallPartRadius;
+    let x = topLeftX + wallPartHalfSize;
+    let y = topLeftY + wallPartHalfSize;
 
     this.createWallSide(x, y, this.sizeOfXAxis, "top");
 
     let lastRect = this.parts[0][this.sizeOfXAxis - 1];
     let lastXRectX = lastRect.x;
 
-    x = topLeftX + wallPartRadius;
+    x = topLeftX + wallPartHalfSize;
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "left");
 
     lastRect = this.parts[this.sizeOfYAxis - 2][0];
     let lastYRectY = lastRect.y;
 
-    y = lastYRectY + 2 * wallPartRadius;
+    y = lastYRectY + 2 * wallPartHalfSize;
     this.createWallSide(x, y, this.sizeOfXAxis, "bottom");
 
-    y = topLeftY + wallPartRadius;
+    y = topLeftY + wallPartHalfSize;
     x = lastXRectX;
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
@@ -123,54 +121,54 @@ export class WallArea extends Area {
     let edgeCorrection = 0;
 
     if (
-      wallPartRadius + xMultiplier * 2 * wallPartRadius <
+      wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize <
       requestedDistanceToWallXAxis
     ) {
       edgeCorrection =
         requestedDistanceToWallXAxis -
-        (wallPartRadius + xMultiplier * 2 * wallPartRadius);
+        (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize);
     } else if (
       borderObject.borderWidth -
-        (wallPartRadius + xMultiplier * 2 * wallPartRadius) <
+        (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize) <
       requestedDistanceToWallXAxis
     ) {
       edgeCorrection =
         requestedDistanceToWallXAxis -
         (borderObject.borderHeight -
-          (wallPartRadius + xMultiplier * 2 * wallPartRadius));
+          (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize));
       edgeCorrection = -edgeCorrection;
     }
     let randX =
       borderObject.borderX +
-      wallPartRadius +
-      xMultiplier * 2 * wallPartRadius +
+      wallPartHalfSize +
+      xMultiplier * 2 * wallPartHalfSize +
       edgeCorrection;
 
     let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis - 2);
     edgeCorrection = 0;
     if (
-      wallPartRadius + yMultiplier * 2 * wallPartRadius <
+      wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize <
       requestedDistanceToWallYAxis
     ) {
       edgeCorrection =
         requestedDistanceToWallYAxis -
-        (wallPartRadius + yMultiplier * 2 * wallPartRadius);
+        (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize);
     } else if (
       borderObject.borderHeight -
-        (wallPartRadius + yMultiplier * 2 * wallPartRadius) <
+        (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize) <
       requestedDistanceToWallYAxis
     ) {
       edgeCorrection =
         requestedDistanceToWallYAxis -
         (borderObject.borderHeight -
-          (wallPartRadius + yMultiplier * 2 * wallPartRadius));
+          (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize));
       edgeCorrection = -edgeCorrection;
     }
 
     let randY =
       borderObject.borderY +
-      wallPartRadius +
-      yMultiplier * 2 * wallPartRadius +
+      wallPartHalfSize +
+      yMultiplier * 2 * wallPartHalfSize +
       edgeCorrection;
 
     return { randX, randY };

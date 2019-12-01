@@ -1,6 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { WallArea } from "../env/areas/WallArea";
-import { wallPartRadius } from "../global";
+import { wallPartHalfSize } from "../global";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { Area } from "../env/areas/Area";
 import { AreaService } from "../env/areas/AreaService";
@@ -37,7 +37,7 @@ export class AreaManager {
   private createFirstRowOfAreas() {
     let row: Area[] = [];
     row.push(WallAreaWithBuildings.withHoles(this.scene, 20, 20, 0, 0, 9));
-    row.push(new Area(20, 20, row[0].width, 0, 2 * wallPartRadius));
+    row.push(new Area(20, 20, row[0].width, 0, 2 * wallPartHalfSize));
     row.push(
       WallAreaWithBuildings.withHoles(
         this.scene,
@@ -54,14 +54,14 @@ export class AreaManager {
 
   private createSecondRowOfAreas() {
     let row: Area[] = [];
-    row.push(new Area(20, 20, 0, this.areas[0][0].height, 2 * wallPartRadius));
+    row.push(new Area(20, 20, 0, this.areas[0][0].height, 2 * wallPartHalfSize));
     row.push(
       new Area(
         20,
         20,
         this.areas[0][0].width,
         this.areas[0][0].height,
-        2 * wallPartRadius
+        2 * wallPartHalfSize
       )
     );
     row.push(
@@ -70,7 +70,7 @@ export class AreaManager {
         20,
         2 * this.areas[0][0].width,
         this.areas[0][0].height,
-        2 * wallPartRadius
+        2 * wallPartHalfSize
       )
     );
     this.areas.push(row);
@@ -96,7 +96,7 @@ export class AreaManager {
         20,
         this.areas[0][0].width,
         2 * this.areas[0][0].height,
-        2 * wallPartRadius
+        2 * wallPartHalfSize
       )
     );
 
@@ -121,8 +121,8 @@ export class AreaManager {
       this.scene,
       62,
       61,
-      -2 * wallPartRadius,
-      -2 * wallPartRadius
+      -2 * wallPartHalfSize,
+      -2 * wallPartHalfSize
     );
   }
 
