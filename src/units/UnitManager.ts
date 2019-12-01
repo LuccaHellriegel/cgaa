@@ -2,7 +2,6 @@ import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "./Player";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
-import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { EnemyCircle } from "./circles/EnemyCircle";
 
@@ -27,25 +26,17 @@ export class UnitManager {
     let enemyWeapons = this.scene.physics.add.group();
     this.scene.areaManager.areas.forEach(areaRow => {
       areaRow.forEach(area => {
-        if (area instanceof WallAreaWithBuildings) {
+        console.log(area)
+        if (area.buildings[0]) {
           new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, area);
-          (area as WallAreaWithBuildings).buildings.forEach(building => {
-            new BuildingPopulator(
-              this.scene,
-              enemyPhysics,
-              enemyWeapons,
-              building,
-              this.easyStar
-            );
+          area.buildings.forEach(building => {
+            new BuildingPopulator(this.scene, enemyPhysics, enemyWeapons, building, this.easyStar);
           });
         }
       });
     });
 
-    this.scene.physics.add.collider(
-      this.scene.player.physicsGroup,
-      this.enemies[0].physicsGroup
-    );
+    this.scene.physics.add.collider(this.scene.player.physicsGroup, this.enemies[0].physicsGroup);
 
     this.scene.physics.add.collider(
       this.scene.player.weapon.weaponGroup,
@@ -69,18 +60,12 @@ export class UnitManager {
   }
 
   private considerDamage(weapon, enemy) {
-    console.log(
-      "Collision: " + weapon.polygon.checkForCollision(enemy.polygon)
-    );
+    console.log("Collision: " + weapon.polygon.checkForCollision(enemy.polygon));
     console.log("Weapon attacking: " + weapon.attacking);
-    console.log(
-      "Already attacked: " + weapon.alreadyAttacked.includes(enemy.id)
-    );
+    console.log("Already attacked: " + weapon.alreadyAttacked.includes(enemy.id));
 
     return (
-      weapon.polygon.checkForCollision(enemy.polygon) &&
-      weapon.attacking &&
-      !weapon.alreadyAttacked.includes(enemy.id)
+      weapon.polygon.checkForCollision(enemy.polygon) && weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id)
     );
   }
 }

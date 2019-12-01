@@ -1,19 +1,19 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { WallArea } from "./areas/WallArea";
 import { wallPartHalfSize } from "../globals/globalSizes";
-import { WallAreaWithBuildings } from "./areas/WallAreaWithBuildings";
 import { Area } from "./areas/Area";
 import { AreaService } from "./areas/AreaService";
+import { AreaFactory, AreaConfig } from "./areas/AreaFactory";
 
 export class AreaManager {
   scene: Gameplay;
   areas: Area[][];
-  borderWall: WallArea;
+  borderWall: Area;
   walkableArr: number[][];
   physicsGroup: Phaser.Physics.Arcade.StaticGroup;
+  private areaConfig: AreaConfig;
   constructor(scene: Gameplay) {
     this.scene = scene;
-    scene.areaManager = this
+    scene.areaManager = this;
     this.areas = [];
     this.physicsGroup = scene.physics.add.staticGroup();
 
@@ -34,96 +34,54 @@ export class AreaManager {
     unit.setVelocity(0, 0);
   }
 
-  private createFirstRowOfAreas() {
-    let row: Area[] = [];
-    row.push(WallAreaWithBuildings.withHoles(this.scene, 20, 20, 0, 0, 9));
-    row.push(new Area(20, 20, row[0].width, 0, 2 * wallPartHalfSize));
-    row.push(
-      WallAreaWithBuildings.withHoles(
-        this.scene,
-        20,
-        20,
-        row[0].width * 2,
-        0,
-        9
-      )
-    );
-
-    this.areas.push(row);
+  private toggleIfAreaConfigIsEmpty() {
+    this.areaConfig.hasWalls = !this.areaConfig.hasWalls;
+    this.areaConfig.hasBuildings = !this.areaConfig.hasBuildings;
   }
 
-  private createSecondRowOfAreas() {
+  private createRowOfAreas(startingTopLeftX, startingTopLeftY, rightStepValue, isEmptyArr) {
     let row: Area[] = [];
-    row.push(new Area(20, 20, 0, this.areas[0][0].height, 2 * wallPartHalfSize));
-    row.push(
-      new Area(
-        20,
-        20,
-        this.areas[0][0].width,
-        this.areas[0][0].height,
-        2 * wallPartHalfSize
-      )
-    );
-    row.push(
-      new Area(
-        20,
-        20,
-        2 * this.areas[0][0].width,
-        this.areas[0][0].height,
-        2 * wallPartHalfSize
-      )
-    );
-    this.areas.push(row);
-  }
-
-  private createThirdRowOfAreas() {
-    let row: Area[] = [];
-
-    row.push(
-      WallAreaWithBuildings.withHoles(
-        this.scene,
-        20,
-        20,
-        0,
-        this.areas[0][0].height * 2,
-        9
-      )
-    );
-
-    row.push(
-      new Area(
-        20,
-        20,
-        this.areas[0][0].width,
-        2 * this.areas[0][0].height,
-        2 * wallPartHalfSize
-      )
-    );
-
-    row.push(
-      WallAreaWithBuildings.withHoles(
-        this.scene,
-        20,
-        20,
-        this.areas[0][0].width * 2,
-        this.areas[0][0].height * 2,
-        9
-      )
-    );
+    this.areaConfig.topLeftX = startingTopLeftX;
+    this.areaConfig.topLeftY = startingTopLeftY;
+    let stepCount = 0;
+    isEmptyArr.forEach(isEmpty => {
+      console.log(isEmpty)
+      if (isEmpty) this.toggleIfAreaConfigIsEmpty();
+      this.areaConfig.topLeftX += stepCount * rightStepValue;
+      row.push(AreaFactory.createArea(this.areaConfig));
+      if (isEmpty) this.toggleIfAreaConfigIsEmpty();
+      stepCount++;
+    });
     this.areas.push(row);
   }
 
   private createAreas() {
-    this.createFirstRowOfAreas();
-    this.createSecondRowOfAreas();
-    this.createThirdRowOfAreas();
-    this.borderWall = new WallArea(
-      this.scene,
-      62,
-      61,
-      -2 * wallPartHalfSize,
-      -2 * wallPartHalfSize
-    );
+    this.areaConfig = {
+      sizeOfXAxis: 20,
+      sizeOfYAxis: 20,
+      topLeftX: 0,
+      topLeftY: 0,
+      unitForPart: 2 * wallPartHalfSize,
+      hasWalls: true,
+      hasHoles: true,
+      holePosition: 9,
+      hasBuildings: true,
+      numbOfBuildings: 8,
+      scene: this.scene
+    };
+
+    let rightStepValue = 20 * 2 * wallPartHalfSize;
+
+    this.createRowOfAreas(0, 0, rightStepValue, [false, true, false]);
+    this.createRowOfAreas(0, rightStepValue, rightStepValue, [true, true, true]);
+    this.createRowOfAreas(0, 2 * rightStepValue, rightStepValue, [false, true, false]);
+
+    this.areaConfig.topLeftX = -2 * wallPartHalfSize;
+    this.areaConfig.topLeftY = -2 * wallPartHalfSize;
+    this.areaConfig.sizeOfXAxis = 62;
+    this.areaConfig.sizeOfYAxis = 62;
+
+    this.borderWall = AreaFactory.createArea(this.areaConfig);
   }
 
   private calculateCumulativeWalkAbleArr() {
@@ -139,13 +97,7 @@ export class AreaManager {
   }
 
   setupAreaColliders() {
-    this.scene.physics.add.collider(
-      this.scene.player.physicsGroup,
-      this.physicsGroup,
-      this.bounceCallback,
-      null,
-      this
-    );
+    this.scene.physics.add.collider(this.scene.player.physicsGroup, this.physicsGroup, this.bounceCallback, null, this);
     this.scene.physics.add.collider(
       this.scene.unitManager.enemies[0].physicsGroup,
       this.physicsGroup,

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "parcel build index.html --public-url ./",
     "watch": "parcel watch index.html",
-    "start": "parcel serve index.html --log-level 2",
+    "start": "parcel serve index.html",
     "clean": "rm -v dist/*",
     "test": "./node_modules/.bin/mocha --require ts-node/register test/*.ts"
   },
