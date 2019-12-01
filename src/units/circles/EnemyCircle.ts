@@ -1,5 +1,5 @@
 import { HealthBar } from "../../graphic/HealthBar";
-import { normalCircleRadius } from "../../global";
+import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
 import { PolygonWeapon } from "../weapons/PolygonWeapon";
@@ -59,10 +59,9 @@ export class EnemyCircle extends CircleWithWeapon {
       this.scene.player.x,
       this.scene.player.y
     );
-    //TODO: is dependedant on circle radius
     let weaponsLastPolygonReachesPlayer =
       this.weapon.polygonArr[this.weapon.polygonArr.length - 1].height +
-        30 >
+        normalCircleRadius >
       distanceBetweenPlayerAndEnemy;
     if (weaponsLastPolygonReachesPlayer) {
       this.attack();

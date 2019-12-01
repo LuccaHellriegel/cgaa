@@ -1,4 +1,4 @@
-import { wallPartHalfSize } from "../global";
+import { wallPartHalfSize } from "../globals/globalSizes";
 
 export class GeometryService {
     private constructor(){}

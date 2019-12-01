@@ -6,7 +6,7 @@ import {
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../../global"
+} from "../../globals/globalSizes"
 
 export class RandWeapon extends PolygonWeapon {
     constructor(scene, x, y, weaponGroup) {
@@ -19,5 +19,7 @@ export class RandWeapon extends PolygonWeapon {
 
         let offSetArr = [[normalCircleRadius,-normalCircleRadius],[normalCircleRadius,-normalCircleRadius]]
         super(scene, x, y, "randWeapon", weaponGroup, polygonArr, offSetArr)
+        this.setSize(this.polygonArr[polygonArr.length-1].width, this.polygonArr[polygonArr.length-1].height)
+
     }
 }

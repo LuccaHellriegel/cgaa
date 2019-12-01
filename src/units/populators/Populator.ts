@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { wallPartHalfSize } from "../../global";
+import { wallPartHalfSize } from "../../globals/globalSizes";
 import { EnemyCircle } from "../circles/EnemyCircle";
 
 export abstract class Populator {

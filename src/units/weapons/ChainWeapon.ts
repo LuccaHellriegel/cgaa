@@ -6,7 +6,7 @@ import {
 } from "./PolygonWeapon"
 import {
     normalCircleRadius
-} from "../../global"
+} from "../../globals/globalSizes"
 export class ChainWeapon extends PolygonWeapon {
     numberOfSmallCircles: number
     numberOfBiggerCircles: number
@@ -35,6 +35,8 @@ export class ChainWeapon extends PolygonWeapon {
         this.createPolygons()
         //TODO: better distinction between unit offset and physics sprite offset
         this.setOffSetArr()
+        this.setSize(2*this.polygonArr[this.polygonArr.length-1].height, 2*this.polygonArr[this.polygonArr.length-1].height)
+
 
     }
 

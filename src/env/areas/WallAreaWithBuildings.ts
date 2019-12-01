@@ -5,7 +5,7 @@ import {
   rectBuildinghalfHeight,
   wallPartHalfSize,
   rectBuildingInWallParts
-} from "../../global";
+} from "../../globals/globalSizes";
 import { WallArea } from "./WallArea";
 import { BuildingService } from "../BuildingService";
 

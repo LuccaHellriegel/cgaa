@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { RandWeaponGenerator } from "./weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./units/CircleGenerator";
-import { normalCircleRadius } from "../../global";
+import { normalCircleRadius } from "../../globals/globalSizes";
 import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
 import { WallPartGenerator } from "./env/WallPartGenerator";
 import { BuildingGenerator } from "./env/BuildingGenerator";

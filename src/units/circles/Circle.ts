@@ -1,7 +1,7 @@
 import { CirclePolygon } from "../../polygon/CirclePolygon";
 import { BaseSprite } from "../../graphic/BaseSprite";
-import { normalCircleRadius } from "../../global";
-import { debugModus } from "../../global";
+import { normalCircleRadius } from "../../globals/globalSizes";
+import { debugModus } from "../../globals/globalConfig";
 import { Gameplay } from "../../scenes/Gameplay";
 
 export abstract class Circle extends BaseSprite {

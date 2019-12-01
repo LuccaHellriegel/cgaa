@@ -1,18 +1,14 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Player } from "../player/Player";
-import {
-  playerStartX,
-  playerStartY,
-  playerTextureName
-} from "../global";
 import { AreaPopulator } from "../units/populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { BuildingPopulator } from "../units/populators/BuildingPopulator";
+import { EnemyCircle } from "../units/circles/EnemyCircle";
 
 export class UnitManager {
   scene: Gameplay;
-  enemies: any[];
+  enemies: EnemyCircle[];
   enemyPhysics: Phaser.Physics.Arcade.Group;
   enemyWeapons: Phaser.Physics.Arcade.Group;
   easyStar: EasyStar.js;
@@ -25,14 +21,7 @@ export class UnitManager {
   }
 
   spawnUnits() {
-    Player.withChainWeapon(
-      this.scene,
-      playerStartX,
-      playerStartY,
-      playerTextureName,
-      this.scene.physics.add.group(),
-      this.scene.physics.add.group()
-    );
+    Player.withChainWeapon(this.scene);
 
     let enemyPhysics = this.scene.physics.add.group();
     let enemyWeapons = this.scene.physics.add.group();
@@ -57,33 +46,41 @@ export class UnitManager {
       this.scene.player.physicsGroup,
       this.enemies[0].physicsGroup
     );
+
+    this.scene.physics.add.collider(
+      this.scene.player.weapon.weaponGroup,
+      this.enemies[0].physicsGroup,
+      this.doDamage,
+      this.considerDamage
+    );
+
+    this.scene.physics.add.collider(
+      this.enemies[0].weapon.weaponGroup,
+      this.scene.player.physicsGroup,
+      this.doDamage,
+      this.considerDamage
+    );
   }
 
-  private doDamage(weapon, enemy, amount: number) {
+  private doDamage(weapon, enemy) {
     weapon.alreadyAttacked.push(enemy.id);
-    enemy.damage(amount);
+    //TODO: amount is saved on weapon
+    enemy.damage(50);
   }
 
   private considerDamage(weapon, enemy) {
+    console.log(
+      "Collision: " + weapon.polygon.checkForCollision(enemy.polygon)
+    );
+    console.log("Weapon attacking: " + weapon.attacking);
+    console.log(
+      "Already attacked: " + weapon.alreadyAttacked.includes(enemy.id)
+    );
+
     return (
       weapon.polygon.checkForCollision(enemy.polygon) &&
       weapon.attacking &&
       !weapon.alreadyAttacked.includes(enemy.id)
     );
-  }
-
-  //TODO: might be faster to use big hitbox for circles and then fire this one, takes up 25% of performance time
-  checkWeaponOverlap() {
-    for (let index = 0; index < this.enemies.length; index++) {
-      let playerWeapon = this.scene.player.weapon;
-      let enemy = this.enemies[index];
-      let enemyWeapon = enemy.weapon;
-      if (this.considerDamage(playerWeapon, enemy)) {
-        this.doDamage(playerWeapon, enemy, 50);
-      }
-      if (this.considerDamage(enemyWeapon, this.scene.player)) {
-        this.doDamage(enemyWeapon, this.scene.player, 20);
-      }
-    }
   }
 }

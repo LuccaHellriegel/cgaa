@@ -1,6 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { WallArea } from "../env/areas/WallArea";
-import { wallPartHalfSize } from "../global";
+import { wallPartHalfSize } from "../globals/globalSizes";
 import { WallAreaWithBuildings } from "../env/areas/WallAreaWithBuildings";
 import { Area } from "../env/areas/Area";
 import { AreaService } from "../env/areas/AreaService";

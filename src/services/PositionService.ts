@@ -2,7 +2,7 @@ import {
   rectBuildingHalfWidth,
   rectBuildinghalfHeight,
   wallPartHalfSize
-} from "../global";
+} from "../globals/globalSizes";
 
 export class PositionService {
   private constructor() {}

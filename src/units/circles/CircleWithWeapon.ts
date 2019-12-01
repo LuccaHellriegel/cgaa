@@ -12,8 +12,6 @@ export class CircleWithWeapon extends Circle {
   }
 
   attack() {
-    //TODO: cancel sound before playing new (also for damage)
-    //this.scene.sound.play("hit")
     if (!this.weapon.attacking) {
       this.weapon.attacking = true;
       this.weapon.anims.play("attack-" + this.weapon.texture.key);

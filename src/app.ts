@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
-import { debugModus } from "./global";
+import { debugModus } from "./globals/globalConfig";
 
 //TODO: on firefox WEBGL produces bad performance
 let gameConfig = {

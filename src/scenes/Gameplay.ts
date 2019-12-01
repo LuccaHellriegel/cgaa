@@ -1,13 +1,14 @@
-import damage from "../../assets/audio/damage.mp3";
-import hit from "../../assets/audio/hit.mp3";
-import step from "../../assets/audio/step.mp3";
+// import damage from "../../assets/audio/damage.mp3";
+// import hit from "../../assets/audio/hit.mp3";
+// import step from "../../assets/audio/step.mp3";
 import { Player } from "../player/Player";
 import { PlayerMovement } from "../player/PlayerMovement";
-import { debugModus, wallPartHalfSize} from "../global";
+import { wallPartHalfSize } from "../globals/globalSizes";
 import { createAnims } from "../graphic/anims";
 import { UnitManager } from "../managers/UnitManager";
 import { GeneratorService } from "../graphic/generator/GeneratorService";
 import { AreaManager } from "../managers/AreaManager";
+import { debugModus } from "../globals/globalConfig";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
@@ -20,32 +21,36 @@ export class Gameplay extends Phaser.Scene {
   constructor() {
     super("Gameplay");
   }
- 
+
   preload() {
-    this.load.audio("damage", damage);
-    this.load.audio("hit", hit);
-    this.load.audio("step", step);
+    // this.load.audio("damage", damage);
+    // this.load.audio("hit", hit);
+    // this.load.audio("step", step);
   }
 
   create() {
-    this.physics.world.setFPS(120)
+    this.physics.world.setFPS(120);
 
-    GeneratorService.executeGeneration(this)
+    GeneratorService.executeGeneration(this);
     createAnims(this.anims);
-    new AreaManager(this)
-    this.physics.world.setBounds(0, 0,this.areaManager.borderWall.width-4*wallPartHalfSize,this.areaManager.borderWall.width-4*wallPartHalfSize);
+    new AreaManager(this);
+    this.physics.world.setBounds(
+      0,
+      0,
+      this.areaManager.borderWall.width - 4 * wallPartHalfSize,
+      this.areaManager.borderWall.width - 4 * wallPartHalfSize
+    );
 
-    this.unitManager = new UnitManager(this)
-    this.unitManager.spawnUnits()
-    this.areaManager.setupAreaColliders()
+    this.unitManager = new UnitManager(this);
+    this.unitManager.spawnUnits();
+    this.areaManager.setupAreaColliders();
 
-    
-    if(debugModus){ this.polygonOffset = 0
+    if (debugModus) {
+      this.polygonOffset = 0;
     }
   }
 
   update() {
-    this.playerMovement.update()
-    this.unitManager.checkWeaponOverlap()
+    this.playerMovement.update();
   }
 }
