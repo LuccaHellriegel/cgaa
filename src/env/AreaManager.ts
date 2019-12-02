@@ -59,7 +59,7 @@ export class AreaManager {
       hasHoles: true,
       holePosition: 9,
       hasBuildings: true,
-      numbOfBuildings: 1,
+      numbOfBuildings: 8,
       scene: this.scene
     };
 
@@ -83,7 +83,7 @@ export class AreaManager {
     this.areas.forEach(areaRow => {
       let row: number[][][] = [];
       areaRow.forEach(area => {
-        row.push(area.calculateWalkableArr());
+        row.push(AreaService.createWalkableArr(area.parts));
       });
       walkableArrArr.push(row);
     });

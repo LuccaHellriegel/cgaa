@@ -3,6 +3,8 @@ import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Circle } from "./Circle";
 import { Weapon } from "../../weapons/Weapon";
+import { ChainWeapon } from "../../weapons/ChainWeapon";
+import { RandWeapon } from "../../weapons/RandWeapon";
 
 export class EnemyCircle extends Circle {
   hasBeenAttacked: boolean;
@@ -23,6 +25,15 @@ export class EnemyCircle extends Circle {
     //TODO: change this back once I figure out how to prevent push-clipping
     //TODO: If I walk across the immovable Circle, I get push-clipped
     this.setImmovable(true);
+  }
+
+  //TODO: better solution than doubling this
+  static withChainWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
+    return new this(scene, x, y, texture, physicsGroup, new ChainWeapon(scene, x, y, weaponGroup, 5, 2));
+  }
+
+  static withRandWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
+    return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x, y, weaponGroup));
   }
 
   moveAndTurnToPlayer() {
