@@ -2,7 +2,7 @@ import { Circle } from "./Circle";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { Weapon } from "../../weapons/Weapon";
-import { Weapon } from "../../weapons/Weapon";
+
 export class CircleWithWeapon extends Circle {
   weapon: Weapon;
 

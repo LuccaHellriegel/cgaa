@@ -12,6 +12,7 @@ export abstract class Weapon extends BaseSprite {
 
   constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
     super(scene, x, y, texture, weaponGroup);
+    this.setCollideWorldBounds(false)
     this.alreadyAttacked = [];
     this.attacking = false;
     this.setupAnimEvents();
