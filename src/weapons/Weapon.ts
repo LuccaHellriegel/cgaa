@@ -1,23 +1,43 @@
-export abstract class Weapon extends Phaser.Physics.Arcade.Sprite {
-  attacking: boolean;
+import { CompositePolygon } from "../polygon/CompositePolygon";
+import { BaseSprite } from "../base/BaseSprite";
+
+export abstract class Weapon extends BaseSprite {
+  polygon: CompositePolygon;
+  polygonArr: CompositePolygon[];
   alreadyAttacked: string[];
+  attacking: boolean;
   unitOffSetX: number;
   unitOffSetY: number;
-  offSetArr: number[][];
-  weaponGroup: any;
+  offSetArr: number[];
 
-  constructor(scene, x, y, texture, weaponGroup, offSetArr) {
-    super(scene, x, y, texture);
-    scene.add.existing(this);
-    weaponGroup.add(this);
-    this.weaponGroup = weaponGroup;
+  constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
+    super(scene, x, y, texture, weaponGroup);
     this.alreadyAttacked = [];
     this.attacking = false;
-    this.setCollideWorldBounds(true);
     this.setupAnimEvents();
     this.unitOffSetX = offSetArr[0][0];
     this.unitOffSetY = offSetArr[0][1];
     this.offSetArr = offSetArr;
+    this.polygon = polygonArr[0];
+    this.polygonArr = polygonArr;
+  }
+
+  movePolygon() {
+    if (this.polygon.centerX !== this.x || this.polygon.centerY !== this.y) {
+      this.polygon.setPosition(this.x, this.y);
+    }
+    if (this.polygon.rotation !== this.rotation) {
+      this.polygon.rotate(this.rotation);
+    }
+  }
+
+  setPolygonForFrame() {
+    this.polygon = this.polygonArr[parseInt(this.frame.name) - 1];
+  }
+
+  syncPolygon() {
+    this.setPolygonForFrame();
+    this.movePolygon();
   }
 
   setupAnimEvents() {

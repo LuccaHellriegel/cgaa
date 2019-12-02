@@ -1,12 +1,12 @@
 import { Circle } from "./Circle";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
-import { PolygonWeapon } from "../../weapons/PolygonWeapon";
+import { Weapon } from "../../weapons/Weapon";
 import { Weapon } from "../../weapons/Weapon";
 export class CircleWithWeapon extends Circle {
-  weapon: PolygonWeapon;
+  weapon: Weapon;
 
-  constructor(scene, x, y, texture, physicsGroup, weapon:PolygonWeapon) {
+  constructor(scene, x, y, texture, physicsGroup, weapon:Weapon) {
     super(scene, x, y, texture, physicsGroup);
     this.weapon = weapon;
   }

@@ -2,13 +2,13 @@ import {
     CompositePolygon
 } from "../polygon/CompositePolygon"
 import {
-    PolygonWeapon
-} from "./PolygonWeapon"
+    Weapon
+} from "./Weapon"
 import {
     normalCircleRadius
 } from "../globals/globalSizes"
 
-export class RandWeapon extends PolygonWeapon {
+export class RandWeapon extends Weapon {
     constructor(scene, x, y, weaponGroup) {
         let polygonArr = [new CompositePolygon([
             [x, y, 10, 64, "rect"]

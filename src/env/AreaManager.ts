@@ -27,7 +27,6 @@ export class AreaManager {
 
     this.calculateCumulativeWalkAbleArr();
   }
- 
 
   private toggleIfAreaConfigIsEmpty() {
     this.areaConfig.hasWalls = !this.areaConfig.hasWalls;
@@ -74,7 +73,8 @@ export class AreaManager {
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;
     this.areaConfig.sizeOfXAxis = 62;
     this.areaConfig.sizeOfYAxis = 62;
-
+    this.areaConfig.hasHoles = false;
+    this.areaConfig.hasBuildings = false;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
   }
 
@@ -90,18 +90,18 @@ export class AreaManager {
     this.walkableArr = AreaService.createCumulativeWalkableArr(walkableArrArr);
   }
 
- //TODO: can push other Sprite into wall
- private bounceCallback(unit, rect) {
-  let x = unit.x;
-  let y = unit.y;
-  let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
+  //TODO: can push other Sprite into wall
+  private bounceCallback(unit, rect) {
+    let x = unit.x;
+    let y = unit.y;
+    let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
 
-  let bounceBackDistance = 0.5;
-  let x1 = x + Math.cos(angle) * bounceBackDistance;
-  let y1 = y + Math.sin(angle) * bounceBackDistance;
-  unit.setPosition(x1, y1);
-  unit.setVelocity(0, 0);
-}
+    let bounceBackDistance = 0.5;
+    let x1 = x + Math.cos(angle) * bounceBackDistance;
+    let y1 = y + Math.sin(angle) * bounceBackDistance;
+    unit.setPosition(x1, y1);
+    unit.setVelocity(0, 0);
+  }
 
   setupAreaColliders() {
     this.scene.physics.add.collider(this.scene.player.physicsGroup, this.physicsGroup, this.bounceCallback, null, this);

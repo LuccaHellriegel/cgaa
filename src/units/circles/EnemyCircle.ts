@@ -2,7 +2,7 @@ import { HealthBar } from "../../ui/healthbars/HealthBar";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CircleWithWeapon } from "./CircleWithWeapon";
-import { PolygonWeapon } from "../../weapons/PolygonWeapon";
+import { Weapon } from "../../weapons/Weapon";
 
 export class EnemyCircle extends CircleWithWeapon {
   hasBeenAttacked: boolean;
@@ -14,7 +14,7 @@ export class EnemyCircle extends CircleWithWeapon {
     y,
     texture,
     physicsGroup: Phaser.Physics.Arcade.Group,
-    weapon: PolygonWeapon
+    weapon: Weapon
   ) {
     super(scene, x, y, texture, physicsGroup, weapon);
     this.hasBeenAttacked = false;
@@ -85,6 +85,6 @@ export class EnemyCircle extends CircleWithWeapon {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     this.healthbar.move(this.x - 26, this.y - 38);
-    //if (this.hasBeenAttacked) this.attackPlayer();
+    if (this.hasBeenAttacked) this.attackPlayer();
   }
 }

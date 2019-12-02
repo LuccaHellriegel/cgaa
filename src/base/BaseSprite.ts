@@ -16,5 +16,7 @@ export class BaseSprite extends Phaser.Physics.Arcade.Sprite {
 
     scene.add.existing(this);
     physicsGroup.add(this);
+    this.setCollideWorldBounds(true);
+
   }
 }
