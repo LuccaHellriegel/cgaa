@@ -1,7 +1,7 @@
-import { CircleWithWeapon } from "./circles/CircleWithWeapon";
+import { Circle } from "./circles/Circle";
 import { playerStartX, playerStartY, playerTextureName } from "../globals/globalConfig";
 import { ChainWeapon } from "../weapons/ChainWeapon";
-export class Player extends CircleWithWeapon {
+export class Player extends Circle {
   constructor(scene, physicsGroup, weapon) {
     super(scene, playerStartX, playerStartY, playerTextureName, physicsGroup, weapon);
     this.unitType = "player";

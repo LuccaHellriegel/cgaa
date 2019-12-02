@@ -1,10 +1,10 @@
 import { HealthBar } from "../../ui/healthbars/HealthBar";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
-import { CircleWithWeapon } from "./CircleWithWeapon";
+import { Circle } from "./Circle";
 import { Weapon } from "../../weapons/Weapon";
 
-export class EnemyCircle extends CircleWithWeapon {
+export class EnemyCircle extends Circle {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
 

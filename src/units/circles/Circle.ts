@@ -1,15 +1,16 @@
+import { ChainWeapon } from "../../weapons/ChainWeapon";
+import { RandWeapon } from "../../weapons/RandWeapon";
+import { Weapon } from "../../weapons/Weapon";
 import { CirclePolygon } from "../../polygon/CirclePolygon";
-import { BaseSprite } from "../../base/BaseSprite";
 import { normalCircleRadius } from "../../globals/globalSizes";
-import { debugModus } from "../../globals/globalConfig";
-import { Gameplay } from "../../scenes/Gameplay";
+import { BaseSprite } from "../../base/BaseSprite";
 
-export abstract class Circle extends BaseSprite {
+export class Circle extends BaseSprite {
+  weapon: Weapon;
   polygon: CirclePolygon;
-  graphics: Phaser.GameObjects.Graphics;
   unitType: string;
 
-  constructor(scene: Gameplay, x, y, texture, physicsGroup) {
+  constructor(scene, x, y, texture, physicsGroup, weapon: Weapon) {
     super(scene, x, y, texture, physicsGroup);
     this.polygon = new CirclePolygon(
       x + scene.cameras.main.scrollX,
@@ -19,8 +20,45 @@ export abstract class Circle extends BaseSprite {
     this.unitType = "circle";
     this.setCircle(normalCircleRadius);
     this.setupAnimEvents();
+    this.weapon = weapon;
   }
 
+  attack() {
+    if (!this.weapon.attacking) {
+      this.weapon.attacking = true;
+      this.weapon.anims.play("attack-" + this.weapon.texture.key);
+    }
+  }
+
+  rotateWeaponAroundCircle() {
+    let point = Phaser.Math.RotateAround(
+      new Phaser.Geom.Point(this.x + this.weapon.unitOffSetX, this.y + this.weapon.unitOffSetY),
+      this.x,
+      this.y,
+      this.rotation
+    );
+    this.weapon.setPosition(point.x, point.y);
+    this.weapon.setRotation(this.rotation);
+  }
+
+  destroy() {
+    super.destroy();
+    this.weapon.destroy();
+  }
+
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta);
+    this.rotateWeaponAroundCircle();
+  }
+
+  static withChainWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
+    return new this(scene, x, y, texture, physicsGroup, new ChainWeapon(scene, x, y, weaponGroup, 5, 2));
+  }
+
+  static withRandWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
+    return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x, y, weaponGroup));
+  }
+  
   setupAnimEvents() {
     this.on(
       "animationcomplete",
