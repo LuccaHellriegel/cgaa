@@ -1,4 +1,3 @@
-import { MovementManager } from "../input/MovementManager";
 import { CircleWithWeapon } from "./circles/CircleWithWeapon";
 import { playerStartX, playerStartY, playerTextureName } from "../globals/globalConfig";
 import { ChainWeapon } from "../weapons/ChainWeapon";
@@ -14,6 +13,7 @@ export class Player extends CircleWithWeapon {
     this.weapon.setVelocityX(velo);
     return super.setVelocityX(velo);
   }
+  
   setVelocityY(velo) {
     this.weapon.setVelocityY(velo);
     return super.setVelocityY(velo);

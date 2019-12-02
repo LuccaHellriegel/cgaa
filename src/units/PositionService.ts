@@ -5,7 +5,6 @@ import {
 export class PositionService {
   private constructor() {}
 
-  //TODO: make a unit specific service for all calculation, as Phaser always needs a window, so I can never easily test it
   private static snapCoordinateToGrid(coordinate) {
     let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
     let floor = Math.floor(coordinate / wallPartHalfSize) * wallPartHalfSize;

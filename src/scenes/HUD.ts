@@ -14,7 +14,6 @@ export class HUD extends Phaser.Scene {
     this.ourGame.events.on(
       "damage-player",
       function(amount) {
-        //TODO: decrease based on attacker
         if (this.playerHealthBar.decrease(amount)) {
           this.ourGame.scene.restart();
           this.playerSoulCounter.reset();

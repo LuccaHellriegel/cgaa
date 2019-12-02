@@ -31,7 +31,6 @@ export class ChainWeapon extends Weapon {
         this.biggerCirclesRadius = ((this.arrowWidth / 3) / 2)
         this.smallerCirclesRadius = 2 * (this.biggerCirclesRadius / 3)
 
-        //TODO: size does not line up with manual calculation
         this.createPolygons()
         //TODO: better distinction between unit offset and physics sprite offset
         this.setOffSetArr()

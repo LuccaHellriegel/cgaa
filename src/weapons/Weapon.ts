@@ -8,7 +8,7 @@ export abstract class Weapon extends BaseSprite {
   attacking: boolean;
   unitOffSetX: number;
   unitOffSetY: number;
-  offSetArr: number[];
+  offSetArr: number[][];
 
   constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
     super(scene, x, y, texture, weaponGroup);

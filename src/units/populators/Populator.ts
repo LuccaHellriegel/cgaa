@@ -26,11 +26,10 @@ export abstract class Populator {
   }
 
   onEvent() {
-    if (this.enemyCount !== 10) {
-      let prevEnemies: any[] = this.scene.unitManager.enemies
-        ? this.scene.unitManager.enemies
-        : [];
-      this.scene.unitManager.enemies = prevEnemies.concat([this.createEnemy()]);
+    if (this.enemyCount !== 1000) {
+      let enemy = this.createEnemy();
+      this.populationReference.enemies.push(enemy);
+      this.scene.unitManager.enemies.push(enemy);
       this.enemyCount++;
       this.timedEvent.reset({
         delay: Phaser.Math.Between(100, 5000),
@@ -48,26 +47,13 @@ export abstract class Populator {
   }
 
   constructEnemy(randX, randY, enemyClass) {
-    return enemyClass(
-      this.scene,
-      randX,
-      randY,
-      "redCircle",
-      this.enemyPhysics,
-      this.enemyWeapons
-    );
+    return enemyClass(this.scene, randX, randY, "redCircle", this.enemyPhysics, this.enemyWeapons);
   }
 
   //TODO: dont spawn on top of other enemies and on buildings
   createEnemy() {
     //TODO: switch to same idea as building spawning for easier pathfinding
-    let {
-      randX,
-      randY
-    } = this.populationReference.calculateRandValidSpawnPosition(
-      wallPartHalfSize,
-      wallPartHalfSize
-    );
+    let { randX, randY } = this.populationReference.calculateRandValidSpawnPosition(wallPartHalfSize, wallPartHalfSize);
     let EnemyCircleClass = this.chooseEnemyClass();
 
     return this.constructEnemy(randX, randY, EnemyCircleClass);

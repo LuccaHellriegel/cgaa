@@ -4,11 +4,10 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { EnemyCircle } from "./circles/EnemyCircle";
-import { Weapon } from "../weapons/Weapon";
 
 export class UnitManager {
   scene: Gameplay;
-  enemies: EnemyCircle[];
+  enemies: EnemyCircle[] = [];
   enemyPhysics: Phaser.Physics.Arcade.Group;
   enemyWeapons: Phaser.Physics.Arcade.Group;
   easyStar: EasyStar.js;
@@ -39,39 +38,8 @@ export class UnitManager {
       });
     });
 
-    this.scene.physics.add.collider(this.scene.player.physicsGroup, this.enemies[0].physicsGroup);
-
-    this.scene.physics.add.overlap(
-      this.scene.player.weapon.physicsGroup,
-      this.enemies[0].physicsGroup,
-      this.doDamage,
-      this.considerDamage,
-      this
-    );
-
-    this.scene.physics.add.overlap(
-      this.enemies[0].weapon.physicsGroup,
-      this.scene.player.physicsGroup,
-      this.doDamage,
-      this.considerDamage,
-      this
-    );
+    
   }
 
-  private doDamage(weapon, enemy) {
-    weapon.alreadyAttacked.push(enemy.id);
-    //TODO: amount is saved on weapon
-    enemy.damage(50);
-  }
-
-  private considerDamage(weapon: Weapon, enemy) {
-    if (weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id)) {
-      weapon.syncPolygon();
-      enemy.syncPolygon();
-      let collision = weapon.polygon.checkForCollision(enemy.polygon);
-      return collision;
-    }
-
-    return false;
-  }
+  
 }

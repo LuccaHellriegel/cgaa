@@ -89,28 +89,4 @@ export class AreaManager {
     });
     this.walkableArr = AreaService.createCumulativeWalkableArr(walkableArrArr);
   }
-
-  //TODO: can push other Sprite into wall
-  private bounceCallback(unit, rect) {
-    let x = unit.x;
-    let y = unit.y;
-    let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
-
-    let bounceBackDistance = 0.5;
-    let x1 = x + Math.cos(angle) * bounceBackDistance;
-    let y1 = y + Math.sin(angle) * bounceBackDistance;
-    unit.setPosition(x1, y1);
-    unit.setVelocity(0, 0);
-  }
-
-  setupAreaColliders() {
-    this.scene.physics.add.collider(this.scene.player.physicsGroup, this.physicsGroup, this.bounceCallback, null, this);
-    this.scene.physics.add.collider(
-      this.scene.unitManager.enemies[0].physicsGroup,
-      this.physicsGroup,
-      this.bounceCallback,
-      null,
-      this
-    );
-  }
 }
