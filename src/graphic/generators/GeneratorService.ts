@@ -1,9 +1,7 @@
-import { Gameplay } from "../../scenes/Gameplay";
 import { RandWeaponGenerator } from "./weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./units/CircleGenerator";
-import { normalCircleRadius } from "../../globals/globalSizes";
+import { normalCircleRadius, wallPartHalfSize } from "../../globals/globalSizes";
 import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
-import { WallPartGenerator } from "./env/WallPartGenerator";
 import { BuildingGenerator } from "./env/BuildingGenerator";
 import { RectGenerator } from "./RectGenerator";
 
@@ -24,10 +22,27 @@ export class GeneratorService {
   private static generateUnits(scene) {
     new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
     new CircleGenerator(0xff0000, scene, "redCircle", normalCircleRadius);
+    new RectGenerator(
+      scene,
+      0x013220,
+      "tower",
+      1.5 * wallPartHalfSize,
+      1.5 * wallPartHalfSize,
+      3 * wallPartHalfSize,
+      3 * wallPartHalfSize
+    );
   }
 
   private static generateEnvironment(scene) {
-    new RectGenerator(scene, "wallPart", 40, 40, 80, 80);
+    new RectGenerator(
+      scene,
+      0xa9a9a9,
+      "wallPart",
+      wallPartHalfSize,
+      wallPartHalfSize,
+      2 * wallPartHalfSize,
+      2 * wallPartHalfSize
+    );
     new BuildingGenerator(scene);
   }
 }

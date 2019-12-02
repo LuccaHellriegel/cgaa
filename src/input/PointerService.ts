@@ -1,4 +1,6 @@
 export class PointerService {
+  private constructor() {}
+
   static setupPointerEvents(scene) {
     let input = scene.input;
     input.on(
