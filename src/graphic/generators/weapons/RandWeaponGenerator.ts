@@ -17,6 +17,7 @@ export class RandWeaponGenerator extends WeaponGenerator {
       this.biggerThanWeapon,
       this.tempWeaponGroup
     );
+    this.generate()
   }
 
   generate() {

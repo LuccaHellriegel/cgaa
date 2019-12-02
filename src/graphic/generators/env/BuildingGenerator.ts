@@ -21,6 +21,7 @@ export class BuildingGenerator extends Generator {
       (rectBuildingHalfWidth-20) * 2,
       (rectBuildinghalfHeight-20) * 2
     );
+    this.generate()
   }
 
   generate() {
