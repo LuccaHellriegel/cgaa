@@ -1,18 +1,38 @@
 import { BaseImage } from "../../base/BaseImage";
-import { BuildingService } from "./BuildingService";
+import { SpawnService } from "../../services/SpawnService";
+import { Area } from "../areas/Area";
 
 export class Building extends BaseImage {
   validSpawnPositions: any[];
-  constructor(scene, x, y, physicsGroup) {
+  enemies: any[] = [];
+  area: Area;
+
+  constructor(scene, x, y, physicsGroup, area) {
     super(scene, x, y, "rectBuilding", physicsGroup);
-    this.validSpawnPositions = BuildingService.calculateValidSpawnPositionAroundBuilding(
-      this.x,
-      this.y
-    );
+    this.area = area;
+    this.validSpawnPositions = SpawnService.calculateSpawnPositionsAroundBuilding(this.x, this.y);
   }
 
-  calculateRandValidSpawnPosition() {
+  //TODO: replae this with randomylTryFunc
+  calculateRandUnitSpawnPosition() {
     let pos = Phaser.Math.Between(0, this.validSpawnPositions.length - 1);
-    return this.validSpawnPositions[pos];
+    let chosenPosition = this.validSpawnPositions[pos];
+    let positionsTried = 0;
+    while (SpawnService.checkIfCircleCollidesWithCircles(this.enemies, chosenPosition.x, chosenPosition.y)) {
+      positionsTried++;
+      if (positionsTried === this.validSpawnPositions.length) {
+        return null;
+      }
+
+      let reachedLastPos = pos === this.validSpawnPositions.length - 1;
+      if (!reachedLastPos) {
+        pos++;
+      } else {
+        pos = 0;
+      }
+      chosenPosition = this.validSpawnPositions[pos];
+    }
+
+    return chosenPosition;
   }
 }

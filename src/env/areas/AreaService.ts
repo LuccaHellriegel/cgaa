@@ -9,26 +9,12 @@ export class AreaService {
 
     let cumulativeWalkableArr: number[][] = [];
 
-    for (
-      let rowIndexArea = 0;
-      rowIndexArea < arrOfWalkAbleArrs.length;
-      rowIndexArea++
-    ) {
-      for (
-        let rowIndex = 0;
-        rowIndex < arrOfWalkAbleArrs[0][0].length;
-        rowIndex++
-      ) {
+    for (let rowIndexArea = 0; rowIndexArea < arrOfWalkAbleArrs.length; rowIndexArea++) {
+      for (let rowIndex = 0; rowIndex < arrOfWalkAbleArrs[0][0].length; rowIndex++) {
         let cumulativeRow = [];
 
-        for (
-          let columnIndexArea = 0;
-          columnIndexArea < arrOfWalkAbleArrs[0].length;
-          columnIndexArea++
-        ) {
-          cumulativeRow = cumulativeRow.concat(
-            arrOfWalkAbleArrs[rowIndexArea][columnIndexArea][rowIndex]
-          );
+        for (let columnIndexArea = 0; columnIndexArea < arrOfWalkAbleArrs[0].length; columnIndexArea++) {
+          cumulativeRow = cumulativeRow.concat(arrOfWalkAbleArrs[rowIndexArea][columnIndexArea][rowIndex]);
         }
         cumulativeWalkableArr.push(cumulativeRow);
       }
@@ -42,18 +28,20 @@ export class AreaService {
     for (let i = 0; i < parts.length; i++) {
       let row: number[] = [];
       for (let k = 0; k < parts[0].length; k++) {
-        row.push(parts[i][k].isWalkable() ? 0 : 1);
+        let notWalkableSymbol = parts[i][k].contentType === "building" ? 2 : 1;
+
+        row.push(parts[i][k].isWalkable() ? 0 : notWalkableSymbol);
       }
       walkabkleArr.push(row);
     }
     return walkabkleArr;
   }
 
-  static calculateBorderObjectFromPartsAndSize(parts,width,height){
+  static calculateBorderObject(parts, width, height) {
     let borderX = parts[0][0].x + wallPartHalfSize;
     let borderY = parts[0][0].y + wallPartHalfSize;
     let borderWidth = width - 4 * wallPartHalfSize;
     let borderHeight = height - 4 * wallPartHalfSize;
     return { borderX, borderY, borderWidth, borderHeight };
-  } 
+  }
 }

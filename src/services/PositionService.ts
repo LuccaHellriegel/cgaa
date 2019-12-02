@@ -1,6 +1,4 @@
-import {
-  wallPartHalfSize
-} from "../globals/globalSizes";
+import { wallPartHalfSize } from "../globals/globalSizes";
 
 export class PositionService {
   private constructor() {}
@@ -45,28 +43,21 @@ export class PositionService {
     return { newX, newY };
   }
 
-  private static tryToFindRelativePosInArr(
-    walkableArr,
-    x,
-    y
-  ) {
+  private static tryToFindRelativePosInArr(walkableArr, x, y) {
     //TODO: symmetrical arr is assumed
 
-    let curXInArr = 0
-    let curYInArr = 0
+    let curXInArr = 0;
+    let curYInArr = 0;
     for (let i = 0; i < walkableArr.length; i++) {
       for (let k = 0; k < walkableArr[0].length; k++) {
-        if (
-          x - wallPartHalfSize === curXInArr &&
-          y - wallPartHalfSize === curYInArr
-        ) {
+        if (x - wallPartHalfSize === curXInArr && y - wallPartHalfSize === curYInArr) {
           return { row: i, column: k };
         }
         curXInArr += 2 * wallPartHalfSize;
       }
       curYInArr += 2 * wallPartHalfSize;
 
-      curXInArr = 0
+      curXInArr = 0;
     }
 
     return null;
@@ -75,18 +66,16 @@ export class PositionService {
   static findCurRelativePosition(walkableArr: number[][], x, y) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
-    let relPos = this.tryToFindRelativePosInArr(
-      walkableArr,
-      newX,
-      newY
-    );
+    let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
 
     if (relPos) return relPos;
 
-    throw "No relative position found for point " +
-      x +
-      " " +
-      y;
+    throw "No relative position found for point " + x + " " + y;
   }
 
+  static relativePosToRealPosInArea(area, column, row) {
+    let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
+    let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
+    return { x, y };
+  }
 }

@@ -1,61 +1,37 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { wallPartHalfSize } from "../../globals/globalSizes";
-import { EnemyCircle } from "../circles/EnemyCircle";
 
 export abstract class Populator {
   enemyWeapons: Phaser.Physics.Arcade.Group;
-  scene: Gameplay;
   enemyPhysics: Phaser.Physics.Arcade.Group;
-  populationReference: any;
-  timedEvent: Phaser.Time.TimerEvent;
-  enemyCount: number;
+  enemyCount: number = 0;
+  scene: Gameplay;
 
-  constructor(
-    scene: Gameplay,
-    enemyPhysics: Phaser.Physics.Arcade.Group,
-    enemyWeapons: Phaser.Physics.Arcade.Group,
-    populationReference
-  ) {
-    this.scene = scene;
+  constructor(scene: Gameplay, enemyPhysics: Phaser.Physics.Arcade.Group, enemyWeapons: Phaser.Physics.Arcade.Group) {
     this.enemyPhysics = enemyPhysics;
     this.enemyWeapons = enemyWeapons;
-    this.populationReference = populationReference;
-    this.enemyCount = 0;
-
-    this.timedEvent = scene.time.addEvent({});
+    this.scene = scene;
   }
 
-  onEvent() {
-    if (this.enemyCount !== 1000) {
-      let enemy = this.createEnemy();
-      this.populationReference.enemies.push(enemy);
+  abstract addEnemyToControlInstance(enemy);
+
+  abstract createEnemy();
+
+  abstract doMoreSpawn();
+
+  startPopulating() {
+    let enemy = this.createEnemy();
+    if (enemy != null) {
+      this.addEnemyToControlInstance(enemy);
       this.scene.unitManager.enemies.push(enemy);
       this.enemyCount++;
-      this.timedEvent.reset({
+    }
+    if (this.doMoreSpawn()) {
+      this.scene.time.addEvent({
         delay: Phaser.Math.Between(100, 5000),
-        callback: this.onEvent,
+        callback: this.startPopulating,
         callbackScope: this,
-        repeat: 1
+        repeat: 0
       });
     }
-  }
-
-  chooseEnemyClass() {
-    return Phaser.Math.Between(0, 1) === 0
-      ? EnemyCircle.withChainWeapon.bind(EnemyCircle)
-      : EnemyCircle.withRandWeapon.bind(EnemyCircle);
-  }
-
-  constructEnemy(randX, randY, enemyClass) {
-    return enemyClass(this.scene, randX, randY, "redCircle", this.enemyPhysics, this.enemyWeapons);
-  }
-
-  //TODO: dont spawn on top of other enemies and on buildings
-  createEnemy() {
-    //TODO: switch to same idea as building spawning for easier pathfinding
-    let { randX, randY } = this.populationReference.calculateRandValidSpawnPosition(wallPartHalfSize, wallPartHalfSize);
-    let EnemyCircleClass = this.chooseEnemyClass();
-
-    return this.constructEnemy(randX, randY, EnemyCircleClass);
   }
 }

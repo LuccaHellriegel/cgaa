@@ -25,21 +25,21 @@ export class UnitManager {
   spawnUnits() {
     Player.withChainWeapon(this.scene);
 
-    let enemyPhysics = this.scene.physics.add.group();
-    let enemyWeapons = this.scene.physics.add.group();
     this.scene.areaManager.areas.forEach(areaRow => {
       areaRow.forEach(area => {
         if (area.buildings[0]) {
-          new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, area);
+          new AreaPopulator(this.scene, this.enemyPhysics, this.enemyWeapons, area).startPopulating();
           area.buildings.forEach(building => {
-            new BuildingPopulator(this.scene, enemyPhysics, enemyWeapons, building, this.easyStar);
+            new BuildingPopulator(
+              this.scene,
+              this.enemyPhysics,
+              this.enemyWeapons,
+              building,
+              this.easyStar
+            ).startPopulating();
           });
         }
       });
     });
-
-    
   }
-
-  
 }

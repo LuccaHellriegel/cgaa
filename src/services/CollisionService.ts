@@ -5,23 +5,24 @@ export class CollisionService {
   private constructor() {}
 
   static addCollisionDetection(scene: Gameplay) {
-   this.addCombatCollision(scene)
-   this.addAreaCollision(scene)
+    this.addCombatCollision(scene);
+    this.addAreaCollision(scene);
   }
 
-  private static addCombatCollision(scene){
-    scene.physics.add.collider(scene.player.physicsGroup, scene.unitManager.enemies[0].physicsGroup);
+  private static addCombatCollision(scene: Gameplay) {
+    scene.physics.add.collider(scene.player.physicsGroup, scene.unitManager.enemyPhysics);
 
     scene.physics.add.overlap(
       scene.player.weapon.physicsGroup,
-      scene.unitManager.enemies[0].physicsGroup,
+      scene.unitManager.enemyPhysics,
       this.doDamage,
       this.considerDamage,
       this
     );
 
+    //TODO: rename enemyWeapons to group
     scene.physics.add.overlap(
-      scene.unitManager.enemies[0].weapon.physicsGroup,
+      scene.unitManager.enemyWeapons,
       scene.player.physicsGroup,
       this.doDamage,
       this.considerDamage,
@@ -68,7 +69,7 @@ export class CollisionService {
       this
     );
     scene.physics.add.collider(
-      scene.unitManager.enemies[0].physicsGroup,
+      scene.unitManager.enemyPhysics,
       scene.areaManager.physicsGroup,
       this.bounceCallback,
       null,

@@ -4,12 +4,14 @@ export class AreaPart {
   height: number;
   x: any;
   y: any;
+  contentType: any;
   constructor(content) {
     this.content = content
   }
 
-  updateContent(content){
+  updateContent(content, contentType){
     this.content = content
+    this.contentType = contentType
     this.x = content.x;
     this.y = content.y;
     this.width = content.width;

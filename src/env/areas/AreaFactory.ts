@@ -35,11 +35,12 @@ export class AreaFactory {
 
     if (hasWalls || hasBuildings) newArea.scene = scene;
 
-    if (hasWalls) {
-      newArea.buildWalls();
-      if (hasHoles) newArea.makeHoles(holePosition);
-    }
+    if (hasWalls) newArea.buildWalls();
+
+    //buildings need to be place before holes, otherwise wrong positioning
     if (hasBuildings) newArea.buildBuildings(numbOfBuildings);
+
+    if (hasWalls && hasHoles) newArea.makeHoles(holePosition);
 
     return newArea;
   }

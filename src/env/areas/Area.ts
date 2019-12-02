@@ -1,9 +1,16 @@
 import { AreaPart } from "./AreaPart";
 import { AreaService } from "./AreaService";
-import { wallPartHalfSize, rectBuildingHalfWidth, rectBuildinghalfHeight, rectBuildingInWallParts } from "../../globals/globalSizes";
+import {
+  wallPartHalfSize,
+  rectBuildingHalfWidth,
+  rectBuildinghalfHeight,
+  rectBuildingInWallParts
+} from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
-import { BuildingService } from "../buildings/BuildingService";
 import { Building } from "../buildings/Building";
+import { SpawnService } from "../../services/SpawnService";
+import { EnemyCircle } from "../../units/circles/EnemyCircle";
+import { PositionService } from "../../services/PositionService";
 
 export class Area {
   parts: AreaPart[][] = [];
@@ -16,13 +23,12 @@ export class Area {
   scene: any;
   buildings: Building[] = [];
 
-  constructor(
-    sizeOfXAxis: number,
-    sizeOfYAxis: number,
-    topLeftX,
-    topLeftY,
-    unitForPart
-  ) {
+  //TODO: needs to be accurate for future spawning
+  enemies: EnemyCircle[] = [];
+  spawnableArrForEnemies: number[][];
+  spawnableArrForBuildings: number[][];
+
+  constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart) {
     for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];
       for (let column = 0; column < sizeOfXAxis; column++) {
@@ -40,10 +46,6 @@ export class Area {
     this.height = sizeOfYAxis * unitForPart;
   }
 
-  calculateWalkableArr() {
-    return AreaService.createWalkableArr(this.parts);
-  }
-
   makeHoles(holePosition) {
     this.parts[0][holePosition].deleteContent();
     this.parts[holePosition][0].deleteContent();
@@ -51,33 +53,23 @@ export class Area {
     this.parts[holePosition][this.sizeOfXAxis - 1].deleteContent();
   }
 
-  private createWallSide(
-    topLeftCenterX,
-    topLeftCenterY,
-    numberOfRects,
-    wallSide
-  ) {
+  private createWallSide(topLeftCenterX, topLeftCenterY, numberOfRects, wallSide) {
     let x = topLeftCenterX;
     let y = topLeftCenterY;
     for (let index = 0; index < numberOfRects; index++) {
       if (wallSide === "left" || wallSide === "right") y += 2 * wallPartHalfSize;
 
-      let curRect = new WallPart(
-        this.scene,
-        x,
-        y,
-        this.scene.areaManager.physicsGroup
-      );
+      let curRect = new WallPart(this.scene, x, y, this.scene.areaManager.physicsGroup);
       if (wallSide === "top") {
-        this.parts[0][index].updateContent(curRect);
+        this.parts[0][index].updateContent(curRect, "wall");
         x += 2 * wallPartHalfSize;
       } else if (wallSide === "bottom") {
-        this.parts[this.sizeOfYAxis - 1][index].updateContent(curRect);
+        this.parts[this.sizeOfYAxis - 1][index].updateContent(curRect, "wall");
         x += 2 * wallPartHalfSize;
       } else if (wallSide === "left") {
-        this.parts[index + 1][0].updateContent(curRect);
+        this.parts[index + 1][0].updateContent(curRect, "wall");
       } else {
-        this.parts[index + 1][this.sizeOfXAxis - 1].updateContent(curRect);
+        this.parts[index + 1][this.sizeOfXAxis - 1].updateContent(curRect, "wall");
       }
     }
   }
@@ -105,106 +97,48 @@ export class Area {
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
 
-  calculateRandValidSpawnPosition(
-    requestedDistanceToWallXAxis,
-    requestedDistanceToWallYAxis
-  ) {
-    let borderObject = this.calculateBorderObject();
-    let numberOfRectsInBorder = 2;
-
-    let xMultiplier = Phaser.Math.Between(
-      0,
-      this.sizeOfXAxis - numberOfRectsInBorder - 1
-    );
-    let edgeCorrection = 0;
-
-    if (
-      wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize <
-      requestedDistanceToWallXAxis
-    ) {
-      edgeCorrection =
-        requestedDistanceToWallXAxis -
-        (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize);
-    } else if (
-      borderObject.borderWidth -
-        (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize) <
-      requestedDistanceToWallXAxis
-    ) {
-      edgeCorrection =
-        requestedDistanceToWallXAxis -
-        (borderObject.borderHeight -
-          (wallPartHalfSize + xMultiplier * 2 * wallPartHalfSize));
-      edgeCorrection = -edgeCorrection;
-    }
-    let randX =
-      borderObject.borderX +
-      wallPartHalfSize +
-      xMultiplier * 2 * wallPartHalfSize +
-      edgeCorrection;
-
-    let yMultiplier = Phaser.Math.Between(0, this.sizeOfYAxis - 2);
-    edgeCorrection = 0;
-    if (
-      wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize <
-      requestedDistanceToWallYAxis
-    ) {
-      edgeCorrection =
-        requestedDistanceToWallYAxis -
-        (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize);
-    } else if (
-      borderObject.borderHeight -
-        (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize) <
-      requestedDistanceToWallYAxis
-    ) {
-      edgeCorrection =
-        requestedDistanceToWallYAxis -
-        (borderObject.borderHeight -
-          (wallPartHalfSize + yMultiplier * 2 * wallPartHalfSize));
-      edgeCorrection = -edgeCorrection;
+  calculateRandUnitSpawnPosition() {
+    if (!this.spawnableArrForEnemies) {
+      //TODO: can reuse calculation from the cumulative walk arr
+      //TODO: think if calculation on small areas might be more performant
+      this.spawnableArrForEnemies = AreaService.createWalkableArr(this.parts);
     }
 
-    let randY =
-      borderObject.borderY +
-      wallPartHalfSize +
-      yMultiplier * 2 * wallPartHalfSize +
-      edgeCorrection;
-
-    return { randX, randY };
-  }
-
-  calculateBorderObject() {
-    return AreaService.calculateBorderObjectFromPartsAndSize(
-      this.parts,
-      this.width,
-      this.height
+    return SpawnService.randomlyTryAllSpawnablePos(
+      this.spawnableArrForEnemies,
+      this,
+      spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
+      (x, y) => {
+        return SpawnService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
+      }
     );
   }
+
+  private calculateRandBuildingSpawnPos() {
+    if (!this.spawnableArrForBuildings) {
+      this.spawnableArrForBuildings = SpawnService.calculateBuildingSpawnableArrForArea(this.parts);
+    } else {
+      SpawnService.updateBuildingSpawnableArr(this.spawnableArrForBuildings);
+    }
+    return SpawnService.randomlyTryAllSpawnablePos(
+      this.spawnableArrForBuildings,
+      this,
+      spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
+      (x, y) => {
+        return false;
+      }
+    );
+  }
+
   private buildBuilding() {
-    let { randX, randY } = this.calculateRandValidSpawnPosition(
-      rectBuildingHalfWidth + 2 * wallPartHalfSize,
-      rectBuildinghalfHeight + 2 * wallPartHalfSize
-    );
-    while (
-      BuildingService.checkIfOnTopOfOtherBuildingOrSpawnArea(
-        this.buildings,
-        randX,
-        randY
-      )
-    ) {
-      let result = this.calculateRandValidSpawnPosition(
-        rectBuildingHalfWidth + 2 * wallPartHalfSize,
-        rectBuildinghalfHeight + 2 * wallPartHalfSize
-      );
+    let { randX, randY } = this.calculateRandBuildingSpawnPos();
+    while (SpawnService.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
+      let result = this.calculateRandBuildingSpawnPos();
       randX = result.randX;
       randY = result.randY;
     }
 
-    let building = new Building(
-      this.scene,
-      randX,
-      randY,
-      this.scene.areaManager.physicsGroup
-    );
+    let building = new Building(this.scene, randX, randY, this.scene.areaManager.physicsGroup, this);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }
@@ -215,12 +149,9 @@ export class Area {
 
     for (let i = 0; i < this.sizeOfYAxis; i++) {
       for (let k = 0; k < this.sizeOfXAxis; k++) {
-        if (
-          building.x - rectBuildingHalfWidth === x &&
-          building.y - rectBuildinghalfHeight === y
-        ) {
+        if (building.x - rectBuildingHalfWidth === x && building.y - rectBuildinghalfHeight === y) {
           for (let index = 0; index < rectBuildingInWallParts; index++) {
-            this.parts[i][k + index].updateContent(building);
+            this.parts[i][k + index].updateContent(building, "building");
           }
           break;
         }
@@ -232,9 +163,9 @@ export class Area {
     }
   }
 
-  buildBuildings(numbOfBuildings){
-    Array.from({ length: numbOfBuildings}, () => {
+  buildBuildings(numbOfBuildings) {
+    for (let index = 0; index < numbOfBuildings; index++) {
       this.buildBuilding();
-    });
+    }
   }
 }

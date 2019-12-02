@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { wallPartHalfSize } from "../src/globals/globalSizes";
-import { PositionService } from "../src/units/PositionService";
+import { PositionService } from "../src/services/PositionService";
 
 describe("Test PositionService", function() {
   describe("Find relativ position in Area", function() {
@@ -12,11 +12,7 @@ describe("Test PositionService", function() {
         [0, 0, 0],
         [0, 0, 0]
       ];
-      let { row, column } = PositionService.findCurRelativePosition(
-        walkableArr,
-        x,
-        y
-      );
+      let { row, column } = PositionService.findCurRelativePosition(walkableArr, x, y);
       expect(row).to.equal(1);
       expect(column).to.equal(1);
     });
@@ -27,11 +23,7 @@ describe("Test PositionService", function() {
         [0, 0, 0],
         [0, 0, 0]
       ];
-      let { row, column } = PositionService.findCurRelativePosition(
-        walkableArr,
-        wallPartHalfSize,
-        y
-      );
+      let { row, column } = PositionService.findCurRelativePosition(walkableArr, wallPartHalfSize, y);
       expect(row).to.equal(1);
       expect(column).to.equal(0);
     });
@@ -46,11 +38,7 @@ describe("Test PositionService", function() {
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0]
       ];
-      let { row, column } = PositionService.findCurRelativePosition(
-        walkableArr,
-        x,
-        y
-      );
+      let { row, column } = PositionService.findCurRelativePosition(walkableArr, x, y);
       expect(row).to.equal(2);
       expect(column).to.equal(2);
     });
@@ -64,49 +52,50 @@ describe("Test PositionService", function() {
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0]
       ];
-      let { row, column } = PositionService.findCurRelativePosition(
-        walkableArr,
-        x - 7,
-        y - 7
-      );
+      let { row, column } = PositionService.findCurRelativePosition(walkableArr, x - 7, y - 7);
       expect(row).to.equal(2);
       expect(column).to.equal(2);
     });
     it("X and Y should be snapped back to 200", function() {
-      let { newX, newY } = PositionService.snapXYToGrid(
-        5 * wallPartHalfSize - 7,
-        5 * wallPartHalfSize - 7
-      );
+      let { newX, newY } = PositionService.snapXYToGrid(5 * wallPartHalfSize - 7, 5 * wallPartHalfSize - 7);
 
       expect(newX).to.equal(5 * wallPartHalfSize);
       expect(newY).to.equal(5 * wallPartHalfSize);
     });
     it("X and Y should remain 200", function() {
-      let { newX, newY } = PositionService.snapXYToGrid(
-        5 * wallPartHalfSize,
-        5 * wallPartHalfSize
-      );
+      let { newX, newY } = PositionService.snapXYToGrid(5 * wallPartHalfSize, 5 * wallPartHalfSize);
 
       expect(newX).to.equal(5 * wallPartHalfSize);
       expect(newY).to.equal(5 * wallPartHalfSize);
     });
     it("If X and Y is between tiles it should go to the closest (the right one)", function() {
-      let { newX, newY } = PositionService.snapXYToGrid(
-        2 * wallPartHalfSize + 2,
-        wallPartHalfSize
-      );
+      let { newX, newY } = PositionService.snapXYToGrid(2 * wallPartHalfSize + 2, wallPartHalfSize);
 
       expect(newX).to.equal(3 * wallPartHalfSize);
       expect(newY).to.equal(wallPartHalfSize);
     });
     it("If X and Y is between tiles it should go to the closest (the left one)", function() {
-      let { newX, newY } = PositionService.snapXYToGrid(
-        2 * wallPartHalfSize - 2,
-        wallPartHalfSize
-      );
+      let { newX, newY } = PositionService.snapXYToGrid(2 * wallPartHalfSize - 2, wallPartHalfSize);
 
       expect(newX).to.equal(wallPartHalfSize);
       expect(newY).to.equal(wallPartHalfSize);
+    });
+  });
+  describe("Convert relative pos in Area to real pos", function() {
+    it("First position is first in grid (wallPartHalfSize,wallPartHalfSize)", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 0, 0);
+      expect(realPos).to.deep.equal({ x: wallPartHalfSize, y: wallPartHalfSize });
+    });
+    it("Second position is second in grid (3*wallPartHalfSize,wallPartHalfSize)", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 1, 0);
+      expect(realPos).to.deep.equal({ x: 3 * wallPartHalfSize, y: wallPartHalfSize });
+    });
+    it("(1,1) position is (1,1) in grid (3*wallPartHalfSize,3*wallPartHalfSize)", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 1, 1);
+      expect(realPos).to.deep.equal({ x: 3 * wallPartHalfSize, y: 3 * wallPartHalfSize });
     });
   });
 });

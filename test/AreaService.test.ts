@@ -178,7 +178,7 @@ describe("Test AreaService", function() {
           { x: 0 + 5 * wallPartHalfSize, y: 0 + 5 * wallPartHalfSize }
         ]
       ];
-      let borderObject = AreaService.calculateBorderObjectFromPartsAndSize(
+      let borderObject = AreaService.calculateBorderObject(
         parts,
         6 * wallPartHalfSize,
         6 * wallPartHalfSize
@@ -216,7 +216,7 @@ describe("Test AreaService", function() {
           { x: 0 + 7 * wallPartHalfSize, y: 0 + 7 * wallPartHalfSize }
         ]
       ];
-      let borderObject = AreaService.calculateBorderObjectFromPartsAndSize(
+      let borderObject = AreaService.calculateBorderObject(
         parts,
         8 * wallPartHalfSize,
         8 * wallPartHalfSize
