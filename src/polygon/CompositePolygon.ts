@@ -15,6 +15,7 @@ export class CompositePolygon {
     centerY: number;
     height: number;
     width: number;
+    rotation: number;
 
     constructor(config) {
         this.polygons = [];

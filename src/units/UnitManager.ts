@@ -4,6 +4,8 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { EnemyCircle } from "./circles/EnemyCircle";
+import { Weapon } from "../weapons/Weapon";
+import { PolygonWeapon } from "../weapons/PolygonWeapon";
 
 export class UnitManager {
   scene: Gameplay;
@@ -14,12 +16,12 @@ export class UnitManager {
 
   constructor(scene: Gameplay) {
     this.scene = scene;
-    scene.unitManager = this
+    scene.unitManager = this;
     this.enemyPhysics = this.scene.physics.add.group();
     this.enemyWeapons = this.scene.physics.add.group();
     this.easyStar = new EasyStar.js();
 
-    this.spawnUnits()
+    this.spawnUnits();
   }
 
   spawnUnits() {
@@ -29,7 +31,7 @@ export class UnitManager {
     let enemyWeapons = this.scene.physics.add.group();
     this.scene.areaManager.areas.forEach(areaRow => {
       areaRow.forEach(area => {
-        console.log(area)
+        console.log(area);
         if (area.buildings[0]) {
           new AreaPopulator(this.scene, enemyPhysics, enemyWeapons, area);
           area.buildings.forEach(building => {
@@ -41,18 +43,18 @@ export class UnitManager {
 
     this.scene.physics.add.collider(this.scene.player.physicsGroup, this.enemies[0].physicsGroup);
 
-    this.scene.physics.add.collider(
+    this.scene.physics.add.overlap(
       this.scene.player.weapon.weaponGroup,
       this.enemies[0].physicsGroup,
       this.doDamage,
-      this.considerDamage
+      this.considerDamage, this
     );
 
-    this.scene.physics.add.collider(
+    this.scene.physics.add.overlap(
       this.enemies[0].weapon.weaponGroup,
       this.scene.player.physicsGroup,
       this.doDamage,
-      this.considerDamage
+      this.considerDamage, this
     );
   }
 
@@ -62,14 +64,16 @@ export class UnitManager {
     enemy.damage(50);
   }
 
-  private considerDamage(weapon, enemy) {
-    
-    console.log("Collision: " + weapon.polygon.checkForCollision(enemy.polygon));
-    console.log("Weapon attacking: " + weapon.attacking);
-    console.log("Already attacked: " + weapon.alreadyAttacked.includes(enemy.id));
+  private considerDamage(weapon: PolygonWeapon, enemy) {
+    if (weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id)) {
+      weapon.syncPolygon();
+      enemy.syncPolygon();
+      let collision = weapon.polygon.checkForCollision(enemy.polygon);
+      console.log(collision)
 
-    return (
-      weapon.polygon.checkForCollision(enemy.polygon) && weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id)
-    );
+      return collision
+    }
+
+    return false;
   }
 }

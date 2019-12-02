@@ -4,7 +4,8 @@ export class AreaPart {
   height: number;
   x: any;
   y: any;
-  constructor() {
+  constructor(content) {
+    this.content = content
   }
 
   updateContent(content){

@@ -85,6 +85,6 @@ export class EnemyCircle extends CircleWithWeapon {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     this.healthbar.move(this.x - 26, this.y - 38);
-    if (this.hasBeenAttacked) this.attackPlayer();
+    //if (this.hasBeenAttacked) this.attackPlayer();
   }
 }

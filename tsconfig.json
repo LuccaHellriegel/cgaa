@@ -2,10 +2,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "allowJs": true,
-    "target": "es6",
+    "target": "es5",
     "typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
     "types": ["phaser", "mocha"],
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es6", "dom", "es2017"],
   },
   "include": ["src/**/*"]
 }

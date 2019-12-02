@@ -51,10 +51,13 @@ export abstract class Circle extends BaseSprite {
     this.scene.events.emit("damage-" + this.unitType, amount);
   }
 
-  preUpdate(time, delta) {
-    super.preUpdate(time, delta);
+  syncPolygon(){
     this.polygon.setPosition(this.x, this.y);
 
+  }
+
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta);
     if (debugModus) this.draw();
   }
 
