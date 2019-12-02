@@ -15,6 +15,7 @@ export class MovementManager {
         this.down
         this.player = player
         this.cursors = this.createKeyboardInput(scene)
+        scene.playerMovement = this
     }
 
     createKeyboardInput(scene){

@@ -4,7 +4,7 @@ import { AnimationService } from "../graphic/AnimationService";
 import { UnitManager } from "../units/UnitManager";
 import { GeneratorService } from "../graphic/generators/GeneratorService";
 import { AreaManager } from "../env/AreaManager";
-import { debugModus } from "../globals/globalConfig";
+import { PointerService } from "../input/PointerService";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
@@ -29,9 +29,8 @@ export class Gameplay extends Phaser.Scene {
 
     this.areaManager.setupAreaColliders();
 
-    if (debugModus) {
-      this.polygonOffset = 0;
-    }
+    new MovementManager(this.player, this);
+    PointerService.setupPointerEvents(this);
   }
 
   update() {

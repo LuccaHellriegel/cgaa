@@ -11,7 +11,6 @@ export abstract class Circle extends BaseSprite {
 
   constructor(scene: Gameplay, x, y, texture, physicsGroup) {
     super(scene, x, y, texture, physicsGroup);
-    //TODO: polygon has a few pixel offset, screen offset?
     this.polygon = new CirclePolygon(
       x + scene.cameras.main.scrollX,
       y + scene.cameras.main.scrollY,
@@ -20,13 +19,6 @@ export abstract class Circle extends BaseSprite {
     this.unitType = "circle";
     this.setCircle(normalCircleRadius);
     this.setupAnimEvents();
-
-    if (debugModus)
-      this.graphics = scene.add.graphics({
-        fillStyle: {
-          color: 0xff00ff
-        }
-      });
   }
 
   setupAnimEvents() {
@@ -51,18 +43,7 @@ export abstract class Circle extends BaseSprite {
     this.scene.events.emit("damage-" + this.unitType, amount);
   }
 
-  syncPolygon(){
+  syncPolygon() {
     this.polygon.setPosition(this.x, this.y);
-
-  }
-
-  preUpdate(time, delta) {
-    super.preUpdate(time, delta);
-    if (debugModus) this.draw();
-  }
-
-  draw() {
-    this.graphics.clear();
-    this.polygon.draw(this.graphics, this.scene.polygonOffset);
   }
 }

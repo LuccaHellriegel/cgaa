@@ -42,11 +42,6 @@ export class CircleWithWeapon extends Circle {
     this.rotateWeaponAroundCircle();
   }
 
-  draw() {
-    super.draw();
-    this.weapon.polygon.draw(this.graphics, this.scene.polygonOffset);
-  }
-
   static withChainWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
     return new this(
       scene,
