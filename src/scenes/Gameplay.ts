@@ -2,7 +2,7 @@ import { Player } from "../units/Player";
 import { MovementManager } from "../input/MovementManager";
 import { AnimationService } from "../graphic/AnimationService";
 import { UnitManager } from "../units/UnitManager";
-import { GeneratorService } from "../graphic/generator/GeneratorService";
+import { GeneratorService } from "../graphic/generators/GeneratorService";
 import { AreaManager } from "../env/AreaManager";
 import { debugModus } from "../globals/globalConfig";
 
