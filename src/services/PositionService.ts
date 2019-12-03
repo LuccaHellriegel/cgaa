@@ -3,7 +3,7 @@ import { wallPartHalfSize } from "../globals/globalSizes";
 export class PositionService {
   private constructor() {}
 
-  private static snapCoordinateToGrid(coordinate) {
+  static snapCoordinateToGrid(coordinate) {
     let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
     let floor = Math.floor(coordinate / wallPartHalfSize) * wallPartHalfSize;
 
@@ -22,7 +22,7 @@ export class PositionService {
 
   static snapXYToGrid(x, y) {
     let needToSnapX = x % wallPartHalfSize !== 0;
-    let needToSnapY = x % wallPartHalfSize !== 0;
+    let needToSnapY = y % wallPartHalfSize !== 0;
 
     if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 

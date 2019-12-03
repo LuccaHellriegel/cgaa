@@ -1,8 +1,12 @@
+import { Gameplay } from "../scenes/Gameplay";
+import { Tower } from "../units/towers/Tower";
+
 export class PointerService {
   private constructor() {}
 
-  static setupPointerEvents(scene) {
+  static setupPointerEvents(scene : Gameplay) {
     let input = scene.input;
+
     input.on(
       "pointermove",
       function(pointer) {
@@ -18,6 +22,13 @@ export class PointerService {
       },
       this
     );
+
+    let keyObj = input.keyboard.addKey("F")
+    keyObj.on("down", event => {
+      //TODO: direction
+      scene.towerManager.spawnNewTower(scene.player.x + 160,scene.player.y + 160)
+      //new Tower(scene,scene.player.x + 160, scene.player.y + 160, scene.physics.add.group())
+    })
   }
 
   static rotatePlayerTowardsMouse(pointer, scene) {

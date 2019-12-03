@@ -6,14 +6,14 @@ import { GeneratorService } from "../graphic/generators/GeneratorService";
 import { AreaManager } from "../env/AreaManager";
 import { PointerService } from "../input/PointerService";
 import { CollisionService } from "../services/CollisionService";
+import { TowerManager } from "../units/towers/TowerManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
-  enemies: any[] = [];
   playerMovement: MovementManager;
-  polygonOffset: number;
   unitManager: UnitManager;
   areaManager: AreaManager;
+  towerManager: TowerManager;
 
   constructor() {
     super("Gameplay");
@@ -28,7 +28,9 @@ export class Gameplay extends Phaser.Scene {
     new AreaManager(this);
     new UnitManager(this);
 
-    CollisionService.addCollisionDetection(this)
+    new TowerManager(this);
+
+    CollisionService.addCollisionDetection(this);
 
     new MovementManager(this);
     PointerService.setupPointerEvents(this);
