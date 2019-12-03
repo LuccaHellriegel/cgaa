@@ -107,7 +107,8 @@ export class TowerService {
       changeY = 2 * towerHalfSize;
     }
 
-    if (closestTower.x + changeX < 0 || closestTower.y + changeY < 0) return null;
+    //TODO: other side of map is also out of boundss
+    if (closestTower.x + changeX < towerHalfSize || closestTower.y + changeY < towerHalfSize) return null;
 
     return { newX: closestTower.x + changeX, newY: closestTower.y + changeY };
   }
