@@ -1,6 +1,6 @@
 import {
     CompositePolygon
-} from "../polygon/CompositePolygon"
+} from "../polygons/CompositePolygon"
 import {
     Weapon
 } from "./Weapon"

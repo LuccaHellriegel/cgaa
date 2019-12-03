@@ -1,4 +1,4 @@
-import { CompositePolygon } from "../polygon/CompositePolygon";
+import { CompositePolygon } from "../polygons/CompositePolygon";
 import { BaseSprite } from "../base/BaseSprite";
 
 export abstract class Weapon extends BaseSprite {

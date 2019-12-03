@@ -1,7 +1,7 @@
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { Weapon } from "../../weapons/Weapon";
-import { CirclePolygon } from "../../polygon/CirclePolygon";
+import { CirclePolygon } from "../../polygons/CirclePolygon";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { BaseSprite } from "../../base/BaseSprite";
 
