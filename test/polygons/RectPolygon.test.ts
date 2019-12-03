@@ -3,8 +3,8 @@ import {
 } from "chai"
 import {
     RectPolygon
-} from "../src/polygon/RectPolygon";
-import { Point } from "../src/polygon/Point";
+} from "../../src/polygons/RectPolygon";
+import { Point } from "../../src/polygons/Point";
 
 describe("Test RectPolygon", function () {
 
