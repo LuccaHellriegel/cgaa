@@ -4,6 +4,7 @@ import { normalCircleRadius, wallPartHalfSize } from "../../globals/globalSizes"
 import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./env/BuildingGenerator";
 import { RectGenerator } from "./RectGenerator";
+import { GhostTowerGenerator } from "./units/GhostTowerGenerator";
 
 export class GeneratorService {
   private constructor() {}
@@ -31,6 +32,7 @@ export class GeneratorService {
       3 * wallPartHalfSize,
       3 * wallPartHalfSize
     );
+    new GhostTowerGenerator(scene);
   }
 
   private static generateEnvironment(scene) {
