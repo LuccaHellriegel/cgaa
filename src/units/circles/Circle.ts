@@ -21,6 +21,7 @@ export class Circle extends BaseSprite {
     this.setCircle(normalCircleRadius);
     this.setupAnimEvents();
     this.weapon = weapon;
+    this.setCollideWorldBounds(true);
   }
 
   attack() {
@@ -58,7 +59,7 @@ export class Circle extends BaseSprite {
   static withRandWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
     return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x, y, weaponGroup));
   }
-  
+
   setupAnimEvents() {
     this.on(
       "animationcomplete",

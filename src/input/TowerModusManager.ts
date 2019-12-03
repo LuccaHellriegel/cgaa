@@ -21,7 +21,7 @@ export class TowerModusManager {
       let active = false;
       let visible = false;
       if (this.isOn) {
-          //TODO not perfect :P
+        //TODO not perfect :P
         this.ghostTower.setPosition(this.scene.input.mousePointer.x, this.scene.input.mousePointer.y);
         active = true;
         visible = true;
@@ -32,5 +32,9 @@ export class TowerModusManager {
 
   syncGhostTowerWithMouse(x, y) {
     if (this.isOn) this.ghostTower.setPosition(x, y);
+  }
+
+  bringGhostTowerToTop() {
+    this.scene.children.bringToTop(this.ghostTower);
   }
 }

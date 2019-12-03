@@ -27,5 +27,7 @@ export class AnimationService {
   static createAnims(anims) {
     this.createWeaponAnims(anims);
     this.createCircleAnims(anims);
+    this.createNonRepeatingAnim(anims, "invalid-tower-pos", "ghostTower", 1, 2, 8);
+    this.createNonRepeatingAnim(anims, "idle-ghostTower", "ghostTower", 1, 1, 10);
   }
 }

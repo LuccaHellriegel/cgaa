@@ -12,14 +12,7 @@ export class CircleGenerator extends Generator {
     this.generate();
   }
 
-  generate() {
-    this.drawCircleFrames();
-    this.generateCircleTexture();
-    this.addFramesToCircleTexture();
-    this.destroyUsedObjects();
-  }
-
-  drawCircleFrames() {
+  drawFrames() {
     this.drawCircleIdleFrame();
     this.drawCircleDamageFrame();
   }
@@ -34,16 +27,12 @@ export class CircleGenerator extends Generator {
     this.graphics.fillCircle(3 * this.radius, this.radius, 2 * (this.radius / 3));
   }
 
-  generateCircleTexture() {
+  generateTexture() {
     this.graphics.generateTexture(this.title, 4 * this.radius, 2 * this.radius);
   }
 
-  addFramesToCircleTexture() {
+  addFrames() {
     this.scene.textures.list[this.title].add(1, 0, 0, 0, 2 * this.radius, 2 * this.radius);
     this.scene.textures.list[this.title].add(2, 0, 2 * this.radius, 0, 2 * this.radius, 2 * this.radius);
-  }
-
-  destroyUsedObjects() {
-    this.graphics.destroy();
   }
 }

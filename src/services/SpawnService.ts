@@ -2,7 +2,8 @@ import {
   normalCircleRadius,
   rectBuildinghalfHeight,
   wallPartHalfSize,
-  rectBuildingHalfWidth
+  rectBuildingHalfWidth,
+  towerHalfSize
 } from "../globals/globalSizes";
 import { PositionService } from "./PositionService";
 import { AreaService } from "../env/areas/AreaService";
@@ -35,6 +36,16 @@ export class SpawnService {
       return false;
     };
     return this.checkIfSpawnWouldCollide(buildings, randX, randY, checkDiffCallback);
+  }
+
+  static checkIfTowerCollidesWithTowers(towers, randX, randY) {
+    let checkDiffCallback = (diffX, diffY) => {
+      let inRowsOverOrUnderBuilding = diffY >= 2 * towerHalfSize;
+      let leftOrRightFromBuilding = diffX >= 2 * towerHalfSize;
+      if (!inRowsOverOrUnderBuilding && !leftOrRightFromBuilding) return true;
+      return false;
+    };
+    return this.checkIfSpawnWouldCollide(towers, randX, randY, checkDiffCallback);
   }
 
   static calculateSpawnPositionsAround(x, y, width, height) {
