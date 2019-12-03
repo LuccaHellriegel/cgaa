@@ -11,22 +11,14 @@ export class RandWeaponGenerator extends WeaponGenerator {
 
   constructor(hexColor: number, scene: Gameplay) {
     super(hexColor, scene);
-    this.randWeapon = new RandWeapon(
-      scene,
-      this.biggerThanWeapon,
-      this.biggerThanWeapon,
-      this.tempWeaponGroup
-    );
-    this.generate()
+    this.randWeapon = new RandWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, this.tempWeaponGroup);
+    this.generate();
   }
 
-  generate() {
+  drawFrames() {
     this.setPolygonMeasurementsForEasierPositioning();
     this.setPositionsForWeaponPolygonsForDrawing();
     this.drawRandWeaponPolygons();
-    this.generateRandWeaponTexture();
-    this.addFramesToRandWeaponTexture();
-    this.destroyUsedObjects();
   }
 
   setPolygonMeasurementsForEasierPositioning() {
@@ -38,19 +30,17 @@ export class RandWeaponGenerator extends WeaponGenerator {
   }
 
   setPositionsForWeaponPolygonsForDrawing() {
-    this.randWeapon.polygon.setPosition(
-      this.idlePolygonWidth / 2,
-      this.idlePolygonHeight / 2
-    );
+    this.randWeapon.polygon.setPosition(this.idlePolygonWidth / 2, this.idlePolygonHeight / 2);
 
     this.randWeapon.polygonArr[1].setPosition(
       this.idlePolygonWidth + this.attackPolygonWidth / 2,
-      (this.attackPolygonHeight / 2)
+      this.attackPolygonHeight / 2
     );
-    let diffBetweenAttackCenterAndIdleCenterY = this.randWeapon.polygonArr[1].polygons[0].y - this.randWeapon.polygonArr[0].centerY
+    let diffBetweenAttackCenterAndIdleCenterY =
+      this.randWeapon.polygonArr[1].polygons[0].y - this.randWeapon.polygonArr[0].centerY;
     this.randWeapon.polygonArr[1].setPosition(
       this.idlePolygonWidth + this.attackPolygonWidth / 2,
-      (this.attackPolygonHeight / 2) - diffBetweenAttackCenterAndIdleCenterY
+      this.attackPolygonHeight / 2 - diffBetweenAttackCenterAndIdleCenterY
     );
   }
 
@@ -59,7 +49,7 @@ export class RandWeaponGenerator extends WeaponGenerator {
     this.randWeapon.polygonArr[1].draw(this.graphics, 0);
   }
 
-  generateRandWeaponTexture() {
+  generateTexture() {
     this.graphics.generateTexture(
       "randWeapon",
       this.idlePolygonWidth + this.attackPolygonWidth,
@@ -67,18 +57,11 @@ export class RandWeaponGenerator extends WeaponGenerator {
     );
   }
 
-  addFramesToRandWeaponTexture() {
+  addFrames() {
     let topLeftX = 0;
     let topLeftY = 0;
 
-    this.scene.textures.list["randWeapon"].add(
-      1,
-      0,
-      topLeftX,
-      topLeftY,
-      this.idlePolygonWidth,
-      this.idlePolygonHeight
-    );
+    this.scene.textures.list["randWeapon"].add(1, 0, topLeftX, topLeftY, this.idlePolygonWidth, this.idlePolygonHeight);
 
     topLeftX += this.idlePolygonWidth;
     this.scene.textures.list["randWeapon"].add(

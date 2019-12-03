@@ -18,21 +18,19 @@ export class BuildingGenerator extends Generator {
     this.rectBuildingInnerRect = new RectPolygon(
       rectBuildingHalfWidth,
       rectBuildinghalfHeight,
-      (rectBuildingHalfWidth-20) * 2,
-      (rectBuildinghalfHeight-20) * 2
+      (rectBuildingHalfWidth - 20) * 2,
+      (rectBuildinghalfHeight - 20) * 2
     );
-    this.generate()
+    this.generate();
   }
 
-  generate() {
+  drawFrames() {
     this.rectBuilding.draw(this.graphics, 0);
-    this.graphics.fillStyle(0x00008b)
-    this.rectBuildingInnerRect.draw(this.graphics,0)
-    this.graphics.generateTexture(
-      "rectBuilding",
-      rectBuildingHalfWidth * 2,
-      rectBuildinghalfHeight * 2
-    );
-    this.destroyUsedObjects();
+    this.graphics.fillStyle(0x00008b);
+    this.rectBuildingInnerRect.draw(this.graphics, 0);
   }
+  generateTexture() {
+    this.graphics.generateTexture("rectBuilding", rectBuildingHalfWidth * 2, rectBuildinghalfHeight * 2);
+  }
+  addFrames() {}
 }
