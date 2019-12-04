@@ -1,14 +1,14 @@
 import { expect } from "chai";
-import { AreaService } from "../src/env/areas/AreaService";
+import { SpawnService } from "../src/spawn/SpawnService";
 import { AreaPosition } from "../src/env/areas/AreaPosition";
 import { wallPartHalfSize } from "../src/globals/globalSizes";
 
-describe("Test AreaService", function() {
+describe("Test SpawnService", function() {
   describe("Calculate walkable map", function() {
     it("Empty single part map, everything is walkable", () => {
       let parts: AreaPosition[][] = [[new AreaPosition(null)]];
 
-      let walkAbleArr = AreaService.createWalkableArr(parts);
+      let walkAbleArr = SpawnService.createWalkableArr(parts);
 
       let expectedWalkableArr = [[0]];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
@@ -19,7 +19,7 @@ describe("Test AreaService", function() {
         [new AreaPosition(null), new AreaPosition(null), new AreaPosition(null)],
         [new AreaPosition(null), new AreaPosition(null), new AreaPosition(null)]
       ];
-      let walkAbleArr = AreaService.createWalkableArr(parts);
+      let walkAbleArr = SpawnService.createWalkableArr(parts);
 
       let expectedWalkableArr = [
         [0, 0, 0],
@@ -34,7 +34,7 @@ describe("Test AreaService", function() {
         [new AreaPosition({}), new AreaPosition(null), new AreaPosition({})],
         [new AreaPosition({}), new AreaPosition({}), new AreaPosition({})]
       ];
-      let walkAbleArr = AreaService.createWalkableArr(parts);
+      let walkAbleArr = SpawnService.createWalkableArr(parts);
 
       let expectedWalkableArr = [
         [1, 1, 1],
@@ -51,7 +51,7 @@ describe("Test AreaService", function() {
         [new AreaPosition({}), new AreaPosition(null), new AreaPosition(null), new AreaPosition(null), new AreaPosition({})],
         [new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({})]
       ];
-      let walkAbleArr = AreaService.createWalkableArr(parts);
+      let walkAbleArr = SpawnService.createWalkableArr(parts);
 
       let expectedWalkableArr = [
         [1, 1, 1, 1, 1],
@@ -77,7 +77,7 @@ describe("Test AreaService", function() {
         [1, 1],
         [1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
+      let returnedCumulativeMap = SpawnService.createCumulativeWalkableArr(walkAbleArrArr);
 
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
@@ -95,7 +95,7 @@ describe("Test AreaService", function() {
         [1, 1, 1, 1],
         [1, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
+      let returnedCumulativeMap = SpawnService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
     it("4 2x2 areas generate a joined 4x4 map", () => {
@@ -125,7 +125,7 @@ describe("Test AreaService", function() {
         [1, 1, 1, 1],
         [1, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
+      let returnedCumulativeMap = SpawnService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
     it("4 2x2 areas with 0 in them generate a joined 4x4 map", () => {
@@ -155,7 +155,7 @@ describe("Test AreaService", function() {
         [1, 1, 0, 1],
         [0, 1, 1, 1]
       ];
-      let returnedCumulativeMap = AreaService.createCumulativeWalkableArr(walkAbleArrArr);
+      let returnedCumulativeMap = SpawnService.createCumulativeWalkableArr(walkAbleArrArr);
       expect(returnedCumulativeMap).to.deep.equal(expectedCumulativeMap);
     });
   });
@@ -178,7 +178,7 @@ describe("Test AreaService", function() {
           { x: 0 + 5 * wallPartHalfSize, y: 0 + 5 * wallPartHalfSize }
         ]
       ];
-      let borderObject = AreaService.calculateBorderObject(
+      let borderObject = SpawnService.calculateBorderObject(
         parts,
         6 * wallPartHalfSize,
         6 * wallPartHalfSize
@@ -216,7 +216,7 @@ describe("Test AreaService", function() {
           { x: 0 + 7 * wallPartHalfSize, y: 0 + 7 * wallPartHalfSize }
         ]
       ];
-      let borderObject = AreaService.calculateBorderObject(
+      let borderObject = SpawnService.calculateBorderObject(
         parts,
         8 * wallPartHalfSize,
         8 * wallPartHalfSize

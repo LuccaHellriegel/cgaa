@@ -1,5 +1,5 @@
 import { AreaPosition } from "./AreaPosition";
-import { AreaService } from "./AreaService";
+import { SpawnService } from "../../spawn/SpawnService";
 import {
   wallPartHalfSize,
   rectBuildingHalfWidth,
@@ -8,7 +8,6 @@ import {
 } from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { Building } from "../buildings/Building";
-import { SpawnService } from "../../spawn/SpawnService";
 import { EnemyCircle } from "../../units/circles/EnemyCircle";
 import { CollisionService } from "../../spawn/CollisionService";
 
@@ -101,10 +100,10 @@ export class Area {
     if (!this.spawnableArrForEnemies) {
       //TODO: can reuse calculation from the cumulative walk arr
       //TODO: think if calculation on small areas might be more performant
-      this.spawnableArrForEnemies = AreaService.createWalkableArr(this.parts);
+      this.spawnableArrForEnemies = SpawnService.createWalkableArr(this.parts);
     }
 
-    return SpawnService.randomlyTryAllSpawnablePos(
+    return SpawnService.randomlyTryAllSpawnablePosFromArr(
       this.spawnableArrForEnemies,
       this,
       spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
@@ -120,7 +119,7 @@ export class Area {
     } else {
       SpawnService.updateBuildingSpawnableArr(this.spawnableArrForBuildings);
     }
-    return SpawnService.randomlyTryAllSpawnablePos(
+    return SpawnService.randomlyTryAllSpawnablePosFromArr(
       this.spawnableArrForBuildings,
       this,
       spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),

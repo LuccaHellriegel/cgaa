@@ -16,7 +16,7 @@ export class PointerService {
         let y = pointer.y + scrollY;
 
         this.rotatePlayerTowardsMouse(x, y, scene);
-        scene.towerModusManager.syncGhostTowerWithMouse(x, y);
+        scene.towerModus.syncGhostTowerWithMouse(x, y);
       },
       this
     );
@@ -24,8 +24,8 @@ export class PointerService {
     input.on(
       "pointerdown",
       function() {
-        if (scene.towerModusManager.isOn) {
-          scene.towerManager.spawnNewTower(scene.towerModusManager.ghostTower.x, scene.towerModusManager.ghostTower.y);
+        if (scene.towerModus.isOn) {
+          scene.towerManager.spawnNewTower(scene.towerModus.ghostTower.x, scene.towerModus.ghostTower.y);
         } else {
           scene.player.attack();
         }

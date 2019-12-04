@@ -5,6 +5,7 @@ import {
   rectBuildingHalfWidth,
   towerHalfSize
 } from "../globals/globalSizes";
+import { PositionService } from "../services/PositionService";
 
 export class CollisionService {
   private constructor() {}
@@ -45,4 +46,5 @@ export class CollisionService {
     };
     return this.checkIfSpawnWouldCollide(towers, randX, randY, checkDiffCallback);
   }
+ 
 }

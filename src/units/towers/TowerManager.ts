@@ -2,7 +2,6 @@ import { Tower } from "./Tower";
 import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 import { TowerService } from "./TowerService";
-import { CollisionService } from "../../spawn/CollisionService";
 import { PhysicalManager } from "../../base/Base";
 
 export class TowerManager extends PhysicalManager {
@@ -11,18 +10,15 @@ export class TowerManager extends PhysicalManager {
   }
 
   private playInvalidTowerPosAnim() {
-    this.scene.towerModusManager.ghostTower.anims.play("invalid-tower-pos");
+    this.scene.towerModus.ghostTower.anims.play("invalid-tower-pos");
   }
 
   spawnNewTower(x, y) {
     if (!(x < 0 || y < 0)) {
       let { closestTower, dist } = TowerService.findClosestTower(this.elements, x, y);
       if (dist < 3.5 * towerHalfSize) {
-        console.log("here");
-
         let resultXY = TowerService.snapTowerPosToClosestTower(closestTower, x, y);
         if (resultXY === null) {
-          console.log("here1");
           this.playInvalidTowerPosAnim();
           return;
         }
@@ -31,17 +27,15 @@ export class TowerManager extends PhysicalManager {
         x = newX;
         y = newY;
       }
-      if (!CollisionService.checkIfTowerCollidesWithTowers(this.elements, x, y)) {
-        this.elements.push(new Tower(this.scene, x, y, this.physicsGroup));
-        this.scene.towerModusManager.bringGhostTowerToTop();
-      } else {
-        console.log("here2");
 
+      //TODO: fire event to alert spawnManager of new Tower pos for updating
+      if (this.scene.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
+        this.elements.push(new Tower(this.scene, x, y, this.physicsGroup));
+        this.scene.towerModus.bringGhostTowerToTop();
+      } else {
         this.playInvalidTowerPosAnim();
       }
     } else {
-      console.log("here3");
-
       this.playInvalidTowerPosAnim();
     }
   }

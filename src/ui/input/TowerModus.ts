@@ -9,7 +9,7 @@ export class TowerModus {
 
   constructor(scene: Gameplay) {
     this.scene = scene;
-    scene.towerModusManager = this;
+    scene.towerModus = this;
 
     this.physicsGroup = scene.physics.add.staticGroup();
     this.ghostTower = new GhostTower(scene, 0, 0, this.physicsGroup);

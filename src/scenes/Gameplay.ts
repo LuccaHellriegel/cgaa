@@ -9,6 +9,7 @@ import { ColliderService } from "../services/ColliderService";
 import { TowerManager } from "../units/towers/TowerManager";
 import { TowerModus } from "../ui/input/TowerModus";
 import { PathManager } from "../path/PathManager";
+import { SpawnManager } from "../spawn/SpawnManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
@@ -16,8 +17,9 @@ export class Gameplay extends Phaser.Scene {
   enemyManager: EnemyManager;
   areaManager: AreaManager;
   pathManager: PathManager;
+  spawnManager: SpawnManager;
   towerManager: TowerManager;
-  towerModusManager: TowerModus;
+  towerModus: TowerModus;
 
   constructor() {
     super("Gameplay");
@@ -31,10 +33,12 @@ export class Gameplay extends Phaser.Scene {
 
     new AreaManager(this);
     new PathManager(this);
+    new TowerManager(this);
+
+    new SpawnManager(this);
 
     new EnemyManager(this);
 
-    new TowerManager(this);
     new TowerModus(this);
 
     ColliderService.addCollisionDetection(this);
