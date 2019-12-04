@@ -1,7 +1,7 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
 
-export class CollisionService {
+export class ColliderService {
   private constructor() {}
 
   static addCollisionDetection(scene: Gameplay) {
