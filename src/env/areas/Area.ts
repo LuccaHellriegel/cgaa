@@ -24,8 +24,11 @@ export class Area {
 
   //TODO: needs to be accurate for future spawning
   enemies: EnemyCircle[] = [];
-  spawnableArrForEnemies: number[][];
   spawnableArrForBuildings: number[][];
+  relativeWidth: number;
+  relativeHeight: number;
+  relativeTopLeftX: number;
+  relativeTopLeftY: number;
 
   constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart) {
     for (let row = 0; row < sizeOfYAxis; row++) {
@@ -43,6 +46,12 @@ export class Area {
 
     this.width = sizeOfXAxis * unitForPart;
     this.height = sizeOfYAxis * unitForPart;
+
+    this.relativeWidth = (this.width) / (2 * wallPartHalfSize);
+    this.relativeHeight = (this.height) / (2 * wallPartHalfSize);
+
+    this.relativeTopLeftX = topLeftX / (2 * wallPartHalfSize);
+    this.relativeTopLeftY = topLeftY / (2 * wallPartHalfSize);
   }
 
   makeHoles(holePosition) {
@@ -58,7 +67,7 @@ export class Area {
     for (let index = 0; index < numberOfRects; index++) {
       if (wallSide === "left" || wallSide === "right") y += 2 * wallPartHalfSize;
 
-      let curRect = new WallPart(this.scene, x, y, this.scene.EnvManager.physicsGroup);
+      let curRect = new WallPart(this.scene, x, y, this.scene.envManager.physicsGroup);
       if (wallSide === "top") {
         this.parts[0][index].updateContent(curRect, "wall");
         x += 2 * wallPartHalfSize;
@@ -96,7 +105,6 @@ export class Area {
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
 
-
   private calculateRandBuildingSpawnPos() {
     if (!this.spawnableArrForBuildings) {
       this.spawnableArrForBuildings = SpawnService.calculateBuildingSpawnableArrForArea(this.parts);
@@ -121,7 +129,7 @@ export class Area {
       randY = result.randY;
     }
 
-    let building = new Building(this.scene, randX, randY, this.scene.EnvManager.physicsGroup, this);
+    let building = new Building(this.scene, randX, randY, this.scene.envManager.physicsGroup, this);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

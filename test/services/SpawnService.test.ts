@@ -386,7 +386,7 @@ describe("Test SpawnService", function() {
         { column: 3, row: 3 }
       ]);
     });
-    it("2x6 area has 3 spawnable pos", () => {
+    it("2x5 area has 3 spawnable pos", () => {
       let spawnableArr = [
         [1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1],
@@ -395,11 +395,62 @@ describe("Test SpawnService", function() {
         [1, 1, 1, 1, 1]
       ];
 
-      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(0, 0, 5, 2, spawnableArr)).to.deep.equal([
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(1, 0, 5, 2, spawnableArr)).to.deep.equal([
         { column: 1, row: 1 },
         { column: 2, row: 1 },
         { column: 3, row: 1 }
       ]);
+    });
+    it("2x4 area starting bad has 3 spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(1, 0, 4, 2, spawnableArr)).to.deep.equal([
+        { column: 1, row: 1 },
+        { column: 2, row: 1 },
+        { column: 3, row: 1 }
+      ]);
+    });
+    it("3x2 area has 3 spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(1, 0, 2, 3, spawnableArr)).to.deep.equal([
+        { column: 1, row: 1 },
+        { column: 2, row: 1 },
+        { column: 1, row: 2 }
+      ]);
+    });
+  });
+
+  describe("Try all pos", function() {
+    it("Last pos is returned", () => {
+      let spawnablePos = [
+        { column: 0, row: 0 },
+        { column: 1, row: 0 },
+        { column: 2, row: 0 },
+        { column: 3, row: 0 }
+      ];
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let randGenerationCallback = () => 0;
+      let validTestingCallback = x => x !== 5* wallPartHalfSize;
+      let pos = SpawnService.randomlyTryAllSpawnablePos(
+        spawnablePos,
+        area,
+        randGenerationCallback,
+        validTestingCallback
+      );
+      expect(pos).to.deep.equal({randX: 5* wallPartHalfSize, randY: wallPartHalfSize})
     });
   });
 });

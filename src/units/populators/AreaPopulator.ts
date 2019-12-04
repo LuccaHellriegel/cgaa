@@ -3,7 +3,6 @@ import { Area } from "../../env/areas/Area";
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnemyCircle } from "../circles/EnemyCircle";
 import { SpawnService } from "../../spawn/SpawnService";
-import { CollisionService } from "../../spawn/CollisionService";
 
 export class AreaPopulator extends Populator {
   area: Area;
@@ -18,24 +17,17 @@ export class AreaPopulator extends Populator {
     this.area = area;
   }
 
-  //TODO: think about control instances having only the id, is search more expensive? where do i need it?
-  addEnemyToControlInstance(enemy) {
-    this.area.enemies.push(enemy);
-  }
-
   calculateRandUnitSpawnPosition(area) {
-    if (!area.spawnableArrForEnemies) {
-      area.spawnableArrForEnemies = SpawnService.createWalkableArr(area.parts);
-    }
+    let spawnablePos = this.scene.spawnManager.getValidSpawnPosForEnemiesInArea(area);
 
-    return SpawnService.randomlyTryAllSpawnablePosFromArr(
-      area.spawnableArrForEnemies,
-      area,
+    let pos = SpawnService.randomlyTryAllSpawnablePosInRelationToEnv(
+      spawnablePos,
       spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
       (x, y) => {
-        return CollisionService.checkIfCircleCollidesWithCircles(area.enemies, x, y);
+        return false;
       }
     );
+    return pos
   }
 
   createEnemy() {
@@ -43,7 +35,6 @@ export class AreaPopulator extends Populator {
     if (spawnPositon === null) return null;
 
     let { randX, randY } = spawnPositon;
-
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     if (choseRandWeapon) {
       return EnemyCircle.withRandWeapon(

@@ -6,13 +6,15 @@ export abstract class Populator {
   enemyCount: number = 0;
   scene: Gameplay;
 
-  constructor(scene: Gameplay, enemyPhysicsGroup: Phaser.Physics.Arcade.Group, weaponPhysicsGroup: Phaser.Physics.Arcade.Group) {
+  constructor(
+    scene: Gameplay,
+    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
+    weaponPhysicsGroup: Phaser.Physics.Arcade.Group
+  ) {
     this.enemyPhysicsGroup = enemyPhysicsGroup;
     this.weaponPhysicsGroup = weaponPhysicsGroup;
     this.scene = scene;
   }
-
-  abstract addEnemyToControlInstance(enemy);
 
   abstract createEnemy();
 
@@ -21,7 +23,6 @@ export abstract class Populator {
   startPopulating() {
     let enemy = this.createEnemy();
     if (enemy != null) {
-      this.addEnemyToControlInstance(enemy);
       this.scene.enemyManager.elements.push(enemy);
       this.enemyCount++;
     }

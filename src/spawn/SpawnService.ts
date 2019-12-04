@@ -198,12 +198,15 @@ export class SpawnService {
     spawnPos.forEach(pos => {
       if (
         pos.column < relativeAreaTopLeftX + relativeAreaWidth &&
-        pos.row < realtiveAreaTopLeftY + relativeAreaHeight
+        pos.column >= relativeAreaTopLeftX &&
+        pos.row < realtiveAreaTopLeftY + relativeAreaHeight &&
+        pos.row >= realtiveAreaTopLeftY
       ) {
         areaSpawnPos.push(pos);
       }
     });
 
+    console.log(areaSpawnPos);
     return areaSpawnPos;
   }
 
@@ -216,6 +219,15 @@ export class SpawnService {
   static randomlyTryAllSpawnablePosFromArr(spawnableArr, area, randGenerationCallback, validTestingCallback) {
     let spawnablePos = this.extractSpawnPosFromSpawnableArr(spawnableArr);
     return this.randomlyTryAllSpawnablePos(spawnablePos, area, randGenerationCallback, validTestingCallback);
+  }
+
+  static randomlyTryAllSpawnablePosInRelationToEnv(spawnablePos, randGenerationCallback, validTestingCallback) {
+    return this.randomlyTryAllSpawnablePos(
+      spawnablePos,
+      { topLeftX: 0, topLeftY: 0 },
+      randGenerationCallback,
+      validTestingCallback
+    );
   }
 
   static randomlyTryAllSpawnablePos(spawnablePos, area, randGenerationCallback, validTestingCallback) {
@@ -244,6 +256,12 @@ export class SpawnService {
       realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
     }
 
+    console.log(
+      realPos,
+      area,
+      PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row),
+      chosenPosition
+    );
     return { randX: realPos.x, randY: realPos.y };
   }
 }

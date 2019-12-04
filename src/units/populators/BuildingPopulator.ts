@@ -21,14 +21,9 @@ export class BuildingPopulator extends Populator {
     this.building = building;
   }
 
-  addEnemyToControlInstance(enemy) {
-    this.building.enemies.push(enemy);
-  }
-
   calculateRandUnitSpawnPosition(building) {
-    return SpawnService.randomlyTryAllSpawnablePos(
+    return SpawnService.randomlyTryAllSpawnablePosInRelationToEnv(
       building.validSpawnPositions,
-      { topLeftX: 0, topLeftY: 0 },
       spawnablePosCount => {
         return Phaser.Math.Between(0, spawnablePosCount);
       },

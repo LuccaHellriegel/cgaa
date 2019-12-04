@@ -2,6 +2,7 @@ import { Manager } from "../base/Base";
 import { Gameplay } from "../scenes/Gameplay";
 import { PositionService } from "../services/PositionService";
 import { SpawnService } from "./SpawnService";
+import { Area } from "../env/areas/Area";
 
 export class SpawnManager extends Manager {
   spawnableArrForEnemies;
@@ -58,22 +59,28 @@ export class SpawnManager extends Manager {
 
   private addTowersToSpawnableArr() {
     this.scene.towerManager.elements.forEach(tower => {
+
       let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForEnemies, tower.x, tower.y);
       this.markPosAroundUnit(this.spawnableArrForEnemies, row, column);
     });
   }
 
-  evaluateRealSpawnPosOfEnemies(x, y) {
-    console.log(x, y);
-    let { row, column } = PositionService.findCurRelativePosition(this.elements, x, y);
-    this.updateSpawnableArrForEnemies();
-
-    return this.elements[row][column] === 0;
-  }
   evaluateRealSpawnPosOfTower(x, y) {
+
     let { row, column } = PositionService.findCurRelativePosition(this.elements, x, y);
     this.updateSpawnableArrForTowers();
 
     return this.elements[row][column] === 0;
+  }
+
+  getValidSpawnPosForEnemiesInArea(area: Area) {
+    this.updateSpawnableArrForEnemies();
+    return SpawnService.extractSpawnPosFromSpawnableArrForArea(
+      area.relativeTopLeftX,
+      area.relativeTopLeftY,
+      area.relativeWidth,
+      area.relativeHeight,
+      this.spawnableArrForEnemies
+    );
   }
 }

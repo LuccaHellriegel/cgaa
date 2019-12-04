@@ -21,8 +21,8 @@ export class PositionService {
   }
 
   static snapXYToGrid(x, y) {
-    let needToSnapX = x % wallPartHalfSize !== 0;
-    let needToSnapY = y % wallPartHalfSize !== 0;
+    let needToSnapX = x % wallPartHalfSize !== 0 || x / wallPartHalfSize / 2 === 0;
+    let needToSnapY = y % wallPartHalfSize !== 0 || y / wallPartHalfSize / 2 === 0;
 
     if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 
@@ -66,6 +66,7 @@ export class PositionService {
   static findCurRelativePosition(walkableArr: number[][], x, y) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
+
     let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
 
     if (relPos) return relPos;
@@ -73,14 +74,15 @@ export class PositionService {
   }
 
   static relativePosToRealPosInArea(area, column, row) {
+    //TODO; 
     let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
     let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };
   }
 
   static realPosToRelativePosInEnv(x, y) {
-    let row = Math.floor(y / wallPartHalfSize / 2);
-    let column = Math.floor(x / wallPartHalfSize / 2);
+    let row = (y - wallPartHalfSize) / (2 * wallPartHalfSize)
+    let column = (x - wallPartHalfSize) / (2 * wallPartHalfSize)
     return { row: row, column: column };
   }
 }

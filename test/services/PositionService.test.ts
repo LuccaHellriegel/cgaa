@@ -87,6 +87,11 @@ describe("Test PositionService", function() {
       let realPos = PositionService.relativePosToRealPosInArea(area, 0, 0);
       expect(realPos).to.deep.equal({ x: wallPartHalfSize, y: wallPartHalfSize });
     });
+    it("First position is first in moved grid (wallPartHalfSize+100,wallPartHalfSize)", function() {
+      let area = { topLeftX: 0 + 100, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 0, 0);
+      expect(realPos).to.deep.equal({ x: wallPartHalfSize + 100, y: wallPartHalfSize });
+    });
     it("Second position is second in grid (3*wallPartHalfSize,wallPartHalfSize)", function() {
       let area = { topLeftX: 0, topLeftY: 0 };
       let realPos = PositionService.relativePosToRealPosInArea(area, 1, 0);
@@ -96,6 +101,27 @@ describe("Test PositionService", function() {
       let area = { topLeftX: 0, topLeftY: 0 };
       let realPos = PositionService.relativePosToRealPosInArea(area, 1, 1);
       expect(realPos).to.deep.equal({ x: 3 * wallPartHalfSize, y: 3 * wallPartHalfSize });
+    });
+  });
+
+  describe("Convert relative pos in Area to real pos and back", function() {
+    it("First position is first in grid (0,0)", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 0, 0);
+      let relativePos = PositionService.realPosToRelativePosInEnv(realPos.x, realPos.y);
+      expect(relativePos).to.deep.equal({ column: 0, row: 0 });
+    });
+    it("Second position is second in grid (1,0)", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 1, 0);
+      let relativePos = PositionService.realPosToRelativePosInEnv(realPos.x, realPos.y);
+      expect(relativePos).to.deep.equal({ column: 1, row: 0 });
+    });
+    it("Position (51,23) stays there", function() {
+      let area = { topLeftX: 0, topLeftY: 0 };
+      let realPos = PositionService.relativePosToRealPosInArea(area, 51, 23);
+      let relativePos = PositionService.realPosToRelativePosInEnv(realPos.x, realPos.y);
+      expect(relativePos).to.deep.equal({ column: 51, row: 23 });
     });
   });
 });

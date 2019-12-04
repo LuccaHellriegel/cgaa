@@ -9,7 +9,7 @@ export class EnvManager extends PhysicalManager {
 
   private areaConfig: AreaConfig;
   constructor(scene: Gameplay) {
-    super(scene, "EnvManager", "staticGroup");
+    super(scene, "envManager", "staticGroup");
 
     this.createAreas();
     scene.physics.world.setBounds(
@@ -32,7 +32,7 @@ export class EnvManager extends PhysicalManager {
     let stepCount = 0;
     isEmptyArr.forEach(isEmpty => {
       if (isEmpty) this.toggleIfAreaConfigIsEmpty();
-      this.areaConfig.topLeftX += stepCount * rightStepValue;
+      this.areaConfig.topLeftX = startingTopLeftX + stepCount * rightStepValue;
       row.push(AreaFactory.createArea(this.areaConfig));
       if (isEmpty) this.toggleIfAreaConfigIsEmpty();
       stepCount++;

@@ -15,7 +15,7 @@ export class Gameplay extends Phaser.Scene {
   player: Player;
   movement: Movement;
   enemyManager: EnemyManager;
-  EnvManager: EnvManager;
+  envManager: EnvManager;
   pathManager: PathManager;
   spawnManager: SpawnManager;
   towerManager: TowerManager;
