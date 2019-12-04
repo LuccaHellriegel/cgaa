@@ -3,16 +3,14 @@ import { Player } from "./Player";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
-import { EnemyCircle } from "./circles/EnemyCircle";
 import { PhysicalManager } from "../base/Base";
 
-export class EnemyManager extends PhysicalManager{
-  enemies: EnemyCircle[] = [];
+export class EnemyManager extends PhysicalManager {
   weaponPhysicsGroup: Phaser.Physics.Arcade.Group;
   easyStar: EasyStar.js;
 
   constructor(scene: Gameplay) {
-    super(scene,"enemyManager", "group")
+    super(scene, "enemyManager", "group");
     this.weaponPhysicsGroup = this.scene.physics.add.group();
     this.easyStar = new EasyStar.js();
 

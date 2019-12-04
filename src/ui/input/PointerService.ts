@@ -1,5 +1,5 @@
-import { Gameplay } from "../scenes/Gameplay";
-import { Tower } from "../units/towers/Tower";
+import { Gameplay } from "../../scenes/Gameplay";
+import { Tower } from "../../units/towers/Tower";
 
 export class PointerService {
   private constructor() {}

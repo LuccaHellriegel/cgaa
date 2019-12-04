@@ -1,4 +1,4 @@
-import { HealthBar } from "../../ui/healthbars/HealthBar";
+import { HealthBar } from "../../ui/graphics/healthbars/HealthBar";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Circle } from "./Circle";

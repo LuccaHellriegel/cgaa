@@ -1,5 +1,5 @@
-import { Gameplay } from "../scenes/Gameplay";
-import { GhostTower } from "../ui/GhostTower";
+import { Gameplay } from "../../scenes/Gameplay";
+import { GhostTower } from "../graphics/GhostTower";
 
 export class TowerModusManager {
   scene: Gameplay;

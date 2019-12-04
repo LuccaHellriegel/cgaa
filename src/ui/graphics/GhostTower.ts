@@ -1,5 +1,5 @@
-import { Gameplay } from "../scenes/Gameplay";
-import { Sprite } from "../base/BasePhaser";
+import { Gameplay } from "../../scenes/Gameplay";
+import { Sprite } from "../../base/BasePhaser";
 
 export class GhostTower extends Sprite{
     constructor(scene : Gameplay,x,y, physicsGroup){

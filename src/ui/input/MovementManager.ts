@@ -1,4 +1,4 @@
-import { Player } from "../units/Player";
+import { Player } from "../../units/Player";
 
 export class MovementManager {
   left: Boolean;
