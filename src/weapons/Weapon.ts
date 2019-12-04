@@ -1,5 +1,5 @@
 import { CompositePolygon } from "../polygons/CompositePolygon";
-import { Sprite } from "../base/Sprite";
+import { Sprite } from "../base/BasePhaser";
 
 export abstract class Weapon extends Sprite {
   polygon: CompositePolygon;

@@ -1,4 +1,4 @@
-import { Image } from "../../base/Image";
+import { Image } from "../../base/BasePhaser";
 
 export class WallPart extends Image {
   constructor(scene, x, y, physicsGroup) {

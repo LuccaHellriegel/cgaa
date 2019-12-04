@@ -3,7 +3,7 @@ import { RandWeapon } from "../../weapons/RandWeapon";
 import { Weapon } from "../../weapons/Weapon";
 import { CirclePolygon } from "../../polygons/CirclePolygon";
 import { normalCircleRadius } from "../../globals/globalSizes";
-import { Sprite } from "../../base/Sprite";
+import { Sprite } from "../../base/BasePhaser";
 
 export class Circle extends Sprite {
   weapon: Weapon;

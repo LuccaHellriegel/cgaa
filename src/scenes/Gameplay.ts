@@ -31,7 +31,7 @@ export class Gameplay extends Phaser.Scene {
     new UnitManager(this);
 
     new TowerManager(this);
-    new TowerModusManager(sthis)
+    new TowerModusManager(this);
 
     ColliderService.addCollisionDetection(this);
 
