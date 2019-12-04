@@ -1,7 +1,7 @@
 import { CompositePolygon } from "../polygons/CompositePolygon";
-import { BaseSprite } from "../base/BaseSprite";
+import { Sprite } from "../base/Sprite";
 
-export abstract class Weapon extends BaseSprite {
+export abstract class Weapon extends Sprite {
   polygon: CompositePolygon;
   polygonArr: CompositePolygon[];
   alreadyAttacked: string[];

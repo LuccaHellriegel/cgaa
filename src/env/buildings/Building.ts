@@ -1,9 +1,9 @@
-import { BaseImage } from "../../base/BaseImage";
+import { Image } from "../../base/Image";
 import { SpawnService } from "../../spawn/SpawnService";
 import { Area } from "../areas/Area";
 import { CollisionService } from "../../spawn/CollisionService";
 
-export class Building extends BaseImage {
+export class Building extends Image {
   validSpawnPositions: any[];
   enemies: any[] = [];
   area: Area;

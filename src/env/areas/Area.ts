@@ -10,7 +10,6 @@ import { WallPart } from "./WallPart";
 import { Building } from "../buildings/Building";
 import { SpawnService } from "../../spawn/SpawnService";
 import { EnemyCircle } from "../../units/circles/EnemyCircle";
-import { PositionService } from "../../services/PositionService";
 import { CollisionService } from "../../spawn/CollisionService";
 
 export class Area {

@@ -3,9 +3,9 @@ import { RandWeapon } from "../../weapons/RandWeapon";
 import { Weapon } from "../../weapons/Weapon";
 import { CirclePolygon } from "../../polygons/CirclePolygon";
 import { normalCircleRadius } from "../../globals/globalSizes";
-import { BaseSprite } from "../../base/BaseSprite";
+import { Sprite } from "../../base/Sprite";
 
-export class Circle extends BaseSprite {
+export class Circle extends Sprite {
   weapon: Weapon;
   polygon: CirclePolygon;
   unitType: string;
