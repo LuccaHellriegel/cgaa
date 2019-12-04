@@ -20,12 +20,6 @@ export class AreaManager extends PhysicalManager {
     );
   }
 
-  executeForEachAreaRow(callback) {
-    this.elements.forEach(areaRow => {
-      callback(areaRow);
-    });
-  }
-
   private toggleIfAreaConfigIsEmpty() {
     this.areaConfig.hasWalls = !this.areaConfig.hasWalls;
     this.areaConfig.hasBuildings = !this.areaConfig.hasBuildings;

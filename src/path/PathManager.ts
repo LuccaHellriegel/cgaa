@@ -1,6 +1,5 @@
 import { Manager } from "../base/Base";
 import { Gameplay } from "../scenes/Gameplay";
-import { AreaService } from "../env/areas/AreaService";
 import EasyStar from "easystarjs";
 import { PositionService } from "../services/PositionService";
 
@@ -12,20 +11,37 @@ export class PathManager extends Manager {
   constructor(scene: Gameplay) {
     super(scene, "pathManager");
 
-    this.calculateCumulativeWalkAbleArr();
+    this.calculateWalkAbleArr();
     this.easyStar = new EasyStar.js();
   }
 
-  private calculateCumulativeWalkAbleArr() {
-    let walkableArrArr: number[][][][] = [];
-    this.scene.areaManager.executeForEachAreaRow(areaRow => {
-      let row: number[][][] = [];
-      areaRow.forEach(area => {
-        row.push(AreaService.createWalkableArr(area.parts));
-      });
-      walkableArrArr.push(row);
-    });
-    this.elements = AreaService.createCumulativeWalkableArr(walkableArrArr);
+  private rowOfAreaToWalkableRow(rowOfArea) {
+    let row: number[] = [];
+    for (let k = 0; k < rowOfArea.length; k++) {
+      let notWalkableSymbol = rowOfArea[k].contentType === "building" ? 2 : 1;
+
+      row.push(rowOfArea[k].isWalkable() ? 0 : notWalkableSymbol);
+    }
+    return row;
+  }
+
+  private calculateWalkAbleArr() {
+    //TODO: assummption that all areas have the same number of rows, and that the input arr is symmetric
+
+    let areas = this.scene.areaManager.elements;
+
+    for (let rowIndexArea = 0; rowIndexArea < areas.length; rowIndexArea++) {
+      for (let rowIndex = 0; rowIndex < areas[0][0].parts.length; rowIndex++) {
+        let cumulativeRow = [];
+
+        for (let columnIndexArea = 0; columnIndexArea < areas[0].length; columnIndexArea++) {
+          cumulativeRow = cumulativeRow.concat(
+            this.rowOfAreaToWalkableRow(areas[rowIndexArea][columnIndexArea].parts[rowIndex])
+          );
+        }
+        this.elements.push(cumulativeRow);
+      }
+    }
   }
 
   calculatePath(unit, x, y) {
