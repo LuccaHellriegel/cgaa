@@ -2,8 +2,8 @@ import { Tower } from "./Tower";
 import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 import { TowerService } from "./TowerService";
-import { SpawnService } from "../../services/SpawnService";
-import { CollisionService } from "../../services/CollisionService";
+import { SpawnService } from "../../spawn/SpawnService";
+import { CollisionService } from "../../spawn/CollisionService";
 
 export class TowerManager {
   towers: Tower[] = [];

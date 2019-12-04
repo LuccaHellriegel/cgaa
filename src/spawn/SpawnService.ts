@@ -3,7 +3,7 @@ import {
   wallPartHalfSize,
   rectBuildingHalfWidth
 } from "../globals/globalSizes";
-import { PositionService } from "./PositionService";
+import { PositionService } from "../services/PositionService";
 import { AreaService } from "../env/areas/AreaService";
 
 export class SpawnService {

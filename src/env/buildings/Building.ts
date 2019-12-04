@@ -1,7 +1,7 @@
 import { BaseImage } from "../../base/BaseImage";
-import { SpawnService } from "../../services/SpawnService";
+import { SpawnService } from "../../spawn/SpawnService";
 import { Area } from "../areas/Area";
-import { CollisionService } from "../../services/CollisionService";
+import { CollisionService } from "../../spawn/CollisionService";
 
 export class Building extends BaseImage {
   validSpawnPositions: any[];
