@@ -3,6 +3,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 import { TowerService } from "./TowerService";
 import { SpawnService } from "../../services/SpawnService";
+import { CollisionService } from "../../services/CollisionService";
 
 export class TowerManager {
   towers: Tower[] = [];
@@ -36,7 +37,7 @@ export class TowerManager {
         x = newX;
         y = newY;
       }
-      if (!SpawnService.checkIfTowerCollidesWithTowers(this.towers, x, y)) {
+      if (!CollisionService.checkIfTowerCollidesWithTowers(this.towers, x, y)) {
         this.towers.push(new Tower(this.scene, x, y, this.physicsGroup));
         this.scene.towerModusManager.bringGhostTowerToTop();
       } else {

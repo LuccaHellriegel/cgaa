@@ -11,6 +11,7 @@ import { Building } from "../buildings/Building";
 import { SpawnService } from "../../services/SpawnService";
 import { EnemyCircle } from "../../units/circles/EnemyCircle";
 import { PositionService } from "../../services/PositionService";
+import { CollisionService } from "../../services/CollisionService";
 
 export class Area {
   parts: AreaPart[][] = [];
@@ -109,7 +110,7 @@ export class Area {
       this,
       spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
       (x, y) => {
-        return SpawnService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
+        return CollisionService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
       }
     );
   }
@@ -132,7 +133,7 @@ export class Area {
 
   private buildBuilding() {
     let { randX, randY } = this.calculateRandBuildingSpawnPos();
-    while (SpawnService.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
+    while (CollisionService.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
       let result = this.calculateRandBuildingSpawnPos();
       randX = result.randX;
       randY = result.randY;

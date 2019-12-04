@@ -1,6 +1,7 @@
 import { BaseImage } from "../../base/BaseImage";
 import { SpawnService } from "../../services/SpawnService";
 import { Area } from "../areas/Area";
+import { CollisionService } from "../../services/CollisionService";
 
 export class Building extends BaseImage {
   validSpawnPositions: any[];
@@ -18,7 +19,7 @@ export class Building extends BaseImage {
     let pos = Phaser.Math.Between(0, this.validSpawnPositions.length - 1);
     let chosenPosition = this.validSpawnPositions[pos];
     let positionsTried = 0;
-    while (SpawnService.checkIfCircleCollidesWithCircles(this.enemies, chosenPosition.x, chosenPosition.y)) {
+    while (CollisionService.checkIfCircleCollidesWithCircles(this.enemies, chosenPosition.x, chosenPosition.y)) {
       positionsTried++;
       if (positionsTried === this.validSpawnPositions.length) {
         return null;
