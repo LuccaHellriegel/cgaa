@@ -1,4 +1,4 @@
-export class AreaPart {
+export class AreaPosition {
   content: any = null;
   width: number;
   height: number;

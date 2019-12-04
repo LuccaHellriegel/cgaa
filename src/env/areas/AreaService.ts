@@ -1,4 +1,4 @@
-import { AreaPart } from "./AreaPart";
+import { AreaPosition } from "./AreaPosition";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 
 export class AreaService {
@@ -23,7 +23,7 @@ export class AreaService {
     return cumulativeWalkableArr;
   }
 
-  static createWalkableArr(parts: AreaPart[][]) {
+  static createWalkableArr(parts: AreaPosition[][]) {
     let walkabkleArr: number[][] = [];
     for (let i = 0; i < parts.length; i++) {
       let row: number[] = [];

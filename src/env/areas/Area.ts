@@ -1,4 +1,4 @@
-import { AreaPart } from "./AreaPart";
+import { AreaPosition } from "./AreaPosition";
 import { AreaService } from "./AreaService";
 import {
   wallPartHalfSize,
@@ -13,7 +13,7 @@ import { EnemyCircle } from "../../units/circles/EnemyCircle";
 import { CollisionService } from "../../spawn/CollisionService";
 
 export class Area {
-  parts: AreaPart[][] = [];
+  parts: AreaPosition[][] = [];
   sizeOfXAxis: number;
   sizeOfYAxis: number;
   topLeftX: any;
@@ -32,7 +32,7 @@ export class Area {
     for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];
       for (let column = 0; column < sizeOfXAxis; column++) {
-        this.parts[row].push(new AreaPart(null));
+        this.parts[row].push(new AreaPosition(null));
       }
     }
 

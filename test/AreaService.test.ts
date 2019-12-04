@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { AreaService } from "../src/env/areas/AreaService";
-import { AreaPart } from "../src/env/areas/AreaPart";
+import { AreaPosition } from "../src/env/areas/AreaPosition";
 import { wallPartHalfSize } from "../src/globals/globalSizes";
 
 describe("Test AreaService", function() {
   describe("Calculate walkable map", function() {
     it("Empty single part map, everything is walkable", () => {
-      let parts: AreaPart[][] = [[new AreaPart(null)]];
+      let parts: AreaPosition[][] = [[new AreaPosition(null)]];
 
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -14,10 +14,10 @@ describe("Test AreaService", function() {
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
     });
     it("Empty 3x3 part map, everything is walkable", () => {
-      let parts: AreaPart[][] = [
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)],
-        [new AreaPart(null), new AreaPart(null), new AreaPart(null)]
+      let parts: AreaPosition[][] = [
+        [new AreaPosition(null), new AreaPosition(null), new AreaPosition(null)],
+        [new AreaPosition(null), new AreaPosition(null), new AreaPosition(null)],
+        [new AreaPosition(null), new AreaPosition(null), new AreaPosition(null)]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -29,10 +29,10 @@ describe("Test AreaService", function() {
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
     });
     it("3x3 part map with border wall, only the middle is walkable", () => {
-      let parts: AreaPart[][] = [
-        [new AreaPart({}), new AreaPart({}), new AreaPart({})],
-        [new AreaPart({}), new AreaPart(null), new AreaPart({})],
-        [new AreaPart({}), new AreaPart({}), new AreaPart({})]
+      let parts: AreaPosition[][] = [
+        [new AreaPosition({}), new AreaPosition({}), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition(null), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition({}), new AreaPosition({})]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
@@ -44,12 +44,12 @@ describe("Test AreaService", function() {
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
     });
     it("5x5 part map with border wall and building, only the empty spots are walkable", () => {
-      let parts: AreaPart[][] = [
-        [new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({})],
-        [new AreaPart({}), new AreaPart(null), new AreaPart(null), new AreaPart(null), new AreaPart({})],
-        [new AreaPart({}), new AreaPart(null), new AreaPart({}), new AreaPart({}), new AreaPart({})],
-        [new AreaPart({}), new AreaPart(null), new AreaPart(null), new AreaPart(null), new AreaPart({})],
-        [new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({}), new AreaPart({})]
+      let parts: AreaPosition[][] = [
+        [new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition(null), new AreaPosition(null), new AreaPosition(null), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition(null), new AreaPosition({}), new AreaPosition({}), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition(null), new AreaPosition(null), new AreaPosition(null), new AreaPosition({})],
+        [new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({}), new AreaPosition({})]
       ];
       let walkAbleArr = AreaService.createWalkableArr(parts);
 
