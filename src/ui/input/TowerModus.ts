@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { GhostTower } from "../graphics/GhostTower";
 
-export class TowerModusManager {
+export class TowerModus {
   scene: Gameplay;
   ghostTower: GhostTower;
   physicsGroup: Phaser.Physics.Arcade.StaticGroup;
