@@ -1,6 +1,6 @@
 import { Player } from "../../units/Player";
 
-export class MovementManager {
+export class Movement {
   left: Boolean;
   right: Boolean;
   up: Boolean;
@@ -15,7 +15,7 @@ export class MovementManager {
     this.down;
     this.player = scene.player;
     this.cursors = this.createKeyboardInput(scene);
-    scene.playerMovement = this;
+    scene.movement = this;
   }
 
   createKeyboardInput(scene) {

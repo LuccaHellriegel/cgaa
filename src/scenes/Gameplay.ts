@@ -1,5 +1,5 @@
 import { Player } from "../units/Player";
-import { MovementManager } from "../ui/input/MovementManager";
+import { Movement } from "../ui/input/Movement";
 import { AnimationService } from "../graphic/AnimationService";
 import { EnemyManager } from "../units/EnemyManager";
 import { GeneratorService } from "../graphic/generators/GeneratorService";
@@ -11,7 +11,7 @@ import { TowerModusManager } from "../ui/input/TowerModusManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
-  playerMovement: MovementManager;
+  movement: Movement;
   enemyManager: EnemyManager;
   areaManager: AreaManager;
   towerManager: TowerManager;
@@ -35,11 +35,11 @@ export class Gameplay extends Phaser.Scene {
 
     ColliderService.addCollisionDetection(this);
 
-    new MovementManager(this);
+    new Movement(this);
     PointerService.setupPointerEvents(this);
   }
 
   update() {
-    this.playerMovement.update();
+    this.movement.update();
   }
 }
