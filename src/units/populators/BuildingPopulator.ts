@@ -25,31 +25,43 @@ export class BuildingPopulator extends Populator {
   }
 
   //TODO: replae this with randomylTryFunc
-  calculateRandUnitSpawnPosition(validSpawnPositions) {
-    let pos = Phaser.Math.Between(0, validSpawnPositions.length - 1);
-    let chosenPosition = validSpawnPositions[pos];
+  calculateRandUnitSpawnPosition(building) {
+    let pos = Phaser.Math.Between(0, building.validSpawnPositions.length - 1);
+    let chosenPosition = building.validSpawnPositions[pos];
     let positionsTried = 0;
-    console.log(chosenPosition);
-    while (this.scene.spawnManager.evaluateRealSpawnPosOfEnemies(chosenPosition.randX, chosenPosition.randY)) {
+    while (CollisionService.checkIfCircleCollidesWithCircles(building.enemies, chosenPosition.x, chosenPosition.y)) {
       positionsTried++;
-      if (positionsTried === validSpawnPositions.length) {
+      if (positionsTried === building.validSpawnPositions.length) {
         return null;
       }
 
-      let reachedLastPos = pos === validSpawnPositions.length - 1;
+      let reachedLastPos = pos === building.validSpawnPositions.length - 1;
       if (!reachedLastPos) {
         pos++;
       } else {
         pos = 0;
       }
-      chosenPosition = validSpawnPositions[pos];
+      chosenPosition = building.validSpawnPositions[pos];
     }
 
     return chosenPosition;
   }
 
+  // calculateRandUnitSpawnPosition() {
+  //   return SpawnService.randomlyTryAllSpawnablePos(
+  //     this.validSpawnPositions,
+  //     this.area,
+  //     spawnablePosCount => {
+  //       return Phaser.Math.Between(0, spawnablePosCount);
+  //     },
+  //     (x, y) => {
+  //       return CollisionService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
+  //     }
+  //   );
+  // }
+
   createEnemy() {
-    let spawnPositon = this.building.calculateRandUnitSpawnPosition();
+    let spawnPositon = this.calculateRandUnitSpawnPosition(this.building);
     //let spawnPositon = this.calculateRandUnitSpawnPosition(this.building.validSpawnPositions);
     if (spawnPositon === null) return null;
 

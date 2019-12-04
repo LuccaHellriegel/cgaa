@@ -14,26 +14,4 @@ export class Building extends Image {
     this.validSpawnPositions = SpawnService.calculateSpawnPositionsAroundBuilding(this.x, this.y);
   }
 
-  //TODO: replae this with randomylTryFunc
-  calculateRandUnitSpawnPosition() {
-    let pos = Phaser.Math.Between(0, this.validSpawnPositions.length - 1);
-    let chosenPosition = this.validSpawnPositions[pos];
-    let positionsTried = 0;
-    while (CollisionService.checkIfCircleCollidesWithCircles(this.enemies, chosenPosition.x, chosenPosition.y)) {
-      positionsTried++;
-      if (positionsTried === this.validSpawnPositions.length) {
-        return null;
-      }
-
-      let reachedLastPos = pos === this.validSpawnPositions.length - 1;
-      if (!reachedLastPos) {
-        pos++;
-      } else {
-        pos = 0;
-      }
-      chosenPosition = this.validSpawnPositions[pos];
-    }
-
-    return chosenPosition;
-  }
 }
