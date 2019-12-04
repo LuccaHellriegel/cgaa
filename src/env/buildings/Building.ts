@@ -1,7 +1,6 @@
 import { Image } from "../../base/BasePhaser";
 import { SpawnService } from "../../spawn/SpawnService";
 import { Area } from "../areas/Area";
-import { CollisionService } from "../../spawn/CollisionService";
 
 export class Building extends Image {
   validSpawnPositions: any[];

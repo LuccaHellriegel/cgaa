@@ -28,7 +28,7 @@ export class PathManager extends Manager {
   private calculateWalkAbleArr() {
     //TODO: assummption that all areas have the same number of rows, and that the input arr is symmetric
 
-    let areas = this.scene.areaManager.elements;
+    let areas = this.scene.EnvManager.elements;
 
     for (let rowIndexArea = 0; rowIndexArea < areas.length; rowIndexArea++) {
       for (let rowIndex = 0; rowIndex < areas[0][0].parts.length; rowIndex++) {

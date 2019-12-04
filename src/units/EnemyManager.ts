@@ -17,7 +17,7 @@ export class EnemyManager extends PhysicalManager {
   spawnUnits() {
     Player.withChainWeapon(this.scene);
 
-    this.scene.areaManager.elements.forEach(areaRow => {
+    this.scene.EnvManager.elements.forEach(areaRow => {
       areaRow.forEach(area => {
         if (area.buildings[0]) {
           new AreaPopulator(this.scene, this.physicsGroup, this.weaponPhysicsGroup, area).startPopulating();

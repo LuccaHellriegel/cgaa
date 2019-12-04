@@ -3,7 +3,7 @@ import { Movement } from "../ui/input/Movement";
 import { AnimationService } from "../graphic/AnimationService";
 import { EnemyManager } from "../units/EnemyManager";
 import { GeneratorService } from "../graphic/generators/GeneratorService";
-import { AreaManager } from "../env/AreaManager";
+import { EnvManager } from "../env/EnvManager";
 import { PointerService } from "../ui/input/PointerService";
 import { ColliderService } from "../services/ColliderService";
 import { TowerManager } from "../units/towers/TowerManager";
@@ -15,7 +15,7 @@ export class Gameplay extends Phaser.Scene {
   player: Player;
   movement: Movement;
   enemyManager: EnemyManager;
-  areaManager: AreaManager;
+  EnvManager: EnvManager;
   pathManager: PathManager;
   spawnManager: SpawnManager;
   towerManager: TowerManager;
@@ -31,7 +31,7 @@ export class Gameplay extends Phaser.Scene {
     GeneratorService.generateTextures(this);
     AnimationService.createAnims(this.anims);
 
-    new AreaManager(this);
+    new EnvManager(this);
     new PathManager(this);
     new TowerManager(this);
 

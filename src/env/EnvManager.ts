@@ -4,12 +4,12 @@ import { Area } from "./areas/Area";
 import { AreaFactory, AreaConfig } from "./areas/AreaFactory";
 import { PhysicalManager } from "../base/Base";
 
-export class AreaManager extends PhysicalManager {
+export class EnvManager extends PhysicalManager {
   borderWall: Area;
 
   private areaConfig: AreaConfig;
   constructor(scene: Gameplay) {
-    super(scene, "areaManager", "staticGroup");
+    super(scene, "EnvManager", "staticGroup");
 
     this.createAreas();
     scene.physics.world.setBounds(

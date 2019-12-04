@@ -62,14 +62,14 @@ export class ColliderService {
   private static addAreaCollision(scene: Gameplay) {
     scene.physics.add.collider(
       scene.player.physicsGroup,
-      scene.areaManager.physicsGroup,
+      scene.EnvManager.physicsGroup,
       this.bounceCallback,
       null,
       this
     );
     scene.physics.add.collider(
       scene.enemyManager.physicsGroup,
-      scene.areaManager.physicsGroup,
+      scene.EnvManager.physicsGroup,
       this.bounceCallback,
       null,
       this
