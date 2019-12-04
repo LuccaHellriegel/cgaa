@@ -4,19 +4,16 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import EasyStar from "easystarjs";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { EnemyCircle } from "./circles/EnemyCircle";
+import { PhysicalManager } from "../base/Base";
 
-export class UnitManager {
-  scene: Gameplay;
+export class EnemyManager extends PhysicalManager{
   enemies: EnemyCircle[] = [];
-  enemyPhysics: Phaser.Physics.Arcade.Group;
-  enemyWeapons: Phaser.Physics.Arcade.Group;
+  weaponPhysicsGroup: Phaser.Physics.Arcade.Group;
   easyStar: EasyStar.js;
 
   constructor(scene: Gameplay) {
-    this.scene = scene;
-    scene.unitManager = this;
-    this.enemyPhysics = this.scene.physics.add.group();
-    this.enemyWeapons = this.scene.physics.add.group();
+    super(scene,"enemyManager", "group")
+    this.weaponPhysicsGroup = this.scene.physics.add.group();
     this.easyStar = new EasyStar.js();
 
     this.spawnUnits();
@@ -28,12 +25,12 @@ export class UnitManager {
     this.scene.areaManager.elements.forEach(areaRow => {
       areaRow.forEach(area => {
         if (area.buildings[0]) {
-          new AreaPopulator(this.scene, this.enemyPhysics, this.enemyWeapons, area).startPopulating();
+          new AreaPopulator(this.scene, this.physicsGroup, this.weaponPhysicsGroup, area).startPopulating();
           area.buildings.forEach(building => {
             new BuildingPopulator(
               this.scene,
-              this.enemyPhysics,
-              this.enemyWeapons,
+              this.physicsGroup,
+              this.weaponPhysicsGroup,
               building,
               this.easyStar
             ).startPopulating();

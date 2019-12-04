@@ -11,12 +11,12 @@ export class BuildingPopulator extends Populator {
 
   constructor(
     scene: Gameplay,
-    enemyPhysics: Phaser.Physics.Arcade.Group,
-    enemyWeapons: Phaser.Physics.Arcade.Group,
+    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
+    weaponPhysicsGroup: Phaser.Physics.Arcade.Group,
     building: Building,
     easyStar
   ) {
-    super(scene, enemyPhysics, enemyWeapons);
+    super(scene, enemyPhysicsGroup, weaponPhysicsGroup);
     this.easyStar = easyStar;
     this.building = building;
   }
@@ -38,8 +38,8 @@ export class BuildingPopulator extends Populator {
         randX,
         randY,
         "blueCircle",
-        this.enemyPhysics,
-        this.enemyWeapons,
+        this.enemyPhysicsGroup,
+        this.weaponPhysicsGroup,
         this.easyStar
       );
     } else {
@@ -48,8 +48,8 @@ export class BuildingPopulator extends Populator {
         randX,
         randY,
         "blueCircle",
-        this.enemyPhysics,
-        this.enemyWeapons,
+        this.enemyPhysicsGroup,
+        this.weaponPhysicsGroup,
         this.easyStar
       );
     }

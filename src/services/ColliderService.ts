@@ -10,19 +10,18 @@ export class ColliderService {
   }
 
   private static addCombatCollision(scene: Gameplay) {
-    scene.physics.add.collider(scene.player.physicsGroup, scene.unitManager.enemyPhysics);
+    scene.physics.add.collider(scene.player.physicsGroup, scene.enemyManager.physicsGroup);
 
     scene.physics.add.overlap(
       scene.player.weapon.physicsGroup,
-      scene.unitManager.enemyPhysics,
+      scene.enemyManager.physicsGroup,
       this.doDamage,
       this.considerDamage,
       this
     );
 
-    //TODO: rename enemyWeapons to group
     scene.physics.add.overlap(
-      scene.unitManager.enemyWeapons,
+      scene.enemyManager.weaponPhysicsGroup,
       scene.player.physicsGroup,
       this.doDamage,
       this.considerDamage,
@@ -69,7 +68,7 @@ export class ColliderService {
       this
     );
     scene.physics.add.collider(
-      scene.unitManager.enemyPhysics,
+      scene.enemyManager.physicsGroup,
       scene.areaManager.physicsGroup,
       this.bounceCallback,
       null,

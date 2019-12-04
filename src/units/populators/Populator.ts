@@ -1,14 +1,14 @@
 import { Gameplay } from "../../scenes/Gameplay";
 
 export abstract class Populator {
-  enemyWeapons: Phaser.Physics.Arcade.Group;
-  enemyPhysics: Phaser.Physics.Arcade.Group;
+  weaponPhysicsGroup: Phaser.Physics.Arcade.Group;
+  enemyPhysicsGroup: Phaser.Physics.Arcade.Group;
   enemyCount: number = 0;
   scene: Gameplay;
 
-  constructor(scene: Gameplay, enemyPhysics: Phaser.Physics.Arcade.Group, enemyWeapons: Phaser.Physics.Arcade.Group) {
-    this.enemyPhysics = enemyPhysics;
-    this.enemyWeapons = enemyWeapons;
+  constructor(scene: Gameplay, enemyPhysicsGroup: Phaser.Physics.Arcade.Group, weaponPhysicsGroup: Phaser.Physics.Arcade.Group) {
+    this.enemyPhysicsGroup = enemyPhysicsGroup;
+    this.weaponPhysicsGroup = weaponPhysicsGroup;
     this.scene = scene;
   }
 
@@ -22,7 +22,7 @@ export abstract class Populator {
     let enemy = this.createEnemy();
     if (enemy != null) {
       this.addEnemyToControlInstance(enemy);
-      this.scene.unitManager.enemies.push(enemy);
+      this.scene.enemyManager.elements.push(enemy);
       this.enemyCount++;
     }
     if (this.doMoreSpawn()) {

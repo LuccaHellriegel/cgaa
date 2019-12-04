@@ -8,11 +8,11 @@ export class AreaPopulator extends Populator {
 
   constructor(
     scene: Gameplay,
-    enemyPhysics: Phaser.Physics.Arcade.Group,
-    enemyWeapons: Phaser.Physics.Arcade.Group,
+    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
+    weaponPhysicsGroup: Phaser.Physics.Arcade.Group,
     area: Area
   ) {
-    super(scene, enemyPhysics, enemyWeapons);
+    super(scene, enemyPhysicsGroup, weaponPhysicsGroup);
     this.area = area;
   }
 
@@ -29,9 +29,9 @@ export class AreaPopulator extends Populator {
 
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     if (choseRandWeapon) {
-      return EnemyCircle.withRandWeapon(this.scene, randX, randY, "redCircle", this.enemyPhysics, this.enemyWeapons);
+      return EnemyCircle.withRandWeapon(this.scene, randX, randY, "redCircle", this.enemyPhysicsGroup, this.weaponPhysicsGroup);
     } else {
-      return EnemyCircle.withChainWeapon(this.scene, randX, randY, "redCircle", this.enemyPhysics, this.enemyWeapons);
+      return EnemyCircle.withChainWeapon(this.scene, randX, randY, "redCircle", this.enemyPhysicsGroup, this.weaponPhysicsGroup);
     }
   }
 
