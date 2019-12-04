@@ -69,7 +69,6 @@ export class PositionService {
     let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
 
     if (relPos) return relPos;
-
     throw "No relative position found for point " + x + " " + y;
   }
 
@@ -77,5 +76,11 @@ export class PositionService {
     let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
     let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };
+  }
+
+  static realPosToRelativePosInEnv(x, y) {
+    let row = Math.floor(y / wallPartHalfSize / 2);
+    let column = Math.floor(x / wallPartHalfSize / 2);
+    return { row: row, column: column };
   }
 }

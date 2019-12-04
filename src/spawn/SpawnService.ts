@@ -18,7 +18,27 @@ export class SpawnService {
     }
     return walkabkleArr;
   }
-  
+
+  static calculateRelativeSpawnPositionsAround(column, row, width, height) {
+    let validPositions: any[] = [];
+
+    //TODO: assumes symmetrical objects
+
+    let rowSize = Math.floor(height / 2) + 1;
+    let columnSize = Math.floor(width / 2) + 1;
+
+    for (let rowIndex = 0; rowIndex < rowSize + 1; rowIndex++) {
+      for (let columnIndex = 0; columnIndex + 1 < columnSize; columnIndex++) {
+        if (rowIndex > Math.floor(height / 2) || columnIndex > Math.floor(width / 2)) {
+          validPositions.push({ column: column + columnIndex, row: row + rowIndex });
+          validPositions.push({ column: column - columnIndex, row: row - rowIndex });
+        }
+      }
+    }
+
+    return validPositions;
+  }
+
   static calculateSpawnPositionsAround(x, y, width, height) {
     //TODO: assumes grid position and width and height being grid multiple
     let topLeftX = x - width / 2;
@@ -71,11 +91,6 @@ export class SpawnService {
 
   static calculateSpawnPositionsAroundBuilding(x, y) {
     return this.calculateSpawnPositionsAround(x, y, 2 * rectBuildingHalfWidth, 2 * rectBuildinghalfHeight);
-  }
-
-  static calculateSpawnPositionsAroundCircle(x, y) {
-    let { newX, newY } = PositionService.snapXYToGrid(x, y);
-    return this.calculateSpawnPositionsAround(newX, newY, 2 * wallPartHalfSize, 2 * wallPartHalfSize);
   }
 
   static updateBuildingSpawnableArr(partialArr) {
@@ -201,7 +216,9 @@ export class SpawnService {
     let positionsTried = 0;
 
     let chosenPosition = spawnablePos[randPos];
+
     let realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
+
     while (validTestingCallback(realPos.x, realPos.y)) {
       positionsTried++;
       if (positionsTried === spawnablePosCount + 1) {
@@ -217,6 +234,7 @@ export class SpawnService {
       chosenPosition = spawnablePos[randPos];
       realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
     }
+
     return { randX: realPos.x, randY: realPos.y };
   }
 }

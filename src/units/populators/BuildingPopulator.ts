@@ -2,9 +2,10 @@ import { Populator } from "./Populator";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../../env/buildings/Building";
 import EasyStar from "easystarjs";
-import { EnemyCircle } from "../circles/EnemyCircle";
 import { PathfindingCircle } from "../circles/PathfindingCircle";
 import { CollisionService } from "../../spawn/CollisionService";
+import { SpawnService } from "../../spawn/SpawnService";
+
 
 export class BuildingPopulator extends Populator {
   easyStar: EasyStar.js;
@@ -24,45 +25,21 @@ export class BuildingPopulator extends Populator {
     this.building.enemies.push(enemy);
   }
 
-  //TODO: replae this with randomylTryFunc
   calculateRandUnitSpawnPosition(building) {
-    let pos = Phaser.Math.Between(0, building.validSpawnPositions.length - 1);
-    let chosenPosition = building.validSpawnPositions[pos];
-    let positionsTried = 0;
-    while (CollisionService.checkIfCircleCollidesWithCircles(building.enemies, chosenPosition.x, chosenPosition.y)) {
-      positionsTried++;
-      if (positionsTried === building.validSpawnPositions.length) {
-        return null;
+    return SpawnService.randomlyTryAllSpawnablePos(
+      building.validSpawnPositions,
+      { topLeftX: 0, topLeftY: 0 },
+      spawnablePosCount => {
+        return Phaser.Math.Between(0, spawnablePosCount);
+      },
+      (x, y) => {
+        return CollisionService.checkIfCircleCollidesWithCircles(building.enemies, x, y);
       }
-
-      let reachedLastPos = pos === building.validSpawnPositions.length - 1;
-      if (!reachedLastPos) {
-        pos++;
-      } else {
-        pos = 0;
-      }
-      chosenPosition = building.validSpawnPositions[pos];
-    }
-
-    return chosenPosition;
+    );
   }
-
-  // calculateRandUnitSpawnPosition() {
-  //   return SpawnService.randomlyTryAllSpawnablePos(
-  //     this.validSpawnPositions,
-  //     this.area,
-  //     spawnablePosCount => {
-  //       return Phaser.Math.Between(0, spawnablePosCount);
-  //     },
-  //     (x, y) => {
-  //       return CollisionService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
-  //     }
-  //   );
-  // }
 
   createEnemy() {
     let spawnPositon = this.calculateRandUnitSpawnPosition(this.building);
-    //let spawnPositon = this.calculateRandUnitSpawnPosition(this.building.validSpawnPositions);
     if (spawnPositon === null) return null;
 
     let { randX, randY } = spawnPositon;
