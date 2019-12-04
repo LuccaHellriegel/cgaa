@@ -32,7 +32,7 @@ export class PathfindingCircle extends EnemyCircle {
 
   private calculatePathCallback() {
     if (this.scene) {
-      this.calculatePath(this.scene.areaManager.walkableArr);
+      this.calculatePath(this.scene.pathManager.walkableArr);
     }
   }
 

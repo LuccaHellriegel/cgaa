@@ -8,12 +8,14 @@ import { PointerService } from "../ui/input/PointerService";
 import { ColliderService } from "../services/ColliderService";
 import { TowerManager } from "../units/towers/TowerManager";
 import { TowerModus } from "../ui/input/TowerModus";
+import { PathManager } from "../path/PathManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
   movement: Movement;
   enemyManager: EnemyManager;
   areaManager: AreaManager;
+  pathManager: PathManager;
   towerManager: TowerManager;
   towerModusManager: TowerModus;
 
@@ -28,6 +30,8 @@ export class Gameplay extends Phaser.Scene {
     AnimationService.createAnims(this.anims);
 
     new AreaManager(this);
+    new PathManager(this);
+
     new EnemyManager(this);
 
     new TowerManager(this);

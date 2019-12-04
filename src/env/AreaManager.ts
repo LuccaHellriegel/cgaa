@@ -1,13 +1,11 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { Area } from "./areas/Area";
-import { AreaService } from "./areas/AreaService";
 import { AreaFactory, AreaConfig } from "./areas/AreaFactory";
 import { PhysicalManager } from "../base/Base";
 
 export class AreaManager extends PhysicalManager {
   borderWall: Area;
-  walkableArr: number[][];
 
   private areaConfig: AreaConfig;
   constructor(scene: Gameplay) {
@@ -20,8 +18,12 @@ export class AreaManager extends PhysicalManager {
       this.borderWall.width - 4 * wallPartHalfSize,
       this.borderWall.width - 4 * wallPartHalfSize
     );
+  }
 
-    this.calculateCumulativeWalkAbleArr();
+  executeForEachAreaRow(callback) {
+    this.elements.forEach(areaRow => {
+      callback(areaRow);
+    });
   }
 
   private toggleIfAreaConfigIsEmpty() {
@@ -72,17 +74,5 @@ export class AreaManager extends PhysicalManager {
     this.areaConfig.hasHoles = false;
     this.areaConfig.hasBuildings = false;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
-  }
-
-  private calculateCumulativeWalkAbleArr() {
-    let walkableArrArr: number[][][][] = [];
-    this.elements.forEach(areaRow => {
-      let row: number[][][] = [];
-      areaRow.forEach(area => {
-        row.push(AreaService.createWalkableArr(area.parts));
-      });
-      walkableArrArr.push(row);
-    });
-    this.walkableArr = AreaService.createCumulativeWalkableArr(walkableArrArr);
   }
 }
