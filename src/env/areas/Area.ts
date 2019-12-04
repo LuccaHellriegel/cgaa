@@ -96,22 +96,6 @@ export class Area {
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
 
-  calculateRandUnitSpawnPosition() {
-    if (!this.spawnableArrForEnemies) {
-      //TODO: can reuse calculation from the cumulative walk arr
-      //TODO: think if calculation on small areas might be more performant
-      this.spawnableArrForEnemies = SpawnService.createWalkableArr(this.parts);
-    }
-
-    return SpawnService.randomlyTryAllSpawnablePosFromArr(
-      this.spawnableArrForEnemies,
-      this,
-      spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
-      (x, y) => {
-        return CollisionService.checkIfCircleCollidesWithCircles(this.enemies, x, y);
-      }
-    );
-  }
 
   private calculateRandBuildingSpawnPos() {
     if (!this.spawnableArrForBuildings) {
