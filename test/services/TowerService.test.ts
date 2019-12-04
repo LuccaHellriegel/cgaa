@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { TowerService } from "../src/units/towers/TowerService";
-import { towerHalfSize } from "../src/globals/globalSizes";
+import { TowerService } from "../../src/units/towers/TowerService";
+import { towerHalfSize } from "../../src/globals/globalSizes";
 
 describe("Test TowerService", function() {
   describe("Find closest tower", function() {
@@ -141,15 +141,15 @@ describe("Test TowerService", function() {
       expect(result).to.equal(null);
     });
     it("Tower is snapped to the right", () => {
-      let closestTower = { x: 0, y: 0 };
-      let result = TowerService.snapTowerPosToClosestTower(closestTower, 1, 0);
-      expect(result).to.deep.equal({ newX: 2 * towerHalfSize, newY: 0 });
+      let closestTower = { x: 3 * towerHalfSize, y: 3 * towerHalfSize };
+      let result = TowerService.snapTowerPosToClosestTower(closestTower, 3 * towerHalfSize + 1, 3 * towerHalfSize);
+      expect(result).to.deep.equal({ newX: 3 * towerHalfSize + 2 * towerHalfSize, newY: 3 * towerHalfSize });
     });
     it("Tower is snapped to the left", () => {
-        let closestTower = { x: 3 * towerHalfSize, y: 3 * towerHalfSize };
-        let result = TowerService.snapTowerPosToClosestTower(closestTower, 2 * towerHalfSize, 3 * towerHalfSize);
-        expect(result).to.deep.equal({ newX: towerHalfSize, newY: 3 * towerHalfSize });
-      });
+      let closestTower = { x: 3 * towerHalfSize, y: 3 * towerHalfSize };
+      let result = TowerService.snapTowerPosToClosestTower(closestTower, 2 * towerHalfSize, 3 * towerHalfSize);
+      expect(result).to.deep.equal({ newX: towerHalfSize, newY: 3 * towerHalfSize });
+    });
     it("Tower snapped beyond origin is null", () => {
       let closestTower = { x: 1, y: 1 };
       let result = TowerService.snapTowerPosToClosestTower(closestTower, 1, 0);

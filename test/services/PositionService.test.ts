@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { wallPartHalfSize } from "../src/globals/globalSizes";
-import { PositionService } from "../src/services/PositionService";
+import { wallPartHalfSize } from "../../src/globals/globalSizes";
+import { PositionService } from "../../src/services/PositionService";
 
 describe("Test PositionService", function() {
   describe("Find relativ position in Area", function() {
