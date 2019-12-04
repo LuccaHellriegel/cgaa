@@ -14,10 +14,8 @@ export class BuildingPopulator extends Populator {
     enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
     weaponPhysicsGroup: Phaser.Physics.Arcade.Group,
     building: Building,
-    easyStar
   ) {
     super(scene, enemyPhysicsGroup, weaponPhysicsGroup);
-    this.easyStar = easyStar;
     this.building = building;
   }
 
@@ -40,7 +38,6 @@ export class BuildingPopulator extends Populator {
         "blueCircle",
         this.enemyPhysicsGroup,
         this.weaponPhysicsGroup,
-        this.easyStar
       );
     } else {
       return PathfindingCircle.withRandWeapon(
@@ -50,7 +47,6 @@ export class BuildingPopulator extends Populator {
         "blueCircle",
         this.enemyPhysicsGroup,
         this.weaponPhysicsGroup,
-        this.easyStar
       );
     }
   }
