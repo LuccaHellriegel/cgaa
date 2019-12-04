@@ -1,7 +1,7 @@
 import { CompositePolygon } from "../polygons/CompositePolygon";
-import { Sprite } from "../base/BasePhaser";
+import { SpriteWithAnimEvents } from "../base/BasePhaser";
 
-export abstract class Weapon extends Sprite {
+export abstract class Weapon extends SpriteWithAnimEvents {
   polygon: CompositePolygon;
   polygonArr: CompositePolygon[];
   alreadyAttacked: string[];
@@ -12,7 +12,7 @@ export abstract class Weapon extends Sprite {
 
   constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
     super(scene, x, y, texture, weaponGroup);
-    this.setCollideWorldBounds(false)
+    this.setCollideWorldBounds(false);
     this.alreadyAttacked = [];
     this.attacking = false;
     this.setupAnimEvents();
@@ -42,14 +42,6 @@ export abstract class Weapon extends Sprite {
   }
 
   setupAnimEvents() {
-    this.on(
-      "animationcomplete",
-      function(anim, frame) {
-        this.emit("animationcomplete_" + anim.key, anim, frame);
-      },
-      this
-    );
-
     this.on(
       "animationcomplete_attack-" + this.texture.key,
       function() {

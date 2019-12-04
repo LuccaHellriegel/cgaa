@@ -3,9 +3,9 @@ import { RandWeapon } from "../../weapons/RandWeapon";
 import { Weapon } from "../../weapons/Weapon";
 import { CirclePolygon } from "../../polygons/CirclePolygon";
 import { normalCircleRadius } from "../../globals/globalSizes";
-import { Sprite } from "../../base/BasePhaser";
+import { SpriteWithAnimEvents } from "../../base/BasePhaser";
 
-export class Circle extends Sprite {
+export class Circle extends SpriteWithAnimEvents {
   weapon: Weapon;
   polygon: CirclePolygon;
   unitType: string;
@@ -61,13 +61,6 @@ export class Circle extends Sprite {
   }
 
   setupAnimEvents() {
-    this.on(
-      "animationcomplete",
-      function(anim, frame) {
-        this.emit("animationcomplete_" + anim.key, anim, frame);
-      },
-      this
-    );
     this.on(
       "animationcomplete_damage-" + this.texture.key,
       function() {

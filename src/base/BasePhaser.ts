@@ -1,6 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 
-export class Sprite extends Phaser.Physics.Arcade.Sprite {
+export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
   physicsGroup: Phaser.Physics.Arcade.Group;
   id: string;
   scene: Gameplay;
@@ -19,7 +19,19 @@ export class Sprite extends Phaser.Physics.Arcade.Sprite {
   }
 }
 
-export class Image extends Phaser.Physics.Arcade.Image {
+export abstract class SpriteWithAnimEvents extends Sprite {
+  constructor(scene: Gameplay, x, y, texture, physicsGroup) {
+    super(scene, x, y, texture,physicsGroup);
+    this.on(
+      "animationcomplete",
+      function(anim, frame) {
+        this.emit("animationcomplete_" + anim.key, anim, frame);
+      },
+      this
+    );
+}
+
+export abstract class Image extends Phaser.Physics.Arcade.Image {
   physicsGroup: Phaser.Physics.Arcade.Group;
   scene: Gameplay;
 
@@ -30,3 +42,5 @@ export class Image extends Phaser.Physics.Arcade.Image {
     physicsGroup.add(this);
   }
 }
+
+
