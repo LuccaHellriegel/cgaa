@@ -8,7 +8,12 @@ describe("Test SpawnService", function() {
     it("There are only 12 valid positions around a building", () => {
       let buildingX = 0 + 2 * wallPartHalfSize + rectBuildingHalfWidth;
       let buildingY = 0 + 2 * wallPartHalfSize + rectBuildinghalfHeight;
-      let validPositions = SpawnService.calculateSpawnPositionsAroundBuilding(buildingX, buildingY);
+      let validPositions = SpawnService.calculateSpawnPositionsAround(
+        buildingX,
+        buildingY,
+        2 * rectBuildingHalfWidth,
+        2 * rectBuildinghalfHeight
+      );
 
       let rowAboveY = wallPartHalfSize;
       let rowBelowY = 5 * wallPartHalfSize;
@@ -61,28 +66,6 @@ describe("Test SpawnService", function() {
         { randX: 0 + 3 * wallPartHalfSize + 2 * rectBuildingHalfWidth, randY: 5 * wallPartHalfSize }
       ];
       expect(validPositions.length).to.equal(14);
-      expect(validPositions).to.deep.equal(realPositions);
-    });
-
-    it("There are only 8 valid positions around a circle ", () => {
-      let x = 0 + 3 * wallPartHalfSize;
-      let y = 0 + 3 * wallPartHalfSize;
-      let validPositions = SpawnService.calculateSpawnPositionsAroundCircle(x, y);
-
-      let rowAboveY = wallPartHalfSize;
-      let rowBelowY = 5 * wallPartHalfSize;
-
-      let realPositions = [
-        { randX: 0 + wallPartHalfSize, randY: rowAboveY },
-        { randX: 0 + 3 * wallPartHalfSize, randY: rowAboveY },
-        { randX: 0 + 5 * wallPartHalfSize, randY: rowAboveY },
-        { randX: 0 + wallPartHalfSize, randY: rowBelowY },
-        { randX: 0 + 3 * wallPartHalfSize, randY: rowBelowY },
-        { randX: 0 + 5 * wallPartHalfSize, randY: rowBelowY },
-        { randX: 0 + wallPartHalfSize, randY: 3 * wallPartHalfSize },
-        { randX: 0 + 5 * wallPartHalfSize, randY: 3 * wallPartHalfSize }
-      ];
-      expect(validPositions.length).to.equal(8);
       expect(validPositions).to.deep.equal(realPositions);
     });
   });
@@ -356,6 +339,67 @@ describe("Test SpawnService", function() {
         [1, 1, 1, 1, 1]
       ];
       expect(walkAbleArr).to.deep.equal(expectedWalkableArr);
+    });
+  });
+
+  describe("Extract area relative spawn pos", function() {
+    it("1x1 area has no spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(0, 0, 1, 1, spawnableArr)).to.deep.equal([]);
+    });
+    it("2x2 area has one spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(0, 0, 2, 2, spawnableArr)).to.deep.equal([
+        { column: 1, row: 1 }
+      ]);
+    });
+    it("4x4 area has 7 spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(0, 0, 4, 4, spawnableArr)).to.deep.equal([
+        { column: 1, row: 1 },
+        { column: 2, row: 1 },
+        { column: 3, row: 1 },
+        { column: 1, row: 2 },
+        { column: 1, row: 3 },
+        { column: 2, row: 3 },
+        { column: 3, row: 3 }
+      ]);
+    });
+    it("2x6 area has 3 spawnable pos", () => {
+      let spawnableArr = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+      ];
+
+      expect(SpawnService.extractSpawnPosFromSpawnableArrForArea(0, 0, 5, 2, spawnableArr)).to.deep.equal([
+        { column: 1, row: 1 },
+        { column: 2, row: 1 },
+        { column: 3, row: 1 }
+      ]);
     });
   });
 });

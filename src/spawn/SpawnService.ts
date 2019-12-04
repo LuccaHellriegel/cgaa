@@ -186,11 +186,20 @@ export class SpawnService {
     return spawnPos;
   }
 
-  static extractSpawnPosFromSpawnableArrForArea(relativeAreaWidth, relativeAreaHeight, spawnableArr) {
+  static extractSpawnPosFromSpawnableArrForArea(
+    relativeAreaTopLeftX,
+    realtiveAreaTopLeftY,
+    relativeAreaWidth,
+    relativeAreaHeight,
+    spawnableArr
+  ) {
     let spawnPos = this.extractSpawnPosFromSpawnableArr(spawnableArr);
     let areaSpawnPos = [];
     spawnPos.forEach(pos => {
-      if (pos.row < relativeAreaWidth && pos.column < relativeAreaHeight) {
+      if (
+        pos.column < relativeAreaTopLeftX + relativeAreaWidth &&
+        pos.row < realtiveAreaTopLeftY + relativeAreaHeight
+      ) {
         areaSpawnPos.push(pos);
       }
     });
