@@ -3,19 +3,15 @@ import { wallPartHalfSize } from "../globals/globalSizes";
 import { Area } from "./areas/Area";
 import { AreaService } from "./areas/AreaService";
 import { AreaFactory, AreaConfig } from "./areas/AreaFactory";
+import { PhysicalManager } from "../base/Base";
 
-export class AreaManager {
-  scene: Gameplay;
-  areas: Area[][];
+export class AreaManager extends PhysicalManager {
   borderWall: Area;
   walkableArr: number[][];
-  physicsGroup: Phaser.Physics.Arcade.StaticGroup;
+
   private areaConfig: AreaConfig;
   constructor(scene: Gameplay) {
-    this.scene = scene;
-    scene.areaManager = this;
-    this.areas = [];
-    this.physicsGroup = scene.physics.add.staticGroup();
+    super(scene, "areaManager", "staticGroup");
 
     this.createAreas();
     scene.physics.world.setBounds(
@@ -45,7 +41,7 @@ export class AreaManager {
       if (isEmpty) this.toggleIfAreaConfigIsEmpty();
       stepCount++;
     });
-    this.areas.push(row);
+    this.elements.push(row);
   }
 
   private createAreas() {
@@ -80,7 +76,7 @@ export class AreaManager {
 
   private calculateCumulativeWalkAbleArr() {
     let walkableArrArr: number[][][][] = [];
-    this.areas.forEach(areaRow => {
+    this.elements.forEach(areaRow => {
       let row: number[][][] = [];
       areaRow.forEach(area => {
         row.push(AreaService.createWalkableArr(area.parts));

@@ -25,7 +25,7 @@ export class UnitManager {
   spawnUnits() {
     Player.withChainWeapon(this.scene);
 
-    this.scene.areaManager.areas.forEach(areaRow => {
+    this.scene.areaManager.elements.forEach(areaRow => {
       areaRow.forEach(area => {
         if (area.buildings[0]) {
           new AreaPopulator(this.scene, this.enemyPhysics, this.enemyWeapons, area).startPopulating();
