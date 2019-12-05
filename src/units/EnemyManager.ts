@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { PhysicalManager } from "../base/Base";
+import { PositionService } from "../services/PositionService";
 
 export class EnemyManager extends PhysicalManager {
   weaponPhysicsGroup: Phaser.Physics.Arcade.Group;
@@ -12,6 +13,19 @@ export class EnemyManager extends PhysicalManager {
     this.weaponPhysicsGroup = this.scene.physics.add.group();
 
     this.spawnUnits();
+  }
+
+  getRelativeEnemyPositions() {
+    return PositionService.getRelativePosOfElements(this.elements, this.scene.pathManager.elements);
+  }
+
+  getRelativeEnemyPositionsAndAroundEnemyPositions() {
+    return PositionService.getRelativePosOfElementsAndAroundElements(
+      this.elements,
+      this.scene.pathManager.elements,
+      1,
+      1
+    );
   }
 
   spawnUnits() {

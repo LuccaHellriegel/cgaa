@@ -1,4 +1,5 @@
 import { wallPartHalfSize } from "../globals/globalSizes";
+import { SpawnService } from "../spawn/SpawnService";
 
 export class PositionService {
   private constructor() {}
@@ -83,5 +84,29 @@ export class PositionService {
     let row = (y - wallPartHalfSize) / (2 * wallPartHalfSize);
     let column = (x - wallPartHalfSize) / (2 * wallPartHalfSize);
     return { row: row, column: column };
+  }
+
+  static getRelativePosOfElements(elements, map) {
+    let relativePositions: any[] = [];
+    elements.forEach(ele => {
+      let pos = PositionService.findCurRelativePosition(map, ele.x, ele.y);
+      relativePositions.push(pos);
+    });
+    return relativePositions;
+  }
+
+  static getRelativePosOfElementsAndAroundElements(elements, map, relativeWidth, relativeHeight) {
+    let relativePositions: any[] = this.getRelativePosOfElements(elements, map);
+    let relativePositionsAround: any[] = [];
+    relativePositions.forEach(pos => {
+      let posAround = SpawnService.calculateRelativeSpawnPositionsAround(
+        pos.column,
+        pos.row,
+        relativeWidth,
+        relativeHeight
+      );
+      relativePositionsAround = relativePositionsAround.concat(posAround);
+    });
+    return relativePositions.concat(relativePositionsAround);
   }
 }

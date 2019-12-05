@@ -14,6 +14,10 @@ export class TowerModus {
     this.physicsGroup = scene.physics.add.staticGroup();
     this.ghostTower = new GhostTower(scene, 0, 0, this.physicsGroup);
 
+    this.scene.events.on("added-tower", () => {
+      this.bringGhostTowerToTop();
+    });
+
     let keyObj = scene.input.keyboard.addKey("F");
     keyObj.on("down", () => {
       this.isOn = !this.isOn;
@@ -34,7 +38,7 @@ export class TowerModus {
     if (this.isOn) this.ghostTower.setPosition(x, y);
   }
 
-  bringGhostTowerToTop() {
+  private bringGhostTowerToTop() {
     this.scene.children.bringToTop(this.ghostTower);
   }
 }

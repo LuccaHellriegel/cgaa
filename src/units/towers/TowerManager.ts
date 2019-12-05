@@ -3,10 +3,20 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 import { TowerService } from "./TowerService";
 import { PhysicalManager } from "../../base/Base";
+import { PositionService } from "../../services/PositionService";
 
 export class TowerManager extends PhysicalManager {
   constructor(scene: Gameplay) {
     super(scene, "towerManager", "staticGroup");
+  }
+
+  getRelativeTowerPositionsAndAroundTowerPositions() {
+    return PositionService.getRelativePosOfElementsAndAroundElements(
+      this.elements,
+      this.scene.pathManager.elements,
+      1,
+      1
+    );
   }
 
   private playInvalidTowerPosAnim() {
@@ -28,10 +38,10 @@ export class TowerManager extends PhysicalManager {
         y = newY;
       }
 
-      //TODO: fire event to alert spawnManager of new Tower pos for updating
       if (this.scene.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
-        this.elements.push(new Tower(this.scene, x, y, this.physicsGroup));
-        this.scene.towerModus.bringGhostTowerToTop();
+        let tower = new Tower(this.scene, x, y, this.physicsGroup);
+        this.scene.events.emit("added-tower", tower);
+        this.elements.push(tower);
       } else {
         this.playInvalidTowerPosAnim();
       }

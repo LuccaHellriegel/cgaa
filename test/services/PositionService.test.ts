@@ -124,4 +124,30 @@ describe("Test PositionService", function() {
       expect(relativePos).to.deep.equal({ column: 51, row: 23 });
     });
   });
+
+  describe("getRelativePosOfElementsAndAroundElements", function() {
+    it("Element is in (1,1) and around elements form circle", function() {
+      let element = { x: 3 * wallPartHalfSize, y: 3 * wallPartHalfSize };
+
+      let map = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ];
+      let relativePositions = PositionService.getRelativePosOfElementsAndAroundElements([element], map, 1, 1);
+      let expectedPositions = [
+        { row: 0, column: 0 },
+        { row: 0, column: 1 },
+        { row: 0, column: 2 },
+        { row: 1, column: 0 },
+        { row: 1, column: 1 },
+        { row: 1, column: 2 },
+        { row: 2, column: 0 },
+        { row: 2, column: 1 },
+        { row: 2, column: 2 }
+      ];
+
+      expectedPositions.forEach(pos => expect(relativePositions).to.deep.include(pos));
+    });
+  });
 });
