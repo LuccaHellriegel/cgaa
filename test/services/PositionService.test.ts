@@ -80,6 +80,16 @@ describe("Test PositionService", function() {
       expect(newX).to.equal(wallPartHalfSize);
       expect(newY).to.equal(wallPartHalfSize);
     });
+    it("560 is between tiles and should be snapped left ", function() {
+      let newX = PositionService.snapCoordinateToGrid(560);
+
+      expect(newX).to.equal(520);
+    });
+    it("1040 is between tiles and should be snapped left ", function() {
+      let newX = PositionService.snapCoordinateToGrid(1040);
+
+      expect(newX).to.equal(1000);
+    });
   });
   describe("Convert relative pos in Area to real pos", function() {
     it("First position is first in grid (wallPartHalfSize,wallPartHalfSize)", function() {

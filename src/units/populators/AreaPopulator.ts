@@ -27,7 +27,7 @@ export class AreaPopulator extends Populator {
         return false;
       }
     );
-    return pos
+    return pos;
   }
 
   createEnemy() {
@@ -35,8 +35,10 @@ export class AreaPopulator extends Populator {
     if (spawnPositon === null) return null;
     let { randX, randY } = spawnPositon;
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
+    let enemy;
+
     if (choseRandWeapon) {
-      return EnemyCircle.withRandWeapon(
+      enemy = EnemyCircle.withRandWeapon(
         this.scene,
         randX,
         randY,
@@ -45,7 +47,7 @@ export class AreaPopulator extends Populator {
         this.weaponPhysicsGroup
       );
     } else {
-      return EnemyCircle.withChainWeapon(
+      enemy = EnemyCircle.withChainWeapon(
         this.scene,
         randX,
         randY,
@@ -54,6 +56,8 @@ export class AreaPopulator extends Populator {
         this.weaponPhysicsGroup
       );
     }
+    enemy.state = "guard";
+    return enemy;
   }
 
   doMoreSpawn() {

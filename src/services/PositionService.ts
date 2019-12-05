@@ -14,7 +14,9 @@ export class PositionService {
     let diffCeil = Math.abs(ceil - coordinate);
     let diffFloor = Math.abs(floor - coordinate);
 
-    if (diffCeil < diffFloor) {
+    if (ceil === Infinity && floor === Infinity) {
+      return coordinate - wallPartHalfSize;
+    } else if (diffCeil < diffFloor) {
       return ceil;
     } else {
       return floor;
@@ -22,8 +24,8 @@ export class PositionService {
   }
 
   static snapXYToGrid(x, y) {
-    let needToSnapX = x % wallPartHalfSize !== 0 || x / wallPartHalfSize / 2 === 0;
-    let needToSnapY = y % wallPartHalfSize !== 0 || y / wallPartHalfSize / 2 === 0;
+    let needToSnapX = (x - wallPartHalfSize) % (2 * wallPartHalfSize) !== 0;
+    let needToSnapY = (y - wallPartHalfSize) % (2 * wallPartHalfSize) !== 0;
 
     if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 
@@ -49,6 +51,7 @@ export class PositionService {
 
     let curXInArr = 0;
     let curYInArr = 0;
+
     for (let i = 0; i < walkableArr.length; i++) {
       for (let k = 0; k < walkableArr[0].length; k++) {
         if (x - wallPartHalfSize === curXInArr && y - wallPartHalfSize === curYInArr) {
@@ -64,19 +67,68 @@ export class PositionService {
     return null;
   }
 
+  static findCurRelativePositionInArea(walkableArr: number[][], x, y, area) {
+    let { newX, newY } = this.snapXYToGrid(x, y);
+
+    //symmetrical arr is assumed
+
+    let curXInArr = area.topLeftX;
+    let curYInArr = area.topLeftY;
+
+    for (let i = 0; i < walkableArr.length; i++) {
+      for (let k = 0; k < walkableArr[0].length; k++) {
+        if (newX - wallPartHalfSize === curXInArr && newY - wallPartHalfSize === curYInArr) {
+          return { row: i, column: k };
+        }
+        curXInArr += 2 * wallPartHalfSize;
+      }
+      curYInArr += 2 * wallPartHalfSize;
+
+      curXInArr = area.topLeftX;
+    }
+
+    console.log(
+      "No relative position found for point " +
+        x +
+        " " +
+        y +
+        " and snapped point " +
+        newX +
+        " " +
+        newY +
+        " and map shape " +
+        [walkableArr.length, walkableArr[0].length]
+    );
+  }
+
   static findCurRelativePosition(walkableArr: number[][], x, y) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
     let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
 
     if (relPos) return relPos;
-    throw "No relative position found for point " + x + " " + y + " and snapped point " + newX + " " + newY;
+    console.log(
+      "No relative position found for point " +
+        x +
+        " " +
+        y +
+        " and snapped point " +
+        newX +
+        " " +
+        newY +
+        " and map shape " +
+        [walkableArr.length, walkableArr[0].length]
+    );
   }
 
   static relativePosToRealPosInArea(area, column, row) {
     let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
     let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };
+  }
+
+  static relativePosToRealPosInEnv(column, row) {
+    return this.relativePosToRealPosInArea({ topLeftX: 0, topLeftY: 0 }, column, row);
   }
 
   static realPosToRelativePosInEnv(x, y) {

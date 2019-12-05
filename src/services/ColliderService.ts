@@ -1,5 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
+import { Circle } from "../units/circles/Circle";
 
 export class ColliderService {
   private constructor() {}
@@ -45,7 +46,7 @@ export class ColliderService {
     return false;
   }
 
-  private static bounceCallback(unit, rect) {
+  private static bounceCallback(unit : Circle, rect) {
     let x = unit.x;
     let y = unit.y;
     let angle = Phaser.Math.Angle.Between(rect.x, rect.y, x, y);
@@ -55,6 +56,7 @@ export class ColliderService {
     let y1 = y + Math.sin(angle) * bounceBackDistance;
     unit.setPosition(x1, y1);
     unit.setVelocity(0, 0);
+    unit.state = "idle"
   }
 
   private static addEnvCollider(scene: Gameplay) {

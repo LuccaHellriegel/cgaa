@@ -2,8 +2,8 @@ import { Populator } from "./Populator";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../../env/buildings/Building";
 import EasyStar from "easystarjs";
-import { PathfindingCircle } from "../circles/PathfindingCircle";
 import { SpawnService } from "../../spawn/SpawnService";
+import { EnemyCircle } from "../circles/EnemyCircle";
 
 export class BuildingPopulator extends Populator {
   easyStar: EasyStar.js;
@@ -39,8 +39,10 @@ export class BuildingPopulator extends Populator {
     let { randX, randY } = spawnPositon;
 
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
+    let enemy;
+
     if (choseRandWeapon) {
-      return PathfindingCircle.withChainWeapon(
+      enemy = EnemyCircle.withChainWeapon(
         this.scene,
         randX,
         randY,
@@ -49,7 +51,7 @@ export class BuildingPopulator extends Populator {
         this.weaponPhysicsGroup
       );
     } else {
-      return PathfindingCircle.withRandWeapon(
+      enemy = EnemyCircle.withRandWeapon(
         this.scene,
         randX,
         randY,
@@ -58,6 +60,8 @@ export class BuildingPopulator extends Populator {
         this.weaponPhysicsGroup
       );
     }
+    enemy.state = "ambush";
+    return enemy;
   }
 
   doMoreSpawn() {

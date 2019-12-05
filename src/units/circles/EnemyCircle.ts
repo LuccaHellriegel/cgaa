@@ -5,19 +5,15 @@ import { Circle } from "./Circle";
 import { Weapon } from "../../weapons/Weapon";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
+import { StateService } from "../StateService";
 
 export class EnemyCircle extends Circle {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
+  path;
+  curPosInPath = 0;
 
-  constructor(
-    scene: Gameplay,
-    x,
-    y,
-    texture,
-    physicsGroup: Phaser.Physics.Arcade.Group,
-    weapon: Weapon
-  ) {
+  constructor(scene: Gameplay, x, y, texture, physicsGroup: Phaser.Physics.Arcade.Group, weapon: Weapon) {
     super(scene, x, y, texture, physicsGroup, weapon);
     this.hasBeenAttacked = false;
     this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
@@ -34,49 +30,6 @@ export class EnemyCircle extends Circle {
 
   static withRandWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
     return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x, y, weaponGroup));
-  }
-
-  moveAndTurnToPlayer() {
-    let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius =
-      normalCircleRadius + normalCircleRadius + 32;
-    let distanceToPlayerSmallEnough =
-      Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        this.scene.player.x,
-        this.scene.player.y
-      ) < radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius;
-    if (!distanceToPlayerSmallEnough) {
-      this.scene.physics.moveToObject(this, this.scene.player, 160);
-    } else {
-      this.setVelocity(0, 0);
-    }
-
-    let newRotation = Phaser.Math.Angle.Between(
-      this.x,
-      this.y,
-      this.scene.player.x,
-      this.scene.player.y
-    );
-    let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
-    this.setRotation(newRotation + correctionForPhasersMinus90DegreeTopPostion);
-  }
-
-  attackPlayer() {
-    this.moveAndTurnToPlayer();
-    let distanceBetweenPlayerAndEnemy = Phaser.Math.Distance.Between(
-      this.x,
-      this.y,
-      this.scene.player.x,
-      this.scene.player.y
-    );
-    let weaponsLastPolygonReachesPlayer =
-      this.weapon.polygonArr[this.weapon.polygonArr.length - 1].height +
-        normalCircleRadius >
-      distanceBetweenPlayerAndEnemy;
-    if (weaponsLastPolygonReachesPlayer) {
-      this.attack();
-    }
   }
 
   damage(amount) {
@@ -96,6 +49,6 @@ export class EnemyCircle extends Circle {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     this.healthbar.move(this.x - 26, this.y - 38);
-    if (this.hasBeenAttacked) this.attackPlayer();
+    StateService.executeState(this)
   }
 }

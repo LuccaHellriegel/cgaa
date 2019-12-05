@@ -24,6 +24,8 @@ export class Area {
   relativeHeight: number;
   relativeTopLeftX: number;
   relativeTopLeftY: number;
+  x: any;
+  y: any;
 
   constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart) {
     for (let row = 0; row < sizeOfYAxis; row++) {
@@ -41,6 +43,9 @@ export class Area {
 
     this.width = sizeOfXAxis * unitForPart;
     this.height = sizeOfYAxis * unitForPart;
+
+    this.x = topLeftX + this.width / 2;
+    this.y = topLeftY + this.height / 2;
 
     this.relativeWidth = this.width / (2 * wallPartHalfSize);
     this.relativeHeight = this.height / (2 * wallPartHalfSize);
