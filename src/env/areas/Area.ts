@@ -9,7 +9,6 @@ import {
 import { WallPart } from "./WallPart";
 import { Building } from "../buildings/Building";
 import { EnemyCircle } from "../../units/circles/EnemyCircle";
-import { CollisionService } from "../../spawn/CollisionService";
 
 export class Area {
   parts: AreaPosition[][] = [];
@@ -47,8 +46,8 @@ export class Area {
     this.width = sizeOfXAxis * unitForPart;
     this.height = sizeOfYAxis * unitForPart;
 
-    this.relativeWidth = (this.width) / (2 * wallPartHalfSize);
-    this.relativeHeight = (this.height) / (2 * wallPartHalfSize);
+    this.relativeWidth = this.width / (2 * wallPartHalfSize);
+    this.relativeHeight = this.height / (2 * wallPartHalfSize);
 
     this.relativeTopLeftX = topLeftX / (2 * wallPartHalfSize);
     this.relativeTopLeftY = topLeftY / (2 * wallPartHalfSize);
@@ -121,9 +120,24 @@ export class Area {
     );
   }
 
+  private checkIfBuildingCollidesWithBuildings(buildings, randX, randY) {
+    let checkDiffCallback = (diffX, diffY) => {
+      let inRowsOverOrUnderBuilding = diffY >= 2 * rectBuildinghalfHeight + 2 * wallPartHalfSize;
+      let leftOrRightFromBuilding = diffX >= 2 * rectBuildingHalfWidth + 2 * wallPartHalfSize;
+      if (!inRowsOverOrUnderBuilding && !leftOrRightFromBuilding) return true;
+      return false;
+    };
+    for (let index = 0; index < buildings.length; index++) {
+      const otherObject = buildings[index];
+      let diffX = Math.abs(otherObject.x - randX);
+      let diffY = Math.abs(otherObject.y - randY);
+      if (checkDiffCallback(diffX, diffY)) return true;
+    }
+    return false;
+  }
   private buildBuilding() {
     let { randX, randY } = this.calculateRandBuildingSpawnPos();
-    while (CollisionService.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
+    while (this.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
       let result = this.calculateRandBuildingSpawnPos();
       randX = result.randX;
       randY = result.randY;

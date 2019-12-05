@@ -3,9 +3,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../../env/buildings/Building";
 import EasyStar from "easystarjs";
 import { PathfindingCircle } from "../circles/PathfindingCircle";
-import { CollisionService } from "../../spawn/CollisionService";
 import { SpawnService } from "../../spawn/SpawnService";
-
 
 export class BuildingPopulator extends Populator {
   easyStar: EasyStar.js;
@@ -21,6 +19,7 @@ export class BuildingPopulator extends Populator {
     this.building = building;
   }
 
+  //TODO: use spawnmanager
   calculateRandUnitSpawnPosition(building) {
     return SpawnService.randomlyTryAllSpawnablePosInRelationToEnv(
       building.validSpawnPositions,
@@ -28,7 +27,7 @@ export class BuildingPopulator extends Populator {
         return Phaser.Math.Between(0, spawnablePosCount);
       },
       (x, y) => {
-        return CollisionService.checkIfCircleCollidesWithCircles(building.enemies, x, y);
+        return !this.scene.spawnManager.evaluateRealSpawnPosOfEnemy(x, y);
       }
     );
   }

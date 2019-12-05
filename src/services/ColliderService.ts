@@ -6,7 +6,7 @@ export class ColliderService {
 
   static addCollisionDetection(scene: Gameplay) {
     this.addCombatCollision(scene);
-    this.addAreaCollision(scene);
+    this.addEnvCollider(scene);
   }
 
   private static addCombatCollision(scene: Gameplay) {
@@ -46,7 +46,6 @@ export class ColliderService {
     return false;
   }
 
-  //TODO: can push other Sprite into wall
   private static bounceCallback(unit, rect) {
     let x = unit.x;
     let y = unit.y;
@@ -59,7 +58,7 @@ export class ColliderService {
     unit.setVelocity(0, 0);
   }
 
-  private static addAreaCollision(scene: Gameplay) {
+  private static addEnvCollider(scene: Gameplay) {
     scene.physics.add.collider(
       scene.player.physicsGroup,
       scene.envManager.physicsGroup,
@@ -70,6 +69,22 @@ export class ColliderService {
     scene.physics.add.collider(
       scene.enemyManager.physicsGroup,
       scene.envManager.physicsGroup,
+      this.bounceCallback,
+      null,
+      this
+    );
+    scene.physics.add.collider(
+      scene.player.physicsGroup,
+      scene.towerManager.physicsGroup,
+      this.bounceCallback,
+      null,
+      this
+    );
+
+    //TODO: does not work
+    scene.physics.add.collider(
+      scene.enemyManager.physicsGroup,
+      scene.towerManager.physicsGroup,
       this.bounceCallback,
       null,
       this

@@ -5,6 +5,7 @@ import { SpawnService } from "./SpawnService";
 import { Area } from "../env/areas/Area";
 import { Tower } from "../units/towers/Tower";
 import { towerSymbol, walkableSymbol } from "../globals/globalMarking";
+import { MapService } from "../services/MapService";
 
 export class SpawnManager extends Manager {
   spawnableArrForEnemiesBase;
@@ -28,33 +29,13 @@ export class SpawnManager extends Manager {
     //TODO: building add and remove
 
     this.scene.events.on("added-tower", (tower: Tower) => {
-      this.updateMapWithElementAndAroundElements(this.spawnableArrForEnemiesBase, tower, towerSymbol, false);
-      this.updateMapWithElement(this.spawnableArrForTowersBase, tower, towerSymbol, false);
+      MapService.updateMapWithElementAndAroundElements(this.spawnableArrForEnemiesBase, tower, towerSymbol, false);
+      MapService.updateMapWithElement(this.spawnableArrForTowersBase, tower, towerSymbol, false);
     });
 
     this.scene.events.on("removed-tower", (tower: Tower) => {
       //TODO
     });
-  }
-
-  private updateMapWithElementAndAroundElements(map, element, eleSymbol, removed) {
-    let positions = PositionService.getRelativePosOfElementsAndAroundElements([element], map, 1, 1);
-    positions.forEach(pos => {
-      if (removed) {
-        map[pos.row][pos.column] = walkableSymbol;
-      } else {
-        map[pos.row][pos.column] = eleSymbol;
-      }
-    });
-  }
-
-  private updateMapWithElement(map, element, eleSymbol, removed) {
-    let { row, column } = PositionService.findCurRelativePosition(map, element.x, element.y);
-    if (removed) {
-      map[row][column] = walkableSymbol;
-    } else {
-      map[row][column] = eleSymbol;
-    }
   }
 
   private updateSpawnableArrForTowers() {
@@ -88,9 +69,11 @@ export class SpawnManager extends Manager {
     return this.spawnableArrForTowers[row][column] === 0;
   }
 
-  getValidSpawnPosForTowers() {
+  evaluateRealSpawnPosOfEnemy(x, y) {
+    //TODO: enemy spawning is to often for always copying?
     this.updateSpawnableArrForEnemies();
-    return SpawnService.extractSpawnPosFromSpawnableArr(this.spawnableArrForEnemies);
+    let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForEnemies, x, y);
+    return this.spawnableArrForEnemies[row][column] === 0;
   }
 
   getValidSpawnPosForEnemiesInArea(area: Area) {
