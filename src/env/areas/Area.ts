@@ -144,7 +144,7 @@ export class Area {
       randY = result.randY;
     }
 
-    let building = new Building(this.scene, randX, randY, this.scene.envManager.physicsGroup, this);
+    let building = new Building(this.scene, randX, randY, this.scene.envManager.physicsGroup);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

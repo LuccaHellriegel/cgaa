@@ -1,11 +1,9 @@
 import { Image } from "../../base/BasePhaser";
-import { Area } from "../areas/Area";
 
 export class Building extends Image {
-  area: Area;
-
-  constructor(scene, x, y, physicsGroup, area) {
+  constructor(scene, x, y, physicsGroup) {
     super(scene, x, y, "rectBuilding", physicsGroup);
-    this.area = area;
+    this.setImmovable(true);
+
   }
 }
