@@ -2,6 +2,7 @@ import { Manager } from "../base/Base";
 import { Gameplay } from "../scenes/Gameplay";
 import EasyStar from "easystarjs";
 import { PositionService } from "../services/PositionService";
+import { PathContainer } from "./PathContainer";
 
 export class PathManager extends Manager {
   areaMaps: any[] = [];
@@ -18,13 +19,11 @@ export class PathManager extends Manager {
     //TODO: listen to building destroyed
     this.elements = this.scene.envManager.calculateWalkAbleArr();
     this.areaMaps = this.scene.envManager.calculateAreaMaps();
-    console.log(this.areaMaps);
     this.easyStar = new EasyStar.js();
     this.calculateMainPath();
   }
 
   private calculateMainPath() {
-    console.log(this.elements);
     this.easyStar.setGrid(this.elements);
     this.easyStar.setAcceptableTiles([0]);
     this.easyStar.findPath(
@@ -43,7 +42,7 @@ export class PathManager extends Manager {
     this.easyStar.calculate();
   }
 
-  calculatePath(unit, x, y) {
+  calculateAreaSpecificPath(x, y, saveReference : PathContainer) {
     let { rowInAreaArr, columnInAreaArr } = this.scene.envManager.findClosestArea(x, y);
     let map = this.areaMaps[rowInAreaArr][columnInAreaArr];
     this.easyStar.setGrid(map);
@@ -63,7 +62,7 @@ export class PathManager extends Manager {
         if (path === null) {
           console.log("Path was not found.");
         } else {
-          unit.path = path;
+          saveReference.updatePath(path);
         }
       }.bind(this)
     );

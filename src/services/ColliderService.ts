@@ -56,6 +56,8 @@ export class ColliderService {
     let y1 = y + Math.sin(angle) * bounceBackDistance;
     unit.setPosition(x1, y1);
     unit.setVelocity(0, 0);
+
+    //TODO: this is to fine grained
     unit.state = "idle"
   }
 

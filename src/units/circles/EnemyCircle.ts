@@ -1,16 +1,16 @@
 import { HealthBar } from "../../ui/graphics/healthbars/HealthBar";
-import { normalCircleRadius } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Circle } from "./Circle";
 import { Weapon } from "../../weapons/Weapon";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { StateService } from "../StateService";
+import { PathContainer } from "../../path/PathContainer";
 
 export class EnemyCircle extends Circle {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
-  path;
+  pathContainer: PathContainer;
   curPosInPath = 0;
 
   constructor(scene: Gameplay, x, y, texture, physicsGroup: Phaser.Physics.Arcade.Group, weapon: Weapon) {
@@ -49,6 +49,6 @@ export class EnemyCircle extends Circle {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     this.healthbar.move(this.x - 26, this.y - 38);
-    StateService.executeState(this)
+    StateService.executeState(this);
   }
 }

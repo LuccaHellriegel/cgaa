@@ -20,7 +20,15 @@ export class StateService {
         this.ambush(unit);
         break;
       }
+      case "obstacle" : {
+        this.obstacle(unit)
+        break;
+      }
     }
+  }
+
+  private static obstacle(unit){
+
   }
 
   private static idle(unit: EnemyCircle) {
@@ -81,37 +89,21 @@ export class StateService {
   }
 
   private static ambush(unit: EnemyCircle) {
-    if (unit.path) {
-      if (unit.path && unit.path[unit.curPosInPath]) {
+      if (unit.pathContainer.path && unit.pathContainer.path[unit.curPosInPath]) {
         let { x, y } = PositionService.relativePosToRealPosInEnv(
-          unit.path[unit.curPosInPath].x,
-          unit.path[unit.curPosInPath].y
+          unit.pathContainer.path[unit.curPosInPath].x,
+          unit.pathContainer.path[unit.curPosInPath].y
         );
         if (Math.abs(unit.x - x) < 2 && Math.abs(unit.y - y) < 2) {
           unit.curPosInPath++;
         } else {
           unit.scene.physics.moveTo(unit, x, y, 160);
         }
-      } else if (unit.path && unit.curPosInPath >= unit.path.length) {
+      } else if (unit.pathContainer.path && unit.curPosInPath >= unit.pathContainer.path.length) {
         unit.setVelocity(0, 0);
-        unit.path = unit.scene.pathManager.mainPath
-        unit.curPosInPath = 0
+        unit.pathContainer.path = unit.scene.pathManager.mainPath;
+        unit.curPosInPath = 0;
       }
-    } else {
-      unit.scene.time.addEvent({
-        delay: 1000,
-        callback: this.createPathCallback(unit),
-        callbackScope: unit
-      });
     }
-  }
-
-  //TODO: tanks performance 40%, how to optimize?
-  private static createPathCallback(unit: EnemyCircle) {
-    return function pathCalculation() {
-      if (unit.scene) {
-        unit.scene.pathManager.calculatePath(unit, unit.x, unit.y);
-      }
-    };
   }
 }

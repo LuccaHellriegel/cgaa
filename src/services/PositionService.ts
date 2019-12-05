@@ -46,27 +46,6 @@ export class PositionService {
     return { newX, newY };
   }
 
-  private static tryToFindRelativePosInArr(walkableArr, x, y) {
-    //symmetrical arr is assumed
-
-    let curXInArr = 0;
-    let curYInArr = 0;
-
-    for (let i = 0; i < walkableArr.length; i++) {
-      for (let k = 0; k < walkableArr[0].length; k++) {
-        if (x - wallPartHalfSize === curXInArr && y - wallPartHalfSize === curYInArr) {
-          return { row: i, column: k };
-        }
-        curXInArr += 2 * wallPartHalfSize;
-      }
-      curYInArr += 2 * wallPartHalfSize;
-
-      curXInArr = 0;
-    }
-
-    return null;
-  }
-
   static findCurRelativePositionInArea(walkableArr: number[][], x, y, area) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
@@ -102,23 +81,7 @@ export class PositionService {
   }
 
   static findCurRelativePosition(walkableArr: number[][], x, y) {
-    let { newX, newY } = this.snapXYToGrid(x, y);
-
-    let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
-
-    if (relPos) return relPos;
-    console.log(
-      "No relative position found for point " +
-        x +
-        " " +
-        y +
-        " and snapped point " +
-        newX +
-        " " +
-        newY +
-        " and map shape " +
-        [walkableArr.length, walkableArr[0].length]
-    );
+    return this.findCurRelativePositionInArea(walkableArr, x, y, { topLeftX: 0, topLeftY: 0 });
   }
 
   static relativePosToRealPosInArea(area, column, row) {
