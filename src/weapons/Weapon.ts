@@ -9,6 +9,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
   unitOffSetX: number;
   unitOffSetY: number;
   offSetArr: number[][];
+  amount : number;
 
   constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
     super(scene, x, y, texture, weaponGroup);

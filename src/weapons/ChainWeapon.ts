@@ -36,6 +36,7 @@ export class ChainWeapon extends Weapon {
         this.setOffSetArr()
         this.setSize(2*this.polygonArr[this.polygonArr.length-1].height, 2*this.polygonArr[this.polygonArr.length-1].height)
 
+        this.amount = 20
 
     }
 

@@ -21,5 +21,6 @@ export class RandWeapon extends Weapon {
         super(scene, x, y, "randWeapon", weaponGroup, polygonArr, offSetArr)
         this.setSize(this.polygonArr[polygonArr.length-1].width, this.polygonArr[polygonArr.length-1].height)
 
+        this.amount = 50
     }
 }

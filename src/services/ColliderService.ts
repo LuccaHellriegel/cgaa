@@ -31,8 +31,7 @@ export class ColliderService {
 
   private static doDamage(weapon, enemy) {
     weapon.alreadyAttacked.push(enemy.id);
-    //TODO: amount is saved on weapon
-    enemy.damage(50);
+    enemy.damage(weapon.amount);
   }
 
   private static considerDamage(weapon: Weapon, enemy) {
