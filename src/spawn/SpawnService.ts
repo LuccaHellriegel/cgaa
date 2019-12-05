@@ -22,20 +22,25 @@ export class SpawnService {
   static calculateRelativeSpawnPositionsAround(column, row, width, height) {
     let validPositions: any[] = [];
 
-    //TODO: assumes symmetrical objects
+    //TODO: assumes symmetrical objects that fit perfectly on the grid
 
     let rowSize = Math.floor(height / 2) + 1;
     let columnSize = Math.floor(width / 2) + 1;
 
-    for (let rowIndex = 0; rowIndex < rowSize + 1; rowIndex++) {
-      for (let columnIndex = 0; columnIndex + 1 < columnSize; columnIndex++) {
-        if (rowIndex > Math.floor(height / 2) || columnIndex > Math.floor(width / 2)) {
-          validPositions.push({ column: column + columnIndex, row: row + rowIndex });
-          validPositions.push({ column: column - columnIndex, row: row - rowIndex });
+    let startRow = row - rowSize;
+    let startColumn = column - columnSize;
+
+    for (let rowIndex = 0; rowIndex < height +2; rowIndex++) {
+      for (let columnIndex = 0; columnIndex < width +2; columnIndex++) {
+        let betweenRowEdges = startRow + rowIndex > row - rowSize && startRow + rowIndex < row + rowSize;
+        let betweenColumnEdges =
+          startColumn + columnIndex > column - columnSize && startColumn + columnIndex < column + columnSize;
+
+        if (!betweenRowEdges || !betweenColumnEdges) {
+          validPositions.push({ column: startColumn + columnIndex, row: startRow + rowIndex });
         }
       }
     }
-
     return validPositions;
   }
 
@@ -205,8 +210,6 @@ export class SpawnService {
         areaSpawnPos.push(pos);
       }
     });
-
-    console.log(areaSpawnPos);
     return areaSpawnPos;
   }
 
@@ -256,12 +259,6 @@ export class SpawnService {
       realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
     }
 
-    console.log(
-      realPos,
-      area,
-      PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row),
-      chosenPosition
-    );
     return { randX: realPos.x, randY: realPos.y };
   }
 }

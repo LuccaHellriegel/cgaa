@@ -23,11 +23,14 @@ export class PointerService {
 
     input.on(
       "pointerdown",
-      function() {
-        if (scene.towerModus.isOn) {
-          scene.towerManager.spawnNewTower(scene.towerModus.ghostTower.x, scene.towerModus.ghostTower.y);
-        } else {
-          scene.player.attack();
+      function(pointer) {
+        //TODO: only left click
+        if (pointer) {
+          if (scene.towerModus.isOn) {
+            scene.towerManager.spawnNewTower(scene.towerModus.ghostTower.x, scene.towerModus.ghostTower.y);
+          } else {
+            scene.player.attack();
+          }
         }
       },
       this

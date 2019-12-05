@@ -66,23 +66,22 @@ export class PositionService {
   static findCurRelativePosition(walkableArr: number[][], x, y) {
     let { newX, newY } = this.snapXYToGrid(x, y);
 
-
     let relPos = this.tryToFindRelativePosInArr(walkableArr, newX, newY);
 
     if (relPos) return relPos;
-    throw "No relative position found for point " + x + " " + y;
+    throw "No relative position found for point " + x + " " + y + " and snapped point " + newX + " " + newY;
   }
 
   static relativePosToRealPosInArea(area, column, row) {
-    //TODO; 
+    //TODO;
     let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
     let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };
   }
 
   static realPosToRelativePosInEnv(x, y) {
-    let row = (y - wallPartHalfSize) / (2 * wallPartHalfSize)
-    let column = (x - wallPartHalfSize) / (2 * wallPartHalfSize)
+    let row = (y - wallPartHalfSize) / (2 * wallPartHalfSize);
+    let column = (x - wallPartHalfSize) / (2 * wallPartHalfSize);
     return { row: row, column: column };
   }
 }

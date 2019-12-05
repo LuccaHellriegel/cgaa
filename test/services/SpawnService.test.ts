@@ -443,14 +443,73 @@ describe("Test SpawnService", function() {
       ];
       let area = { topLeftX: 0, topLeftY: 0 };
       let randGenerationCallback = () => 0;
-      let validTestingCallback = x => x !== 5* wallPartHalfSize;
+      let validTestingCallback = x => x !== 5 * wallPartHalfSize;
       let pos = SpawnService.randomlyTryAllSpawnablePos(
         spawnablePos,
         area,
         randGenerationCallback,
         validTestingCallback
       );
-      expect(pos).to.deep.equal({randX: 5* wallPartHalfSize, randY: wallPartHalfSize})
+      expect(pos).to.deep.equal({ randX: 5 * wallPartHalfSize, randY: wallPartHalfSize });
+    });
+  });
+  describe("Calculate relative spawn pos around", function() {
+    it("Spawn pos around (1,1) form a circle around it", () => {
+      let positions = SpawnService.calculateRelativeSpawnPositionsAround(1, 1, 1, 1);
+      let expectedPositions = [
+        { row: 0, column: 0 },
+        { row: 0, column: 1 },
+        { row: 0, column: 2 },
+        { row: 2, column: 0 },
+        { row: 2, column: 1 },
+        { row: 2, column: 2 },
+        { row: 1, column: 0 },
+        { row: 1, column: 2 }
+      ];
+
+      expectedPositions.forEach(pos => expect(positions).to.deep.include(pos));
+    });
+    it("Spawn pos around building shape are 12", () => {
+      let positions = SpawnService.calculateRelativeSpawnPositionsAround(2, 1, 3, 1);
+      let expectedPositions = [
+        { row: 0, column: 0 },
+        { row: 0, column: 1 },
+        { row: 0, column: 2 },
+        { row: 0, column: 3 },
+        { row: 0, column: 4 },
+        { row: 2, column: 0 },
+        { row: 2, column: 1 },
+        { row: 2, column: 2 },
+        { row: 2, column: 3 },
+        { row: 2, column: 4 },
+        { row: 1, column: 0 },
+        { row: 1, column: 4 }
+      ];
+
+      expectedPositions.forEach(pos => expect(positions).to.deep.include(pos));
+    });
+    it("Spawn pos around 5 part building shape are 16", () => {
+      let positions = SpawnService.calculateRelativeSpawnPositionsAround(3, 1, 5, 1);
+      let expectedPositions = [
+        { row: 0, column: 0 },
+        { row: 0, column: 1 },
+        { row: 0, column: 2 },
+        { row: 0, column: 3 },
+        { row: 0, column: 4 },
+        { row: 0, column: 5 },
+        { row: 0, column: 6 },
+        { row: 2, column: 0 },
+        { row: 2, column: 1 },
+        { row: 2, column: 2 },
+        { row: 2, column: 3 },
+        { row: 2, column: 4 },
+        { row: 2, column: 5 },
+        { row: 2, column: 6 },
+        { row: 1, column: 0 },
+        { row: 1, column: 6 }
+      ];
+
+      expectedPositions.forEach(pos => expect(positions).to.deep.include(pos));
     });
   });
 });

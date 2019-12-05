@@ -33,7 +33,6 @@ export class AreaPopulator extends Populator {
   createEnemy() {
     let spawnPositon = this.calculateRandUnitSpawnPosition(this.area);
     if (spawnPositon === null) return null;
-
     let { randX, randY } = spawnPositon;
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     if (choseRandWeapon) {

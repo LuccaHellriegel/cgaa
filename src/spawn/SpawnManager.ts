@@ -10,25 +10,19 @@ export class SpawnManager extends Manager {
 
   constructor(scene: Gameplay) {
     super(scene, "spawnManager");
-    this.calculateSpawnableArrWithBuildings();
-  }
-
-  //TODO: make dependency aparent with events
-  private calculateSpawnableArrWithBuildings() {
-    this.elements = JSON.parse(JSON.stringify(this.scene.pathManager.elements));
   }
 
   private updateSpawnableArrForTowers() {
-    this.spawnableArrForTowers = JSON.parse(JSON.stringify(this.elements));
-    SpawnService.updateBuildingSpawnableArr(this.spawnableArrForTowers);
+    this.spawnableArrForTowers = JSON.parse(JSON.stringify(this.scene.pathManager.elements));
     this.addEnemiesToSpawnableArr(true);
+    SpawnService.updateBuildingSpawnableArr(this.spawnableArrForTowers);
   }
 
   private updateSpawnableArrForEnemies() {
-    this.spawnableArrForEnemies = JSON.parse(JSON.stringify(this.elements));
-    SpawnService.updateBuildingSpawnableArr(this.spawnableArrForEnemies);
+    this.spawnableArrForEnemies = JSON.parse(JSON.stringify(this.scene.pathManager.elements));
     this.addEnemiesToSpawnableArr(false);
     this.addTowersToSpawnableArr();
+    SpawnService.updateBuildingSpawnableArr(this.spawnableArrForEnemies);
   }
 
   private addEnemiesToSpawnableArr(isForTower) {
@@ -38,39 +32,35 @@ export class SpawnManager extends Manager {
       let { row, column } = PositionService.findCurRelativePosition(spawnableArr, enemy.x, enemy.y);
       spawnableArr[row][column] = 4;
       if (isForTower) {
-        this.markPosAroundUnit(spawnableArr, row, column);
+        this.markPosAroundUnit(spawnableArr, row, column, 1, 1);
       }
     });
   }
 
-  private markPosAroundUnit(spawnableArr, row, column) {
+  private markPosAroundUnit(spawnableArr, row, column, width, height) {
     spawnableArr[row][column] = 5;
-    if (spawnableArr[row] && spawnableArr[row][column + 1]) spawnableArr[row][column + 1] = 5;
-    if (spawnableArr[row] && spawnableArr[row][column - 1]) spawnableArr[row][column - 1] = 5;
-
-    if (spawnableArr[row - 1] && spawnableArr[row - 1][column - 1]) spawnableArr[row - 1][column - 1] = 5;
-    if (spawnableArr[row - 1] && spawnableArr[row - 1][column]) spawnableArr[row - 1][column] = 5;
-    if (spawnableArr[row - 1] && spawnableArr[row - 1][column + 1]) spawnableArr[row - 1][column + 1] = 5;
-
-    if (spawnableArr[row + 1] && spawnableArr[row + 1][column - 1]) spawnableArr[row + 1][column - 1] = 5;
-    if (spawnableArr[row + 1] && spawnableArr[row + 1][column]) spawnableArr[row + 1][column] = 5;
-    if (spawnableArr[row + 1] && spawnableArr[row + 1][column + 1]) spawnableArr[row + 1][column + 1] = 5;
+    let positions = SpawnService.calculateRelativeSpawnPositionsAround(column, row, width, height);
+    positions.forEach(pos => {
+      spawnableArr[pos.row][pos.column] = 5;
+    });
   }
 
   private addTowersToSpawnableArr() {
     this.scene.towerManager.elements.forEach(tower => {
-
       let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForEnemies, tower.x, tower.y);
-      this.markPosAroundUnit(this.spawnableArrForEnemies, row, column);
+      this.markPosAroundUnit(this.spawnableArrForEnemies, row, column, 1, 1);
     });
   }
 
   evaluateRealSpawnPosOfTower(x, y) {
-
-    let { row, column } = PositionService.findCurRelativePosition(this.elements, x, y);
     this.updateSpawnableArrForTowers();
+    let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForTowers, x, y);
+    return this.spawnableArrForTowers[row][column] === 0;
+  }
 
-    return this.elements[row][column] === 0;
+  getValidSpawnPosForTowers() {
+    this.updateSpawnableArrForEnemies();
+    return SpawnService.extractSpawnPosFromSpawnableArr(this.spawnableArrForEnemies);
   }
 
   getValidSpawnPosForEnemiesInArea(area: Area) {
