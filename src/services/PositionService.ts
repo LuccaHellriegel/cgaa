@@ -45,7 +45,7 @@ export class PositionService {
   }
 
   private static tryToFindRelativePosInArr(walkableArr, x, y) {
-    //TODO: symmetrical arr is assumed
+    //symmetrical arr is assumed
 
     let curXInArr = 0;
     let curYInArr = 0;
@@ -74,7 +74,6 @@ export class PositionService {
   }
 
   static relativePosToRealPosInArea(area, column, row) {
-    //TODO;
     let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
     let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };

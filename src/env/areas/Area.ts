@@ -8,7 +8,6 @@ import {
 } from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { Building } from "../buildings/Building";
-import { EnemyCircle } from "../../units/circles/EnemyCircle";
 
 export class Area {
   parts: AreaPosition[][] = [];
@@ -20,9 +19,6 @@ export class Area {
   height: number;
   scene: any;
   buildings: Building[] = [];
-
-  //TODO: needs to be accurate for future spawning
-  enemies: EnemyCircle[] = [];
   spawnableArrForBuildings: number[][];
   relativeWidth: number;
   relativeHeight: number;

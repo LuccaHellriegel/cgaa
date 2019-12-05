@@ -1,6 +1,5 @@
 import { shapeWord, Polygon } from "./Polygon";
 
-//TODO: setting x,y seems to be lagging if I use setVelocity for player, try polygon as Image instance with veloctiy or moveTo
 export class CirclePolygon extends Polygon {
   r: number;
 

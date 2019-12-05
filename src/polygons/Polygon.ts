@@ -7,7 +7,6 @@ export let shapeWord = {
     polygon: "polygon",
 };
 
-//TODO: evaluate if I can use Polygon Shape Game Object instead of my classes
 export class Polygon {
     type: string;
     x: number;
@@ -55,7 +54,6 @@ export class Polygon {
     }
 
     rotatePoints(rotation, centerX, centerY) {
-        //TODO: this function is not defined on this level
         let originalPoints = this.createUnrotatedPoints()
         let newPoints: Point[] = []
         originalPoints.forEach(point => {
@@ -65,7 +63,6 @@ export class Polygon {
             let temp_x1 = x1 * Math.cos(rotation) - y1 * Math.sin(rotation)
             let temp_y1 = x1 * Math.sin(rotation) + y1 * Math.cos(rotation)
 
-            //TODO: choose precision on more than intuition?
             let x = Math.round((temp_x1 + centerX + Number.EPSILON) * 10000) / 10000
             let y = Math.round((temp_y1 + centerY + Number.EPSILON) * 10000) / 10000
 
@@ -83,7 +80,6 @@ export class Polygon {
        return this.points
     }
 
-    //TODO: rotate weapon around circle polygon, we would save setting the position first
     rotateWithCenter(rotation, centerX, centerY) {
         this.rotatePoints(rotation, centerX, centerY)
     }

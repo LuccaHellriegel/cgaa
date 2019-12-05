@@ -104,7 +104,6 @@ export class CompositePolygon {
         });
     }
 
-    //TODO: exchange collision with sat-js for broader applicability (only circle + polygon is supported, thats why I need the bounding box)
     checkForCollision(other) {
         for (let index = 0; index < this.polygons.length; index++) {
 
