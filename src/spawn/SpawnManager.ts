@@ -4,8 +4,9 @@ import { PositionService } from "../services/PositionService";
 import { SpawnService } from "./SpawnService";
 import { Area } from "../env/areas/Area";
 import { Tower } from "../units/towers/Tower";
-import { towerSymbol, walkableSymbol } from "../globals/globalMarking";
+import { towerSymbol, walkableSymbol, buildingSymbol } from "../globals/globalMarking";
 import { MapService } from "../services/MapService";
+import { Building } from "../env/buildings/Building";
 
 export class SpawnManager extends Manager {
   spawnableArrForEnemiesBase;
@@ -25,16 +26,41 @@ export class SpawnManager extends Manager {
     SpawnService.updateBuildingSpawnableArr(this.spawnableArrForTowersBase);
   }
 
+  private updateBaseArrs(element, isTower, removed) {
+    let symbol = isTower ? towerSymbol : buildingSymbol;
+    let width = isTower ? 1 : 3;
+    let height = 1;
+
+    if (isTower) {
+      MapService.updateMapWithElementAndAroundElements(
+        this.spawnableArrForEnemiesBase,
+        element,
+        symbol,
+        removed,
+        width,
+        height
+      );
+      MapService.updateMapWithElement(this.spawnableArrForTowersBase, element, towerSymbol, removed);
+    } else {
+      //TODO
+    }
+  }
+
   private setupEventListeners() {
-    //TODO: building add and remove
+    this.scene.events.on("added-building", (building: Building) => {
+      this.updateBaseArrs(building, false, false);
+    });
+
+    this.scene.events.on("removed-building", (building: Building) => {
+      this.updateBaseArrs(building, false, true);
+    });
 
     this.scene.events.on("added-tower", (tower: Tower) => {
-      MapService.updateMapWithElementAndAroundElements(this.spawnableArrForEnemiesBase, tower, towerSymbol, false);
-      MapService.updateMapWithElement(this.spawnableArrForTowersBase, tower, towerSymbol, false);
+      this.updateBaseArrs(tower, false, false);
     });
 
     this.scene.events.on("removed-tower", (tower: Tower) => {
-      //TODO
+      this.updateBaseArrs(tower, false, true);
     });
   }
 
