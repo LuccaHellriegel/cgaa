@@ -1,7 +1,7 @@
-import { Generator } from "../Generator";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { RectPolygon } from "../../polygons/RectPolygon";
-import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../../globals/globalSizes";
+import { Generator } from "./Generator";
+import { Gameplay } from "../../scenes/Gameplay";
+import { RectPolygon } from "../polygons/RectPolygon";
+import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../globals/globalSizes";
 
 export class BuildingGenerator extends Generator {
   rectBuilding: RectPolygon;

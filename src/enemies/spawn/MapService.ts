@@ -1,5 +1,5 @@
 import { PositionService } from "../../world/PositionService";
-import { walkableSymbol } from "../../globals/globalMarking";
+import { walkableSymbol } from "../../globals/globalSymbols";
 
 export class MapService {
   private constructor() {}

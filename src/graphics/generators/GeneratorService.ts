@@ -1,10 +1,10 @@
-import { RandWeaponGenerator } from "./weapons/RandWeaponGenerator";
-import { CircleGenerator } from "./units/CircleGenerator";
+import { RandWeaponGenerator } from "./base/weapons/RandWeaponGenerator";
+import { CircleGenerator } from "./base/CircleGenerator";
 import { normalCircleRadius, wallPartHalfSize } from "../../globals/globalSizes";
-import { ChainWeaponGenerator } from "./weapons/ChainWeaponGenerator";
-import { BuildingGenerator } from "./env/BuildingGenerator";
-import { RectGenerator } from "./RectGenerator";
-import { GhostTowerGenerator } from "./units/GhostTowerGenerator";
+import { ChainWeaponGenerator } from "./base/weapons/ChainWeaponGenerator";
+import { BuildingGenerator } from "./BuildingGenerator";
+import { RectGenerator } from "./base/RectGenerator";
+import { GhostTowerGenerator } from "./GhostTowerGenerator";
 import { campColors, campHexColors } from "../../globals/globalColors";
 
 export class GeneratorService {
