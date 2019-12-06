@@ -6,17 +6,17 @@ import { PhysicalManager } from "../base/Base";
 import { PositionService } from "../services/PositionService";
 
 export class TowerManager extends PhysicalManager {
+  sightGroup: Phaser.Physics.Arcade.StaticGroup;
+  bulletGroup: Phaser.Physics.Arcade.Group;
+
   constructor(scene: Gameplay) {
     super(scene, "towerManager", "staticGroup");
+    this.sightGroup = this.scene.physics.add.staticGroup();
+    this.bulletGroup = this.scene.physics.add.group();
   }
 
   getRelativeTowerPositionsAndAroundTowerPositions() {
-    return PositionService.getRelativePosOfElementsAndAroundElements(
-      this.elements,
-      this.scene.pathManager.elements,
-      1,
-      1
-    );
+    return PositionService.getRelativePosOfElementsAndAroundElements(this.elements, 1, 1);
   }
 
   private playInvalidTowerPosAnim() {
@@ -39,7 +39,7 @@ export class TowerManager extends PhysicalManager {
       }
 
       if (this.scene.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
-        let tower = new Tower(this.scene, x, y, this.physicsGroup);
+        let tower = new Tower(this.scene, x, y, this.physicsGroup, this.sightGroup, this.bulletGroup);
         this.scene.events.emit("added-tower", tower);
         this.elements.push(tower);
       } else {

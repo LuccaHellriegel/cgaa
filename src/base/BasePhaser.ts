@@ -32,9 +32,10 @@ export abstract class SpriteWithAnimEvents extends Sprite {
   }
 }
 
-export abstract class Image extends Phaser.Physics.Arcade.Image {
+export class Image extends Phaser.Physics.Arcade.Image {
   physicsGroup: Phaser.Physics.Arcade.Group;
   scene: Gameplay;
+  owner: this;
 
   constructor(scene: Gameplay, x, y, texture, physicsGroup) {
     super(scene, x, y, texture);

@@ -104,6 +104,7 @@ export class StateService {
         unit.pathContainer.path[unit.curPosInPath].x,
         unit.pathContainer.path[unit.curPosInPath].y
       );
+      this.turnTo(unit, {x,y})
       if (Math.abs(unit.x - x) < 2 && Math.abs(unit.y - y) < 2) {
         unit.curPosInPath++;
       } else {

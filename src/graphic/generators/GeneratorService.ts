@@ -30,6 +30,8 @@ export class GeneratorService {
   private static generateWeapons(scene) {
     new RandWeaponGenerator(0x6495ed, scene);
     new ChainWeaponGenerator(0xff0000, scene);
+    new CircleGenerator(0x6495ed, scene, "bullet", normalCircleRadius/4);
+
   }
 
   private static generateUnits(scene) {

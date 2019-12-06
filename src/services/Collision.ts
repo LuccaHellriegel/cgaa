@@ -3,6 +3,7 @@ import { Weapon } from "../weapons/Weapon";
 import { Circle } from "../units/circles/Circle";
 import { campColors } from "../globals/globalColors";
 import { EnemyCircle } from "../units/circles/EnemyCircle";
+import { Tower } from "../units/towers/Tower";
 
 export class Collision {
   player: Phaser.Physics.Arcade.Group;
@@ -33,6 +34,7 @@ export class Collision {
     this.addCombatCollision();
     this.addUnitCollision();
     this.addEnvCollider();
+    this.addBulletCollision();
   }
 
   private addWeaponOverlap(weapon, unit) {
@@ -88,8 +90,16 @@ export class Collision {
   private doDamage(weapon, enemy) {
     weapon.alreadyAttacked.push(enemy.id);
     enemy.damage(weapon.amount);
-    enemy.spotted = weapon.owner
-    enemy.state = "guard"
+    enemy.spotted = weapon.owner;
+    enemy.state = "guard";
+  }
+
+  private doDamageBullet(weapon, enemy) {
+    enemy.damage(weapon.amount);
+    if (enemy.state !== "ambush") {
+      enemy.spotted = weapon.owner;
+      enemy.state = "guard";
+    }
   }
 
   private isInSight(weapon: Weapon, enemy) {
@@ -129,6 +139,22 @@ export class Collision {
 
     let func = color => {
       this.addBounceCollider(this.enemies[color], this.env);
+    };
+
+    this.executeOverAllCamps(func);
+  }
+
+  private addBulletCollision() {
+    let func = color => {
+      this.addOverlap(
+        this.scene.towerManager.sightGroup,
+        this.enemies[color],
+        (sightElement, enemy) => {
+          sightElement.owner.fire(enemy);
+        },
+        () => true
+      );
+      this.addCollider(this.scene.towerManager.bulletGroup, this.enemies[color], this.doDamageBullet, () => true);
     };
 
     this.executeOverAllCamps(func);
