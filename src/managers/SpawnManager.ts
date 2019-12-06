@@ -1,11 +1,11 @@
 import { Manager } from "../base/Base";
 import { Gameplay } from "../scenes/Gameplay";
 import { PositionService } from "../services/PositionService";
-import { SpawnService } from "./SpawnService";
+import { SpawnService } from "../spawn/SpawnService";
 import { Area } from "../env/areas/Area";
 import { Tower } from "../units/towers/Tower";
-import { towerSymbol, walkableSymbol, buildingSymbol } from "../globals/globalMarking";
-import { MapService } from "../services/MapService";
+import { towerSymbol, buildingSymbol } from "../globals/globalMarking";
+import { MapService } from "../spawn/MapService";
 import { Building } from "../env/buildings/Building";
 
 export class SpawnManager extends Manager {
@@ -21,8 +21,8 @@ export class SpawnManager extends Manager {
   }
 
   private initBaseArrs() {
-    this.spawnableArrForEnemiesBase = JSON.parse(JSON.stringify(this.scene.pathManager.elements));
-    this.spawnableArrForTowersBase = JSON.parse(JSON.stringify(this.scene.pathManager.elements));
+    this.spawnableArrForEnemiesBase = this.scene.envManager.getCopyOfMap();
+    this.spawnableArrForTowersBase = this.scene.envManager.getCopyOfMap();
     SpawnService.updateBuildingSpawnableArr(this.spawnableArrForTowersBase);
   }
 
@@ -91,18 +91,21 @@ export class SpawnManager extends Manager {
 
   evaluateRealSpawnPosOfTower(x, y) {
     this.updateSpawnableArrForTowers();
-    let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForTowers, x, y);
+    let { row, column } = PositionService.realPosToRelativePos(x, y);
     return this.spawnableArrForTowers[row][column] === 0;
   }
 
-  evaluateRealSpawnPosOfEnemy(x, y) {
-    //TODO: enemy spawning is to often for always copying?
+  filterForValidEnemySpawnPos(spawnPos) {
     this.updateSpawnableArrForEnemies();
-    let { row, column } = PositionService.findCurRelativePosition(this.spawnableArrForEnemies, x, y);
-    return this.spawnableArrForEnemies[row][column] === 0;
+    let validPos: any[] = [];
+    spawnPos.forEach(pos => {
+      if (this.spawnableArrForEnemies[pos.row][pos.column] === 0) validPos.push(pos);
+    });
+
+    return validPos;
   }
 
-  getValidSpawnPosForEnemiesInArea(area: Area) {
+  getValidSpawnPosForEnemiesInArea(area: Area): { column: number; row: number }[] {
     this.updateSpawnableArrForEnemies();
     return SpawnService.extractSpawnPosFromSpawnableArrForArea(
       area.relativeTopLeftX,

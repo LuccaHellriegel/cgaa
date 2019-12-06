@@ -2,7 +2,7 @@ import { Populator } from "./Populator";
 import { Area } from "../../env/areas/Area";
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnemyCircle } from "../circles/EnemyCircle";
-import { SpawnService } from "../../spawn/SpawnService";
+import { PositionService } from "../../services/PositionService";
 
 export class AreaPopulator extends Populator {
   area: Area;
@@ -20,28 +20,21 @@ export class AreaPopulator extends Populator {
   calculateRandUnitSpawnPosition(area) {
     let spawnablePos = this.scene.spawnManager.getValidSpawnPosForEnemiesInArea(area);
 
-    let pos = SpawnService.randomlyTryAllSpawnablePosInRelationToEnv(
-      spawnablePos,
-      spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
-      (x, y) => {
-        return false;
-      }
-    );
+    let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
     return pos;
   }
 
   createEnemy() {
-    let spawnPositon = this.calculateRandUnitSpawnPosition(this.area);
-    if (spawnPositon === null) return null;
-    let { randX, randY } = spawnPositon;
+    let spawnPosition = this.calculateRandUnitSpawnPosition(this.area);
+    let { x, y } = PositionService.relativePosToRealPos(spawnPosition.column, spawnPosition.row);
     let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     let enemy;
 
     if (choseRandWeapon) {
       enemy = EnemyCircle.withRandWeapon(
         this.scene,
-        randX,
-        randY,
+        x,
+        y,
         "redCircle",
         this.enemyPhysicsGroup,
         this.weaponPhysicsGroup
@@ -49,8 +42,8 @@ export class AreaPopulator extends Populator {
     } else {
       enemy = EnemyCircle.withChainWeapon(
         this.scene,
-        randX,
-        randY,
+        x,
+        y,
         "redCircle",
         this.enemyPhysicsGroup,
         this.weaponPhysicsGroup

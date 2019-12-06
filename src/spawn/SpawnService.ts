@@ -1,26 +1,8 @@
-import { rectBuildinghalfHeight, wallPartHalfSize, rectBuildingHalfWidth } from "../globals/globalSizes";
-import { PositionService } from "../services/PositionService";
-import { AreaPosition } from "../env/areas/AreaPosition";
-
 export class SpawnService {
   private constructor() {}
 
-  static createWalkableArr(parts: AreaPosition[][]) {
-    let walkabkleArr: number[][] = [];
-    for (let i = 0; i < parts.length; i++) {
-      let row: number[] = [];
-      for (let k = 0; k < parts[0].length; k++) {
-        let notWalkableSymbol = parts[i][k].contentType === "building" ? 2 : 1;
-
-        row.push(parts[i][k].isWalkable() ? 0 : notWalkableSymbol);
-      }
-      walkabkleArr.push(row);
-    }
-    return walkabkleArr;
-  }
-
   static calculateRelativeSpawnPositionsAround(column, row, width, height) {
-    let validPositions: any[] = [];
+    let validPositions: { column; row }[] = [];
 
     //TODO: assumes symmetrical objects that fit perfectly on the grid
 
@@ -30,8 +12,8 @@ export class SpawnService {
     let startRow = row - rowSize;
     let startColumn = column - columnSize;
 
-    for (let rowIndex = 0; rowIndex < height +2; rowIndex++) {
-      for (let columnIndex = 0; columnIndex < width +2; columnIndex++) {
+    for (let rowIndex = 0; rowIndex < height + 2; rowIndex++) {
+      for (let columnIndex = 0; columnIndex < width + 2; columnIndex++) {
         let betweenRowEdges = startRow + rowIndex > row - rowSize && startRow + rowIndex < row + rowSize;
         let betweenColumnEdges =
           startColumn + columnIndex > column - columnSize && startColumn + columnIndex < column + columnSize;
@@ -42,60 +24,6 @@ export class SpawnService {
       }
     }
     return validPositions;
-  }
-
-  static calculateSpawnPositionsAround(x, y, width, height) {
-    //TODO: assumes grid position and width and height being grid multiple
-    let topLeftX = x - width / 2;
-    let topLeftY = y - height / 2;
-    let startXForRow = topLeftX - wallPartHalfSize;
-    let startYForRow = topLeftY - wallPartHalfSize;
-
-    let rowAbove: number[] = [];
-    for (let index = 0; index < 2 + width / (2 * wallPartHalfSize); index++) {
-      rowAbove.push(index);
-    }
-    let rowBelow = rowAbove;
-
-    let rowLeft: number[] = [];
-    for (let index = 0; index < height / (2 * wallPartHalfSize); index++) {
-      rowLeft.push(index);
-    }
-
-    let rowRight = rowLeft;
-
-    let mapFuncForXRow = numb => {
-      let randX = startXForRow + numb * 2 * wallPartHalfSize;
-      let randY = startYForRow;
-      return { randX, randY };
-    };
-
-    let mapFuncForYRow = numb => {
-      let randX = startXForRow;
-      let randY = startYForRow + numb * 2 * wallPartHalfSize;
-      return { randX, randY };
-    };
-
-    let validPositions = rowAbove.map(mapFuncForXRow);
-
-    startYForRow += height + 2 * wallPartHalfSize;
-
-    validPositions = validPositions.concat(rowBelow.map(mapFuncForXRow));
-
-    startYForRow = topLeftY + wallPartHalfSize;
-    startXForRow = topLeftX - wallPartHalfSize;
-
-    validPositions = validPositions.concat(rowLeft.map(mapFuncForYRow));
-
-    startXForRow = x + width / 2 + wallPartHalfSize;
-
-    validPositions = validPositions.concat(rowRight.map(mapFuncForYRow));
-
-    return validPositions;
-  }
-
-  static calculateSpawnPositionsAroundBuilding(x, y) {
-    return this.calculateSpawnPositionsAround(x, y, 2 * rectBuildingHalfWidth, 2 * rectBuildinghalfHeight);
   }
 
   static updateBuildingSpawnableArr(partialArr) {
@@ -196,7 +124,7 @@ export class SpawnService {
     realtiveAreaTopLeftY,
     relativeAreaWidth,
     relativeAreaHeight,
-    spawnableArr
+    spawnableArr : any[]
   ) {
     let spawnPos = this.extractSpawnPosFromSpawnableArr(spawnableArr);
     let areaSpawnPos = [];
@@ -213,27 +141,7 @@ export class SpawnService {
     return areaSpawnPos;
   }
 
-  static calculateBuildingSpawnableArrForArea(parts) {
-    let spawnableArr = SpawnService.createWalkableArr(parts);
-    this.updateBuildingSpawnableArr(spawnableArr);
-    return spawnableArr;
-  }
-
-  static randomlyTryAllSpawnablePosFromArr(spawnableArr, area, randGenerationCallback, validTestingCallback) {
-    let spawnablePos = this.extractSpawnPosFromSpawnableArr(spawnableArr);
-    return this.randomlyTryAllSpawnablePos(spawnablePos, area, randGenerationCallback, validTestingCallback);
-  }
-
-  static randomlyTryAllSpawnablePosInRelationToEnv(spawnablePos, randGenerationCallback, validTestingCallback) {
-    return this.randomlyTryAllSpawnablePos(
-      spawnablePos,
-      { topLeftX: 0, topLeftY: 0 },
-      randGenerationCallback,
-      validTestingCallback
-    );
-  }
-
-  static randomlyTryAllSpawnablePos(spawnablePos, area, randGenerationCallback, validTestingCallback) {
+  static randomlyTryAllSpawnablePos(spawnablePos, randGenerationCallback, validTestingCallback) {
     let spawnablePosCount = spawnablePos.length - 1;
     let randPos = randGenerationCallback(spawnablePosCount);
 
@@ -241,9 +149,7 @@ export class SpawnService {
 
     let chosenPosition = spawnablePos[randPos];
 
-    let realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
-
-    while (validTestingCallback(realPos.x, realPos.y)) {
+    while (!validTestingCallback(chosenPosition.column, chosenPosition.row)) {
       positionsTried++;
       if (positionsTried === spawnablePosCount + 1) {
         return null;
@@ -256,9 +162,8 @@ export class SpawnService {
         randPos = 0;
       }
       chosenPosition = spawnablePos[randPos];
-      realPos = PositionService.relativePosToRealPosInArea(area, chosenPosition.column, chosenPosition.row);
     }
 
-    return { randX: realPos.x, randY: realPos.y };
+    return chosenPosition;
   }
 }

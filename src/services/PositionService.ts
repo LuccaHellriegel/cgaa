@@ -2,6 +2,9 @@ import { wallPartHalfSize } from "../globals/globalSizes";
 import { SpawnService } from "../spawn/SpawnService";
 
 export class PositionService {
+  static relativePosToRealPosInEnv(column: any, row: any): { x: any; y: any; } {
+    throw new Error("Method not implemented.");
+  }
   private constructor() {}
 
   static snapCoordinateToGrid(coordinate) {
@@ -46,79 +49,33 @@ export class PositionService {
     return { newX, newY };
   }
 
-  static findCurRelativePositionInArea(walkableArr: number[][], x, y, area) {
-    let { newX, newY } = this.snapXYToGrid(x, y);
-
-    //symmetrical arr is assumed
-
-    let curXInArr = area.topLeftX;
-    let curYInArr = area.topLeftY;
-
-    for (let i = 0; i < walkableArr.length; i++) {
-      for (let k = 0; k < walkableArr[0].length; k++) {
-        if (newX - wallPartHalfSize === curXInArr && newY - wallPartHalfSize === curYInArr) {
-          return { row: i, column: k };
-        }
-        curXInArr += 2 * wallPartHalfSize;
-      }
-      curYInArr += 2 * wallPartHalfSize;
-
-      curXInArr = area.topLeftX;
-    }
-
-    console.log(
-      "No relative position found for point " +
-        x +
-        " " +
-        y +
-        " and snapped point " +
-        newX +
-        " " +
-        newY +
-        " and map shape " +
-        [walkableArr.length, walkableArr[0].length]
-    );
-  }
-
-  static findCurRelativePosition(walkableArr: number[][], x, y) {
-    return this.findCurRelativePositionInArea(walkableArr, x, y, { topLeftX: 0, topLeftY: 0 });
-  }
-
-  static relativePosToRealPosInArea(area, column, row) {
-    let x = area.topLeftX + wallPartHalfSize + column * 2 * wallPartHalfSize;
-    let y = area.topLeftY + wallPartHalfSize + row * 2 * wallPartHalfSize;
+  static relativePosToRealPos(column, row) {
+    let x = 0 + wallPartHalfSize + column * 2 * wallPartHalfSize;
+    let y = 0 + wallPartHalfSize + row * 2 * wallPartHalfSize;
     return { x, y };
   }
 
-  static relativePosToRealPosInEnv(column, row) {
-    return this.relativePosToRealPosInArea({ topLeftX: 0, topLeftY: 0 }, column, row);
-  }
-
-  static realPosToRelativePosInEnv(x, y) {
-    let row = (y - wallPartHalfSize) / (2 * wallPartHalfSize);
-    let column = (x - wallPartHalfSize) / (2 * wallPartHalfSize);
+  static realPosToRelativePos(x, y) {
+    let { newX, newY } = this.snapXYToGrid(x, y);
+    let row = (newY - wallPartHalfSize) / (2 * wallPartHalfSize);
+    let column = (newX - wallPartHalfSize) / (2 * wallPartHalfSize);
     return { row: row, column: column };
   }
 
-  static getRelativePosOfElements(elements, map) {
+  static getRelativePosOfElements(elements) {
     let relativePositions: any[] = [];
     elements.forEach(ele => {
-      let pos = PositionService.findCurRelativePosition(map, ele.x, ele.y);
+      let pos = PositionService.realPosToRelativePos(ele.x, ele.y);
       relativePositions.push(pos);
     });
     return relativePositions;
   }
 
-  static getRelativePosOfElementsAndAroundElements(elements, map, relativeWidth, relativeHeight) {
-    let relativePositions: any[] = this.getRelativePosOfElements(elements, map);
+  static getRelativePosOfElementsAndAroundElements(elements, width, height) {
+    let relativePositions: any[] = this.getRelativePosOfElements(elements);
     let relativePositionsAround: any[] = [];
     relativePositions.forEach(pos => {
-      let posAround = SpawnService.calculateRelativeSpawnPositionsAround(
-        pos.column,
-        pos.row,
-        relativeWidth,
-        relativeHeight
-      );
+      let posAround = SpawnService.calculateRelativeSpawnPositionsAround(pos.column, pos.row, width, height);
       relativePositionsAround = relativePositionsAround.concat(posAround);
     });
     return relativePositions.concat(relativePositionsAround);

@@ -20,16 +20,14 @@ export class StateService {
         this.ambush(unit);
         break;
       }
-      case "obstacle" : {
-        this.obstacle(unit)
+      case "obstacle": {
+        this.obstacle(unit);
         break;
       }
     }
   }
 
-  private static obstacle(unit){
-
-  }
+  private static obstacle(unit) {}
 
   private static idle(unit: EnemyCircle) {
     unit.setVelocity(0, 0);
@@ -89,21 +87,20 @@ export class StateService {
   }
 
   private static ambush(unit: EnemyCircle) {
-      if (unit.pathContainer.path && unit.pathContainer.path[unit.curPosInPath]) {
-        let { x, y } = PositionService.relativePosToRealPosInEnv(
-          unit.pathContainer.path[unit.curPosInPath].x,
-          unit.pathContainer.path[unit.curPosInPath].y
-        );
-        if (Math.abs(unit.x - x) < 2 && Math.abs(unit.y - y) < 2) {
-          unit.curPosInPath++;
-        } else {
-          unit.scene.physics.moveTo(unit, x, y, 160);
-        }
-      } else if (unit.pathContainer.path && unit.curPosInPath >= unit.pathContainer.path.length) {
-        unit.setVelocity(0, 0);
-        unit.pathContainer.path = unit.scene.pathManager.mainPath;
-        unit.curPosInPath = 0;
+    if (unit.pathContainer.path && unit.pathContainer.path[unit.curPosInPath]) {
+      let { x, y } = PositionService.relativePosToRealPos(
+        unit.pathContainer.path[unit.curPosInPath].x,
+        unit.pathContainer.path[unit.curPosInPath].y
+      );
+      if (Math.abs(unit.x - x) < 2 && Math.abs(unit.y - y) < 2) {
+        unit.curPosInPath++;
+      } else {
+        unit.scene.physics.moveTo(unit, x, y, 160);
       }
+    } else if (unit.pathContainer.path && unit.curPosInPath >= unit.pathContainer.path.length) {
+      unit.setVelocity(0, 0);
+      unit.pathContainer.path = unit.scene.pathManager.mainPath;
+      unit.curPosInPath = 0;
     }
   }
 }

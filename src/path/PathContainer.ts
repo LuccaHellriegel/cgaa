@@ -1,6 +1,9 @@
 export class PathContainer {
   path;
-  constructor() {}
+  id: string;
+  constructor(column, row) {
+    this.id = [column, row].join("");
+  }
 
   updatePath(path) {
     this.path = path;

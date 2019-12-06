@@ -8,6 +8,8 @@ import {
 } from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { Building } from "../buildings/Building";
+import { AreaService } from "./AreaService";
+import { PositionService } from "../../services/PositionService";
 
 export class Area {
   parts: AreaPosition[][] = [];
@@ -24,8 +26,6 @@ export class Area {
   relativeHeight: number;
   relativeTopLeftX: number;
   relativeTopLeftY: number;
-  x: any;
-  y: any;
 
   constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart) {
     for (let row = 0; row < sizeOfYAxis; row++) {
@@ -43,9 +43,6 @@ export class Area {
 
     this.width = sizeOfXAxis * unitForPart;
     this.height = sizeOfYAxis * unitForPart;
-
-    this.x = topLeftX + this.width / 2;
-    this.y = topLeftY + this.height / 2;
 
     this.relativeWidth = this.width / (2 * wallPartHalfSize);
     this.relativeHeight = this.height / (2 * wallPartHalfSize);
@@ -105,20 +102,21 @@ export class Area {
     this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
   }
 
+  private calculateBuildingSpawnableArrForArea(parts) {
+    let spawnableArr = AreaService.createWalkableArr(parts);
+    SpawnService.updateBuildingSpawnableArr(spawnableArr);
+    return spawnableArr;
+  }
+
   private calculateRandBuildingSpawnPos() {
     if (!this.spawnableArrForBuildings) {
-      this.spawnableArrForBuildings = SpawnService.calculateBuildingSpawnableArrForArea(this.parts);
+      this.spawnableArrForBuildings = this.calculateBuildingSpawnableArrForArea(this.parts);
     } else {
       SpawnService.updateBuildingSpawnableArr(this.spawnableArrForBuildings);
     }
-    return SpawnService.randomlyTryAllSpawnablePosFromArr(
-      this.spawnableArrForBuildings,
-      this,
-      spawnablePosCount => Phaser.Math.Between(0, spawnablePosCount),
-      (x, y) => {
-        return false;
-      }
-    );
+    let spawnablePos = SpawnService.extractSpawnPosFromSpawnableArr(this.spawnableArrForBuildings);
+    let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
+    return PositionService.relativePosToRealPos(pos.column + this.relativeTopLeftX, pos.row + this.relativeTopLeftY);
   }
 
   private checkIfBuildingCollidesWithBuildings(buildings, randX, randY) {
@@ -137,14 +135,14 @@ export class Area {
     return false;
   }
   private buildBuilding() {
-    let { randX, randY } = this.calculateRandBuildingSpawnPos();
-    while (this.checkIfBuildingCollidesWithBuildings(this.buildings, randX, randY)) {
+    let { x, y } = this.calculateRandBuildingSpawnPos();
+    while (this.checkIfBuildingCollidesWithBuildings(this.buildings, x, y)) {
       let result = this.calculateRandBuildingSpawnPos();
-      randX = result.randX;
-      randY = result.randY;
+      x = result.x;
+      y = result.y;
     }
 
-    let building = new Building(this.scene, randX, randY, this.scene.envManager.physicsGroup);
+    let building = new Building(this.scene, x, y, this.scene.envManager.physicsGroup);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

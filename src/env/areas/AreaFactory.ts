@@ -1,15 +1,18 @@
 import { Area } from "./Area";
 
+export enum AreaType {
+  "empty",
+  "camp"
+}
+
 export interface AreaConfig {
   sizeOfXAxis: number;
   sizeOfYAxis: number;
   topLeftX: number;
   topLeftY: number;
   unitForPart: number;
-  hasWalls: Boolean;
-  hasHoles: Boolean;
+  type: AreaType;
   holePosition: number;
-  hasBuildings: Boolean;
   numbOfBuildings: number;
   scene: Phaser.Scene;
 }
@@ -24,23 +27,23 @@ export class AreaFactory {
       topLeftX,
       topLeftY,
       unitForPart,
-      hasWalls,
-      hasHoles,
+      type,
       holePosition,
-      hasBuildings,
       numbOfBuildings,
       scene
     } = areaConfig;
     let newArea = new Area(sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart);
 
-    if (hasWalls || hasBuildings) newArea.scene = scene;
+    if (type === AreaType.camp) {
+      newArea.scene = scene;
 
-    if (hasWalls) newArea.buildWalls();
+      newArea.buildWalls();
 
-    //buildings need to be place before holes, otherwise wrong positioning
-    if (hasBuildings) newArea.buildBuildings(numbOfBuildings);
-
-    if (hasWalls && hasHoles) newArea.makeHoles(holePosition);
+      //buildings need to be place before holes, otherwise wrong positioning
+      newArea.buildBuildings(numbOfBuildings);
+      
+      newArea.makeHoles(holePosition);
+    }
 
     return newArea;
   }

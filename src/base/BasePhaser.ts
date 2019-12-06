@@ -21,7 +21,7 @@ export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
 
 export abstract class SpriteWithAnimEvents extends Sprite {
   constructor(scene: Gameplay, x, y, texture, physicsGroup) {
-    super(scene, x, y, texture,physicsGroup);
+    super(scene, x, y, texture, physicsGroup);
     this.on(
       "animationcomplete",
       function(anim, frame) {
@@ -29,6 +29,7 @@ export abstract class SpriteWithAnimEvents extends Sprite {
       },
       this
     );
+  }
 }
 
 export abstract class Image extends Phaser.Physics.Arcade.Image {
@@ -42,5 +43,3 @@ export abstract class Image extends Phaser.Physics.Arcade.Image {
     physicsGroup.add(this);
   }
 }
-
-

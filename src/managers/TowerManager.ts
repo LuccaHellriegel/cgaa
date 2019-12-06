@@ -1,9 +1,9 @@
-import { Tower } from "./Tower";
-import { Gameplay } from "../../scenes/Gameplay";
-import { towerHalfSize } from "../../globals/globalSizes";
-import { TowerService } from "./TowerService";
-import { PhysicalManager } from "../../base/Base";
-import { PositionService } from "../../services/PositionService";
+import { Tower } from "../units/towers/Tower";
+import { Gameplay } from "../scenes/Gameplay";
+import { towerHalfSize } from "../globals/globalSizes";
+import { TowerService } from "../units/towers/TowerService";
+import { PhysicalManager } from "../base/Base";
+import { PositionService } from "../services/PositionService";
 
 export class TowerManager extends PhysicalManager {
   constructor(scene: Gameplay) {

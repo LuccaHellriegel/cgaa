@@ -1,13 +1,18 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { wallPartHalfSize } from "../globals/globalSizes";
-import { Area } from "./areas/Area";
-import { AreaFactory, AreaConfig } from "./areas/AreaFactory";
+import { Area } from "../env/areas/Area";
+import { AreaFactory, AreaConfig, AreaType } from "../env/areas/AreaFactory";
 import { PhysicalManager } from "../base/Base";
 
 export class EnvManager extends PhysicalManager {
-  borderWall: Area;
+  private borderWall: Area;
+  private walkableMap;
+
+  //TODO: listen to building destroyed
 
   private areaConfig: AreaConfig;
+  private relativeWorldWidth: number;
+  private relativeWorldHeight: number;
   constructor(scene: Gameplay) {
     super(scene, "envManager", "staticGroup");
 
@@ -18,11 +23,18 @@ export class EnvManager extends PhysicalManager {
       this.borderWall.width - 4 * wallPartHalfSize,
       this.borderWall.width - 4 * wallPartHalfSize
     );
+    this.relativeWorldWidth = (this.borderWall.width - 4 * wallPartHalfSize) / (2 * wallPartHalfSize);
+    this.relativeWorldHeight = (this.borderWall.width - 4 * wallPartHalfSize) / (2 * wallPartHalfSize);
+
+    this.walkableMap = this.calculateWalkAbleArr();
   }
 
-  private toggleIfAreaConfigIsEmpty() {
-    this.areaConfig.hasWalls = !this.areaConfig.hasWalls;
-    this.areaConfig.hasBuildings = !this.areaConfig.hasBuildings;
+  private toggleAreaType() {
+    if (this.areaConfig.type === AreaType.camp) {
+      this.areaConfig.type = AreaType.empty;
+    } else {
+      this.areaConfig.type = AreaType.camp;
+    }
   }
 
   private createRowOfAreas(startingTopLeftX, startingTopLeftY, rightStepValue, isEmptyArr) {
@@ -31,10 +43,10 @@ export class EnvManager extends PhysicalManager {
     this.areaConfig.topLeftY = startingTopLeftY;
     let stepCount = 0;
     isEmptyArr.forEach(isEmpty => {
-      if (isEmpty) this.toggleIfAreaConfigIsEmpty();
+      if (isEmpty) this.toggleAreaType();
       this.areaConfig.topLeftX = startingTopLeftX + stepCount * rightStepValue;
       row.push(AreaFactory.createArea(this.areaConfig));
-      if (isEmpty) this.toggleIfAreaConfigIsEmpty();
+      if (isEmpty) this.toggleAreaType();
       stepCount++;
     });
     this.elements.push(row);
@@ -47,10 +59,8 @@ export class EnvManager extends PhysicalManager {
       topLeftX: 0,
       topLeftY: 0,
       unitForPart: 2 * wallPartHalfSize,
-      hasWalls: true,
-      hasHoles: true,
+      type: AreaType.camp,
       holePosition: 9,
-      hasBuildings: true,
       numbOfBuildings: 8,
       scene: this.scene
     };
@@ -58,16 +68,17 @@ export class EnvManager extends PhysicalManager {
     let rightStepValue = 20 * 2 * wallPartHalfSize;
 
     this.createRowOfAreas(0, 0, rightStepValue, [false, true, false]);
-    // this.createRowOfAreas(0, rightStepValue, rightStepValue, [true, true, true]);
-    // this.createRowOfAreas(0, 2 * rightStepValue, rightStepValue, [false, true, false]);
+    this.createRowOfAreas(0, rightStepValue, rightStepValue, [true, true, true]);
+    this.createRowOfAreas(0, 2 * rightStepValue, rightStepValue, [false, true, false]);
 
     this.areaConfig.topLeftX = -2 * wallPartHalfSize;
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;
     this.areaConfig.sizeOfXAxis = 62;
     this.areaConfig.sizeOfYAxis = 62;
-    this.areaConfig.hasHoles = false;
-    this.areaConfig.hasBuildings = false;
+    this.areaConfig.holePosition = 0;
+    this.areaConfig.numbOfBuildings = 0;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
+    
   }
   private rowOfAreaToWalkableRow(rowOfArea) {
     let row: number[] = [];
@@ -79,7 +90,7 @@ export class EnvManager extends PhysicalManager {
     return row;
   }
 
-  calculateWalkAbleArr() {
+  private calculateWalkAbleArr() {
     //assummption that all areas have the same number of rows, and that the input arr is symmetric
 
     let areas = this.elements;
@@ -100,41 +111,25 @@ export class EnvManager extends PhysicalManager {
     return map;
   }
 
-  findClosestArea(x, y) {
-    let dist = Infinity;
-    let row = 0;
-    let column = 0;
+  findRelativePosition(x, y) {
 
-    let curRow = 0;
-    let curColumn = 0;
-    this.elements.forEach(areaRow => {
-      areaRow.forEach(area => {
-        let curDist = Phaser.Math.Distance.Between(x, y, area.x, area.y);
-        if (dist > curDist) {
-          dist = curDist;
-          row = curRow;
-          column = curColumn;
-        }
-        curColumn++;
-      });
-      curRow++;
-    });
-    return { columnInAreaArr: column, rowInAreaArr: row };
   }
 
-  calculateAreaMaps() {
-    let areaMaps: any[] = [];
+  getCopyOfMap() {
+    return JSON.parse(JSON.stringify(this.walkableMap));
+  }
+
+  setMapAsGrid(easyStar) {
+    easyStar.setGrid(this.walkableMap);
+  }
+
+  executeWithAreasThatHaveBuilding(func) {
     this.elements.forEach(areaRow => {
-      let mapRow: any[] = [];
-      areaRow.forEach((area: Area) => {
-        let map: any[] = [];
-        area.parts.forEach(row => {
-          map.push(this.rowOfAreaToWalkableRow(row));
-        });
-        mapRow.push(map);
+      areaRow.forEach(area => {
+        if (area.buildings[0]) {
+          func(area);
+        }
       });
-      areaMaps.push(mapRow);
     });
-    return areaMaps;
   }
 }

@@ -1,15 +1,15 @@
 import { Player } from "../units/Player";
 import { Movement } from "../ui/input/Movement";
 import { AnimationService } from "../graphic/AnimationService";
-import { EnemyManager } from "../units/EnemyManager";
+import { EnemyManager } from "../managers/EnemyManager";
 import { GeneratorService } from "../graphic/generators/GeneratorService";
-import { EnvManager } from "../env/EnvManager";
+import { EnvManager } from "../managers/EnvManager";
 import { PointerService } from "../ui/input/PointerService";
 import { ColliderService } from "../services/ColliderService";
-import { TowerManager } from "../units/towers/TowerManager";
+import { TowerManager } from "../managers/TowerManager";
 import { TowerModus } from "../ui/input/TowerModus";
-import { PathManager } from "../path/PathManager";
-import { SpawnManager } from "../spawn/SpawnManager";
+import { PathManager } from "../managers/PathManager";
+import { SpawnManager } from "../managers/SpawnManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
