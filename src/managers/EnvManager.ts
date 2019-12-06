@@ -3,6 +3,7 @@ import { wallPartHalfSize } from "../globals/globalSizes";
 import { Area } from "../env/areas/Area";
 import { AreaFactory, AreaConfig, AreaType } from "../env/areas/AreaFactory";
 import { PhysicalManager } from "../base/Base";
+import { campColors } from "../globals/globalColors";
 
 export class EnvManager extends PhysicalManager {
   private borderWall: Area;
@@ -11,10 +12,18 @@ export class EnvManager extends PhysicalManager {
   //TODO: listen to building destroyed
 
   private areaConfig: AreaConfig;
-  private relativeWorldWidth: number;
-  private relativeWorldHeight: number;
+  colorIndices: number[];
+
   constructor(scene: Gameplay) {
     super(scene, "envManager", "staticGroup");
+
+    this.colorIndices = [0, 1, 2, 3];
+    for (let i = this.colorIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i);
+      const temp = this.colorIndices[i];
+      this.colorIndices[i] = this.colorIndices[j];
+      this.colorIndices[j] = temp;
+    }
 
     this.createAreas();
     scene.physics.world.setBounds(
@@ -23,9 +32,6 @@ export class EnvManager extends PhysicalManager {
       this.borderWall.width - 4 * wallPartHalfSize,
       this.borderWall.width - 4 * wallPartHalfSize
     );
-    this.relativeWorldWidth = (this.borderWall.width - 4 * wallPartHalfSize) / (2 * wallPartHalfSize);
-    this.relativeWorldHeight = (this.borderWall.width - 4 * wallPartHalfSize) / (2 * wallPartHalfSize);
-
     this.walkableMap = this.calculateWalkAbleArr();
   }
 
@@ -44,6 +50,9 @@ export class EnvManager extends PhysicalManager {
     let stepCount = 0;
     isEmptyArr.forEach(isEmpty => {
       if (isEmpty) this.toggleAreaType();
+      if (!isEmpty) {
+        this.areaConfig.color = campColors[this.colorIndices.pop()];
+      }
       this.areaConfig.topLeftX = startingTopLeftX + stepCount * rightStepValue;
       row.push(AreaFactory.createArea(this.areaConfig));
       if (isEmpty) this.toggleAreaType();
@@ -54,6 +63,7 @@ export class EnvManager extends PhysicalManager {
 
   private createAreas() {
     this.areaConfig = {
+      color: "blue",
       sizeOfXAxis: 20,
       sizeOfYAxis: 20,
       topLeftX: 0,
@@ -78,7 +88,6 @@ export class EnvManager extends PhysicalManager {
     this.areaConfig.holePosition = 0;
     this.areaConfig.numbOfBuildings = 0;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
-    
   }
   private rowOfAreaToWalkableRow(rowOfArea) {
     let row: number[] = [];
@@ -111,9 +120,7 @@ export class EnvManager extends PhysicalManager {
     return map;
   }
 
-  findRelativePosition(x, y) {
-
-  }
+  findRelativePosition(x, y) {}
 
   getCopyOfMap() {
     return JSON.parse(JSON.stringify(this.walkableMap));

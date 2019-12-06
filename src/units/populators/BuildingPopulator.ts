@@ -37,27 +37,26 @@ export class BuildingPopulator extends Populator {
     let enemy;
 
     if (choseRandWeapon) {
-      enemy = EnemyCircle.withChainWeapon(
-        this.scene,
-        x,
-        y,
-        "blueCircle",
-        this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup
-      );
-    } else {
       enemy = EnemyCircle.withRandWeapon(
         this.scene,
         x,
         y,
-        "blueCircle",
         this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup
+        this.weaponPhysicsGroup,
+        this.building.color
+      );
+    } else {
+      enemy = EnemyCircle.withChainWeapon(
+        this.scene,
+        x,
+        y,
+        this.enemyPhysicsGroup,
+        this.weaponPhysicsGroup,
+        this.building.color
       );
     }
 
     enemy.pathContainer = this.scene.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
-    console.log(enemy.pathContainer)
     enemy.state = "ambush";
     return enemy;
   }

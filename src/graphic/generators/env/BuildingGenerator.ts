@@ -6,9 +6,13 @@ import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../../globals/
 export class BuildingGenerator extends Generator {
   rectBuilding: RectPolygon;
   rectBuildingInnerRect: RectPolygon;
+  title: string;
+  innerRectHexColor: number;
 
-  constructor(scene: Gameplay) {
+  constructor(scene: Gameplay, title: string, innerRectHexColor: number) {
     super(0xa9a9a9, scene);
+    this.title = title;
+    this.innerRectHexColor = innerRectHexColor;
     this.rectBuilding = new RectPolygon(
       rectBuildingHalfWidth,
       rectBuildinghalfHeight,
@@ -26,11 +30,11 @@ export class BuildingGenerator extends Generator {
 
   drawFrames() {
     this.rectBuilding.draw(this.graphics, 0);
-    this.graphics.fillStyle(0x00008b);
+    this.graphics.fillStyle(this.innerRectHexColor);
     this.rectBuildingInnerRect.draw(this.graphics, 0);
   }
   generateTexture() {
-    this.graphics.generateTexture("rectBuilding", rectBuildingHalfWidth * 2, rectBuildinghalfHeight * 2);
+    this.graphics.generateTexture(this.title, rectBuildingHalfWidth * 2, rectBuildinghalfHeight * 2);
   }
   addFrames() {}
 }

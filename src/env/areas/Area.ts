@@ -26,8 +26,9 @@ export class Area {
   relativeHeight: number;
   relativeTopLeftX: number;
   relativeTopLeftY: number;
+  color: string;
 
-  constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart) {
+  constructor(sizeOfXAxis: number, sizeOfYAxis: number, topLeftX, topLeftY, unitForPart, color: string) {
     for (let row = 0; row < sizeOfYAxis; row++) {
       this.parts[row] = [];
       for (let column = 0; column < sizeOfXAxis; column++) {
@@ -49,6 +50,8 @@ export class Area {
 
     this.relativeTopLeftX = topLeftX / (2 * wallPartHalfSize);
     this.relativeTopLeftY = topLeftY / (2 * wallPartHalfSize);
+
+    this.color = color;
   }
 
   makeHoles(holePosition) {
@@ -142,7 +145,7 @@ export class Area {
       y = result.y;
     }
 
-    let building = new Building(this.scene, x, y, this.scene.envManager.physicsGroup);
+    let building = new Building(this.scene, x, y, this.scene.envManager.physicsGroup, this.color);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

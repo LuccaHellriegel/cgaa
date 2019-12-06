@@ -102,5 +102,6 @@ export class StateService {
       unit.pathContainer.path = unit.scene.pathManager.mainPath;
       unit.curPosInPath = 0;
     }
+
   }
 }

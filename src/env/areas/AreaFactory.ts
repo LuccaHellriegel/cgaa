@@ -6,6 +6,7 @@ export enum AreaType {
 }
 
 export interface AreaConfig {
+  color: string,
   sizeOfXAxis: number;
   sizeOfYAxis: number;
   topLeftX: number;
@@ -22,6 +23,7 @@ export class AreaFactory {
 
   static createArea(areaConfig: AreaConfig) {
     let {
+      color,
       sizeOfXAxis,
       sizeOfYAxis,
       topLeftX,
@@ -32,7 +34,7 @@ export class AreaFactory {
       numbOfBuildings,
       scene
     } = areaConfig;
-    let newArea = new Area(sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart);
+    let newArea = new Area(sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color);
 
     if (type === AreaType.camp) {
       newArea.scene = scene;

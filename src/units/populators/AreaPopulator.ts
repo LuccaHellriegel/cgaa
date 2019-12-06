@@ -35,18 +35,18 @@ export class AreaPopulator extends Populator {
         this.scene,
         x,
         y,
-        "redCircle",
         this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup
+        this.weaponPhysicsGroup,
+        this.area.color
       );
     } else {
       enemy = EnemyCircle.withChainWeapon(
         this.scene,
         x,
         y,
-        "redCircle",
         this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup
+        this.weaponPhysicsGroup,
+        this.area.color
       );
     }
     enemy.state = "guard";
