@@ -8,8 +8,8 @@ import { SpawnService } from "../spawn/SpawnService";
 
 export class PathManager extends Manager {
   easyStar: EasyStar.js;
-  relativeGoalPositionRow: number = 9;
-  realtiveGoalPositionColumn: number = 29;
+  relativeGoalPositionRow: number = 14;
+  realtiveGoalPositionColumn: number = 14;
   mainPath;
   buildingSpecificPaths: PathContainer[] = [];
   get: any;
@@ -26,6 +26,7 @@ export class PathManager extends Manager {
     let validSpawnPositions = SpawnService.calculateRelativeSpawnPositionsAround(column, row, 3, 1);
     let containers: PathContainer[] = [];
 
+    console.log(validSpawnPositions)
     validSpawnPositions.forEach(pos => {
       let saveReference = new PathContainer(pos.column, pos.row);
       this.scene.envManager.setMapAsGrid(this.easyStar);

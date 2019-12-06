@@ -4,6 +4,7 @@ import { Area } from "../env/areas/Area";
 import { AreaFactory, AreaConfig, AreaType } from "../env/areas/AreaFactory";
 import { PhysicalManager } from "../base/Base";
 import { campColors } from "../globals/globalColors";
+import { areaSize } from "../globals/globalConfig";
 
 export class EnvManager extends PhysicalManager {
   private borderWall: Area;
@@ -64,18 +65,18 @@ export class EnvManager extends PhysicalManager {
   private createAreas() {
     this.areaConfig = {
       color: "blue",
-      sizeOfXAxis: 20,
-      sizeOfYAxis: 20,
+      sizeOfXAxis: areaSize,
+      sizeOfYAxis: areaSize,
       topLeftX: 0,
       topLeftY: 0,
       unitForPart: 2 * wallPartHalfSize,
       type: AreaType.camp,
-      holePosition: 9,
-      numbOfBuildings: 8,
+      holePosition: 8,
+      numbOfBuildings: 2,
       scene: this.scene
     };
 
-    let rightStepValue = 20 * 2 * wallPartHalfSize;
+    let rightStepValue = areaSize * 2 * wallPartHalfSize;
 
     this.createRowOfAreas(0, 0, rightStepValue, [false, true, false]);
     this.createRowOfAreas(0, rightStepValue, rightStepValue, [true, true, true]);
@@ -83,8 +84,8 @@ export class EnvManager extends PhysicalManager {
 
     this.areaConfig.topLeftX = -2 * wallPartHalfSize;
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;
-    this.areaConfig.sizeOfXAxis = 62;
-    this.areaConfig.sizeOfYAxis = 62;
+    this.areaConfig.sizeOfXAxis = 2+3*areaSize;
+    this.areaConfig.sizeOfYAxis = 2+3*areaSize;
     this.areaConfig.holePosition = 0;
     this.areaConfig.numbOfBuildings = 0;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
