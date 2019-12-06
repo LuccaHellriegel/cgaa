@@ -1,5 +1,6 @@
 import { CompositePolygon } from "../polygons/CompositePolygon";
 import { SpriteWithAnimEvents } from "../base/BasePhaser";
+import { Circle } from "../units/circles/Circle";
 
 export abstract class Weapon extends SpriteWithAnimEvents {
   polygon: CompositePolygon;
@@ -9,9 +10,10 @@ export abstract class Weapon extends SpriteWithAnimEvents {
   unitOffSetX: number;
   unitOffSetY: number;
   offSetArr: number[][];
-  amount : number;
+  amount: number;
+  owner: Circle;
 
-  constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr) {
+  constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr, owner: Circle) {
     super(scene, x, y, texture, weaponGroup);
     this.setCollideWorldBounds(false);
     this.alreadyAttacked = [];
@@ -22,6 +24,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
     this.offSetArr = offSetArr;
     this.polygon = polygonArr[0];
     this.polygonArr = polygonArr;
+    this.owner = owner;
   }
 
   movePolygon() {

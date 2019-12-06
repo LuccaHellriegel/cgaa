@@ -9,6 +9,7 @@ export class Circle extends SpriteWithAnimEvents {
   weapon: Weapon;
   polygon: CirclePolygon;
   unitType: string;
+  obstacle: any;
 
   constructor(scene, x, y, texture, physicsGroup, weapon: Weapon) {
     super(scene, x, y, texture, physicsGroup);
@@ -53,11 +54,17 @@ export class Circle extends SpriteWithAnimEvents {
   }
 
   static withChainWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
-    return new this(scene, x, y, texture, physicsGroup, new ChainWeapon(scene, x, y, weaponGroup, 5, 2));
+    let weapon = new ChainWeapon(scene, x, y, weaponGroup, 5, 2, null);
+    let circle = new this(scene, x, y, texture, physicsGroup, weapon);
+    weapon.owner = circle;
+    return circle;
   }
 
   static withRandWeapon(scene, x, y, texture, physicsGroup, weaponGroup) {
-    return new this(scene, x, y, texture, physicsGroup, new RandWeapon(scene, x, y, weaponGroup));
+    let weapon = new RandWeapon(scene, x, y, weaponGroup, null);
+    let circle = new this(scene, x, y, texture, physicsGroup, weapon);
+    weapon.owner = circle;
+    return circle;
   }
 
   setupAnimEvents() {

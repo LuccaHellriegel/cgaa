@@ -13,17 +13,16 @@ export class Player extends Circle {
     this.weapon.setVelocityX(velo);
     return super.setVelocityX(velo);
   }
-  
+
   setVelocityY(velo) {
     this.weapon.setVelocityY(velo);
     return super.setVelocityY(velo);
   }
 
   static withChainWeapon(scene) {
-    return new Player(
-      scene,
-      scene.physics.add.group(),
-      new ChainWeapon(scene, playerStartX, playerStartY, scene.physics.add.group(), 5, 2)
-    );
+    let weapon = new ChainWeapon(scene, playerStartX, playerStartY, scene.physics.add.group(), 5, 2, null);
+    let circle = new Player(scene, scene.physics.add.group(), weapon);
+    weapon.owner = circle;
+    return circle;
   }
 }

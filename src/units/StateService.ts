@@ -1,6 +1,8 @@
 import { EnemyCircle } from "./circles/EnemyCircle";
-import { normalCircleRadius } from "../globals/globalSizes";
+import { wallPartHalfSize } from "../globals/globalSizes";
 import { PositionService } from "../services/PositionService";
+import { WallPart } from "../env/areas/WallPart";
+import { Building } from "../env/buildings/Building";
 
 export class StateService {
   private constructor() {}
@@ -27,63 +29,73 @@ export class StateService {
     }
   }
 
-  private static obstacle(unit) {}
+  private static obstacle(unit: EnemyCircle) {
+    unit.setVelocity(0, 0);
+    if (unit.obstacle) {
+      this.moveBack(unit);
+      this.turnTo(unit, unit.obstacle);
+      if (unit.obstacle instanceof WallPart || unit.obstacle instanceof Building) {
+        if (unit.pathContainer) {
+          unit.state = "ambush";
+        }
+      } else {
+        unit.spotted = unit.obstacle;
+        unit.state = "guard";
+      }
+    }
+  }
+
+  private static moveBack(unit) {
+    let x = unit.x;
+    let y = unit.y;
+    let angle = Phaser.Math.Angle.Between(unit.obstacle.x, unit.obstacle.y, x, y);
+
+    let bounceBackDistance = 1;
+    let x1 = x + Math.cos(angle) * bounceBackDistance;
+    let y1 = y + Math.sin(angle) * bounceBackDistance;
+    unit.setPosition(x1, y1);
+  }
 
   private static idle(unit: EnemyCircle) {
     unit.setVelocity(0, 0);
-    if (this.checkIfPlayerIsInSight(unit)) unit.state = "guard";
+    if (unit.pathContainer) {
+      unit.state = "ambush";
+    } else {
+      unit.state = "guard";
+    }
   }
 
-  private static checkIfPlayerIsInSight(unit: EnemyCircle) {
-    let distanceBetweenPlayerAndEnemy = Phaser.Math.Distance.Between(
-      unit.x,
-      unit.y,
-      unit.scene.player.x,
-      unit.scene.player.y
-    );
-    //TODO: need real distance
-    let weaponsLastPolygonReachesPlayer =
-      unit.weapon.polygonArr[unit.weapon.polygonArr.length - 1].height + normalCircleRadius >
-      distanceBetweenPlayerAndEnemy;
-    return weaponsLastPolygonReachesPlayer;
+  private static spottedOutOfSight(unit: EnemyCircle) {
+    let dist = Phaser.Math.Distance.Between(unit.x, unit.y, unit.spotted.x, unit.spotted.y);
+    return dist > 6 * wallPartHalfSize;
   }
 
   private static guard(unit: EnemyCircle) {
-    if (!this.checkIfPlayerIsInSight(unit)) {
+    if (!unit.spotted || this.spottedOutOfSight(unit) || !unit.spotted.scene) {
+      unit.spotted = undefined;
       unit.state = "idle";
     } else {
-      this.moveAndTurnToPlayer(unit);
-      if (this.checkIfPlayerIsInReach(unit)) unit.attack();
+      this.turnTo(unit, unit.spotted);
+      let inReach = this.moveTo(unit, unit.spotted);
+      if (inReach) unit.attack();
     }
   }
 
-  private static moveAndTurnToPlayer(unit: EnemyCircle) {
-    let radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius = normalCircleRadius + normalCircleRadius + 32;
-    let distanceToPlayerSmallEnough =
-      Phaser.Math.Distance.Between(unit.x, unit.y, unit.scene.player.x, unit.scene.player.y) <
-      radiusOfCirclePlusRadiusOfPlayerPlusWeaponRadius;
-    if (!distanceToPlayerSmallEnough) {
-      unit.scene.physics.moveToObject(unit, unit.scene.player, 160);
-    } else {
-      unit.setVelocity(0, 0);
-    }
-
-    let newRotation = Phaser.Math.Angle.Between(unit.x, unit.y, unit.scene.player.x, unit.scene.player.y);
+  private static turnTo(unit, obj) {
+    let newRotation = Phaser.Math.Angle.Between(unit.x, unit.y, obj.x, obj.y);
     let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
     unit.setRotation(newRotation + correctionForPhasersMinus90DegreeTopPostion);
   }
 
-  private static checkIfPlayerIsInReach(unit: EnemyCircle) {
-    let distanceBetweenPlayerAndEnemy = Phaser.Math.Distance.Between(
-      unit.x,
-      unit.y,
-      unit.scene.player.x,
-      unit.scene.player.y
-    );
-    let weaponsLastPolygonReachesPlayer =
-      unit.weapon.polygonArr[unit.weapon.polygonArr.length - 1].height + normalCircleRadius >
-      distanceBetweenPlayerAndEnemy;
-    return weaponsLastPolygonReachesPlayer;
+  private static moveTo(unit: EnemyCircle, target) {
+    let reachDist = unit.weapon.polygonArr[unit.weapon.polygonArr.length - 1].height;
+    let inReach = Phaser.Math.Distance.Between(unit.x, unit.y, target.x, target.y) < reachDist;
+    if (!inReach) {
+      unit.scene.physics.moveToObject(unit, target, 160);
+    } else {
+      unit.setVelocity(0, 0);
+    }
+    return inReach;
   }
 
   private static ambush(unit: EnemyCircle) {
@@ -102,6 +114,5 @@ export class StateService {
       unit.pathContainer.path = unit.scene.pathManager.mainPath;
       unit.curPosInPath = 0;
     }
-
   }
 }

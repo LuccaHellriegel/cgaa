@@ -9,7 +9,7 @@ import {
 } from "../globals/globalSizes"
 
 export class RandWeapon extends Weapon {
-    constructor(scene, x, y, weaponGroup) {
+    constructor(scene, x, y, weaponGroup, owner) {
         let polygonArr = [new CompositePolygon([
             [x, y, 10, 64, "rect"]
         ]), new CompositePolygon([
@@ -18,9 +18,9 @@ export class RandWeapon extends Weapon {
         ])]
 
         let offSetArr = [[normalCircleRadius,-normalCircleRadius],[normalCircleRadius,-normalCircleRadius]]
-        super(scene, x, y, "randWeapon", weaponGroup, polygonArr, offSetArr)
+        super(scene, x, y, "randWeapon", weaponGroup, polygonArr, offSetArr, owner)
         this.setSize(this.polygonArr[polygonArr.length-1].width, this.polygonArr[polygonArr.length-1].height)
 
-        this.amount = 50
+        this.amount = 2
     }
 }

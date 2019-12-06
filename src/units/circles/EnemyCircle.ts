@@ -6,13 +6,16 @@ import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { StateService } from "../StateService";
 import { PathContainer } from "../../path/PathContainer";
+import { Damageable } from "../Damageable";
 
-export class EnemyCircle extends Circle {
+export class EnemyCircle extends Circle implements Damageable {
   hasBeenAttacked: boolean;
   healthbar: HealthBar;
   pathContainer: PathContainer;
   curPosInPath = 0;
   color: string;
+  spotted: any;
+  pursuing: any;
 
   constructor(
     scene: Gameplay,
@@ -34,11 +37,17 @@ export class EnemyCircle extends Circle {
 
   //TODO: better solution than doubling this
   static withChainWeapon(scene, x, y, physicsGroup, weaponGroup, color) {
-    return new this(scene, x, y, physicsGroup, new ChainWeapon(scene, x, y, weaponGroup, 5, 2), color);
+    let weapon = new ChainWeapon(scene, x, y, weaponGroup, 5, 2, null);
+    let circle = new this(scene, x, y, physicsGroup, weapon, color);
+    weapon.owner = circle;
+    return circle;
   }
 
   static withRandWeapon(scene, x, y, physicsGroup, weaponGroup, color) {
-    return new this(scene, x, y, physicsGroup, new RandWeapon(scene, x, y, weaponGroup), color);
+    let weapon = new RandWeapon(scene, x, y, weaponGroup, null);
+    let circle = new this(scene, x, y, physicsGroup, weapon, color);
+    weapon.owner = circle;
+    return circle;
   }
 
   damage(amount) {

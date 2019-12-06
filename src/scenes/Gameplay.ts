@@ -5,7 +5,7 @@ import { EnemyManager } from "../managers/EnemyManager";
 import { GeneratorService } from "../graphic/generators/GeneratorService";
 import { EnvManager } from "../managers/EnvManager";
 import { PointerService } from "../ui/input/PointerService";
-import { ColliderService } from "../services/ColliderService";
+import { Collision } from "../services/Collision";
 import { TowerManager } from "../managers/TowerManager";
 import { TowerModus } from "../ui/input/TowerModus";
 import { PathManager } from "../managers/PathManager";
@@ -41,7 +41,7 @@ export class Gameplay extends Phaser.Scene {
 
     new TowerModus(this);
 
-    ColliderService.addCollisionDetection(this);
+    new Collision(this);
 
     new Movement(this);
     PointerService.setupPointerEvents(this);

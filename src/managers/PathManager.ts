@@ -26,7 +26,6 @@ export class PathManager extends Manager {
     let validSpawnPositions = SpawnService.calculateRelativeSpawnPositionsAround(column, row, 3, 1);
     let containers: PathContainer[] = [];
 
-    console.log(validSpawnPositions)
     validSpawnPositions.forEach(pos => {
       let saveReference = new PathContainer(pos.column, pos.row);
       this.scene.envManager.setMapAsGrid(this.easyStar);

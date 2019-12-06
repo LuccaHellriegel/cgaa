@@ -121,8 +121,6 @@ export class EnvManager extends PhysicalManager {
     return map;
   }
 
-  findRelativePosition(x, y) {}
-
   getCopyOfMap() {
     return JSON.parse(JSON.stringify(this.walkableMap));
   }

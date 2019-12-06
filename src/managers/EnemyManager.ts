@@ -17,7 +17,6 @@ export class EnemyManager extends PhysicalManager {
     for (let index = 0; index < campColors.length; index++) {
       this.enemyPhysicGroups[campColors[index]] = this.scene.physics.add.group();
       this.weaponPhysicGroups[campColors[index]] = this.scene.physics.add.group();
-
     }
     this.spawnUnits();
   }
@@ -32,9 +31,9 @@ export class EnemyManager extends PhysicalManager {
 
   spawnUnits() {
     Player.withChainWeapon(this.scene);
-    this.scene.envManager.executeWithAreasThatHaveBuilding((area : Area) => {
-      let enemyPhysicGroup = this.enemyPhysicGroups[area.color]
-      let weaponPhysicGroup = this.weaponPhysicGroups[area.color]
+    this.scene.envManager.executeWithAreasThatHaveBuilding((area: Area) => {
+      let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
+      let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
 
       new AreaPopulator(this.scene, enemyPhysicGroup, weaponPhysicGroup, area).startPopulating();
       area.buildings.forEach(building => {
