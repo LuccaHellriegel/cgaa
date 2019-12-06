@@ -1,7 +1,7 @@
 import { expect } from "chai";
 
-import { CompositePolygon } from "../../src/polygons/CompositePolygon";
-import { Point } from "../../src/polygons/Point";
+import { CompositePolygon } from "../../src/graphics/polygons/CompositePolygon";
+import { Point } from "../../src/graphics/polygons/Point";
 
 describe("Test CompositePolygon", function() {
   describe("Move singular CompositePolygon", function() {

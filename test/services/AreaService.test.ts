@@ -1,6 +1,6 @@
-import { AreaService } from "../../src/env/areas/AreaService";
+import { AreaService } from "../../src/world/areas/AreaService";
 import { expect } from "chai";
-import { AreaPosition } from "../../src/env/areas/AreaPosition";
+import { AreaPosition } from "../../src/world/areas/AreaPosition";
 
 describe("Test AreaService", function() {
   describe("Calculate walkable map", function() {

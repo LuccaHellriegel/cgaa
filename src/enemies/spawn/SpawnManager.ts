@@ -4,9 +4,9 @@ import { PositionService } from "../../world/PositionService";
 import { SpawnService } from "./SpawnService";
 import { Area } from "../../world/areas/Area";
 import { Tower } from "../../player/towers/Tower";
-import { towerSymbol, buildingSymbol } from "../../globals/globalSymbols";
 import { MapService } from "./MapService";
 import { Building } from "../buildings/Building";
+import { towerSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
 export class SpawnManager extends Manager {
   spawnableArrForEnemiesBase;

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { TowerService } from "../../src/units/towers/TowerService";
+import { TowerService } from "../../src/player/towers/TowerService";
 import { towerHalfSize } from "../../src/globals/globalSizes";
 
 describe("Test TowerService", function() {

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ArrowHeadPolygon } from "../../src/polygons/ArrowHeadPolygon";
+import { ArrowHeadPolygon } from "../../src/graphics/polygons/ArrowHeadPolygon";
 
 describe("Test ArrowHeadPolygon", function() {
   describe("Find centerPoint of ArrowHead", function() {

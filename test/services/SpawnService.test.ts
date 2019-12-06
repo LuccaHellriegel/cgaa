@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import { wallPartHalfSize } from "../../src/globals/globalSizes";
-import { SpawnService } from "../../src/spawn/SpawnService";
+import { SpawnService } from "../../src/enemies/spawn/SpawnService";
 
 describe("Test SpawnService", function() {
   describe("Update walkable arr to building spawnable arr", function() {

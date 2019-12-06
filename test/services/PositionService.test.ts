@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { wallPartHalfSize } from "../../src/globals/globalSizes";
-import { PositionService } from "../../src/services/PositionService";
+import { PositionService } from "../../src/world/PositionService";
 
 describe("Test PositionService", function() {
   describe("Snap real pos to real grid pos", function() {
