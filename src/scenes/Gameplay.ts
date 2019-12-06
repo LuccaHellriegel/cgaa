@@ -1,21 +1,21 @@
-import { Player } from "../units/Player";
-import { Movement } from "../ui/input/Movement";
-import { AnimationService } from "../graphic/AnimationService";
-import { EnemyManager } from "../managers/EnemyManager";
-import { GeneratorService } from "../graphic/generators/GeneratorService";
-import { EnvManager } from "../managers/EnvManager";
-import { PointerService } from "../ui/input/PointerService";
-import { Collision } from "../services/Collision";
-import { TowerManager } from "../managers/TowerManager";
-import { TowerModus } from "../ui/input/TowerModus";
-import { PathManager } from "../managers/PathManager";
-import { SpawnManager } from "../managers/SpawnManager";
+import { Player } from "../player/Player";
+import { Movement } from "../player/input/Movement";
+import { AnimationService } from "../graphics/AnimationService";
+import { EnemyManager } from "../enemies/EnemyManager";
+import { GeneratorService } from "../graphics/generators/GeneratorService";
+import { WorldManager } from "../world/WorldManager";
+import { PointerService } from "../player/input/PointerService";
+import { Collision } from "../collision/Collision";
+import { TowerManager } from "../player/towers/TowerManager";
+import { TowerModus } from "../player/input/TowerModus";
+import { PathManager } from "../enemies/path/PathManager";
+import { SpawnManager } from "../enemies/spawn/SpawnManager";
 
 export class Gameplay extends Phaser.Scene {
   player: Player;
   movement: Movement;
   enemyManager: EnemyManager;
-  envManager: EnvManager;
+  worldManager: WorldManager;
   pathManager: PathManager;
   spawnManager: SpawnManager;
   towerManager: TowerManager;
@@ -31,7 +31,7 @@ export class Gameplay extends Phaser.Scene {
     GeneratorService.generateTextures(this);
     AnimationService.createAnims(this.anims);
 
-    new EnvManager(this);
+    new WorldManager(this);
     new PathManager(this);
     new TowerManager(this);
 
