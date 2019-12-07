@@ -4,6 +4,7 @@ import { Damageable } from "../../base/Damageable";
 import { RectPolygon } from "../../graphics/polygons/RectPolygon";
 import { towerHalfSize, wallPartHalfSize } from "../../globals/globalSizes";
 import { Bullet } from "./Bullet";
+import { BaseService } from "../../base/Base";
 
 export class Tower extends Image implements Damageable {
   healthbar: HealthBar;
@@ -13,7 +14,7 @@ export class Tower extends Image implements Damageable {
   bulletGroup: any;
 
   constructor(scene, x, y, physicsGroup, sightGroup, bulletGroup) {
-    super(scene, x, y, "tower", physicsGroup);
+    super({ scene, x, y, texture: "tower", physicsGroup });
     this.setImmovable(true);
 
     this.polygon = new RectPolygon(
@@ -25,21 +26,23 @@ export class Tower extends Image implements Damageable {
 
     this.setSize(this.polygon.width, this.polygon.height);
 
-    this.id =
-      "_" +
-      Math.random()
-        .toString(36)
-        .substr(2, 9);
-    this.healthbar = new HealthBar(scene, x - 26, y - 38, 46, 12);
-
+    BaseService.extendWithNewId(this);
+    this.healthbar = new HealthBar(x, y, {
+      scene,
+      posCorrectionX: -26,
+      posCorrectionY: -38,
+      healthWidth: 46,
+      healthLength: 12,
+      value: 100
+    });
 
     //TODO: bullet firing as events with delay!
     //TODO: only one target at a time
-    //TODO: just make camps offlimit for towers in general 
+    //TODO: just make camps offlimit for towers in general
     //TODO: sometimes I cant pace any tower and no error
     this.bulletGroup = bulletGroup;
-    this.sightElement = new Image(scene, this.x, this.y, "", sightGroup);
-    this.sightElement.setVisible(false)
+    this.sightElement = new Image({ scene, x: this.x, y: this.y, texture: "", physicsGroup: sightGroup });
+    this.sightElement.setVisible(false);
     this.sightElement.owner = this;
     this.sightElement.setSize(12 * wallPartHalfSize, 12 * wallPartHalfSize);
   }
@@ -50,8 +53,8 @@ export class Tower extends Image implements Damageable {
     }
   }
 
-  fire(target){
-    new Bullet(this.scene,this.x,this.y,this.scene.towerManager.bulletGroup, target.x,target.y)
+  fire(target) {
+    new Bullet(this.scene, this.x, this.y, this.scene.towerManager.bulletGroup, target.x, target.y);
   }
 
   syncPolygon() {

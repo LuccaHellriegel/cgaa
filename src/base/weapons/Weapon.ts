@@ -14,7 +14,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
   owner: Circle;
 
   constructor(scene, x, y, texture, weaponGroup, polygonArr, offSetArr, owner: Circle) {
-    super(scene, x, y, texture, weaponGroup);
+    super({scene, x, y, texture, physicsGroup: weaponGroup});
     this.setCollideWorldBounds(false);
     this.alreadyAttacked = [];
     this.attacking = false;

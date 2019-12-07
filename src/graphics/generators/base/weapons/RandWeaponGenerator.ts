@@ -11,7 +11,7 @@ export class RandWeaponGenerator extends WeaponGenerator {
 
   constructor(hexColor: number, scene: Gameplay) {
     super(hexColor, scene);
-    this.randWeapon = new RandWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, this.tempWeaponGroup);
+    this.randWeapon = new RandWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, this.tempWeaponGroup, null);
     this.generate();
   }
 

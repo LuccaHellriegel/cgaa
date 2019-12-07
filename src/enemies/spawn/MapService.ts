@@ -6,7 +6,7 @@ export class MapService {
 
   //TODO: assumes element is one long (gets correct around but not correct in element)
   static updateMapWithElementAndAroundElements(map, element, eleSymbol, removed, width, height) {
-    let positions = PositionService.getRelativePosOfElementsAndAroundElements([element], map.length, map[0].length, width, height);
+    let positions = PositionService.getRelativePosOfElementsAndAroundElements([element], width, height);
     positions.forEach(pos => {
       if (removed) {
         map[pos.row][pos.column] = walkableSymbol;

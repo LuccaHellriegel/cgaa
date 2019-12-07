@@ -11,7 +11,7 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 
   constructor(hexColor: number, scene: Gameplay) {
     super(hexColor, scene);
-    this.chainWeapon = new ChainWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, this.tempWeaponGroup, 5, 2);
+    this.chainWeapon = new ChainWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, this.tempWeaponGroup, null);
     this.generate();
   }
 

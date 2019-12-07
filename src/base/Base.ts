@@ -12,6 +12,10 @@ export interface BaseManagerConfig extends BaseConfig {
   type: string;
 }
 
+export interface BasePhysicalManagerConfig extends BaseManagerConfig {
+  physicGroupType: string;
+}
+
 export interface BasePhysicsConfig extends BaseConfig {
   physicsGroup;
 }
@@ -43,6 +47,11 @@ export class BaseService {
   static applyBaseManagerConfig(obj, baseConfig: BaseManagerConfig) {
     this.applyBaseConfig(obj, baseConfig);
     baseConfig.scene[baseConfig.type] = obj;
+  }
+
+  static applyBasePhysicalManagerConfig(obj, baseConfig: BasePhysicalManagerConfig) {
+    this.applyBaseManagerConfig(obj, baseConfig);
+    this.extendWithNewPhysicsGroup(obj, baseConfig);
   }
 
   static applyBasePhysicsConfig(obj, baseConfig: BasePhysicsConfig) {

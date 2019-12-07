@@ -1,4 +1,4 @@
-import { Manager } from "../../base/Base";
+import { BaseManagerConfig, BaseService } from "../../base/Base";
 import { Gameplay } from "../../scenes/Gameplay";
 import { PositionService } from "../../world/PositionService";
 import { SpawnService } from "./SpawnService";
@@ -8,14 +8,15 @@ import { MapService } from "./MapService";
 import { Building } from "../buildings/Building";
 import { towerSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
-export class SpawnManager extends Manager {
+export class SpawnManager  {
+  scene: Gameplay;
   spawnableArrForEnemiesBase;
   spawnableArrForEnemies;
   spawnableArrForTowersBase;
   spawnableArrForTowers;
 
-  constructor(scene: Gameplay) {
-    super(scene, "spawnManager");
+  constructor(config: BaseManagerConfig) {
+    BaseService.applyBaseManagerConfig(this, config);
     this.initBaseArrs();
     this.setupEventListeners();
   }

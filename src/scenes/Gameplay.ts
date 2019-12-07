@@ -31,18 +31,14 @@ export class Gameplay extends Phaser.Scene {
     GeneratorService.generateTextures(this);
     AnimationService.createAnims(this.anims);
 
-    new WorldManager(this);
-    new PathManager(this);
-    new TowerManager(this);
-
-    new SpawnManager(this);
-
-    new EnemyManager(this);
+    new WorldManager({ scene: this, type: "worldManager", physicGroupType: "staticGroup" });
+    new PathManager({ scene: this, type: "pathManager" });
+    new TowerManager({ scene: this, type: "towerManager", physicGroupType: "staticGroup" });
+    new SpawnManager({ scene: this, type: "spawnManager" });
+    new EnemyManager({ scene: this, type: "enemyManager" });
 
     new TowerModus(this);
-
     new Collision(this);
-
     new Movement(this);
     PointerService.setupPointerEvents(this);
   }

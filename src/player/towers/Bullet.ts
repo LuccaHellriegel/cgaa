@@ -8,12 +8,12 @@ export class Bullet extends Sprite {
   amount: number;
 
   constructor(scene, x, y, bulletGroup, goalX, goalY) {
-    super(scene, x, y, "bullet", bulletGroup);
+    super({ scene, x, y, texture: "bullet", physicsGroup: bulletGroup });
     this.setCircle(normalCircleRadius / 4);
     this.goalX = goalX;
     this.goalY = goalY;
     this.atTarget = false;
-    this.amount = 20
+    this.amount = 20;
   }
 
   preUpdate(time, delta) {

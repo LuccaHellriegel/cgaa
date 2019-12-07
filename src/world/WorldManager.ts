@@ -1,22 +1,25 @@
-import { Gameplay } from "../scenes/Gameplay";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { Area } from "./areas/Area";
 import { AreaFactory, AreaConfig, AreaType } from "./areas/AreaFactory";
-import { PhysicalManager } from "../base/Base";
+import { BasePhysicalManagerConfig, BaseService } from "../base/Base";
 import { campColors } from "../globals/globalColors";
 import { areaSize } from "../globals/globalConfig";
+import { Gameplay } from "../scenes/Gameplay";
 
-export class WorldManager extends PhysicalManager {
+export class WorldManager {
   private borderWall: Area;
   private walkableMap;
+  private areas: Area[][];
+  physicsGroup;
 
   //TODO: listen to building destroyed
 
   private areaConfig: AreaConfig;
   colorIndices: number[];
+  scene: Gameplay;
 
-  constructor(scene: Gameplay) {
-    super(scene, "worldManager", "staticGroup");
+  constructor(config: BasePhysicalManagerConfig) {
+    BaseService.applyBasePhysicalManagerConfig(this, config);
 
     this.colorIndices = [0, 1, 2, 3];
     for (let i = this.colorIndices.length - 1; i > 0; i--) {
@@ -27,7 +30,7 @@ export class WorldManager extends PhysicalManager {
     }
 
     this.createAreas();
-    scene.physics.world.setBounds(
+    config.scene.physics.world.setBounds(
       0,
       0,
       this.borderWall.width - 4 * wallPartHalfSize,
@@ -59,7 +62,7 @@ export class WorldManager extends PhysicalManager {
       if (isEmpty) this.toggleAreaType();
       stepCount++;
     });
-    this.elements.push(row);
+    this.areas.push(row);
   }
 
   private createAreas() {
@@ -84,8 +87,8 @@ export class WorldManager extends PhysicalManager {
 
     this.areaConfig.topLeftX = -2 * wallPartHalfSize;
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;
-    this.areaConfig.sizeOfXAxis = 2+3*areaSize;
-    this.areaConfig.sizeOfYAxis = 2+3*areaSize;
+    this.areaConfig.sizeOfXAxis = 2 + 3 * areaSize;
+    this.areaConfig.sizeOfYAxis = 2 + 3 * areaSize;
     this.areaConfig.holePosition = 0;
     this.areaConfig.numbOfBuildings = 0;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
@@ -103,7 +106,7 @@ export class WorldManager extends PhysicalManager {
   private calculateWalkAbleArr() {
     //assummption that all areas have the same number of rows, and that the input arr is symmetric
 
-    let areas = this.elements;
+    let areas = this.areas;
     let map: any[] = [];
 
     for (let rowIndexArea = 0; rowIndexArea < areas.length; rowIndexArea++) {
@@ -130,7 +133,7 @@ export class WorldManager extends PhysicalManager {
   }
 
   executeWithAreasThatHaveBuilding(func) {
-    this.elements.forEach(areaRow => {
+    this.areas.forEach(areaRow => {
       areaRow.forEach(area => {
         if (area.buildings[0]) {
           func(area);

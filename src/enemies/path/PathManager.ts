@@ -1,4 +1,4 @@
-import { Manager } from "../../base/Base";
+import { BaseManagerConfig, BaseService } from "../../base/Base";
 import { Gameplay } from "../../scenes/Gameplay";
 import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
@@ -6,16 +6,15 @@ import { Area } from "../../world/areas/Area";
 import { PositionService } from "../../world/PositionService";
 import { SpawnService } from "../spawn/SpawnService";
 
-export class PathManager extends Manager {
+export class PathManager {
+  scene: Gameplay;
   easyStar: EasyStar.js;
   relativeGoalPositionRow: number = 14;
   realtiveGoalPositionColumn: number = 14;
-  mainPath;
   buildingSpecificPaths: PathContainer[] = [];
-  get: any;
 
-  constructor(scene: Gameplay) {
-    super(scene, "pathManager");
+  constructor(config: BaseManagerConfig) {
+    BaseService.applyBaseManagerConfig(this, config);
     this.easyStar = new EasyStar.js();
     this.calculateBuildingSpecificPaths();
   }

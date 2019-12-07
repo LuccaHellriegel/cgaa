@@ -3,7 +3,7 @@ import { SpriteWithAnimEvents } from "../../base/BasePhaser";
 
 export class GhostTower extends SpriteWithAnimEvents {
   constructor(scene: Gameplay, x, y, physicsGroup) {
-    super(scene, x, y, "ghostTower", physicsGroup);
+    super({scene, x, y, texture: "ghostTower", physicsGroup});
     this.on(
       "animationcomplete_invalid-tower-pos",
       function() {

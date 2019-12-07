@@ -155,8 +155,6 @@ export class EnemyCircle extends Circle implements Damageable {
       }
     } else if (this.pathContainer.path && this.curPosInPath >= this.pathContainer.path.length) {
       this.setVelocity(0, 0);
-      this.pathContainer.path = this.scene.pathManager.mainPath;
-      this.curPosInPath = 0;
     }
   }
 }
