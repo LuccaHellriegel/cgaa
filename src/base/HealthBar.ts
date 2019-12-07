@@ -1,3 +1,13 @@
+import { BaseConfig } from "./Base";
+
+export interface HealthBarConfig extends BaseConfig {
+  healthWidth;
+  healthLength;
+  posCorrectionX;
+  posCorrectionY;
+  value;
+}
+
 export class HealthBar {
   bar: Phaser.GameObjects.Graphics;
   x: number;
@@ -9,23 +19,24 @@ export class HealthBar {
   posCorrectionX: number;
   posCorrectionY: number;
 
-  constructor(scene, x, y, config) {
-    this.bar = new Phaser.GameObjects.Graphics(scene);
+  constructor(x, y, config: HealthBarConfig) {
+    this.bar = new Phaser.GameObjects.Graphics(config.scene);
     this.x = x;
     this.y = y;
-    this.value = 100;
 
-    let { healthWidth, healthLength, posCorrectionX, posCorrectionY } = config;
+    let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } = config;
+
+    this.value = value;
 
     this.healthWidth = healthWidth;
     this.healthLength = healthLength;
-    this.p = healthWidth / 100;
+    this.p = healthWidth / value;
 
     this.posCorrectionX = posCorrectionX;
     this.posCorrectionY = posCorrectionY;
 
     this.draw();
-    scene.add.existing(this.bar);
+    config.scene.add.existing(this.bar);
   }
 
   decrease(amount) {
@@ -51,7 +62,7 @@ export class HealthBar {
       this.bar.fillStyle(0x00ff00);
     }
     let d = Math.floor(this.p * this.value);
-    this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
+    this.bar.fillRect(this.x + 2, this.y + 2, d, this.healthLength);
   }
 
   draw() {

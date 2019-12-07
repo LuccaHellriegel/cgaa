@@ -1,24 +1,25 @@
-import { SpriteWithAnimEvents } from "./BasePhaser";
+import { SpriteWithAnimEvents, BasePhaser } from "./BasePhaser";
 import { Weapon } from "./weapons/Weapon";
 import { CirclePolygon } from "../graphics/polygons/CirclePolygon";
-import { normalCircleRadius } from "../globals/globalSizes";
+
+export interface CircleWithWeapon extends BasePhaser {
+  weapon : Weapon,
+   polygon : CirclePolygon,
+   radius: number
+}
 
 export class Circle extends SpriteWithAnimEvents {
   weapon: Weapon;
   polygon: CirclePolygon;
   unitType: string;
 
-  constructor(scene, x, y, texture, physicsGroup, weapon: Weapon) {
-    super(scene, x, y, texture, physicsGroup);
-    this.polygon = new CirclePolygon(
-      x + scene.cameras.main.scrollX,
-      y + scene.cameras.main.scrollY,
-      normalCircleRadius
-    );
+  constructor(config : CircleWithWeapon) {
+    super(config);
+    this.polygon = config.polygon
     this.unitType = "circle";
-    this.setCircle(normalCircleRadius);
+    this.setCircle(config.radius);
     this.setupAnimEvents();
-    this.weapon = weapon;
+    this.weapon = config.weapon;
     this.setCollideWorldBounds(true);
   }
 

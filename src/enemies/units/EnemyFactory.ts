@@ -1,14 +1,16 @@
 import { WeaponTypes } from "../../base/weapons/WeaponFactory";
-import { EnemyCircle } from "./EnemyCircle";
+import { EnemyCircle, EnemyCircleConfig } from "./EnemyCircle";
 import { Gameplay } from "../../scenes/Gameplay";
 import { HealthBar } from "../../base/HealthBar";
 import { ChainWeapon } from "../../base/weapons/ChainWeapon";
 import { RandWeapon } from "../../base/weapons/RandWeapon";
+import { CirclePolygon } from "../../graphics/polygons/CirclePolygon";
+import { normalCircleRadius } from "../../globals/globalSizes";
 
 const healthBarConfigs = {
-  Small: { posCorrectionX: 0, posCorrectionY: 0 },
-  Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12 },
-  Big: { posCorrectionX: 0, posCorrectionY: 0 }
+  Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
+  Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
+  Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null }
 };
 
 export type EnemySize = "Small" | "Normal" | "Big";
@@ -31,8 +33,9 @@ export class EnemyFactory {
     let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;
 
     let healthBarConfig = healthBarConfigs[size];
+    healthBarConfig["scene"] = scene;
 
-    let healthBar = new HealthBar(scene, x, y, healthBarConfig);
+    let healthbar = new HealthBar(x, y, healthBarConfig);
 
     let weapon;
     if (weaponType === "chain") {
@@ -40,9 +43,29 @@ export class EnemyFactory {
     } else {
       weapon = new RandWeapon(scene, x, y, weaponGroup, null);
     }
-    let circle = new EnemyCircle(scene, x, y, physicsGroup, weapon, color, size, healthBar);
+
+    let radius = normalCircleRadius;
+
+    let polygon = new CirclePolygon(x, y, radius);
+
+    let texture = color + size + "Circle";
+
+    let circleConfig: EnemyCircleConfig = {
+      scene,
+      color,
+      x,
+      y,
+      weapon,
+      polygon,
+      texture,
+      healthbar,
+      radius,
+      physicsGroup
+    };
+
+    let circle = new EnemyCircle(circleConfig);
     weapon.owner = circle;
-    scene.children.bringToTop(healthBar.bar);
+    scene.children.bringToTop(healthbar.bar);
 
     return circle;
   }

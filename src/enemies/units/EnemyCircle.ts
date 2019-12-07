@@ -1,13 +1,16 @@
 import { HealthBar } from "../../base/HealthBar";
-import { Gameplay } from "../../scenes/Gameplay";
-import { Circle } from "../../base/Circle";
-import { Weapon } from "../../base/weapons/Weapon";
+import { Circle, CircleWithWeapon } from "../../base/Circle";
 import { PathContainer } from "../path/PathContainer";
 import { Damageable } from "../../base/Damageable";
 import { WallPart } from "../../world/areas/WallPart";
 import { Building } from "../buildings/Building";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 import { PositionService } from "../../world/PositionService";
+
+export interface EnemyCircleConfig extends CircleWithWeapon {
+  color: string;
+  healthbar: HealthBar;
+}
 
 export class EnemyCircle extends Circle implements Damageable {
   hasBeenAttacked: boolean;
@@ -19,19 +22,12 @@ export class EnemyCircle extends Circle implements Damageable {
   pursuing: any;
   barrier: any;
 
-  constructor(
-    scene: Gameplay,
-    x: number,
-    y: number,
-    physicsGroup: Phaser.Physics.Arcade.Group,
-    weapon: Weapon,
-    color: string, size: string, healthbar : HealthBar
-  ) {
-    super(scene, x, y, color + size +"Circle", physicsGroup, weapon);
+  constructor(config: EnemyCircleConfig) {
+    super(config);
     this.hasBeenAttacked = false;
-    this.healthbar = healthbar
+    this.healthbar = config.healthbar;
     this.setCollideWorldBounds(true);
-    this.color = color;
+    this.color = config.color;
   }
 
   damage(amount) {
@@ -53,7 +49,6 @@ export class EnemyCircle extends Circle implements Damageable {
     this.healthbar.move(this.x, this.y);
     this.executeState();
   }
-
 
   private executeState() {
     let state = this.state;
@@ -152,7 +147,7 @@ export class EnemyCircle extends Circle implements Damageable {
         this.pathContainer.path[this.curPosInPath].x,
         this.pathContainer.path[this.curPosInPath].y
       );
-      this.turnTo({x,y})
+      this.turnTo({ x, y });
       if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
         this.curPosInPath++;
       } else {

@@ -1,27 +1,26 @@
 import { Gameplay } from "../scenes/Gameplay";
+import { BasePhysicalPositionConfig, BaseService } from "./Base";
+
+export interface BasePhaser extends BasePhysicalPositionConfig {
+  texture: string;
+}
 
 export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
   physicsGroup: Phaser.Physics.Arcade.Group;
   id: string;
   scene: Gameplay;
 
-  constructor(scene: Gameplay, x, y, texture, physicsGroup) {
-    super(scene, x, y, texture);
-    this.physicsGroup = physicsGroup;
-    this.id =
-      "_" +
-      Math.random()
-        .toString(36)
-        .substr(2, 9);
-
-    scene.add.existing(this);
-    physicsGroup.add(this);
+  constructor(config: BasePhaser) {
+    super(config.scene, config.x, config.y, config.texture);
+    BaseService.applyBasePhysicsConfig(this, config);
+    BaseService.extendWithNewId(this);
+    BaseService.makePhysical(this, config);
   }
 }
 
 export abstract class SpriteWithAnimEvents extends Sprite {
-  constructor(scene: Gameplay, x, y, texture, physicsGroup) {
-    super(scene, x, y, texture, physicsGroup);
+  constructor(config: BasePhaser) {
+    super(config);
     this.on(
       "animationcomplete",
       function(anim, frame) {
@@ -35,12 +34,11 @@ export abstract class SpriteWithAnimEvents extends Sprite {
 export class Image extends Phaser.Physics.Arcade.Image {
   physicsGroup: Phaser.Physics.Arcade.Group;
   scene: Gameplay;
-  owner: this;
+  owner;
 
-  constructor(scene: Gameplay, x, y, texture, physicsGroup) {
-    super(scene, x, y, texture);
-    this.physicsGroup = physicsGroup;
-    scene.add.existing(this);
-    physicsGroup.add(this);
+  constructor(config: BasePhaser) {
+    super(config.scene, config.x, config.y, config.texture);
+    BaseService.applyBasePhysicsConfig(this, config);
+    BaseService.makePhysical(this, config);
   }
 }
