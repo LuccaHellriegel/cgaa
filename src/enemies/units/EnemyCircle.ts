@@ -5,7 +5,7 @@ import { Damageable } from "../../base/Damageable";
 import { WallPart } from "../../world/areas/WallPart";
 import { Building } from "../buildings/Building";
 import { wallPartHalfSize } from "../../globals/globalSizes";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 
 export interface EnemyCircleConfig extends CircleWithWeapon {
   color: string;

@@ -3,7 +3,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
 import { Area } from "../../world/areas/Area";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 import { SpawnService } from "../spawn/SpawnService";
 
 export class PathManager {

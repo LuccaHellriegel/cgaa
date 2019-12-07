@@ -3,7 +3,7 @@ import { SpawnService } from "../../enemies/spawn/SpawnService";
 import { WallPart } from "./WallPart";
 import { Building } from "../../enemies/buildings/Building";
 import { AreaService } from "./AreaService";
-import { PositionService } from "../PositionService";
+import { PositionService } from "../../base/PositionService";
 import { wallPartHalfSize, rectBuildinghalfHeight, rectBuildingHalfWidth, rectBuildingInWallParts } from "../../globals/globalSizes";
 
 export class Area {

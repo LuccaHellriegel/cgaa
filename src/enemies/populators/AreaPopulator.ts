@@ -1,6 +1,6 @@
 import { Populator } from "./Populator";
 import { Area } from "../../world/areas/Area";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 
 export class AreaPopulator extends Populator {

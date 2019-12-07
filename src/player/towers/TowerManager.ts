@@ -3,7 +3,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 import { TowerService } from "./TowerService";
 import { BasePhysicalManagerConfig, BaseService } from "../../base/Base";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 
 export class TowerManager  {
   physicsGroup: Phaser.Physics.Arcade.StaticGroup;

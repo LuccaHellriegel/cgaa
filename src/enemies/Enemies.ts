@@ -3,7 +3,7 @@ import { Player } from "../player/Player";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { BaseService, BaseManagerConfig } from "../base/Base";
-import { PositionService } from "../world/PositionService";
+import { PositionService } from "../base/PositionService";
 import { Area } from "../world/areas/Area";
 import { campColors } from "../globals/globalColors";
 import { EnemyConfig } from "./units/EnemyFactory";

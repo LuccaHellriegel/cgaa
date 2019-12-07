@@ -1,4 +1,5 @@
 import { campColors } from "../globals/globalColors";
+import { circleSizeNames } from "../globals/globalSizes";
 
 export class AnimationService {
   private constructor() {}
@@ -24,23 +25,25 @@ export class AnimationService {
     this.createNonRepeatingAnim(anims, "damage-blueCircle", "blueCircle", 1, 2, 10);
 
     for (let index = 0; index < campColors.length; index++) {
+      for (let sizeIndex = 0; sizeIndex < circleSizeNames.length; sizeIndex++) {
+        let title = campColors[index] + circleSizeNames[sizeIndex] + "Circle";
       this.createNonRepeatingAnim(
         anims,
-        "idle-" + campColors[index] + "Circle",
-        campColors[index] + "Circle",
+        "idle-" + title,
+        title,
         1,
         1,
         10
       );
       this.createNonRepeatingAnim(
         anims,
-        "damage-" + campColors[index] + "Circle",
-        campColors[index] + "Circle",
+        "damage-" + title,
+        title,
         1,
         2,
         10
       );
-    }
+    }}
   }
 
   static createAnims(anims) {

@@ -40,7 +40,6 @@ export class GeneratorService {
     for (let index = 0; index < campColors.length; index++) {
       for (let sizeIndex = 0; sizeIndex < circleSizeNames.length; sizeIndex++) {
         let title = campColors[index] + circleSizeNames[sizeIndex] + "Circle";
-        console.log()
         new CircleGenerator(campHexColors[index], scene, title, circleSizes[sizeIndex]);
       }
     }

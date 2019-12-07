@@ -1,4 +1,4 @@
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 import { walkableSymbol } from "../../globals/globalSymbols";
 
 export class MapService {

@@ -1,6 +1,6 @@
 import { BaseManagerConfig, BaseService } from "../../base/Base";
 import { Gameplay } from "../../scenes/Gameplay";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 import { SpawnService } from "./SpawnService";
 import { Area } from "../../world/areas/Area";
 import { Tower } from "../../player/towers/Tower";

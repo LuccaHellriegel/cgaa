@@ -2,7 +2,7 @@ import { Populator } from "./Populator";
 import { Building } from "../buildings/Building";
 import EasyStar from "easystarjs";
 import { SpawnService } from "../spawn/SpawnService";
-import { PositionService } from "../../world/PositionService";
+import { PositionService } from "../../base/PositionService";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 
 export class BuildingPopulator extends Populator {

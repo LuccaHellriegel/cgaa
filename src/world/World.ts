@@ -9,7 +9,7 @@ import { Gameplay } from "../scenes/Gameplay";
 export class World {
   private borderWall: Area;
   private walkableMap;
-  private areas: Area[][];
+  private areas: Area[][] = [];
   physicsGroup;
 
   //TODO: listen to building destroyed
