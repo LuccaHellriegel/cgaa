@@ -1,9 +1,9 @@
 import { Player } from "../player/Player";
 import { Movement } from "../player/input/Movement";
 import { AnimationService } from "../graphics/AnimationService";
-import { EnemyManager } from "../enemies/EnemyManager";
+import { Enemies } from "../enemies/Enemies";
 import { GeneratorService } from "../graphics/generators/GeneratorService";
-import { WorldManager } from "../world/WorldManager";
+import { World } from "../world/World";
 import { PointerService } from "../player/input/PointerService";
 import { Collision } from "../collision/Collision";
 import { TowerManager } from "../player/towers/TowerManager";
@@ -14,8 +14,8 @@ import { SpawnManager } from "../enemies/spawn/SpawnManager";
 export class Gameplay extends Phaser.Scene {
   player: Player;
   movement: Movement;
-  enemyManager: EnemyManager;
-  worldManager: WorldManager;
+  enemies: Enemies;
+  world: World;
   pathManager: PathManager;
   spawnManager: SpawnManager;
   towerManager: TowerManager;
@@ -31,11 +31,11 @@ export class Gameplay extends Phaser.Scene {
     GeneratorService.generateTextures(this);
     AnimationService.createAnims(this.anims);
 
-    new WorldManager({ scene: this, type: "worldManager", physicGroupType: "staticGroup" });
+    new World({ scene: this, type: "world", physicGroupType: "staticGroup" });
     new PathManager({ scene: this, type: "pathManager" });
     new TowerManager({ scene: this, type: "towerManager", physicGroupType: "staticGroup" });
     new SpawnManager({ scene: this, type: "spawnManager" });
-    new EnemyManager({ scene: this, type: "enemyManager" });
+    new Enemies({ scene: this, type: "enemies" });
 
     new TowerModus(this);
     new Collision(this);

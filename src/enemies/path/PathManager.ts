@@ -27,7 +27,7 @@ export class PathManager {
 
     validSpawnPositions.forEach(pos => {
       let saveReference = new PathContainer(pos.column, pos.row);
-      this.scene.worldManager.setMapAsGrid(this.easyStar);
+      this.scene.world.setMapAsGrid(this.easyStar);
       this.easyStar.setAcceptableTiles([0]);
       this.easyStar.findPath(
         pos.column,
@@ -49,7 +49,7 @@ export class PathManager {
   }
 
   private calculateBuildingSpecificPaths() {
-    this.scene.worldManager.executeWithAreasThatHaveBuilding((area: Area) => {
+    this.scene.world.executeWithAreasThatHaveBuilding((area: Area) => {
       area.buildings.forEach(building => {
         this.buildingSpecificPaths = this.buildingSpecificPaths.concat(
           this.calculateAllBuildingSpecificPaths(building)

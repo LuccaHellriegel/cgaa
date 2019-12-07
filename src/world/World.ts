@@ -6,7 +6,7 @@ import { campColors } from "../globals/globalColors";
 import { areaSize } from "../globals/globalConfig";
 import { Gameplay } from "../scenes/Gameplay";
 
-export class WorldManager {
+export class World {
   private borderWall: Area;
   private walkableMap;
   private areas: Area[][];

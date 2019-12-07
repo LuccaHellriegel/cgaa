@@ -17,7 +17,7 @@ export abstract class Populator {
   startPopulating() {
     let enemy = this.createEnemy();
     if (enemy != null) {
-      this.scene.enemyManager.enemies.push(enemy);
+      this.scene.enemies.addEnemy(enemy)
       this.enemyCount++;
     }
     if (this.doMoreSpawn()) {

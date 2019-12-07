@@ -62,7 +62,7 @@ export class Area {
     for (let index = 0; index < numberOfRects; index++) {
       if (wallSide === "left" || wallSide === "right") y += 2 * wallPartHalfSize;
 
-      let curRect = new WallPart(this.scene, x, y, this.scene.worldManager.physicsGroup);
+      let curRect = new WallPart(this.scene, x, y, this.scene.world.physicsGroup);
       if (wallSide === "top") {
         this.parts[0][index].updateContent(curRect, "wall");
         x += 2 * wallPartHalfSize;
@@ -140,7 +140,7 @@ export class Area {
       y = result.y;
     }
 
-    let building = new Building(this.scene, x, y, this.scene.worldManager.physicsGroup, this.color);
+    let building = new Building(this.scene, x, y, this.scene.world.physicsGroup, this.color);
     this.addBuildingToParts(building);
     this.buildings.push(building);
   }

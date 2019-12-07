@@ -21,10 +21,10 @@ export class Collision {
 
     this.towers = scene.towerManager.physicsGroup;
 
-    this.enemies = scene.enemyManager.enemyPhysicGroups;
-    this.enemyWeapons = scene.enemyManager.weaponPhysicGroups;
+    this.enemies = scene.enemies.enemyPhysicGroups;
+    this.enemyWeapons = scene.enemies.weaponPhysicGroups;
 
-    this.env = scene.worldManager.physicsGroup;
+    this.env = scene.world.physicsGroup;
 
     this.addCollisionDetection();
   }

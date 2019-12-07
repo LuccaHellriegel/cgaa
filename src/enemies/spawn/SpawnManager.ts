@@ -22,8 +22,8 @@ export class SpawnManager  {
   }
 
   private initBaseArrs() {
-    this.spawnableArrForEnemiesBase = this.scene.worldManager.getCopyOfMap();
-    this.spawnableArrForTowersBase = this.scene.worldManager.getCopyOfMap();
+    this.spawnableArrForEnemiesBase = this.scene.world.getCopyOfMap();
+    this.spawnableArrForTowersBase = this.scene.world.getCopyOfMap();
     SpawnService.updateBuildingSpawnableArr(this.spawnableArrForTowersBase);
   }
 
@@ -80,9 +80,9 @@ export class SpawnManager  {
 
     let relativePos;
     if (isForTower) {
-      relativePos = this.scene.enemyManager.getRelativeEnemyPositionsAndAroundEnemyPositions();
+      relativePos = this.scene.enemies.getRelativeEnemyPositionsAndAroundEnemyPositions();
     } else {
-      relativePos = this.scene.enemyManager.getRelativeEnemyPositions();
+      relativePos = this.scene.enemies.getRelativeEnemyPositions();
     }
 
     relativePos.forEach(pos => {

@@ -9,11 +9,11 @@ import { campColors } from "../globals/globalColors";
 import { EnemyConfig } from "./units/EnemyFactory";
 import { EnemyCircle } from "./units/EnemyCircle";
 
-export class EnemyManager {
+export class Enemies {
   scene: Gameplay;
   enemyPhysicGroups = {};
   weaponPhysicGroups = {};
-  enemies: EnemyCircle[] = [];
+  units: EnemyCircle[] = [];
 
   constructor(config: BaseManagerConfig) {
     BaseService.applyBaseManagerConfig(this, config);
@@ -26,17 +26,21 @@ export class EnemyManager {
     this.spawnUnits();
   }
 
+  addEnemy(enemy){
+    this.units.push(enemy)
+  }
+
   getRelativeEnemyPositions() {
-    return PositionService.getRelativePosOfElements(this.enemies);
+    return PositionService.getRelativePosOfElements(this.units);
   }
 
   getRelativeEnemyPositionsAndAroundEnemyPositions() {
-    return PositionService.getRelativePosOfElementsAndAroundElements(this.enemies, 1, 1);
+    return PositionService.getRelativePosOfElementsAndAroundElements(this.units, 1, 1);
   }
 
   spawnUnits() {
     Player.withChainWeapon(this.scene);
-    this.scene.worldManager.executeWithAreasThatHaveBuilding((area: Area) => {
+    this.scene.world.executeWithAreasThatHaveBuilding((area: Area) => {
       let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
       let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
       let enemyConfig: EnemyConfig = {
