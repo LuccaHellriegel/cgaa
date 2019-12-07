@@ -1,24 +1,19 @@
 import { Populator } from "./Populator";
-import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "../buildings/Building";
 import EasyStar from "easystarjs";
 import { SpawnService } from "../spawn/SpawnService";
-import { EnemyCircle } from "../units/EnemyCircle";
 import { PositionService } from "../../world/PositionService";
+import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 
 export class BuildingPopulator extends Populator {
   easyStar: EasyStar.js;
   building: Building;
   validSpawnPositions: { column: any; row: any }[];
+  enemyConfig: EnemyConfig;
 
-  constructor(
-    scene: Gameplay,
-    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
-    weaponPhysicsGroup: Phaser.Physics.Arcade.Group,
-    building: Building
-  ) {
-    super(scene, enemyPhysicsGroup, weaponPhysicsGroup);
-    this.building = building;
+  constructor(enemyConfig: EnemyConfig, building: Building) {
+    super(enemyConfig.scene);
+    this.enemyConfig = enemyConfig;
 
     let { column, row } = PositionService.realPosToRelativePos(building.x, building.y);
     this.validSpawnPositions = SpawnService.calculateRelativeSpawnPositionsAround(column, row, 3, 1);
@@ -33,28 +28,17 @@ export class BuildingPopulator extends Populator {
     let spawnPosition = this.calculateRandUnitSpawnPosition();
     let { x, y } = PositionService.relativePosToRealPos(spawnPosition.column, spawnPosition.row);
 
-    let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-    let enemy;
+    this.enemyConfig.x = x;
+    this.enemyConfig.y = y;
 
+    let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     if (choseRandWeapon) {
-      enemy = EnemyCircle.withRandWeapon(
-        this.scene,
-        x,
-        y,
-        this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup,
-        this.building.color
-      );
+      this.enemyConfig.weaponType = "rand"
     } else {
-      enemy = EnemyCircle.withChainWeapon(
-        this.scene,
-        x,
-        y,
-        this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup,
-        this.building.color
-      );
+      this.enemyConfig.weaponType = "chain"
     }
+
+    let enemy = EnemyFactory.createEnemy(this.enemyConfig);
 
     enemy.pathContainer = this.scene.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
     enemy.state = "ambush";

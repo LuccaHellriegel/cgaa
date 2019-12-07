@@ -4,8 +4,9 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { PhysicalManager } from "../base/Base";
 import { PositionService } from "../world/PositionService";
-import { campColors } from "../globals/globalColors";
 import { Area } from "../world/areas/Area";
+import { campColors } from "../globals/globalColors";
+import { EnemyConfig } from "./units/EnemyFactory";
 
 export class EnemyManager extends PhysicalManager {
   enemyPhysicGroups = {};
@@ -18,6 +19,7 @@ export class EnemyManager extends PhysicalManager {
       this.enemyPhysicGroups[campColors[index]] = this.scene.physics.add.group();
       this.weaponPhysicGroups[campColors[index]] = this.scene.physics.add.group();
     }
+
     this.spawnUnits();
   }
 
@@ -34,10 +36,19 @@ export class EnemyManager extends PhysicalManager {
     this.scene.worldManager.executeWithAreasThatHaveBuilding((area: Area) => {
       let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
       let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
-
-      new AreaPopulator(this.scene, enemyPhysicGroup, weaponPhysicGroup, area).startPopulating();
+      let enemyConfig: EnemyConfig = {
+        scene: this.scene,
+        color: area.color,
+        size: "Normal",
+        x: 0,
+        y: 0,
+        weaponType: "rand",
+        physicsGroup: enemyPhysicGroup,
+        weaponGroup: weaponPhysicGroup
+      };
+      new AreaPopulator(enemyConfig, area).startPopulating();
       area.buildings.forEach(building => {
-        new BuildingPopulator(this.scene, enemyPhysicGroup, weaponPhysicGroup, building).startPopulating();
+        new BuildingPopulator(enemyConfig, building).startPopulating();
       });
     });
   }

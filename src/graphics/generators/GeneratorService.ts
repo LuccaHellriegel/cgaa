@@ -6,12 +6,13 @@ import { BuildingGenerator } from "./BuildingGenerator";
 import { RectGenerator } from "./base/RectGenerator";
 import { GhostTowerGenerator } from "./GhostTowerGenerator";
 import { campColors, campHexColors } from "../../globals/globalColors";
+import { circleSizeNames } from "../../globals/globalSizes";
+import { circleSizes } from "../../globals/globalSizes";
 
 export class GeneratorService {
   private constructor() {}
 
   static generateTextures(scene) {
-    new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
     new RectGenerator(
       scene,
       0x013220,
@@ -30,13 +31,22 @@ export class GeneratorService {
   private static generateWeapons(scene) {
     new RandWeaponGenerator(0x6495ed, scene);
     new ChainWeaponGenerator(0xff0000, scene);
-    new CircleGenerator(0x6495ed, scene, "bullet", normalCircleRadius/4);
-
+    new CircleGenerator(0x6495ed, scene, "bullet", normalCircleRadius / 4);
   }
 
   private static generateUnits(scene) {
+    new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
+
     for (let index = 0; index < campColors.length; index++) {
-      new CircleGenerator(campHexColors[index], scene, campColors[index] + "Circle", normalCircleRadius);
+      for (let sizeIndex = 0; sizeIndex < circleSizeNames.length; sizeIndex++) {
+        let title = campColors[index] + circleSizeNames[sizeIndex] + "Circle";
+        console.log()
+        new CircleGenerator(campHexColors[index], scene, title, circleSizes[sizeIndex]);
+      }
+    }
+
+    for (let index = 0; index < campColors.length; index++) {
+      new BuildingGenerator(scene, campColors[index] + "Building", campHexColors[index]);
     }
   }
 
@@ -50,9 +60,5 @@ export class GeneratorService {
       2 * wallPartHalfSize,
       2 * wallPartHalfSize
     );
-
-    for (let index = 0; index < campColors.length; index++) {
-      new BuildingGenerator(scene, campColors[index] + "Building", campHexColors[index]);
-    }
   }
 }

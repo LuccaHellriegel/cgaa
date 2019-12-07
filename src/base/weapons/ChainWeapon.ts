@@ -1,6 +1,7 @@
 import { CompositePolygon } from "../../graphics/polygons/CompositePolygon";
 import { Weapon } from "./Weapon";
 import { normalCircleRadius } from "../../globals/globalSizes";
+
 export class ChainWeapon extends Weapon {
   numberOfSmallCircles: number;
   numberOfBiggerCircles: number;
@@ -9,7 +10,7 @@ export class ChainWeapon extends Weapon {
   biggerCirclesRadius: number;
   smallerCirclesRadius: number;
 
-  constructor(scene, x, y, weaponGroup, numberOfSmallCircles, numberOfBiggerCircles, owner) {
+  constructor(scene, x, y, weaponGroup, owner) {
     super(
       scene,
       x,
@@ -25,8 +26,8 @@ export class ChainWeapon extends Weapon {
       owner
     );
 
-    this.numberOfSmallCircles = numberOfSmallCircles;
-    this.numberOfBiggerCircles = numberOfBiggerCircles;
+    this.numberOfSmallCircles = 5;
+    this.numberOfBiggerCircles = 2;
 
     this.x = x;
     this.y = y;

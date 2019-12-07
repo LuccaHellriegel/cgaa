@@ -1,18 +1,12 @@
 import { Gameplay } from "../../scenes/Gameplay";
 
 export abstract class Populator {
-  weaponPhysicsGroup: Phaser.Physics.Arcade.Group;
-  enemyPhysicsGroup: Phaser.Physics.Arcade.Group;
   enemyCount: number = 0;
   scene: Gameplay;
 
   constructor(
     scene: Gameplay,
-    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
-    weaponPhysicsGroup: Phaser.Physics.Arcade.Group
   ) {
-    this.enemyPhysicsGroup = enemyPhysicsGroup;
-    this.weaponPhysicsGroup = weaponPhysicsGroup;
     this.scene = scene;
   }
 

@@ -1,19 +1,15 @@
 import { Populator } from "./Populator";
 import { Area } from "../../world/areas/Area";
-import { Gameplay } from "../../scenes/Gameplay";
-import { EnemyCircle } from "../units/EnemyCircle";
 import { PositionService } from "../../world/PositionService";
+import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 
 export class AreaPopulator extends Populator {
   area: Area;
+  enemyConfig: EnemyConfig;
 
-  constructor(
-    scene: Gameplay,
-    enemyPhysicsGroup: Phaser.Physics.Arcade.Group,
-    weaponPhysicsGroup: Phaser.Physics.Arcade.Group,
-    area: Area
-  ) {
-    super(scene, enemyPhysicsGroup, weaponPhysicsGroup);
+  constructor(enemyConfig: EnemyConfig, area: Area) {
+    super(enemyConfig.scene);
+    this.enemyConfig = enemyConfig;
     this.area = area;
   }
 
@@ -27,28 +23,19 @@ export class AreaPopulator extends Populator {
   createEnemy() {
     let spawnPosition = this.calculateRandUnitSpawnPosition(this.area);
     let { x, y } = PositionService.relativePosToRealPos(spawnPosition.column, spawnPosition.row);
-    let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-    let enemy;
 
+    this.enemyConfig.x = x;
+    this.enemyConfig.y = y;
+
+    let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
     if (choseRandWeapon) {
-      enemy = EnemyCircle.withRandWeapon(
-        this.scene,
-        x,
-        y,
-        this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup,
-        this.area.color
-      );
+      this.enemyConfig.weaponType = "rand";
     } else {
-      enemy = EnemyCircle.withChainWeapon(
-        this.scene,
-        x,
-        y,
-        this.enemyPhysicsGroup,
-        this.weaponPhysicsGroup,
-        this.area.color
-      );
+      this.enemyConfig.weaponType = "chain";
     }
+
+    let enemy = EnemyFactory.createEnemy(this.enemyConfig);
+
     enemy.state = "guard";
     return enemy;
   }

@@ -1,15 +1,10 @@
 import { AreaPosition } from "./AreaPosition";
 import { SpawnService } from "../../enemies/spawn/SpawnService";
-import {
-  wallPartHalfSize,
-  rectBuildingHalfWidth,
-  rectBuildinghalfHeight,
-  rectBuildingInWallParts
-} from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { Building } from "../../enemies/buildings/Building";
 import { AreaService } from "./AreaService";
 import { PositionService } from "../PositionService";
+import { wallPartHalfSize, rectBuildinghalfHeight, rectBuildingHalfWidth, rectBuildingInWallParts } from "../../globals/globalSizes";
 
 export class Area {
   parts: AreaPosition[][] = [];

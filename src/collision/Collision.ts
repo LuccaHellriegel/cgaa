@@ -118,7 +118,7 @@ export class Collision {
     return false;
   }
 
-  private bounceCallback(unit: Circle, obj) {
+  private bounceCallback(unit: EnemyCircle, obj) {
     let x = unit.x;
     let y = unit.y;
     let angle = Phaser.Math.Angle.Between(obj.x, obj.y, x, y);
@@ -129,7 +129,7 @@ export class Collision {
     unit.setPosition(x1, y1);
     unit.setVelocity(0, 0);
 
-    unit.obstacle = obj;
+    unit.barrier = obj;
     unit.state = "obstacle";
   }
 
