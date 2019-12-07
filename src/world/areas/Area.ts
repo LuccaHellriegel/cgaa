@@ -1,7 +1,7 @@
 import { AreaPosition } from "./AreaPosition";
-import { SpawnService } from "../../enemies/spawn/SpawnService";
+import { SpawnService } from "../enemies/spawn/SpawnService";
 import { WallPart } from "./WallPart";
-import { Building } from "../../enemies/buildings/Building";
+import { Building } from "../enemies/buildings/Building";
 import { AreaService } from "./AreaService";
 import { PositionService } from "../../base/PositionService";
 import {

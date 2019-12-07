@@ -1,5 +1,5 @@
 import { wallPartHalfSize } from "../globals/globalSizes";
-import { SpawnService } from "../enemies/spawn/SpawnService";
+import { SpawnService } from "../world/enemies/spawn/SpawnService";
 
 export class PositionService {
   private constructor() {}

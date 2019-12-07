@@ -1,5 +1,5 @@
-import { PlayerHealthBar } from "../player/PlayerHealthBar";
-import { PlayerSoulCounter } from "../player/counters/PlayerSoulCounter";
+import { PlayerHealthBar } from "../world/player/PlayerHealthBar";
+import { PlayerSoulCounter } from "../world/player/counters/PlayerSoulCounter";
 
 export class HUD extends Phaser.Scene {
   playerHealthBar: PlayerHealthBar;

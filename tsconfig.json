@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
+    "outDir": "./tsbuild",
     "allowJs": true,
     "target": "es5",
     "typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
