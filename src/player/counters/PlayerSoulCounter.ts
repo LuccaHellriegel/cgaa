@@ -1,7 +1,7 @@
 import { PlayerCounter } from "./PlayerCounter";
 import { HUD } from "../../scenes/HUD";
 import { Gameplay } from "../../scenes/Gameplay";
-import { SymmetricCrossPolygon } from "../../graphics/polygons/SymmetricCrossPolygon";
+import { SymmetricCrossPolygon } from "../../base/polygons/SymmetricCrossPolygon";
 
 export class PlayerSoulCounter extends PlayerCounter {
   constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y) {

@@ -4,7 +4,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { HealthBar } from "../../base/HealthBar";
 import { ChainWeapon } from "../../base/weapons/ChainWeapon";
 import { RandWeapon } from "../../base/weapons/RandWeapon";
-import { CirclePolygon } from "../../graphics/polygons/CirclePolygon";
+import { CirclePolygon } from "../../base/polygons/CirclePolygon";
 import { normalCircleRadius } from "../../globals/globalSizes";
 
 const healthBarConfigs = {

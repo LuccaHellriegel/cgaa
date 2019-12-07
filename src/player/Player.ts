@@ -2,7 +2,7 @@ import { Circle } from "../base/Circle";
 import { playerStartX, playerStartY, playerTextureName } from "../globals/globalConfig";
 import { ChainWeapon } from "../base/weapons/ChainWeapon";
 import { normalCircleRadius } from "../globals/globalSizes";
-import { CirclePolygon } from "../graphics/polygons/CirclePolygon";
+import { CirclePolygon } from "../base/polygons/CirclePolygon";
 export class Player extends Circle {
   constructor(scene, physicsGroup, weapon) {
     let polygon = new CirclePolygon(playerStartX, playerStartY, normalCircleRadius);

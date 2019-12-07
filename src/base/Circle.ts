@@ -1,6 +1,6 @@
 import { SpriteWithAnimEvents, BasePhaser } from "./BasePhaser";
 import { Weapon } from "./weapons/Weapon";
-import { CirclePolygon } from "../graphics/polygons/CirclePolygon";
+import { CirclePolygon } from "./polygons/CirclePolygon";
 
 export interface CircleWithWeapon extends BasePhaser {
   weapon : Weapon,

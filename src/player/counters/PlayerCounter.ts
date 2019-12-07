@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { HUD } from "../../scenes/HUD";
-import { Polygon } from "../../graphics/polygons/Polygon";
+import { Polygon } from "../../base/polygons/Polygon";
 
 export class PlayerCounter {
   value: any;

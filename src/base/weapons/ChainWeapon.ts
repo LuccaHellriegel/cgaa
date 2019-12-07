@@ -1,4 +1,4 @@
-import { CompositePolygon } from "../../graphics/polygons/CompositePolygon";
+import { CompositePolygon } from "../polygons/CompositePolygon";
 import { Weapon } from "./Weapon";
 import { normalCircleRadius } from "../../globals/globalSizes";
 

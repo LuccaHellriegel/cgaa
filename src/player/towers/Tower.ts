@@ -1,7 +1,7 @@
 import { Image } from "../../base/BasePhaser";
 import { HealthBar } from "../../base/HealthBar";
 import { Damageable } from "../../base/Damageable";
-import { RectPolygon } from "../../graphics/polygons/RectPolygon";
+import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { towerHalfSize, wallPartHalfSize } from "../../globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { BaseService } from "../../base/Base";
