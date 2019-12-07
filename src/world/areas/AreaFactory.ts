@@ -40,7 +40,6 @@ export class AreaFactory {
 
       newArea.buildWalls();
 
-      //buildings need to be place before holes, otherwise wrong positioning
       newArea.buildBuildings(numbOfBuildings);
 
       newArea.makeExits(exits);

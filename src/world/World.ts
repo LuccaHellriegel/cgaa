@@ -47,19 +47,21 @@ export class World {
     }
   }
 
-  private createRowOfAreas(startingTopLeftX, startingTopLeftY, rightStepValue, isEmptyArr) {
+  private createRowOfAreas(startingTopLeftX, startingTopLeftY, rightStepValue, variableConfig) {
     let row: Area[] = [];
     this.areaConfig.topLeftX = startingTopLeftX;
     this.areaConfig.topLeftY = startingTopLeftY;
     let stepCount = 0;
-    isEmptyArr.forEach(isEmpty => {
-      if (isEmpty) this.toggleAreaType();
-      if (!isEmpty) {
+    variableConfig.forEach(config => {
+      this.areaConfig.exits = config.exits;
+
+      if (config.isEmpty) this.toggleAreaType();
+      if (!config.isEmpty) {
         this.areaConfig.color = campColors[this.colorIndices.pop()];
       }
       this.areaConfig.topLeftX = startingTopLeftX + stepCount * rightStepValue;
       row.push(AreaFactory.createArea(this.areaConfig));
-      if (isEmpty) this.toggleAreaType();
+      if (config.isEmpty) this.toggleAreaType();
       stepCount++;
     });
     this.areas.push(row);
@@ -74,16 +76,28 @@ export class World {
       topLeftY: 0,
       unitForPart: 2 * wallPartHalfSize,
       type: "camp",
-      exits: [{position: 6, wallSide: "right", width: 3}],
+      exits: [{ position: 6, wallSide: "right", width: 3 }],
       numbOfBuildings: 2,
       scene: this.scene
     };
 
     let rightStepValue = areaSize * 2 * wallPartHalfSize;
 
-    this.createRowOfAreas(0, 0, rightStepValue, [false, true, false]);
-    this.createRowOfAreas(0, rightStepValue, rightStepValue, [true, true, true]);
-    this.createRowOfAreas(0, 2 * rightStepValue, rightStepValue, [false, true, false]);
+    this.createRowOfAreas(0, 0, rightStepValue, [
+      { isEmpty: false, exits: [{ position: 6, wallSide: "right", width: 3 }] },
+      { isEmpty: true, exits: [] },
+      { isEmpty: false, exits: [{ position: 6, wallSide: "left", width: 3 }] }
+    ]);
+    this.createRowOfAreas(0, rightStepValue, rightStepValue, [
+      { isEmpty: true, exits: [] },
+      { isEmpty: true, exits: [] },
+      { isEmpty: true, exits: [] }
+    ]);
+    this.createRowOfAreas(0, 2 * rightStepValue, rightStepValue, [
+      { isEmpty: false, exits: [{ position: 6, wallSide: "right", width: 3 }] },
+      { isEmpty: true, exits: [] },
+      { isEmpty: false, exits: [{ position: 6, wallSide: "left", width: 3 }] }
+    ]);
 
     this.areaConfig.topLeftX = -2 * wallPartHalfSize;
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;

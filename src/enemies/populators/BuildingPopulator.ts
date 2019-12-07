@@ -26,23 +26,26 @@ export class BuildingPopulator extends Populator {
 
   createEnemy() {
     let spawnPosition = this.calculateRandUnitSpawnPosition();
-    let { x, y } = PositionService.relativePosToRealPos(spawnPosition.column, spawnPosition.row);
+    if (spawnPosition) {
+      let { x, y } = PositionService.relativePosToRealPos(spawnPosition.column, spawnPosition.row);
 
-    this.enemyConfig.x = x;
-    this.enemyConfig.y = y;
+      this.enemyConfig.x = x;
+      this.enemyConfig.y = y;
 
-    let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-    if (choseRandWeapon) {
-      this.enemyConfig.weaponType = "rand"
-    } else {
-      this.enemyConfig.weaponType = "chain"
+      let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
+      if (choseRandWeapon) {
+        this.enemyConfig.weaponType = "rand";
+      } else {
+        this.enemyConfig.weaponType = "chain";
+      }
+
+      let enemy = EnemyFactory.createEnemy(this.enemyConfig);
+
+      enemy.pathContainer = this.scene.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
+      enemy.state = "ambush";
+      return enemy;
     }
-
-    let enemy = EnemyFactory.createEnemy(this.enemyConfig);
-
-    enemy.pathContainer = this.scene.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
-    enemy.state = "ambush";
-    return enemy;
+    return null;
   }
 
   doMoreSpawn() {
