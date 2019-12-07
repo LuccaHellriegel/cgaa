@@ -5,9 +5,9 @@ import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { BaseService, BaseManagerConfig } from "../../base/Base";
 import { PositionService } from "../../base/PositionService";
 import { Area } from "../areas/Area";
-import { campColors } from "../../globals/globalColors";
 import { EnemyConfig } from "./units/EnemyFactory";
 import { EnemyCircle } from "./units/EnemyCircle";
+import { executeOverAllCamps } from "../../globals/global";
 
 export class Enemies {
   scene: Gameplay;
@@ -18,10 +18,10 @@ export class Enemies {
   constructor(config: BaseManagerConfig) {
     BaseService.applyBaseManagerConfig(this, config);
 
-    for (let index = 0; index < campColors.length; index++) {
-      this.enemyPhysicGroups[campColors[index]] = this.scene.physics.add.group();
-      this.weaponPhysicGroups[campColors[index]] = this.scene.physics.add.group();
-    }
+    executeOverAllCamps((color) => {
+      this.enemyPhysicGroups[color] = this.scene.physics.add.group();
+      this.weaponPhysicGroups[color] = this.scene.physics.add.group();
+    })
 
     this.spawnUnits();
   }

@@ -5,9 +5,9 @@ import { ChainWeaponGenerator } from "./base/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./BuildingGenerator";
 import { RectGenerator } from "./base/RectGenerator";
 import { GhostTowerGenerator } from "./GhostTowerGenerator";
-import { campColors, campHexColors } from "../../globals/globalColors";
-import { circleSizeNames } from "../../globals/globalSizes";
+import { campHexColors } from "../../globals/globalColors";
 import { circleSizes } from "../../globals/globalSizes";
+import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../../globals/global";
 
 export class GeneratorService {
   private constructor() {}
@@ -37,16 +37,14 @@ export class GeneratorService {
   private static generateUnits(scene) {
     new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
 
-    for (let index = 0; index < campColors.length; index++) {
-      for (let sizeIndex = 0; sizeIndex < circleSizeNames.length; sizeIndex++) {
-        let title = campColors[index] + circleSizeNames[sizeIndex] + "Circle";
-        new CircleGenerator(campHexColors[index], scene, title, circleSizes[sizeIndex]);
-      }
-    }
+    executeOverAllCampsAndSizes((color, colorIndex, sizeName, sizeNameIndex) => {
+      let title = color + sizeName + "Circle";
+      new CircleGenerator(campHexColors[colorIndex], scene, title, circleSizes[sizeNameIndex]);
+    });
 
-    for (let index = 0; index < campColors.length; index++) {
-      new BuildingGenerator(scene, campColors[index] + "Building", campHexColors[index]);
-    }
+    executeOverAllCamps((color, colorIndex) => {
+      new BuildingGenerator(scene, color + "Building", campHexColors[colorIndex]);
+    });
   }
 
   private static generateEnvironment(scene) {

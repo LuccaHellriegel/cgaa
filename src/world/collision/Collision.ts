@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../../base/weapons/Weapon";
-import { campColors } from "../../globals/globalColors";
 import { EnemyCircle } from "../enemies/units/EnemyCircle";
+import { executeOverAllCamps } from "../../globals/global";
 
 export class Collision {
   player: Phaser.Physics.Arcade.Group;
@@ -51,12 +51,6 @@ export class Collision {
     this.scene.physics.add.collider(first, second, actualCallback, truthyCallback, this);
   }
 
-  private executeOverAllCamps(func) {
-    for (let index = 0; index < campColors.length; index++) {
-      func(campColors[index]);
-    }
-  }
-
   private addCombatCollision() {
     let func = color => {
       this.addWeaponOverlap(this.playerWeapon, this.enemies[color]);
@@ -65,9 +59,9 @@ export class Collision {
       let secondFunc = secondColor => {
         if (secondColor !== color) this.addWeaponOverlap(this.enemyWeapons[color], this.enemies[secondColor]);
       };
-      this.executeOverAllCamps(secondFunc);
+      executeOverAllCamps(secondFunc);
     };
-    this.executeOverAllCamps(func);
+    executeOverAllCamps(func);
   }
 
   private addUnitCollision() {
@@ -80,9 +74,9 @@ export class Collision {
       let secondFunc = secondColor => {
         if (secondColor !== color) this.addBounceCollider(this.enemies[color], this.enemies[secondColor]);
       };
-      this.executeOverAllCamps(secondFunc);
+      executeOverAllCamps(secondFunc);
     };
-    this.executeOverAllCamps(func);
+    executeOverAllCamps(func);
   }
 
   private doDamage(weapon, enemy) {
@@ -139,7 +133,7 @@ export class Collision {
       this.addBounceCollider(this.enemies[color], this.env);
     };
 
-    this.executeOverAllCamps(func);
+    executeOverAllCamps(func);
   }
 
   private addBulletCollision() {
@@ -155,6 +149,6 @@ export class Collision {
       this.addCollider(this.scene.towerManager.bulletGroup, this.enemies[color], this.doDamageBullet, () => true);
     };
 
-    this.executeOverAllCamps(func);
+    executeOverAllCamps(func);
   }
 }
