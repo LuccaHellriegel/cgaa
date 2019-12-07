@@ -40,10 +40,10 @@ export class World {
   }
 
   private toggleAreaType() {
-    if (this.areaConfig.type === AreaType.camp) {
-      this.areaConfig.type = AreaType.empty;
+    if (this.areaConfig.type === "camp") {
+      this.areaConfig.type = "empty";
     } else {
-      this.areaConfig.type = AreaType.camp;
+      this.areaConfig.type = "camp";
     }
   }
 
@@ -73,8 +73,8 @@ export class World {
       topLeftX: 0,
       topLeftY: 0,
       unitForPart: 2 * wallPartHalfSize,
-      type: AreaType.camp,
-      holePosition: 8,
+      type: "camp",
+      exits: [{position: 6, wallSide: "right", width: 3}],
       numbOfBuildings: 2,
       scene: this.scene
     };
@@ -89,7 +89,7 @@ export class World {
     this.areaConfig.topLeftY = -2 * wallPartHalfSize;
     this.areaConfig.sizeOfXAxis = 2 + 3 * areaSize;
     this.areaConfig.sizeOfYAxis = 2 + 3 * areaSize;
-    this.areaConfig.holePosition = 0;
+    this.areaConfig.exits = [];
     this.areaConfig.numbOfBuildings = 0;
     this.borderWall = AreaFactory.createArea(this.areaConfig);
   }
