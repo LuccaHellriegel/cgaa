@@ -104,20 +104,24 @@ export class Collision {
 
 	private doDamage(weapon, enemy) {
 		weapon.alreadyAttacked.push(enemy.id);
-		if (weapon.owner.unitType === "player") this.scene.events.emit("damage-by-player", weapon.amount);
+		this.scene.events.emit("damage-" + enemy.unitType, weapon.amount);
+		if (weapon.owner.unitType === "player") {
+			this.scene.events.emit("damage-by-player", weapon.amount);
+		}
 
 		enemy.damage(weapon.amount);
 		enemy.spotted = weapon.owner;
 		enemy.state = "guard";
 	}
 
-	private doDamageBullet(weapon, enemy) {
-		enemy.damage(weapon.amount);
-		this.scene.events.emit("damage-by-player", weapon.amount);
+	private doDamageBullet(bullet, enemy) {
+		enemy.damage(bullet.amount);
+		this.scene.events.emit("damage-by-player", bullet.amount);
 		if (enemy.state !== "ambush") {
-			enemy.spotted = weapon.owner;
+			enemy.spotted = bullet.owner;
 			enemy.state = "guard";
 		}
+		bullet.reset();
 	}
 
 	private isInSight(weapon: Weapon, enemy) {

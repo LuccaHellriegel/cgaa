@@ -1,35 +1,46 @@
 import { Sprite } from "../../base/classes/BasePhaser";
 import { normalCircleRadius } from "../../../globals/globalSizes";
+import { Tower } from "./Tower";
 
 export class Bullet extends Sprite {
+	owner: Tower;
 	goalX: number;
 	goalY: number;
-	atTarget: boolean;
 	amount: number;
 
-	constructor(scene, x, y, bulletGroup, goalX, goalY) {
-		super({ scene, x, y, texture: "bullet", physicsGroup: bulletGroup });
+	constructor(scene, bulletGroup, owner) {
+		super({ scene, x: owner.x, y: owner.y, texture: "bullet", physicsGroup: bulletGroup });
 		this.setCircle(normalCircleRadius / 4);
+		this.owner = owner;
+		this.reset();
+		this.amount = 20;
+	}
+
+	reset() {
+		this.setActive(false);
+		this.setVisible(false);
+		this.x = this.owner.x;
+		this.y = this.owner.y;
+		this.goalX = undefined;
+		this.goalY = undefined;
+		this.owner.bulletPool.push(this);
+	}
+
+	shoot(goalX, goalY) {
+		this.setActive(true);
+		this.setVisible(true);
 		this.goalX = goalX;
 		this.goalY = goalY;
-		this.atTarget = false;
-		this.amount = 20;
 	}
 
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
-		if (!this.atTarget) {
+		if (this.goalX) {
 			let dist = Phaser.Math.Distance.Between(this.x, this.y, this.goalX, this.goalY);
 			if (dist > normalCircleRadius) {
 				this.scene.physics.moveTo(this, this.goalX, this.goalY, 160);
 			} else {
-				this.atTarget = true;
-				this.scene.time.addEvent({
-					delay: 100,
-					callback: this.destroy,
-					callbackScope: this,
-					repeat: 0
-				});
+				this.reset();
 			}
 		}
 	}

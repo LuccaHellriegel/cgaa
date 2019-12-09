@@ -12,6 +12,9 @@ export class Tower extends Image implements damageable {
 	polygon: RectPolygon;
 	sightElement: Image;
 	bulletGroup: any;
+	bullets: Bullet[] = [];
+	bulletPool: Bullet[] = [];
+	canFire = true;
 
 	constructor(scene, x, y, physicsGroup, sightGroup, bulletGroup) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
@@ -36,15 +39,19 @@ export class Tower extends Image implements damageable {
 			value: 100
 		});
 
-		//TODO: bullet firing as events with delay!
 		//TODO: only one target at a time
 		//TODO: just make camps offlimit for towers in general
-		//TODO: sometimes I cant pace any tower and no error
+		//TODO: sometimes I cant place any tower and no error
 		this.bulletGroup = bulletGroup;
 		this.sightElement = new Image({ scene, x: this.x, y: this.y, texture: "", physicsGroup: sightGroup });
 		this.sightElement.setVisible(false);
 		this.sightElement.owner = this;
 		this.sightElement.setSize(12 * wallPartHalfSize, 12 * wallPartHalfSize);
+
+		for (let index = 0; index < 10; index++) {
+			let bullet = new Bullet(scene, bulletGroup, this);
+			this.bullets.push(bullet);
+		}
 	}
 
 	damage(amount: number) {
@@ -54,7 +61,20 @@ export class Tower extends Image implements damageable {
 	}
 
 	fire(target) {
-		new Bullet(this.scene, this.x, this.y, this.bulletGroup, target.x, target.y);
+		if (this.bulletPool.length && this.canFire) {
+			let bullet = this.bulletPool.pop();
+			bullet.shoot(target.x, target.y);
+			this.canFire = false;
+			if (this.scene)
+				this.scene.time.addEvent({
+					delay: 300,
+					callback: () => {
+						this.canFire = true;
+					},
+					callbackScope: this,
+					repeat: 0
+				});
+		}
 	}
 
 	syncPolygon() {
@@ -64,5 +84,6 @@ export class Tower extends Image implements damageable {
 	destroy() {
 		super.destroy();
 		this.healthbar.destroy();
+		this.bullets.forEach(bullet => bullet.destroy());
 	}
 }
