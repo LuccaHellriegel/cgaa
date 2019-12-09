@@ -1,6 +1,6 @@
-import { HealthBar } from "./HealthBar";
+import { HealthBar } from "./classes/HealthBar";
 
-export interface Damageable {
+export interface damageable {
   syncPolygon();
   polygon;
   damage(amount: number);
