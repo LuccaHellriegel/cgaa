@@ -5,6 +5,7 @@ import { getRelativePosOfElementsAndAroundElements } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
 import { TowerModus } from "../input/TowerModus";
 import { SpawnManager } from "../../enemies/spawn/SpawnManager";
+import { towerCost } from "../../../globals/globalConfig";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
@@ -14,10 +15,18 @@ export class TowerManager {
 	towers: Tower[] = [];
 	towerModus: TowerModus;
 	spawnManager: SpawnManager;
+	canBuild = false;
 
-	constructor(scene, towerGroup, sightGroup, bulletGroup, towerModus, spawnManager) {
+	constructor(scene: Gameplay, towerGroup, sightGroup, bulletGroup, towerModus, spawnManager) {
 		this.scene = scene;
 
+		scene.events.on("can-build", () => {
+			this.canBuild = true;
+		});
+
+		scene.events.on("can-not-build", () => {
+			this.canBuild = false;
+		});
 		this.spawnManager = spawnManager;
 
 		this.towerModus = towerModus;
@@ -37,6 +46,10 @@ export class TowerManager {
 	}
 
 	spawnNewTower(x, y) {
+		if (!this.canBuild) {
+			this.playInvalidTowerPosAnim();
+			return;
+		}
 		if (!(x < 0 || y < 0)) {
 			let { closestTower, dist } = findClosestTower(this.towers, x, y);
 			if (dist < 3.5 * towerHalfSize) {
@@ -54,6 +67,8 @@ export class TowerManager {
 			if (this.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
 				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
 				this.scene.events.emit("added-tower", tower);
+				this.scene.events.emit("souls-spent", towerCost);
+
 				this.towers.push(tower);
 			} else {
 				this.playInvalidTowerPosAnim();
