@@ -10,7 +10,7 @@ import { Exit } from "./AreaFactory";
 import { WallPart } from "./WallPart";
 import { relativePosToRealPos } from "../base/position";
 import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "../enemies/spawn/spawn";
-import { createWalkableArr } from "../base/map";
+import { createBuildingSpawnableArr } from "../base/map";
 
 export class Area {
 	parts: AreaPosition[][] = [];
@@ -38,7 +38,6 @@ export class Area {
 				this.parts[row].push(new AreaPosition(null));
 			}
 		}
-
 		this.physicsGroup = physicsGroup;
 
 		this.sizeOfXAxis = sizeOfXAxis;
@@ -63,22 +62,22 @@ export class Area {
 		switch (exit.wallSide) {
 			case "top":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[0][exit.position + index].deleteContent();
+					this.parts[0][exit.position + index].setAsExit();
 				}
 				break;
 			case "bottom":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[this.sizeOfYAxis - 1][exit.position + index].deleteContent();
+					this.parts[this.sizeOfYAxis - 1][exit.position + index].setAsExit();
 				}
 				break;
 			case "left":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[exit.position + index][0].deleteContent();
+					this.parts[exit.position + index][0].setAsExit();
 				}
 				break;
 			case "right":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[exit.position + index][this.sizeOfXAxis - 1].deleteContent();
+					this.parts[exit.position + index][this.sizeOfXAxis - 1].setAsExit();
 				}
 				break;
 		}
@@ -133,7 +132,7 @@ export class Area {
 	}
 
 	private calculateBuildingSpawnableArrForArea(parts) {
-		let spawnableArr = createWalkableArr(parts);
+		let spawnableArr = createBuildingSpawnableArr(parts);
 		updateBuildingSpawnableArr(spawnableArr);
 		return spawnableArr;
 	}

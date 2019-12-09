@@ -1,20 +1,25 @@
 import { EnemyCircle } from "./units/EnemyCircle";
 import { getRelativePosOfElements, getRelativePosOfElementsAndAroundElements } from "../base/position";
 import { Area } from "../areas/Area";
-import { EnemyConfig } from "./units/EnemyFactory";
-import { AreaPopulator } from "./populators/AreaPopulator";
-import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { Areas } from "../areas/Areas";
+import { Camp } from "./Camp";
 
 export class Enemies {
 	enemyPhysicGroups = {};
 	weaponPhysicGroups = {};
 	units: EnemyCircle[] = [];
+	camps: Camp[] = [];
 
-	constructor(scene, enemyPhysicGroups, weaponPhysicGroups) {
+	constructor(scene, areas: Areas, spawnManager, pathManager, enemyPhysicGroups, weaponPhysicGroups) {
 		this.enemyPhysicGroups = enemyPhysicGroups;
 		this.weaponPhysicGroups = weaponPhysicGroups;
 		this.setupEventListeners(scene);
+		let areasForBuildings = areas.getAreaForBuildings();
+		areasForBuildings.forEach((area: Area) => {
+			let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
+			let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
+			this.camps.push(new Camp(scene, area, spawnManager, pathManager, enemyPhysicGroup, weaponPhysicGroup));
+		});
 	}
 
 	private setupEventListeners(scene) {
@@ -31,26 +36,7 @@ export class Enemies {
 		return getRelativePosOfElementsAndAroundElements(this.units, 1, 1);
 	}
 
-	spawnUnits(scene, areas: Areas, spawnManager, pathManager) {
-		let areasWithBuildings = areas.getAreaWithBuildings();
-		areasWithBuildings.forEach((area: Area) => {
-			let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
-			let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
-			//TODO: is a share config, wtf?
-			let enemyConfig: EnemyConfig = {
-				scene,
-				color: area.color,
-				size: "Big",
-				x: 0,
-				y: 0,
-				weaponType: "rand",
-				physicsGroup: enemyPhysicGroup,
-				weaponGroup: weaponPhysicGroup
-			};
-			new AreaPopulator(enemyConfig, area, spawnManager).startPopulating();
-			area.buildings.forEach(building => {
-				new BuildingPopulator(enemyConfig, building, spawnManager, pathManager).startPopulating();
-			});
-		});
+	spawnUnits() {
+		this.camps.forEach(camp => camp.spawnUnits());
 	}
 }

@@ -127,7 +127,7 @@ export class EnemyCircle extends Circle implements damageable {
 
 	private moveTo(target) {
 		let reachDist = this.weapon.polygonArr[this.weapon.polygonArr.length - 1].height;
-		let inReach = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) < reachDist;
+		let inReach = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) - 15 < reachDist;
 		if (!inReach) {
 			this.scene.physics.moveToObject(this, target, 160);
 		} else {

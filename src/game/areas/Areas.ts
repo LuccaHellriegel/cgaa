@@ -75,7 +75,6 @@ export class Areas {
 			unitForPart: 2 * wallPartHalfSize,
 			type: "camp",
 			exits: [{ position: 6, wallSide: "right", width: 3 }],
-			numbOfBuildings: 2,
 			scene: this.scene,
 			physicsGroup: this.physicsGroup
 		};
@@ -103,7 +102,6 @@ export class Areas {
 		this.areaConfig.sizeOfXAxis = 2 + 3 * areaSize;
 		this.areaConfig.sizeOfYAxis = 2 + 3 * areaSize;
 		this.areaConfig.exits = [];
-		this.areaConfig.numbOfBuildings = 0;
 		this.borderWall = AreaFactory.createArea(this.areaConfig);
 	}
 	private rowOfAreaToWalkableRow(rowOfArea) {
@@ -137,16 +135,8 @@ export class Areas {
 		return map;
 	}
 
-	getAreaWithBuildings() {
-		let areas: Area[] = [];
-		this.areas.forEach(areaRow => {
-			areaRow.forEach(area => {
-				if (area.buildings[0]) {
-					areas.push(area);
-				}
-			});
-		});
-		return areas;
+	getAreaForBuildings() {
+		return [this.areas[0][0], this.areas[0][2], this.areas[2][0], this.areas[2][2]];
 	}
 
 	getBuildings() {

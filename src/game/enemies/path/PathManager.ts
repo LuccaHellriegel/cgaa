@@ -1,6 +1,5 @@
 import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
-import { Area } from "../../areas/Area";
 import { realPosToRelativePos } from "../../base/position";
 import { calculateRelativeSpawnPositionsAround } from "../spawn/spawn";
 import { Areas } from "../../areas/Areas";
@@ -47,7 +46,7 @@ export class PathManager {
 		return containers;
 	}
 
-	private calculateBuildingSpecificPaths() {
+	calculateBuildingSpecificPaths() {
 		let buildings = this.areas.getBuildings();
 		buildings.forEach(building => {
 			this.buildingSpecificPaths = this.buildingSpecificPaths.concat(this.calculateAllBuildingSpecificPaths(building));

@@ -15,7 +15,7 @@ export class BuildingPopulator extends Populator {
 	spawnManager: SpawnManager;
 	pathManager: PathManager;
 
-	constructor(enemyConfig: EnemyConfig, building: Building, spawnManager, pathManager) {
+	constructor(enemyConfig: EnemyConfig, building: Building, spawnManager: SpawnManager, pathManager: PathManager) {
 		super(enemyConfig.scene, spawnManager);
 		this.pathManager = pathManager;
 		this.enemyConfig = enemyConfig;

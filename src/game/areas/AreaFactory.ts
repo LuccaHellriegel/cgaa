@@ -13,7 +13,6 @@ export interface AreaConfig {
 	unitForPart: number;
 	type: AreaType;
 	exits: Exit[];
-	numbOfBuildings: number;
 	scene: Phaser.Scene;
 	physicsGroup: Phaser.Physics.Arcade.StaticGroup;
 }
@@ -31,7 +30,6 @@ export class AreaFactory {
 			unitForPart,
 			type,
 			exits,
-			numbOfBuildings,
 			scene,
 			physicsGroup
 		} = areaConfig;
@@ -41,9 +39,6 @@ export class AreaFactory {
 			newArea.scene = scene;
 
 			newArea.buildWalls();
-
-			newArea.buildBuildings(numbOfBuildings);
-
 			newArea.makeExits(exits);
 		}
 

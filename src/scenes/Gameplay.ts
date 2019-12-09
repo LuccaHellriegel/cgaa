@@ -37,9 +37,17 @@ export class Gameplay extends Phaser.Scene {
 
 		let pathManager = new PathManager(areas);
 		let spawnManager = new SpawnManager(this, areas.getWalkableMap());
-		let enemies = new Enemies(this, physicsGroups.enemies, physicsGroups.enemyWeapons);
+		let enemies = new Enemies(
+			this,
+			areas,
+			spawnManager,
+			pathManager,
+			physicsGroups.enemies,
+			physicsGroups.enemyWeapons
+		);
 		spawnManager.setEnemies(enemies);
-		enemies.spawnUnits(this, areas, spawnManager, pathManager);
+		pathManager.calculateBuildingSpecificPaths();
+		enemies.spawnUnits();
 
 		let towerModus = new TowerModus(this);
 		let towerManager = new TowerManager(
