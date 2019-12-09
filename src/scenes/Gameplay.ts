@@ -1,49 +1,63 @@
-import { Player } from "../world/player/Player";
-import { Movement } from "../world/player/input/Movement";
-import { Enemies } from "../world/enemies/Enemies";
-import { World } from "../world/World";
-import { Collision } from "../world/collision/Collision";
-import { TowerManager } from "../world/player/towers/TowerManager";
-import { TowerModus } from "../world/player/input/TowerModus";
-import { PathManager } from "../world/enemies/path/PathManager";
-import { SpawnManager } from "../world/enemies/spawn/SpawnManager";
 import { createAnims } from "../graphics/animation";
 import { generateTextures } from "../graphics/textures";
-import { setupPointerEvents } from "../world/player/input/mouse";
+import { Movement } from "../game/player/input/Movement";
+import { Collision } from "../game/collision/Collision";
+import { Areas } from "../game/areas/Areas";
+import { wallPartHalfSize } from "../globals/globalSizes";
+import { PathManager } from "../game/enemies/path/PathManager";
+import { SpawnManager } from "../game/enemies/spawn/SpawnManager";
+import { Enemies } from "../game/enemies/Enemies";
+import { TowerModus } from "../game/player/input/TowerModus";
+import { TowerManager } from "../game/player/towers/TowerManager";
+import { Player } from "../game/player/Player";
+import { setupPointerEvents } from "../game/player/input/mouse";
 
 export class Gameplay extends Phaser.Scene {
-  player: Player;
-  movement: Movement;
-  enemies: Enemies;
-  world: World;
-  pathManager: PathManager;
-  spawnManager: SpawnManager;
-  towerManager: TowerManager;
-  towerModus: TowerModus;
+	movement: Movement;
 
-  constructor() {
-    super("Gameplay");
-  }
+	constructor() {
+		super("Gameplay");
+	}
 
-  preload() {}
+	preload() {}
 
-  create() {
-    generateTextures(this);
-    createAnims(this.anims);
+	create() {
+		generateTextures(this);
+		createAnims(this.anims);
 
-    new World({ scene: this, type: "world", physicGroupType: "staticGroup" });
-    new PathManager({ scene: this, type: "pathManager" });
-    new TowerManager({ scene: this, type: "towerManager", physicGroupType: "staticGroup" });
-    new SpawnManager({ scene: this, type: "spawnManager" });
-    new Enemies({ scene: this, type: "enemies" });
+		let physicsGroups = new Collision(this).getPhysicGroups();
 
-    new TowerModus(this);
-    new Collision(this);
-    new Movement(this);
-    setupPointerEvents(this);
-  }
+		let areas = new Areas(this, physicsGroups.areas);
+		this.physics.world.setBounds(
+			0,
+			0,
+			areas.borderWall.width - 4 * wallPartHalfSize,
+			areas.borderWall.width - 4 * wallPartHalfSize
+		);
 
-  update() {
-    this.movement.update();
-  }
+		let pathManager = new PathManager(areas);
+		let spawnManager = new SpawnManager(this, areas.getWalkableMap());
+		let enemies = new Enemies(this, physicsGroups.enemies, physicsGroups.enemyWeapons);
+		spawnManager.setEnemies(enemies);
+		enemies.spawnUnits(this, areas, spawnManager, pathManager);
+
+		let towerModus = new TowerModus(this);
+		let towerManager = new TowerManager(
+			this,
+			physicsGroups.towers,
+			physicsGroups.towerSightGroup,
+			physicsGroups.towerBulletGroup,
+			towerModus,
+			spawnManager
+		);
+
+		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
+		this.cameras.main.startFollow(player);
+		setupPointerEvents(this, player, towerModus, towerManager);
+		this.movement = new Movement(this, player);
+	}
+
+	update() {
+		this.movement.update();
+	}
 }

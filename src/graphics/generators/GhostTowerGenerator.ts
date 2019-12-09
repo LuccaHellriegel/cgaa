@@ -1,5 +1,5 @@
 import { Generator } from "./Generator";
-import { RectPolygon } from "../../world/base/polygons/RectPolygon";
+import { RectPolygon } from "../../game/base/polygons/RectPolygon";
 import { Gameplay } from "../../scenes/Gameplay";
 import { towerHalfSize } from "../../globals/globalSizes";
 
