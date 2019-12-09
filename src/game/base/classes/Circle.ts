@@ -57,7 +57,6 @@ export class Circle extends SpriteWithAnimEvents {
 
 	damage(amount) {
 		this.anims.play("damage-" + this.texture.key);
-		this.scene.events.emit("damage-" + this.unitType, amount);
 	}
 
 	syncPolygon() {

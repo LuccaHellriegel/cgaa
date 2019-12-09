@@ -14,7 +14,7 @@ export class PlayerSoulCounter extends PlayerCounter {
 			x - 17,
 			y - 12,
 			0,
-			"damage-circle",
+			"damage-by-player",
 			"souls-spent",
 			"never",
 			playerSoulCountGraphic

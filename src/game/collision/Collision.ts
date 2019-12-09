@@ -104,6 +104,8 @@ export class Collision {
 
 	private doDamage(weapon, enemy) {
 		weapon.alreadyAttacked.push(enemy.id);
+		if (weapon.owner.unitType === "player") this.scene.events.emit("damage-by-player", weapon.amount);
+
 		enemy.damage(weapon.amount);
 		enemy.spotted = weapon.owner;
 		enemy.state = "guard";
@@ -111,6 +113,7 @@ export class Collision {
 
 	private doDamageBullet(weapon, enemy) {
 		enemy.damage(weapon.amount);
+		this.scene.events.emit("damage-by-player", weapon.amount);
 		if (enemy.state !== "ambush") {
 			enemy.spotted = weapon.owner;
 			enemy.state = "guard";
