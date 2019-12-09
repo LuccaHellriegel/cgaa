@@ -166,10 +166,13 @@ export class Area {
 
 	private buildBuilding(spawnUnit) {
 		let { x, y } = this.calculateRandBuildingSpawnPos();
+		let count = 0;
 		while (this.checkIfBuildingCollidesWithBuildings(this.buildings, x, y)) {
+			if (count > 100) throw "No building position found";
 			let result = this.calculateRandBuildingSpawnPos();
 			x = result.x;
 			y = result.y;
+			count++;
 		}
 
 		let building = new Building(this.scene, x, y, this.physicsGroup, spawnUnit, this.color);
