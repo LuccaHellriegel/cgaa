@@ -10,7 +10,6 @@ export class PlayerSoulCounter {
 
 	constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y) {
 		let playerSoulCountGraphic = new SymmetricCrossPolygon(x, y, 50, 25);
-		//TODO: decouple damageAmount from soulCount, because if I attack 50 and only 10 lives -> only 10 souls
 
 		let increaseEvent = "damage-by-player";
 		let decreaseEvent = "souls-spent";
