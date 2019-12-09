@@ -9,7 +9,7 @@ export class BuildingGenerator extends Generator {
 	title: string;
 	innerRectHexColor: number;
 
-	constructor(scene: Gameplay, title: string, innerRectHexColor: number) {
+	constructor(scene: Gameplay, title: string, innerRectHexColor: number, sizeName) {
 		super(0xa9a9a9, scene);
 		this.title = title;
 		this.innerRectHexColor = innerRectHexColor;
@@ -19,11 +19,14 @@ export class BuildingGenerator extends Generator {
 			rectBuildingHalfWidth * 2,
 			rectBuildinghalfHeight * 2
 		);
+
+		let innerReduction = sizeName === "Big" ? 20 : sizeName === "Normal" ? 25 : 30;
+
 		this.rectBuildingInnerRect = new RectPolygon(
 			rectBuildingHalfWidth,
 			rectBuildinghalfHeight,
-			(rectBuildingHalfWidth - 20) * 2,
-			(rectBuildinghalfHeight - 20) * 2
+			(rectBuildingHalfWidth - innerReduction) * 2,
+			(rectBuildinghalfHeight - innerReduction) * 2
 		);
 		this.generate();
 	}

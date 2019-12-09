@@ -3,9 +3,12 @@ import { Image } from "../../base/classes/BasePhaser";
 export class Building extends Image {
 	id: string;
 	color: string;
-	constructor(scene, x, y, physicsGroup, color: string) {
-		super({ scene, x, y, texture: color + "Building", physicsGroup });
+	spawnUnit: any;
+
+	constructor(scene, x, y, physicsGroup, spawnUnit, color: string) {
+		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
 		this.color = color;
+		this.spawnUnit = spawnUnit;
 		this.setImmovable(true);
 	}
 }

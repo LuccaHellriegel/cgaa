@@ -4,15 +4,23 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { SpawnManager } from "./spawn/SpawnManager";
 import { PathManager } from "./path/PathManager";
+import { circleSizeNames } from "../../globals/globalSizes";
 
 export class Camp {
 	color: string;
 	area: Area;
 	buildingPopulators: BuildingPopulator[] = [];
 	areaPopulator: AreaPopulator;
-	numbOfBuildings = 2;
+	numbOfBuildings = 3;
 
-	constructor(scene, area, spawnManager: SpawnManager, pathManager: PathManager, enemyPhysicGroup, weaponPhysicGroup) {
+	constructor(
+		scene,
+		area: Area,
+		spawnManager: SpawnManager,
+		pathManager: PathManager,
+		enemyPhysicGroup,
+		weaponPhysicGroup
+	) {
 		let enemyConfig: EnemyConfig = {
 			scene,
 			color: area.color,
@@ -23,10 +31,11 @@ export class Camp {
 			physicsGroup: enemyPhysicGroup,
 			weaponGroup: weaponPhysicGroup
 		};
-		area.buildBuildings(this.numbOfBuildings);
+		area.buildBuildings(this.numbOfBuildings, circleSizeNames);
 		this.areaPopulator = new AreaPopulator(enemyConfig, area, spawnManager);
 		area.buildings.forEach(building => {
-			this.buildingPopulators.push(new BuildingPopulator(enemyConfig, building, spawnManager, pathManager));
+			enemyConfig.size = building.spawnUnit;
+			this.buildingPopulators.push(new BuildingPopulator({ ...enemyConfig }, building, spawnManager, pathManager));
 		});
 	}
 	spawnUnits() {

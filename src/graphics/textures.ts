@@ -39,8 +39,9 @@ function generateUnits(scene) {
 		new CircleGenerator(campHexColors[colorIndex], scene, title, circleSizes[sizeNameIndex]);
 	});
 
-	executeOverAllCamps((color, colorIndex) => {
-		new BuildingGenerator(scene, color + "Building", campHexColors[colorIndex]);
+	executeOverAllCampsAndSizes((color, colorIndex, sizeName, sizeNameIndex) => {
+		let title = color + sizeName + "Building";
+		new BuildingGenerator(scene, title, campHexColors[colorIndex], sizeName);
 	});
 }
 

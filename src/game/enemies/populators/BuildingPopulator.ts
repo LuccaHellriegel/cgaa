@@ -43,7 +43,6 @@ export class BuildingPopulator extends Populator {
 			} else {
 				this.enemyConfig.weaponType = "chain";
 			}
-
 			let enemy = EnemyFactory.createEnemy(this.enemyConfig);
 
 			enemy.pathContainer = this.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);

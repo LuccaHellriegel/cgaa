@@ -163,7 +163,8 @@ export class Area {
 		}
 		return false;
 	}
-	private buildBuilding() {
+
+	private buildBuilding(spawnUnit) {
 		let { x, y } = this.calculateRandBuildingSpawnPos();
 		while (this.checkIfBuildingCollidesWithBuildings(this.buildings, x, y)) {
 			let result = this.calculateRandBuildingSpawnPos();
@@ -171,7 +172,7 @@ export class Area {
 			y = result.y;
 		}
 
-		let building = new Building(this.scene, x, y, this.physicsGroup, this.color);
+		let building = new Building(this.scene, x, y, this.physicsGroup, spawnUnit, this.color);
 		this.addBuildingToParts(building);
 		this.buildings.push(building);
 	}
@@ -196,9 +197,9 @@ export class Area {
 		}
 	}
 
-	buildBuildings(numbOfBuildings) {
+	buildBuildings(numbOfBuildings, spawnUnits) {
 		for (let index = 0; index < numbOfBuildings; index++) {
-			this.buildBuilding();
+			this.buildBuilding(spawnUnits[index]);
 		}
 	}
 }
