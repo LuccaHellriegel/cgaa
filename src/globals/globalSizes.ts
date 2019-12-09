@@ -6,7 +6,7 @@ export const rectBuildinghalfHeight = (2 * wallPartHalfSize) / 2;
 
 export const normalCircleRadius = 30;
 export const smallCircleRadius = normalCircleRadius / 2;
-export const bigCircleRadius = normalCircleRadius * 2;
+export const bigCircleRadius = wallPartHalfSize - 2;
 
 export const circleSizeNames = ["Normal", "Small", "Big"];
 export const circleSizes = [normalCircleRadius, smallCircleRadius, bigCircleRadius];

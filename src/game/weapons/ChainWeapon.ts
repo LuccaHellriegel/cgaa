@@ -10,7 +10,7 @@ export class ChainWeapon extends Weapon {
 	biggerCirclesRadius: number;
 	smallerCirclesRadius: number;
 
-	constructor(scene, x, y, weaponGroup, owner) {
+	constructor(scene, x, y, weaponGroup, owner, ownerSize) {
 		super(
 			scene,
 			x,
@@ -19,11 +19,12 @@ export class ChainWeapon extends Weapon {
 			weaponGroup,
 			[[]],
 			[
-				[0, -normalCircleRadius],
-				[0, -normalCircleRadius],
-				[0, -normalCircleRadius]
+				[0, -ownerSize],
+				[0, -ownerSize],
+				[0, -ownerSize]
 			],
-			owner
+			owner,
+			ownerSize
 		);
 
 		this.numberOfSmallCircles = 5;
@@ -50,9 +51,9 @@ export class ChainWeapon extends Weapon {
 
 	setOffSetArr() {
 		this.offSetArr = [
-			[0, -30 - this.polygon.height / 2],
-			[0, -30 - this.polygonArr[1].height / 2],
-			[0, -30 - this.polygonArr[2].height / 2]
+			[0, -this.ownerSize - this.polygon.height / 2],
+			[0, -this.ownerSize - this.polygonArr[1].height / 2],
+			[0, -this.ownerSize - this.polygonArr[2].height / 2]
 		];
 	}
 

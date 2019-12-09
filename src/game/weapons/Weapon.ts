@@ -13,6 +13,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 	offSetArr: number[][];
 	amount: number;
 	owner: Circle;
+	ownerSize: number;
 
 	constructor(
 		scene: Gameplay,
@@ -22,7 +23,8 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		weaponGroup: Phaser.Physics.Arcade.Group,
 		polygonArr: any[],
 		offSetArr: any[],
-		owner: Circle
+		owner: Circle,
+		ownerSize: number
 	) {
 		super({ scene, x, y, texture, physicsGroup: weaponGroup });
 		this.setCollideWorldBounds(false);
@@ -35,6 +37,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		this.polygon = polygonArr[0];
 		this.polygonArr = polygonArr;
 		this.owner = owner;
+		this.ownerSize = ownerSize;
 	}
 
 	movePolygon() {

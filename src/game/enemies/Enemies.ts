@@ -40,7 +40,7 @@ export class Enemies {
 			let enemyConfig: EnemyConfig = {
 				scene,
 				color: area.color,
-				size: "Normal",
+				size: "Big",
 				x: 0,
 				y: 0,
 				weaponType: "rand",

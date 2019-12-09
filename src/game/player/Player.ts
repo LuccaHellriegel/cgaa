@@ -32,7 +32,7 @@ export class Player extends Circle {
 	}
 
 	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup) {
-		let weapon = new ChainWeapon(scene, playerStartX, playerStartY, playerWeaponPhysicsGroup, null);
+		let weapon = new ChainWeapon(scene, playerStartX, playerStartY, playerWeaponPhysicsGroup, null, normalCircleRadius);
 		let circle = new Player(scene, playerPhysicsGroup, weapon);
 		weapon.owner = circle;
 		return circle;

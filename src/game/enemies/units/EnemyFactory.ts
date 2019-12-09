@@ -5,13 +5,15 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { CirclePolygon } from "../../base/polygons/CirclePolygon";
-import { normalCircleRadius } from "../../../globals/globalSizes";
+import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../../globals/globalSizes";
 
 const healthBarConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
 	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
 	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null }
 };
+
+const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Big: bigCircleRadius };
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
@@ -37,14 +39,14 @@ export class EnemyFactory {
 
 		let healthbar = new HealthBar(x, y, healthBarConfig);
 
+		let radius = radiusConfigs[size];
+
 		let weapon;
 		if (weaponType === "chain") {
-			weapon = new ChainWeapon(scene, x, y, weaponGroup, null);
+			weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius);
 		} else {
-			weapon = new RandWeapon(scene, x, y, weaponGroup, null);
+			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius);
 		}
-
-		let radius = normalCircleRadius;
 
 		let polygon = new CirclePolygon(x, y, radius);
 

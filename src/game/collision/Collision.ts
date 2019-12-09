@@ -105,7 +105,12 @@ export class Collision {
 	private doDamage(weapon, enemy) {
 		weapon.alreadyAttacked.push(enemy.id);
 
-		let damage = weapon.amount > enemy.healthbar.value ? enemy.healthbar.value : weapon.amount;
+		let damage;
+		if (enemy.unitType !== "player") {
+			damage = weapon.amount > enemy.healthbar.value ? enemy.healthbar.value : weapon.amount;
+		} else {
+			damage = weapon.amount;
+		}
 
 		this.scene.events.emit("damage-" + enemy.unitType, damage);
 		if (weapon.owner.unitType === "player") {
