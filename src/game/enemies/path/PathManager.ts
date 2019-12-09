@@ -48,12 +48,9 @@ export class PathManager {
 	}
 
 	private calculateBuildingSpecificPaths() {
-		this.areas.executeWithAreasThatHaveBuilding((area: Area) => {
-			area.buildings.forEach(building => {
-				this.buildingSpecificPaths = this.buildingSpecificPaths.concat(
-					this.calculateAllBuildingSpecificPaths(building)
-				);
-			});
+		let buildings = this.areas.getBuildings();
+		buildings.forEach(building => {
+			this.buildingSpecificPaths = this.buildingSpecificPaths.concat(this.calculateAllBuildingSpecificPaths(building));
 		});
 	}
 

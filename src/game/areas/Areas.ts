@@ -4,6 +4,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 import { campColors } from "../../globals/globalColors";
 import { areaSize } from "../../globals/globalConfig";
+import { Building } from "../enemies/buildings/Building";
 
 export class Areas {
 	borderWall: Area;
@@ -136,13 +137,27 @@ export class Areas {
 		return map;
 	}
 
-	executeWithAreasThatHaveBuilding(func) {
+	getAreaWithBuildings() {
+		let areas: Area[] = [];
 		this.areas.forEach(areaRow => {
 			areaRow.forEach(area => {
 				if (area.buildings[0]) {
-					func(area);
+					areas.push(area);
 				}
 			});
 		});
+		return areas;
+	}
+
+	getBuildings() {
+		let buildings: Building[] = [];
+		this.areas.forEach(areaRow => {
+			areaRow.forEach(area => {
+				if (area.buildings[0]) {
+					buildings = buildings.concat(area.buildings);
+				}
+			});
+		});
+		return buildings;
 	}
 }

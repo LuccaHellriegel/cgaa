@@ -4,6 +4,7 @@ import { Area } from "../areas/Area";
 import { EnemyConfig } from "./units/EnemyFactory";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
+import { Areas } from "../areas/Areas";
 
 export class Enemies {
 	enemyPhysicGroups = {};
@@ -30,8 +31,9 @@ export class Enemies {
 		return getRelativePosOfElementsAndAroundElements(this.units, 1, 1);
 	}
 
-	spawnUnits(scene, areas, spawnManager, pathManager) {
-		areas.executeWithAreasThatHaveBuilding((area: Area) => {
+	spawnUnits(scene, areas: Areas, spawnManager, pathManager) {
+		let areasWithBuildings = areas.getAreaWithBuildings();
+		areasWithBuildings.forEach((area: Area) => {
 			let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
 			let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
 			//TODO: is a share config, wtf?
