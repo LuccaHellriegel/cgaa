@@ -1,4 +1,3 @@
-import { WeaponTypes } from "../../weapons/WeaponFactory";
 import { EnemyCircle } from "./EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { HealthBar } from "../../base/classes/HealthBar";
@@ -18,6 +17,8 @@ const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Bi
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
 export type EnemySize = "Small" | "Normal" | "Big";
+
+export type WeaponTypes = "rand" | "chain";
 
 export interface EnemyConfig {
 	scene: Gameplay;

@@ -53,6 +53,6 @@ export class BuildingPopulator extends Populator {
 	}
 
 	doMoreSpawn() {
-		return this.enemyCount != 10;
+		return this.enemyCount != 3;
 	}
 }

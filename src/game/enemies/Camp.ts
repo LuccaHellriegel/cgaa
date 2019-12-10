@@ -38,8 +38,12 @@ export class Camp {
 			this.buildingPopulators.push(new BuildingPopulator({ ...enemyConfig }, building, spawnManager, pathManager));
 		});
 	}
-	spawnUnits() {
+
+	spawnAreaUnits() {
 		this.areaPopulator.startPopulating();
+	}
+
+	spawnWaveUnits() {
 		this.buildingPopulators.forEach(populator => populator.startPopulating());
 	}
 }

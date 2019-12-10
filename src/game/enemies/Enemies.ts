@@ -9,6 +9,8 @@ export class Enemies {
 	weaponPhysicGroups = {};
 	units: EnemyCircle[] = [];
 	camps: Camp[] = [];
+	campIndex = 0;
+	scene: any;
 
 	constructor(scene, areas: Areas, spawnManager, pathManager, enemyPhysicGroups, weaponPhysicGroups) {
 		this.enemyPhysicGroups = enemyPhysicGroups;
@@ -20,6 +22,7 @@ export class Enemies {
 			let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
 			this.camps.push(new Camp(scene, area, spawnManager, pathManager, enemyPhysicGroup, weaponPhysicGroup));
 		});
+		this.scene = scene;
 	}
 
 	private setupEventListeners(scene) {
@@ -36,7 +39,21 @@ export class Enemies {
 		return getRelativePosOfElementsAndAroundElements(this.units, 1, 1);
 	}
 
-	spawnUnits() {
-		this.camps.forEach(camp => camp.spawnUnits());
+	spawnAreaUnits() {
+		this.camps.forEach(camp => camp.spawnAreaUnits());
+	}
+
+	spawnWaveUnits() {
+		if (this.campIndex == this.camps.length) {
+			this.campIndex = 0;
+		}
+		this.camps[this.campIndex].spawnWaveUnits();
+		this.campIndex++;
+		this.scene.time.addEvent({
+			delay: 15000,
+			callback: this.spawnWaveUnits,
+			callbackScope: this,
+			repeat: 0
+		});
 	}
 }

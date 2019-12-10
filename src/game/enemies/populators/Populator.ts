@@ -23,7 +23,7 @@ export abstract class Populator {
 		}
 		if (this.doMoreSpawn()) {
 			this.scene.time.addEvent({
-				delay: Phaser.Math.Between(100, 5000),
+				delay: 4000,
 				callback: this.startPopulating,
 				callbackScope: this,
 				repeat: 0

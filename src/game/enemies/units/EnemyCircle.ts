@@ -73,12 +73,12 @@ export class EnemyCircle extends Circle implements damageable {
 		this.setVelocity(0, 0);
 		if (this.barrier) {
 			this.moveBack();
-			this.turnTo(this.barrier);
 			if (this.barrier instanceof WallPart || this.barrier instanceof Building) {
 				if (this.pathContainer) {
 					this.state = "ambush";
 				}
 			} else {
+				this.turnTo(this.barrier);
 				this.spotted = this.barrier;
 				this.state = "guard";
 			}
