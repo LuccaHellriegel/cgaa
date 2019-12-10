@@ -13,7 +13,15 @@ export class Enemies {
 	campIndex = 0;
 	scene: Gameplay;
 
-	constructor(scene, areas: Areas, spawnManager, pathManager, enemyPhysicGroups, weaponPhysicGroups) {
+	constructor(
+		scene,
+		areas: Areas,
+		spawnManager,
+		pathManager,
+		enemyPhysicGroups,
+		weaponPhysicGroups,
+		buildingPhysicGroups
+	) {
 		this.enemyPhysicGroups = enemyPhysicGroups;
 		this.weaponPhysicGroups = weaponPhysicGroups;
 		this.setupEventListeners(scene);
@@ -21,7 +29,10 @@ export class Enemies {
 		areasForBuildings.forEach((area: Area) => {
 			let enemyPhysicGroup = this.enemyPhysicGroups[area.color];
 			let weaponPhysicGroup = this.weaponPhysicGroups[area.color];
-			this.camps.push(new Camp(scene, area, spawnManager, pathManager, enemyPhysicGroup, weaponPhysicGroup));
+			let buildingPhysicGroup = buildingPhysicGroups[area.color];
+			this.camps.push(
+				new Camp(scene, area, spawnManager, pathManager, enemyPhysicGroup, weaponPhysicGroup, buildingPhysicGroup)
+			);
 		});
 		this.scene = scene;
 	}

@@ -13,6 +13,7 @@ export class Collision {
 	areas: any;
 	towerSightGroup: Phaser.Physics.Arcade.StaticGroup;
 	towerBulletGroup: Phaser.Physics.Arcade.Group;
+	buildings: {};
 
 	constructor(scene: Gameplay) {
 		this.scene = scene;
@@ -26,9 +27,11 @@ export class Collision {
 
 		this.enemies = {};
 		this.enemyWeapons = {};
+		this.buildings = {};
 		executeOverAllCamps(color => {
 			this.enemies[color] = scene.physics.add.group();
 			this.enemyWeapons[color] = scene.physics.add.group();
+			this.buildings[color] = scene.physics.add.staticGroup();
 		});
 
 		this.areas = scene.physics.add.staticGroup();
@@ -46,6 +49,7 @@ export class Collision {
 
 			enemies: this.enemies,
 			enemyWeapons: this.enemyWeapons,
+			buildings: this.buildings,
 
 			areas: this.areas
 		};
@@ -77,10 +81,15 @@ export class Collision {
 	private addCombatCollision() {
 		let func = color => {
 			this.addWeaponOverlap(this.playerWeapon, this.enemies[color]);
+			this.addWeaponOverlap(this.playerWeapon, this.buildings[color]);
+
 			this.addWeaponOverlap(this.enemyWeapons[color], this.player);
 			this.addWeaponOverlap(this.enemyWeapons[color], this.towers);
 			let secondFunc = secondColor => {
-				if (secondColor !== color) this.addWeaponOverlap(this.enemyWeapons[color], this.enemies[secondColor]);
+				if (secondColor !== color) {
+					this.addWeaponOverlap(this.enemyWeapons[color], this.enemies[secondColor]);
+					this.addWeaponOverlap(this.enemyWeapons[color], this.buildings[secondColor]);
+				}
 			};
 			executeOverAllCamps(secondFunc);
 		};
@@ -165,7 +174,7 @@ export class Collision {
 		unit.setPosition(x1, y1);
 		unit.setVelocity(0, 0);
 
-		if (unit.unitType !== "player" && !unit.dontAttackList.includes(obj.color)) {
+		if (unit.unitType !== "player" && unit.dontAttackList && !unit.dontAttackList.includes(obj.color)) {
 			unit.barrier = obj;
 			unit.state = "obstacle";
 		}
@@ -178,6 +187,14 @@ export class Collision {
 			this.addBounceCollider(this.enemies[color], this.areas);
 		};
 
+		executeOverAllCamps(func);
+
+		func = color => {
+			this.addBounceCollider(this.player, this.buildings[color]);
+			executeOverAllCamps(secondColor => {
+				this.addBounceCollider(this.enemies[color], this.buildings[secondColor]);
+			});
+		};
 		executeOverAllCamps(func);
 	}
 

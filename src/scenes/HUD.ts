@@ -21,6 +21,7 @@ export class HUD extends Phaser.Scene {
 					this.playerSoulCounter.reset();
 					this.playerHealthBar.value = 100;
 					this.playerHealthBar.decrease(0);
+					this.playerKilllist.reset();
 				}
 			},
 			this

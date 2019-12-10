@@ -19,6 +19,7 @@ export class BuildingPopulator extends Populator {
 		super(enemyConfig.scene, spawnManager);
 		this.pathManager = pathManager;
 		this.enemyConfig = enemyConfig;
+		this.building = building;
 
 		let { column, row } = realPosToRelativePos(building.x, building.y);
 		this.validSpawnPositions = calculateRelativeSpawnPositionsAround(column, row, 3, 1);
@@ -54,6 +55,11 @@ export class BuildingPopulator extends Populator {
 	}
 
 	doMoreSpawn() {
+		let isDestroyed = this.building.destroyed;
+		if (isDestroyed) {
+			//TODO
+			return false;
+		}
 		return this.enemyCount != 3;
 	}
 }

@@ -24,7 +24,8 @@ export class Camp {
 		spawnManager: SpawnManager,
 		pathManager: PathManager,
 		enemyPhysicGroup,
-		weaponPhysicGroup
+		weaponPhysicGroup,
+		buildingPhysicGroup
 	) {
 		let enemyConfig: EnemyConfig = {
 			scene,
@@ -36,7 +37,7 @@ export class Camp {
 			physicsGroup: enemyPhysicGroup,
 			weaponGroup: weaponPhysicGroup
 		};
-		area.buildBuildings(this.numbOfBuildings, circleSizeNames);
+		area.buildBuildings(this.numbOfBuildings, circleSizeNames, buildingPhysicGroup);
 		this.areaPopulator = new AreaPopulator(enemyConfig, area, spawnManager);
 		area.buildings.forEach(building => {
 			enemyConfig.size = building.spawnUnit;

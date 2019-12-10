@@ -33,6 +33,11 @@ export class PlayerKilllist {
 		});
 	}
 
+	reset() {
+		this.colors = [];
+		this.redrawList();
+	}
+
 	private redrawList() {
 		let colorStr = "";
 		this.colors.forEach(col => {
