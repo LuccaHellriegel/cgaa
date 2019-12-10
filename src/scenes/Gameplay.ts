@@ -12,6 +12,7 @@ import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/player/input/mouse";
 import { InteractionModus } from "../game/player/input/InteractionModus";
+import { calculateUnifiedMap } from "../game/base/map";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -29,15 +30,17 @@ export class Gameplay extends Phaser.Scene {
 		let physicsGroups = new Collision(this).getPhysicGroups();
 
 		let areas = new Areas(this, physicsGroups.areas);
+		let borderWall = areas.getBorderWall();
 		this.physics.world.setBounds(
 			0,
 			0,
-			areas.borderWall.width - 4 * wallPartHalfSize,
-			areas.borderWall.width - 4 * wallPartHalfSize
+			borderWall.width - 4 * wallPartHalfSize,
+			borderWall.width - 4 * wallPartHalfSize
 		);
 
-		let pathManager = new PathManager(areas);
-		let spawnManager = new SpawnManager(this, areas.getWalkableMap());
+		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
+		let pathManager = new PathManager(unifiedMap);
+		let spawnManager = new SpawnManager(this, unifiedMap);
 		let towerModus = new TowerModus(this);
 		let towerManager = new TowerManager(
 			this,

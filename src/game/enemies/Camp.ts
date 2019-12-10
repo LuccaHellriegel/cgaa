@@ -8,14 +8,15 @@ import {
 	circleSizeNames,
 	rectBuildinghalfHeight,
 	wallPartHalfSize,
-	rectBuildingHalfWidth
+	rectBuildingHalfWidth,
+	rectBuildingInWallParts
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
-import { relativePosToRealPos } from "../base/position";
+import { relativePosToRealPos, realPosToRelativePos, realPosToRelativePosInArea } from "../base/position";
 import { addInteractionEle } from "../base/events";
 import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "./spawn/spawn";
 import { Building } from "./buildings/Building";
-import { exitSymbol } from "../../globals/globalSymbols";
+import { exitSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
 export class Camp {
 	color: string;
@@ -51,6 +52,8 @@ export class Camp {
 		};
 		this.color = color;
 		this.area = area;
+		this.spawnableArrForBuildings = JSON.parse(JSON.stringify(area.map));
+
 		this.scene = scene;
 		this.enemyPhysicGroup = enemyPhysicGroup;
 		this.weaponPhysicGroup = weaponPhysicGroup;
@@ -64,18 +67,8 @@ export class Camp {
 		});
 	}
 
-	private calculateBuildingSpawnableArrForArea() {
-		let spawnableArr = this.area.map;
-		updateBuildingSpawnableArr(spawnableArr);
-		return spawnableArr;
-	}
-
 	private calculateRandBuildingSpawnPos() {
-		if (!this.spawnableArrForBuildings) {
-			this.spawnableArrForBuildings = this.calculateBuildingSpawnableArrForArea();
-		} else {
-			updateBuildingSpawnableArr(this.spawnableArrForBuildings);
-		}
+		updateBuildingSpawnableArr(this.spawnableArrForBuildings);
 		let spawnablePos = extractSpawnPosFromSpawnableArr(this.spawnableArrForBuildings);
 		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
 		return relativePosToRealPos(pos.column + this.area.relativeTopLeftX, pos.row + this.area.relativeTopLeftY);
@@ -97,6 +90,15 @@ export class Camp {
 		return false;
 	}
 
+	private addBuildingToMap(building: Building) {
+		let { row, column } = realPosToRelativePosInArea(building.x, building.y, this.area);
+
+		//TODO: only works if building is 3 long
+		this.spawnableArrForBuildings[row][column] = buildingSymbol;
+		this.spawnableArrForBuildings[row][column - 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row][column + 1] = buildingSymbol;
+	}
+
 	private buildBuilding(spawnUnit, buildingPhysicGroup) {
 		let { x, y } = this.calculateRandBuildingSpawnPos();
 		let count = 0;
@@ -109,7 +111,7 @@ export class Camp {
 		}
 
 		let building = new Building(this.scene, x, y, buildingPhysicGroup, spawnUnit, this.color);
-		this.area.addBuildingToParts(building);
+		this.addBuildingToMap(building);
 		this.buildings.push(building);
 	}
 
@@ -135,8 +137,10 @@ export class Camp {
 		let pos;
 		for (let row = 0; row < this.area.map.length; row++) {
 			for (let column = 0; column < this.area.map[0].length; column++) {
-				if (this.area.map[row][column] === exitSymbol)
+				if (this.area.map[row][column] === exitSymbol) {
 					pos = { column: column + this.area.relativeTopLeftX, row: row + this.area.relativeTopLeftY };
+					break;
+				}
 			}
 		}
 

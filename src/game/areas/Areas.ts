@@ -4,22 +4,20 @@ import { wallPartHalfSize } from "../../globals/globalSizes";
 import { areaSize } from "../../globals/globalConfig";
 
 export class Areas {
-	borderWall: Area;
-	private walkableMap;
+	private borderWall: Area;
 	private areas: Area[][] = [];
-	physicsGroup;
+	private physicsGroup;
 	private areaConfig: AreaConfig;
-	scene: Gameplay;
+	private scene: Gameplay;
 
 	constructor(scene, physicsGroup) {
 		this.scene = scene;
 		this.physicsGroup = physicsGroup;
 		this.createAreas();
-		this.walkableMap = this.calculateWalkAbleArr();
 	}
 
-	getWalkableMap() {
-		return this.walkableMap;
+	getBorderWall() {
+		return this.borderWall;
 	}
 
 	private toggleAreaType() {
@@ -49,7 +47,6 @@ export class Areas {
 
 	private createAreas() {
 		this.areaConfig = {
-			color: "blue",
 			sizeOfXAxis: areaSize,
 			sizeOfYAxis: areaSize,
 			topLeftX: 0,
@@ -87,23 +84,17 @@ export class Areas {
 		this.borderWall = new Area(this.areaConfig);
 	}
 
-	private calculateWalkAbleArr() {
-		//assummption that all areas have the same number of rows, and that the input arr is symmetric
+	getAllMaps() {
+		let maps: any[] = [];
+		this.areas.forEach(areaRow => {
+			let row: any[] = [];
+			areaRow.forEach(area => {
+				row.push(area.map);
+			});
+			maps.push(row);
+		});
 
-		let areas = this.areas;
-		let map: any[] = [];
-
-		for (let rowIndexArea = 0; rowIndexArea < areas.length; rowIndexArea++) {
-			for (let rowIndex = 0; rowIndex < areas[0][0].map.length; rowIndex++) {
-				let cumulativeRow = [];
-
-				for (let columnIndexArea = 0; columnIndexArea < areas[0].length; columnIndexArea++) {
-					cumulativeRow = cumulativeRow.concat(areas[rowIndexArea][columnIndexArea].map[rowIndex]);
-				}
-				map.push(cumulativeRow);
-			}
-		}
-		return map;
+		return maps;
 	}
 
 	getAreaForBuildings() {

@@ -2,7 +2,6 @@ import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
 import { realPosToRelativePos } from "../../base/position";
 import { calculateRelativeSpawnPositionsAround } from "../spawn/spawn";
-import { Areas } from "../../areas/Areas";
 import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
 
 export class PathManager {
@@ -10,10 +9,10 @@ export class PathManager {
 	relativeGoalPositionRow: number = 14;
 	realtiveGoalPositionColumn: number = 14;
 	buildingSpecificPaths: PathContainer[] = [];
-	areas: Areas;
+	unifiedMap: any;
 
-	constructor(areas: Areas) {
-		this.areas = areas;
+	constructor(unifiedMap) {
+		this.unifiedMap = unifiedMap;
 		this.easyStar = new EasyStar.js();
 	}
 
@@ -25,7 +24,7 @@ export class PathManager {
 
 		validSpawnPositions.forEach(pos => {
 			let saveReference = new PathContainer(pos.column, pos.row);
-			this.easyStar.setGrid(this.areas.getWalkableMap());
+			this.easyStar.setGrid(this.unifiedMap);
 			this.easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
 			this.easyStar.findPath(
 				pos.column,

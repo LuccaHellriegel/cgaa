@@ -30,13 +30,13 @@ export function snapXYToGrid(x, y) {
 	let newY;
 
 	if (needToSnapX) {
-		newX = this.snapCoordinateToGrid(x);
+		newX = snapCoordinateToGrid(x);
 	} else {
 		newX = x;
 	}
 
 	if (needToSnapY) {
-		newY = this.snapCoordinateToGrid(y);
+		newY = snapCoordinateToGrid(y);
 	} else {
 		newY = y;
 	}
@@ -50,23 +50,31 @@ export function relativePosToRealPos(column, row) {
 }
 
 export function realPosToRelativePos(x, y) {
-	let { newX, newY } = this.snapXYToGrid(x, y);
+	let { newX, newY } = snapXYToGrid(x, y);
 	let row = (newY - wallPartHalfSize) / (2 * wallPartHalfSize);
 	let column = (newX - wallPartHalfSize) / (2 * wallPartHalfSize);
 	return { row: row, column: column };
 }
 
+export function realPosToRelativePosInArea(x, y, area) {
+	let { row, column } = realPosToRelativePos(x, y);
+
+	let rowRelativeToArea = row - area.relativeTopLeftY;
+	let columnRelativeToArea = column - area.relativeTopLeftX;
+	return { row: rowRelativeToArea, column: columnRelativeToArea };
+}
+
 export function getRelativePosOfElements(elements) {
 	let relativePositions: any[] = [];
 	elements.forEach(ele => {
-		let pos = this.realPosToRelativePos(ele.x, ele.y);
+		let pos = realPosToRelativePos(ele.x, ele.y);
 		relativePositions.push(pos);
 	});
 	return relativePositions;
 }
 
 export function getRelativePosOfElementsAndAroundElements(elements, width, height) {
-	let relativePositions: any[] = this.getRelativePosOfElements(elements);
+	let relativePositions: any[] = getRelativePosOfElements(elements);
 	let relativePositionsAround: any[] = [];
 	relativePositions.forEach(pos => {
 		let posAround = calculateRelativeSpawnPositionsAround(pos.column, pos.row, width, height);

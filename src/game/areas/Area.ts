@@ -1,16 +1,9 @@
-import { Building } from "../enemies/buildings/Building";
-import {
-	wallPartHalfSize,
-	rectBuildinghalfHeight,
-	rectBuildingHalfWidth,
-	rectBuildingInWallParts
-} from "../../globals/globalSizes";
+import { wallPartHalfSize } from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { AreaType, Exit } from "../base/types";
-import { exitSymbol, wallSymbol, buildingSymbol } from "../../globals/globalSymbols";
+import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";
 
 export interface AreaConfig {
-	color: string;
 	sizeOfXAxis: number;
 	sizeOfYAxis: number;
 	topLeftX: number;
@@ -34,13 +27,11 @@ export class Area {
 	relativeHeight: number;
 	relativeTopLeftX: number;
 	relativeTopLeftY: number;
-	color: string;
 	physicsGroup: any;
-	exitPositions: any[] = [];
 	map: number[][] = [];
 
 	constructor(config: AreaConfig) {
-		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color, physicsGroup, type, scene, exits } = config;
+		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, physicsGroup, type, scene, exits } = config;
 		for (let row = 0; row < sizeOfYAxis; row++) {
 			this.map[row] = [];
 			for (let column = 0; column < sizeOfXAxis; column++) {
@@ -64,8 +55,6 @@ export class Area {
 
 		this.relativeTopLeftX = topLeftX / (2 * wallPartHalfSize);
 		this.relativeTopLeftY = topLeftY / (2 * wallPartHalfSize);
-
-		this.color = color;
 
 		if (type === "camp") {
 			this.scene = scene;
@@ -99,11 +88,11 @@ export class Area {
 		}
 	}
 
-	makeExits(exits: Exit[]) {
+	private makeExits(exits: Exit[]) {
 		exits.forEach(exit => this.makeExit(exit));
 	}
 
-	buildWalls() {
+	private buildWalls() {
 		let x = this.topLeftX + wallPartHalfSize;
 		let y = this.topLeftY + wallPartHalfSize;
 		for (let row = 0; row < this.sizeOfYAxis; row++) {
@@ -122,26 +111,6 @@ export class Area {
 			}
 			y += 2 * wallPartHalfSize;
 			x = this.topLeftX + wallPartHalfSize;
-		}
-	}
-
-	addBuildingToParts(building: Building) {
-		let x = this.topLeftX;
-		let y = this.topLeftY;
-
-		for (let i = 0; i < this.sizeOfYAxis; i++) {
-			for (let k = 0; k < this.sizeOfXAxis; k++) {
-				if (building.x - rectBuildingHalfWidth === x && building.y - rectBuildinghalfHeight === y) {
-					for (let index = 0; index < rectBuildingInWallParts; index++) {
-						this.map[i][k + index] = buildingSymbol;
-					}
-					break;
-				}
-				x += 2 * wallPartHalfSize;
-			}
-			y += 2 * wallPartHalfSize;
-
-			x = this.topLeftX;
 		}
 	}
 }
