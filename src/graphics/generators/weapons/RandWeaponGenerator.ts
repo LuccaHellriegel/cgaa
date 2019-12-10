@@ -8,8 +8,9 @@ export class RandWeaponGenerator extends WeaponGenerator {
 	idlePolygonHeight: number;
 	attackPolygonWidth: number;
 	attackPolygonHeight: number;
+	circleSize: any;
 
-	constructor(hexColor: number, scene: Gameplay) {
+	constructor(hexColor: number, scene: Gameplay, circleSize) {
 		super(hexColor, scene);
 		this.randWeapon = new RandWeapon(
 			scene,
@@ -17,8 +18,10 @@ export class RandWeaponGenerator extends WeaponGenerator {
 			this.biggerThanWeapon,
 			this.tempWeaponGroup,
 			null,
-			0
+			0,
+			circleSize
 		);
+		this.circleSize = circleSize;
 		this.generate();
 	}
 
@@ -58,7 +61,7 @@ export class RandWeaponGenerator extends WeaponGenerator {
 
 	generateTexture() {
 		this.graphics.generateTexture(
-			"randWeapon",
+			this.circleSize + "randWeapon",
 			this.idlePolygonWidth + this.attackPolygonWidth,
 			this.attackPolygonHeight
 		);
@@ -68,10 +71,17 @@ export class RandWeaponGenerator extends WeaponGenerator {
 		let topLeftX = 0;
 		let topLeftY = 0;
 
-		this.scene.textures.list["randWeapon"].add(1, 0, topLeftX, topLeftY, this.idlePolygonWidth, this.idlePolygonHeight);
+		this.scene.textures.list[this.circleSize + "randWeapon"].add(
+			1,
+			0,
+			topLeftX,
+			topLeftY,
+			this.idlePolygonWidth,
+			this.idlePolygonHeight
+		);
 
 		topLeftX += this.idlePolygonWidth;
-		this.scene.textures.list["randWeapon"].add(
+		this.scene.textures.list[this.circleSize + "randWeapon"].add(
 			2,
 			0,
 			topLeftX,

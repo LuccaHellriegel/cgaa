@@ -8,8 +8,9 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 	middlePolygonHeight: number;
 	finalPolygonHeight: number;
 	arrowHeadWidth: number;
+	circleSize: any;
 
-	constructor(hexColor: number, scene: Gameplay) {
+	constructor(hexColor: number, scene: Gameplay, circleSize) {
 		super(hexColor, scene);
 		this.chainWeapon = new ChainWeapon(
 			scene,
@@ -17,8 +18,10 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 			this.biggerThanWeapon,
 			this.tempWeaponGroup,
 			null,
-			0
+			0,
+			circleSize
 		);
+		this.circleSize = circleSize;
 		this.generate();
 	}
 
@@ -56,14 +59,14 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 	}
 
 	generateTexture() {
-		this.graphics.generateTexture("chainWeapon", this.arrowHeadWidth * 3, this.finalPolygonHeight);
+		this.graphics.generateTexture(this.circleSize + "chainWeapon", this.arrowHeadWidth * 3, this.finalPolygonHeight);
 	}
 
 	addFrames() {
 		let topLeftX = 0;
 		let topLeftY = this.finalPolygonHeight - this.arrowHeadPolygonHeight;
 
-		this.scene.textures.list["chainWeapon"].add(
+		this.scene.textures.list[this.circleSize + "chainWeapon"].add(
 			1,
 			0,
 			topLeftX,
@@ -74,7 +77,7 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 
 		topLeftX += this.arrowHeadWidth;
 		topLeftY = this.finalPolygonHeight - this.middlePolygonHeight;
-		this.scene.textures.list["chainWeapon"].add(
+		this.scene.textures.list[this.circleSize + "chainWeapon"].add(
 			2,
 			0,
 			topLeftX,
@@ -85,7 +88,14 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 
 		topLeftX += this.arrowHeadWidth;
 		topLeftY = 0;
-		this.scene.textures.list["chainWeapon"].add(3, 0, topLeftX, topLeftY, this.arrowHeadWidth, this.finalPolygonHeight);
+		this.scene.textures.list[this.circleSize + "chainWeapon"].add(
+			3,
+			0,
+			topLeftX,
+			topLeftY,
+			this.arrowHeadWidth,
+			this.finalPolygonHeight
+		);
 	}
 
 	destroyUsedObjects() {

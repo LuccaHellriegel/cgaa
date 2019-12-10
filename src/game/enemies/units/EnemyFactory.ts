@@ -8,9 +8,9 @@ import { CirclePolygon } from "../../base/polygons/CirclePolygon";
 import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../../globals/globalSizes";
 
 const healthBarConfigs = {
-	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
+	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
 	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
-	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null }
+	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 51, healthLength: 17, value: 200, scene: null }
 };
 
 const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Big: bigCircleRadius };
@@ -43,9 +43,9 @@ export class EnemyFactory {
 
 		let weapon;
 		if (weaponType === "chain") {
-			weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius);
+			weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, size);
 		} else {
-			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius);
+			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius, size);
 		}
 
 		let polygon = new CirclePolygon(x, y, radius);

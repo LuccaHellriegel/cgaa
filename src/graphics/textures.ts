@@ -1,6 +1,6 @@
 import { RandWeaponGenerator } from "./generators/weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./generators/CircleGenerator";
-import { normalCircleRadius, wallPartHalfSize } from "../globals/globalSizes";
+import { normalCircleRadius, wallPartHalfSize, circleSizeNames } from "../globals/globalSizes";
 import { ChainWeaponGenerator } from "./generators/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./generators/BuildingGenerator";
 import { RectGenerator } from "./generators/RectGenerator";
@@ -26,8 +26,12 @@ export function generateTextures(scene) {
 }
 
 function generateWeapons(scene) {
-	new RandWeaponGenerator(0x6495ed, scene);
-	new ChainWeaponGenerator(0xff0000, scene);
+	for (let index = 0; index < circleSizeNames.length; index++) {
+		const element = circleSizeNames[index];
+		new RandWeaponGenerator(0x6495ed, scene, element);
+		new ChainWeaponGenerator(0xff0000, scene, element);
+	}
+
 	new CircleGenerator(0x6495ed, scene, "bullet", normalCircleRadius / 4);
 }
 

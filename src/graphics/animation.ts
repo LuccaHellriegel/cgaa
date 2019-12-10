@@ -1,6 +1,7 @@
 import { executeOverAllCampsAndSizes } from "../globals/global";
+import { circleSizeNames } from "../globals/globalSizes";
 
-function createNonRepeatingAnim(anims, key, texture, start, end, frameRate) {
+function createNonRepeatingAnim(anims: Phaser.Animations.AnimationManager, key, texture, start, end, frameRate) {
 	anims.create({
 		key: key,
 		frames: anims.generateFrameNumbers(texture, { start: start, end: end }),
@@ -10,10 +11,33 @@ function createNonRepeatingAnim(anims, key, texture, start, end, frameRate) {
 }
 
 function createWeaponAnims(anims) {
-	createNonRepeatingAnim(anims, "idle-randWeapon", "randWeapon", 1, 1, 10);
-	createNonRepeatingAnim(anims, "attack-randWeapon", "randWeapon", 1, 2, 10);
-	createNonRepeatingAnim(anims, "idle-chainWeapon", "chainWeapon", 1, 1, 10);
-	createNonRepeatingAnim(anims, "attack-chainWeapon", "chainWeapon", 1, 3, 10);
+	let speedPerSize = {
+		Small: 20,
+		Normal: 10,
+		Big: 5
+	};
+
+	for (let index = 0; index < circleSizeNames.length; index++) {
+		const element = circleSizeNames[index];
+		createNonRepeatingAnim(anims, "idle-" + element + "randWeapon", element + "randWeapon", 1, 1, 10);
+		createNonRepeatingAnim(
+			anims,
+			"attack-" + element + "randWeapon",
+			element + "randWeapon",
+			1,
+			2,
+			speedPerSize[element]
+		);
+		createNonRepeatingAnim(anims, "idle-" + element + "chainWeapon", element + "chainWeapon", 1, 1, 10);
+		createNonRepeatingAnim(
+			anims,
+			"attack-" + element + "chainWeapon",
+			element + "chainWeapon",
+			1,
+			3,
+			speedPerSize[element]
+		);
+	}
 }
 
 function createCircleAnims(anims) {

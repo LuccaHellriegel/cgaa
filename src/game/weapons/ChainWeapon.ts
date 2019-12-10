@@ -1,6 +1,11 @@
 import { CompositePolygon } from "../base/polygons/CompositePolygon";
 import { Weapon } from "./Weapon";
-import { normalCircleRadius } from "../../globals/globalSizes";
+
+const chainWeaponConfig = {
+	Small: { numberOfSmallCircles: 7, numberOfBiggerCircles: 1, arrowWidth: 30, arrowHeight: 15, amount: 5 },
+	Normal: { numberOfSmallCircles: 5, numberOfBiggerCircles: 2, arrowWidth: 42, arrowHeight: 21, amount: 10 },
+	Big: { numberOfSmallCircles: 2, numberOfBiggerCircles: 3, arrowWidth: 84, arrowHeight: 42, amount: 20 }
+};
 
 export class ChainWeapon extends Weapon {
 	numberOfSmallCircles: number;
@@ -10,12 +15,12 @@ export class ChainWeapon extends Weapon {
 	biggerCirclesRadius: number;
 	smallerCirclesRadius: number;
 
-	constructor(scene, x, y, weaponGroup, owner, ownerSize) {
+	constructor(scene, x, y, weaponGroup, owner, ownerSize, ownerSizeName) {
 		super(
 			scene,
 			x,
 			y,
-			"chainWeapon",
+			ownerSizeName + "chainWeapon",
 			weaponGroup,
 			[[]],
 			[
@@ -27,14 +32,16 @@ export class ChainWeapon extends Weapon {
 			ownerSize
 		);
 
-		this.numberOfSmallCircles = 5;
-		this.numberOfBiggerCircles = 2;
+		let sizes = chainWeaponConfig[ownerSizeName];
+
+		this.numberOfSmallCircles = sizes.numberOfSmallCircles;
+		this.numberOfBiggerCircles = sizes.numberOfBiggerCircles;
 
 		this.x = x;
 		this.y = y;
 
-		this.arrowWidth = 42;
-		this.arrowHeight = 21;
+		this.arrowWidth = sizes.arrowWidth;
+		this.arrowHeight = sizes.arrowHeight;
 		this.biggerCirclesRadius = this.arrowWidth / 3 / 2;
 		this.smallerCirclesRadius = 2 * (this.biggerCirclesRadius / 3);
 
@@ -46,7 +53,7 @@ export class ChainWeapon extends Weapon {
 			2 * this.polygonArr[this.polygonArr.length - 1].height
 		);
 
-		this.amount = 10;
+		this.amount = sizes.amount;
 	}
 
 	setOffSetArr() {
