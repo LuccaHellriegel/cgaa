@@ -3,7 +3,7 @@ import { Tower } from "../../player/towers/Tower";
 import { Building } from "../buildings/Building";
 import { towerSymbol, buildingSymbol } from "../../../globals/globalSymbols";
 import { realPosToRelativePos } from "../../base/position";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArrForArea } from "./spawn";
+import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArrForArea } from "../../base/spawn";
 import { updateMapWithElementAndAroundElements, updateMapWithElement } from "../../base/map";
 import { Enemies } from "../Enemies";
 

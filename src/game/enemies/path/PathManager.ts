@@ -1,7 +1,7 @@
 import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
 import { realPosToRelativePos } from "../../base/position";
-import { calculateRelativeSpawnPositionsAround } from "../spawn/spawn";
+import { calculateRelativeSpawnPositionsAround } from "../../base/spawn";
 import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
 
 export class PathManager {

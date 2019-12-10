@@ -1,5 +1,5 @@
 import { wallPartHalfSize } from "../../globals/globalSizes";
-import { calculateRelativeSpawnPositionsAround } from "../enemies/spawn/spawn";
+import { calculateRelativeSpawnPositionsAround } from "./spawn";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;

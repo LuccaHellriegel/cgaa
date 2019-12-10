@@ -14,7 +14,7 @@ import {
 import { Gameplay } from "../../scenes/Gameplay";
 import { relativePosToRealPos, realPosToRelativePos, realPosToRelativePosInArea } from "../base/position";
 import { addInteractionEle } from "../base/events";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "./spawn/spawn";
+import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "../base/spawn";
 import { Building } from "./buildings/Building";
 import { exitSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
