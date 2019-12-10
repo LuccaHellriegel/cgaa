@@ -15,6 +15,8 @@ const healthBarConfigs = {
 
 const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Big: bigCircleRadius };
 
+const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
+
 export type EnemySize = "Small" | "Normal" | "Big";
 
 export interface EnemyConfig {
@@ -65,7 +67,7 @@ export class EnemyFactory {
 			physicsGroup
 		};
 
-		let circle = new EnemyCircle(circleConfig);
+		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 

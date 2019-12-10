@@ -16,13 +16,15 @@ export class EnemyCircle extends Circle implements damageable {
 	spotted: any;
 	pursuing: any;
 	barrier: any;
+	velo: any;
 
-	constructor(config) {
+	constructor(config, velo) {
 		super(config);
 		this.hasBeenAttacked = false;
 		this.healthbar = config.healthbar;
 		this.setCollideWorldBounds(true);
 		this.color = config.color;
+		this.velo = velo;
 	}
 
 	damage(amount) {
@@ -129,7 +131,7 @@ export class EnemyCircle extends Circle implements damageable {
 		let reachDist = this.weapon.polygonArr[this.weapon.polygonArr.length - 1].height;
 		let inReach = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) - 15 < reachDist;
 		if (!inReach) {
-			this.scene.physics.moveToObject(this, target, 160);
+			this.scene.physics.moveToObject(this, target, this.velo);
 		} else {
 			this.setVelocity(0, 0);
 		}
@@ -146,7 +148,7 @@ export class EnemyCircle extends Circle implements damageable {
 			if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
 				this.curPosInPath++;
 			} else {
-				this.scene.physics.moveTo(this, x, y, 160);
+				this.scene.physics.moveTo(this, x, y, this.velo);
 			}
 		} else if (this.pathContainer.path && this.curPosInPath >= this.pathContainer.path.length) {
 			this.setVelocity(0, 0);

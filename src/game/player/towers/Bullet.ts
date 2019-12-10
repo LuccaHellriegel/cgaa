@@ -38,7 +38,7 @@ export class Bullet extends Sprite {
 		if (this.goalX) {
 			let dist = Phaser.Math.Distance.Between(this.x, this.y, this.goalX, this.goalY);
 			if (dist > normalCircleRadius) {
-				this.scene.physics.moveTo(this, this.goalX, this.goalY, 160);
+				this.scene.physics.moveTo(this, this.goalX, this.goalY, 185);
 			} else {
 				this.reset();
 			}
