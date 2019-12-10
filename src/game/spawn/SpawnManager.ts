@@ -1,9 +1,9 @@
 import { Area } from "../areas/Area";
 import { Tower } from "../player/towers/Tower";
 import { Building } from "../enemies/units/Building";
-import { towerSymbol, buildingSymbol } from "../../globals/globalSymbols";
+import { towerSymbol, buildingSymbol, wallSymbol, exitSymbol } from "../../globals/globalSymbols";
 import { realPosToRelativePos } from "../base/position";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArrForArea } from "../base/spawn";
+import { extractSpawnPosFromSpawnableArrForArea } from "../base/spawn";
 import { updateMapWithElementAndAroundElements, updateMapWithElement } from "../base/map";
 import { Enemies } from "../enemies/Enemies";
 
@@ -12,7 +12,7 @@ export class SpawnManager {
 	spawnableArrForEnemies;
 	spawnableArrForTowersBase;
 	spawnableArrForTowers;
-	enemies: any;
+	enemies: Enemies;
 
 	constructor(scene, walkableMap) {
 		this.initBaseArrs(walkableMap);
@@ -26,7 +26,28 @@ export class SpawnManager {
 	private initBaseArrs(walkableMap) {
 		this.spawnableArrForEnemiesBase = JSON.parse(JSON.stringify(walkableMap));
 		this.spawnableArrForTowersBase = JSON.parse(JSON.stringify(walkableMap));
-		updateBuildingSpawnableArr(this.spawnableArrForTowersBase);
+		this.markCampsAsNonTowerSpawn();
+		console.log(this.spawnableArrForTowersBase);
+	}
+
+	private markCampsAsNonTowerSpawn() {
+		let numberOfWallParts = 0;
+		for (let row = 0; row < this.spawnableArrForTowersBase.length; row++) {
+			for (let column = 0; column < this.spawnableArrForTowersBase[0].length; column++) {
+				if (
+					this.spawnableArrForTowersBase[row][column] === wallSymbol ||
+					this.spawnableArrForTowersBase[row][column] === exitSymbol
+				) {
+					numberOfWallParts++;
+				}
+				if (numberOfWallParts === 1) {
+					this.spawnableArrForTowersBase[row][column] = wallSymbol;
+				}
+				if (numberOfWallParts === 2) {
+					numberOfWallParts = 0;
+				}
+			}
+		}
 	}
 
 	private updateBaseArrs(element, isTower, removed) {
