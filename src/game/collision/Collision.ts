@@ -187,7 +187,7 @@ export class Collision {
 				this.towerSightGroup,
 				this.enemies[color],
 				(sightElement, enemy) => {
-					sightElement.owner.fire(enemy);
+					if (!enemy.dontAttackList.includes("blue")) sightElement.owner.fire(enemy);
 				},
 				() => true
 			);
