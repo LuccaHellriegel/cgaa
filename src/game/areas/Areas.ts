@@ -1,18 +1,13 @@
 import { Area, AreaConfig } from "./Area";
 import { Gameplay } from "../../scenes/Gameplay";
 import { wallPartHalfSize } from "../../globals/globalSizes";
-import { campColors } from "../../globals/globalColors";
 import { areaSize } from "../../globals/globalConfig";
-import { Building } from "../enemies/buildings/Building";
 
 export class Areas {
 	borderWall: Area;
 	private walkableMap;
 	private areas: Area[][] = [];
 	physicsGroup;
-
-	//TODO: listen to building destroyed
-
 	private areaConfig: AreaConfig;
 	scene: Gameplay;
 
@@ -91,15 +86,6 @@ export class Areas {
 		this.areaConfig.exits = [];
 		this.borderWall = new Area(this.areaConfig);
 	}
-	private rowOfAreaToWalkableRow(rowOfArea) {
-		let row: number[] = [];
-		for (let k = 0; k < rowOfArea.length; k++) {
-			let notWalkableSymbol = rowOfArea[k].contentType === "building" ? 2 : 1;
-
-			row.push(rowOfArea[k].isWalkable() ? 0 : notWalkableSymbol);
-		}
-		return row;
-	}
 
 	private calculateWalkAbleArr() {
 		//assummption that all areas have the same number of rows, and that the input arr is symmetric
@@ -108,13 +94,11 @@ export class Areas {
 		let map: any[] = [];
 
 		for (let rowIndexArea = 0; rowIndexArea < areas.length; rowIndexArea++) {
-			for (let rowIndex = 0; rowIndex < areas[0][0].parts.length; rowIndex++) {
+			for (let rowIndex = 0; rowIndex < areas[0][0].map.length; rowIndex++) {
 				let cumulativeRow = [];
 
 				for (let columnIndexArea = 0; columnIndexArea < areas[0].length; columnIndexArea++) {
-					cumulativeRow = cumulativeRow.concat(
-						this.rowOfAreaToWalkableRow(areas[rowIndexArea][columnIndexArea].parts[rowIndex])
-					);
+					cumulativeRow = cumulativeRow.concat(areas[rowIndexArea][columnIndexArea].map[rowIndex]);
 				}
 				map.push(cumulativeRow);
 			}

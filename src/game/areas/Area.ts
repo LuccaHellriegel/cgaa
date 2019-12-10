@@ -1,4 +1,3 @@
-import { AreaPosition } from "./AreaPosition";
 import { Building } from "../enemies/buildings/Building";
 import {
 	wallPartHalfSize,
@@ -8,6 +7,7 @@ import {
 } from "../../globals/globalSizes";
 import { WallPart } from "./WallPart";
 import { AreaType, Exit } from "../base/types";
+import { exitSymbol, wallSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
 export interface AreaConfig {
 	color: string;
@@ -23,7 +23,6 @@ export interface AreaConfig {
 }
 
 export class Area {
-	parts: AreaPosition[][] = [];
 	sizeOfXAxis: number;
 	sizeOfYAxis: number;
 	topLeftX: any;
@@ -31,8 +30,6 @@ export class Area {
 	width: number;
 	height: number;
 	scene: any;
-	buildings: Building[] = [];
-	spawnableArrForBuildings: number[][];
 	relativeWidth: number;
 	relativeHeight: number;
 	relativeTopLeftX: number;
@@ -40,13 +37,14 @@ export class Area {
 	color: string;
 	physicsGroup: any;
 	exitPositions: any[] = [];
+	map: number[][] = [];
 
 	constructor(config: AreaConfig) {
 		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color, physicsGroup, type, scene, exits } = config;
 		for (let row = 0; row < sizeOfYAxis; row++) {
-			this.parts[row] = [];
+			this.map[row] = [];
 			for (let column = 0; column < sizeOfXAxis; column++) {
-				this.parts[row].push(new AreaPosition(null));
+				this.map[row].push(0);
 			}
 		}
 
@@ -71,9 +69,8 @@ export class Area {
 
 		if (type === "camp") {
 			this.scene = scene;
-
-			this.buildWalls();
 			this.makeExits(exits);
+			this.buildWalls();
 		}
 	}
 
@@ -81,38 +78,22 @@ export class Area {
 		switch (exit.wallSide) {
 			case "top":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[0][exit.position + index].setAsExit();
-					this.exitPositions.push({
-						row: 0 + this.relativeTopLeftY,
-						column: exit.position + index + this.relativeTopLeftX
-					});
+					this.map[0][exit.position + index] = exitSymbol;
 				}
 				break;
 			case "bottom":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[this.sizeOfYAxis - 1][exit.position + index].setAsExit();
-					this.exitPositions.push({
-						row: this.sizeOfYAxis - 1 + this.relativeTopLeftY,
-						column: exit.position + index + this.relativeTopLeftX
-					});
+					this.map[this.sizeOfYAxis - 1][exit.position + index] = exitSymbol;
 				}
 				break;
 			case "left":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[exit.position + index][0].setAsExit();
-					this.exitPositions.push({
-						column: 0 + this.relativeTopLeftX,
-						row: exit.position + index + this.relativeTopLeftY
-					});
+					this.map[exit.position + index][0] = exitSymbol;
 				}
 				break;
 			case "right":
 				for (let index = 0; index < exit.width; index++) {
-					this.parts[exit.position + index][this.sizeOfXAxis - 1].setAsExit();
-					this.exitPositions.push({
-						column: this.sizeOfYAxis - 1 + this.relativeTopLeftX,
-						row: exit.position + index + this.relativeTopLeftY
-					});
+					this.map[exit.position + index][this.sizeOfXAxis - 1] = exitSymbol;
 				}
 				break;
 		}
@@ -122,48 +103,26 @@ export class Area {
 		exits.forEach(exit => this.makeExit(exit));
 	}
 
-	private createWallSide(topLeftCenterX, topLeftCenterY, numberOfRects, wallSide) {
-		let x = topLeftCenterX;
-		let y = topLeftCenterY;
-		for (let index = 0; index < numberOfRects; index++) {
-			if (wallSide === "left" || wallSide === "right") y += 2 * wallPartHalfSize;
-
-			let curRect = new WallPart(this.scene, x, y, this.physicsGroup);
-			if (wallSide === "top") {
-				this.parts[0][index].updateContent(curRect, "wall");
-				x += 2 * wallPartHalfSize;
-			} else if (wallSide === "bottom") {
-				this.parts[this.sizeOfYAxis - 1][index].updateContent(curRect, "wall");
-				x += 2 * wallPartHalfSize;
-			} else if (wallSide === "left") {
-				this.parts[index + 1][0].updateContent(curRect, "wall");
-			} else {
-				this.parts[index + 1][this.sizeOfXAxis - 1].updateContent(curRect, "wall");
-			}
-		}
-	}
-
 	buildWalls() {
 		let x = this.topLeftX + wallPartHalfSize;
 		let y = this.topLeftY + wallPartHalfSize;
-
-		this.createWallSide(x, y, this.sizeOfXAxis, "top");
-
-		let lastRect = this.parts[0][this.sizeOfXAxis - 1];
-		let lastXRectX = lastRect.x;
-
-		x = this.topLeftX + wallPartHalfSize;
-		this.createWallSide(x, y, this.sizeOfYAxis - 2, "left");
-
-		lastRect = this.parts[this.sizeOfYAxis - 2][0];
-		let lastYRectY = lastRect.y;
-
-		y = lastYRectY + 2 * wallPartHalfSize;
-		this.createWallSide(x, y, this.sizeOfXAxis, "bottom");
-
-		y = this.topLeftY + wallPartHalfSize;
-		x = lastXRectX;
-		this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
+		for (let row = 0; row < this.sizeOfYAxis; row++) {
+			for (let column = 0; column < this.sizeOfXAxis; column++) {
+				let isExit = this.map[row][column] === exitSymbol;
+				let isLeftWall = column === 0;
+				let isRightWall = column === this.sizeOfYAxis - 1;
+				let isTopWall = row === 0;
+				let isBottomWall = row === this.sizeOfXAxis - 1;
+				let isWall = isLeftWall || isRightWall || isTopWall || isBottomWall;
+				if (!isExit && isWall) {
+					this.map[row][column] = wallSymbol;
+					new WallPart(this.scene, x, y, this.physicsGroup);
+				}
+				x += 2 * wallPartHalfSize;
+			}
+			y += 2 * wallPartHalfSize;
+			x = this.topLeftX + wallPartHalfSize;
+		}
 	}
 
 	addBuildingToParts(building: Building) {
@@ -174,7 +133,7 @@ export class Area {
 			for (let k = 0; k < this.sizeOfXAxis; k++) {
 				if (building.x - rectBuildingHalfWidth === x && building.y - rectBuildinghalfHeight === y) {
 					for (let index = 0; index < rectBuildingInWallParts; index++) {
-						this.parts[i][k + index].updateContent(building, "building");
+						this.map[i][k + index] = buildingSymbol;
 					}
 					break;
 				}

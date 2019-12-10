@@ -1,4 +1,6 @@
-export const wallPartHalfSize = 40;
+export const gridPartHalfSize = 40;
+
+export const wallPartHalfSize = gridPartHalfSize;
 
 export const rectBuildingInWallParts = 3;
 export const rectBuildingHalfWidth = (3 * 2 * wallPartHalfSize) / 2;

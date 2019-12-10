@@ -8,15 +8,14 @@ import {
 	circleSizeNames,
 	rectBuildinghalfHeight,
 	wallPartHalfSize,
-	rectBuildingHalfWidth,
-	rectBuildingInWallParts
+	rectBuildingHalfWidth
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { relativePosToRealPos } from "../base/position";
 import { addInteractionEle } from "../base/events";
-import { createBuildingSpawnableArr } from "../base/map";
 import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "./spawn/spawn";
 import { Building } from "./buildings/Building";
+import { exitSymbol } from "../../globals/globalSymbols";
 
 export class Camp {
 	color: string;
@@ -65,15 +64,15 @@ export class Camp {
 		});
 	}
 
-	private calculateBuildingSpawnableArrForArea(parts) {
-		let spawnableArr = createBuildingSpawnableArr(parts);
+	private calculateBuildingSpawnableArrForArea() {
+		let spawnableArr = this.area.map;
 		updateBuildingSpawnableArr(spawnableArr);
 		return spawnableArr;
 	}
 
 	private calculateRandBuildingSpawnPos() {
 		if (!this.spawnableArrForBuildings) {
-			this.spawnableArrForBuildings = this.calculateBuildingSpawnableArrForArea(this.area.parts);
+			this.spawnableArrForBuildings = this.calculateBuildingSpawnableArrForArea();
 		} else {
 			updateBuildingSpawnableArr(this.spawnableArrForBuildings);
 		}
@@ -133,7 +132,14 @@ export class Camp {
 	}
 
 	addInteractionUnit() {
-		let pos = this.area.exitPositions[0];
+		let pos;
+		for (let row = 0; row < this.area.map.length; row++) {
+			for (let column = 0; column < this.area.map[0].length; column++) {
+				if (this.area.map[row][column] === exitSymbol)
+					pos = { column: column + this.area.relativeTopLeftX, row: row + this.area.relativeTopLeftY };
+			}
+		}
+
 		let { x, y } = relativePosToRealPos(pos.column, pos.row);
 		let enemyConfig: EnemyConfig = {
 			scene: this.scene,
