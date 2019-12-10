@@ -47,6 +47,7 @@ export class Enemies {
 		if (this.campIndex == this.camps.length) {
 			this.campIndex = 0;
 		}
+		this.camps[this.campIndex].resetWave();
 		this.camps[this.campIndex].spawnWaveUnits();
 		this.campIndex++;
 		this.scene.time.addEvent({

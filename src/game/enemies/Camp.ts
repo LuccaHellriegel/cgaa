@@ -43,6 +43,10 @@ export class Camp {
 		this.areaPopulator.startPopulating();
 	}
 
+	resetWave() {
+		this.buildingPopulators.forEach(populator => (populator.enemyCount = 0));
+	}
+
 	spawnWaveUnits() {
 		this.buildingPopulators.forEach(populator => populator.startPopulating());
 	}
