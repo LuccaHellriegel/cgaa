@@ -62,7 +62,7 @@ export class Gameplay extends Phaser.Scene {
 
 		towerModus.setInteractionModus(interactionModus);
 		enemies.addInteractionUnits();
-		pathManager.calculateBuildingSpecificPaths();
+		pathManager.calculateBuildingSpecificPaths(enemies.getBuildings());
 		enemies.spawnAreaUnits();
 		enemies.spawnWaveUnits();
 

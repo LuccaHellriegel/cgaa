@@ -5,6 +5,7 @@ import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { towerHalfSize, wallPartHalfSize } from "../../../globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/extend";
+import { addInteractionEle, removeInteractionEle } from "../../base/events";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -55,7 +56,7 @@ export class Tower extends Image implements damageable {
 		}
 
 		this.color = "blue";
-		scene.events.emit("interaction-ele-added", this);
+		addInteractionEle(scene, this);
 	}
 
 	damage(amount: number) {
@@ -86,7 +87,7 @@ export class Tower extends Image implements damageable {
 	}
 
 	destroy() {
-		this.scene.events.emit("interaction-ele-removed", this);
+		removeInteractionEle(this.scene, this);
 		super.destroy();
 		this.healthbar.destroy();
 		this.bullets.forEach(bullet => bullet.destroy());

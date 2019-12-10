@@ -2,6 +2,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
 import { EnemyCircle } from "../enemies/units/EnemyCircle";
 import { executeOverAllCamps } from "../../globals/global";
+import { gainSouls } from "../base/events";
 
 export class Collision {
 	player: Phaser.Physics.Arcade.Group;
@@ -123,7 +124,7 @@ export class Collision {
 
 		this.scene.events.emit("damage-" + enemy.unitType, damage);
 		if (weapon.owner.unitType === "player") {
-			this.scene.events.emit("souls-gained", damage);
+			gainSouls(this.scene, damage);
 		}
 
 		enemy.damage(weapon.amount);
@@ -135,7 +136,7 @@ export class Collision {
 		enemy.damage(bullet.amount);
 		let damage = bullet.amount > enemy.healthbar.value ? enemy.healthbar.value : bullet.amount;
 
-		this.scene.events.emit("souls-gained", damage);
+		gainSouls(this.scene, damage);
 		if (enemy.state !== "ambush") {
 			enemy.spotted = bullet.owner;
 			enemy.state = "guard";

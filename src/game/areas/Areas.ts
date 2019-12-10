@@ -1,5 +1,4 @@
-import { Area } from "./Area";
-import { AreaConfig, AreaFactory } from "./AreaFactory";
+import { Area, AreaConfig } from "./Area";
 import { Gameplay } from "../../scenes/Gameplay";
 import { wallPartHalfSize } from "../../globals/globalSizes";
 import { campColors } from "../../globals/globalColors";
@@ -15,20 +14,11 @@ export class Areas {
 	//TODO: listen to building destroyed
 
 	private areaConfig: AreaConfig;
-	colorIndices: number[];
 	scene: Gameplay;
 
 	constructor(scene, physicsGroup) {
 		this.scene = scene;
 		this.physicsGroup = physicsGroup;
-		this.colorIndices = [0, 1, 2, 3];
-		for (let i = this.colorIndices.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * i);
-			const temp = this.colorIndices[i];
-			this.colorIndices[i] = this.colorIndices[j];
-			this.colorIndices[j] = temp;
-		}
-
 		this.createAreas();
 		this.walkableMap = this.calculateWalkAbleArr();
 	}
@@ -54,11 +44,8 @@ export class Areas {
 			this.areaConfig.exits = config.exits;
 
 			if (config.isEmpty) this.toggleAreaType();
-			if (!config.isEmpty) {
-				this.areaConfig.color = campColors[this.colorIndices.pop()];
-			}
 			this.areaConfig.topLeftX = startingTopLeftX + stepCount * rightStepValue;
-			row.push(AreaFactory.createArea(this.areaConfig));
+			row.push(new Area(this.areaConfig));
 			if (config.isEmpty) this.toggleAreaType();
 			stepCount++;
 		});
@@ -102,7 +89,7 @@ export class Areas {
 		this.areaConfig.sizeOfXAxis = 2 + 3 * areaSize;
 		this.areaConfig.sizeOfYAxis = 2 + 3 * areaSize;
 		this.areaConfig.exits = [];
-		this.borderWall = AreaFactory.createArea(this.areaConfig);
+		this.borderWall = new Area(this.areaConfig);
 	}
 	private rowOfAreaToWalkableRow(rowOfArea) {
 		let row: number[] = [];
@@ -137,17 +124,5 @@ export class Areas {
 
 	getAreaForBuildings() {
 		return [this.areas[0][0], this.areas[0][2], this.areas[2][0], this.areas[2][2]];
-	}
-
-	getBuildings() {
-		let buildings: Building[] = [];
-		this.areas.forEach(areaRow => {
-			areaRow.forEach(area => {
-				if (area.buildings[0]) {
-					buildings = buildings.concat(area.buildings);
-				}
-			});
-		});
-		return buildings;
 	}
 }

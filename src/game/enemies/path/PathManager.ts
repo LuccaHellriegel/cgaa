@@ -3,6 +3,7 @@ import { PathContainer } from "./PathContainer";
 import { realPosToRelativePos } from "../../base/position";
 import { calculateRelativeSpawnPositionsAround } from "../spawn/spawn";
 import { Areas } from "../../areas/Areas";
+import { Enemies } from "../Enemies";
 
 export class PathManager {
 	easyStar: EasyStar.js;
@@ -14,7 +15,6 @@ export class PathManager {
 	constructor(areas: Areas) {
 		this.areas = areas;
 		this.easyStar = new EasyStar.js();
-		this.calculateBuildingSpecificPaths();
 	}
 
 	calculateAllBuildingSpecificPaths(building) {
@@ -46,8 +46,7 @@ export class PathManager {
 		return containers;
 	}
 
-	calculateBuildingSpecificPaths() {
-		let buildings = this.areas.getBuildings();
+	calculateBuildingSpecificPaths(buildings) {
 		buildings.forEach(building => {
 			this.buildingSpecificPaths = this.buildingSpecificPaths.concat(this.calculateAllBuildingSpecificPaths(building));
 		});

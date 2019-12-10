@@ -6,6 +6,7 @@ import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
 import { TowerModus } from "../input/TowerModus";
 import { SpawnManager } from "../../enemies/spawn/SpawnManager";
 import { towerCost } from "../../../globals/globalConfig";
+import { gainSouls, spendSouls } from "../../base/events";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
@@ -24,7 +25,7 @@ export class TowerManager {
 			let index = this.towers.indexOf(tower);
 			this.towers.splice(index, 1);
 			tower.destroy();
-			this.scene.events.emit("souls-gained", towerCost);
+			gainSouls(this.scene, towerCost);
 		});
 
 		scene.events.on("can-build", () => {
@@ -74,8 +75,7 @@ export class TowerManager {
 			if (this.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
 				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
 				this.scene.events.emit("added-tower", tower);
-				this.scene.events.emit("souls-spent", towerCost);
-
+				spendSouls(this.scene, towerCost);
 				this.towers.push(tower);
 			} else {
 				this.playInvalidTowerPosAnim();

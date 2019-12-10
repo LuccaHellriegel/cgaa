@@ -15,3 +15,14 @@ export function executeOverAllCampsAndSizes(func) {
 		}
 	});
 }
+
+export function getRandomCampColorOrder() {
+	let colors = JSON.parse(JSON.stringify(campColors));
+	for (let i = colors.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * i);
+		const temp = colors[i];
+		colors[i] = colors[j];
+		colors[j] = temp;
+	}
+	return colors;
+}

@@ -6,11 +6,21 @@ import {
 	rectBuildingHalfWidth,
 	rectBuildingInWallParts
 } from "../../globals/globalSizes";
-import { Exit } from "./AreaFactory";
 import { WallPart } from "./WallPart";
-import { relativePosToRealPos } from "../base/position";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "../enemies/spawn/spawn";
-import { createBuildingSpawnableArr } from "../base/map";
+import { AreaType, Exit } from "../base/types";
+
+export interface AreaConfig {
+	color: string;
+	sizeOfXAxis: number;
+	sizeOfYAxis: number;
+	topLeftX: number;
+	topLeftY: number;
+	unitForPart: number;
+	type: AreaType;
+	exits: Exit[];
+	scene: Phaser.Scene;
+	physicsGroup: Phaser.Physics.Arcade.StaticGroup;
+}
 
 export class Area {
 	parts: AreaPosition[][] = [];
@@ -31,14 +41,15 @@ export class Area {
 	physicsGroup: any;
 	exitPositions: any[] = [];
 
-	constructor(config) {
-		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color, physicsGroup } = config;
+	constructor(config: AreaConfig) {
+		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color, physicsGroup, type, scene, exits } = config;
 		for (let row = 0; row < sizeOfYAxis; row++) {
 			this.parts[row] = [];
 			for (let column = 0; column < sizeOfXAxis; column++) {
 				this.parts[row].push(new AreaPosition(null));
 			}
 		}
+
 		this.physicsGroup = physicsGroup;
 
 		this.sizeOfXAxis = sizeOfXAxis;
@@ -57,6 +68,13 @@ export class Area {
 		this.relativeTopLeftY = topLeftY / (2 * wallPartHalfSize);
 
 		this.color = color;
+
+		if (type === "camp") {
+			this.scene = scene;
+
+			this.buildWalls();
+			this.makeExits(exits);
+		}
 	}
 
 	private makeExit(exit: Exit) {
@@ -148,56 +166,7 @@ export class Area {
 		this.createWallSide(x, y, this.sizeOfYAxis - 2, "right");
 	}
 
-	private calculateBuildingSpawnableArrForArea(parts) {
-		let spawnableArr = createBuildingSpawnableArr(parts);
-		updateBuildingSpawnableArr(spawnableArr);
-		return spawnableArr;
-	}
-
-	private calculateRandBuildingSpawnPos() {
-		if (!this.spawnableArrForBuildings) {
-			this.spawnableArrForBuildings = this.calculateBuildingSpawnableArrForArea(this.parts);
-		} else {
-			updateBuildingSpawnableArr(this.spawnableArrForBuildings);
-		}
-		let spawnablePos = extractSpawnPosFromSpawnableArr(this.spawnableArrForBuildings);
-		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
-		return relativePosToRealPos(pos.column + this.relativeTopLeftX, pos.row + this.relativeTopLeftY);
-	}
-
-	private checkIfBuildingCollidesWithBuildings(buildings, randX, randY) {
-		let checkDiffCallback = (diffX, diffY) => {
-			let inRowsOverOrUnderBuilding = diffY >= 2 * rectBuildinghalfHeight + 2 * wallPartHalfSize;
-			let leftOrRightFromBuilding = diffX >= 2 * rectBuildingHalfWidth + 2 * wallPartHalfSize;
-			if (!inRowsOverOrUnderBuilding && !leftOrRightFromBuilding) return true;
-			return false;
-		};
-		for (let index = 0; index < buildings.length; index++) {
-			const otherObject = buildings[index];
-			let diffX = Math.abs(otherObject.x - randX);
-			let diffY = Math.abs(otherObject.y - randY);
-			if (checkDiffCallback(diffX, diffY)) return true;
-		}
-		return false;
-	}
-
-	private buildBuilding(spawnUnit, buildingPhysicGroup) {
-		let { x, y } = this.calculateRandBuildingSpawnPos();
-		let count = 0;
-		while (this.checkIfBuildingCollidesWithBuildings(this.buildings, x, y)) {
-			if (count > 100) throw "No building position found";
-			let result = this.calculateRandBuildingSpawnPos();
-			x = result.x;
-			y = result.y;
-			count++;
-		}
-
-		let building = new Building(this.scene, x, y, buildingPhysicGroup, spawnUnit, this.color);
-		this.addBuildingToParts(building);
-		this.buildings.push(building);
-	}
-
-	private addBuildingToParts(building: Building) {
+	addBuildingToParts(building: Building) {
 		let x = this.topLeftX;
 		let y = this.topLeftY;
 
@@ -214,12 +183,6 @@ export class Area {
 			y += 2 * wallPartHalfSize;
 
 			x = this.topLeftX;
-		}
-	}
-
-	buildBuildings(numbOfBuildings, spawnUnits, buildingPhysicGroup) {
-		for (let index = 0; index < numbOfBuildings; index++) {
-			this.buildBuilding(spawnUnits[index], buildingPhysicGroup);
 		}
 	}
 }

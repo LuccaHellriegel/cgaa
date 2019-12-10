@@ -4,6 +4,7 @@ import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { rectBuildinghalfHeight } from "../../../globals/globalSizes";
+import { removeInteractionEle, addInteractionEle } from "../../base/events";
 
 export class Building extends Image implements damageable {
 	healthbar: HealthBar;
@@ -29,12 +30,12 @@ export class Building extends Image implements damageable {
 			value: 100,
 			scene
 		});
-		scene.events.emit("interaction-ele-added", this);
+		addInteractionEle(scene, this);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			this.scene.events.emit("interaction-ele-removed", this);
+			removeInteractionEle(this.scene, this);
 			this.destroy();
 		}
 	}

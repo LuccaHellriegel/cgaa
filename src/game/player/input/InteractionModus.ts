@@ -1,9 +1,10 @@
 import { TowerModus } from "./TowerModus";
 import { towerHalfSize } from "../../../globals/globalSizes";
 import { EnemyCircle } from "../../enemies/units/EnemyCircle";
-import { campColors } from "../../../globals/globalColors";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
+import { establishCooperation } from "../../base/events";
+import { getRandomCampColorOrder } from "../../../globals/global";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -15,18 +16,16 @@ export class InteractionModus {
 	scene: Gameplay;
 
 	constructor(scene: Gameplay, towerModus: TowerModus) {
-		let colorIndices = [0, 1, 2, 3];
-		for (let i = colorIndices.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * i);
-			const temp = colorIndices[i];
-			colorIndices[i] = colorIndices[j];
-			colorIndices[j] = temp;
-		}
+		let colors = getRandomCampColorOrder();
 
-		this.rivalries[campColors[colorIndices[0]]] = campColors[colorIndices[1]];
-		this.rivalries[campColors[colorIndices[1]]] = campColors[colorIndices[0]];
-		this.rivalries[campColors[colorIndices[2]]] = campColors[colorIndices[3]];
-		this.rivalries[campColors[colorIndices[3]]] = campColors[colorIndices[2]];
+		let color = colors.pop();
+		let secondColor = colors.pop();
+		this.rivalries[color] = secondColor;
+		this.rivalries[secondColor] = color;
+		color = colors.pop();
+		secondColor = colors.pop();
+		this.rivalries[color] = secondColor;
+		this.rivalries[secondColor] = color;
 
 		this.towerModus = towerModus;
 
@@ -45,7 +44,7 @@ export class InteractionModus {
 				let destroyed = this.checkIfCampDestroy(ele.color);
 				if (destroyed) {
 					//TODO: multiple camp cooperation
-					this.scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
+					establishCooperation(scene, this.rivalries[ele.color], "blue");
 				}
 			}
 		});
