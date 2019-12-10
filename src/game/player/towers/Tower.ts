@@ -15,6 +15,7 @@ export class Tower extends Image implements damageable {
 	bullets: Bullet[] = [];
 	bulletPool: Bullet[] = [];
 	canFire = true;
+	color: string;
 
 	constructor(scene, x, y, physicsGroup, sightGroup, bulletGroup) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
@@ -52,6 +53,9 @@ export class Tower extends Image implements damageable {
 			let bullet = new Bullet(scene, bulletGroup, this);
 			this.bullets.push(bullet);
 		}
+
+		this.color = "blue";
+		scene.events.emit("interaction-ele-added", this);
 	}
 
 	damage(amount: number) {
@@ -82,6 +86,7 @@ export class Tower extends Image implements damageable {
 	}
 
 	destroy() {
+		this.scene.events.emit("interaction-ele-removed", this);
 		super.destroy();
 		this.healthbar.destroy();
 		this.bullets.forEach(bullet => bullet.destroy());

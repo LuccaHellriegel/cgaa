@@ -20,6 +20,13 @@ export class TowerManager {
 	constructor(scene: Gameplay, towerGroup, sightGroup, bulletGroup, towerModus, spawnManager) {
 		this.scene = scene;
 
+		scene.events.on("remove-tower", tower => {
+			let index = this.towers.indexOf(tower);
+			this.towers.splice(index, 1);
+			tower.destroy();
+			this.scene.events.emit("souls-gained", towerCost);
+		});
+
 		scene.events.on("can-build", () => {
 			this.canBuild = true;
 		});

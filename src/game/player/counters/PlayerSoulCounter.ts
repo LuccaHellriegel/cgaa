@@ -11,7 +11,7 @@ export class PlayerSoulCounter {
 	constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y) {
 		let playerSoulCountGraphic = new SymmetricCrossPolygon(x, y, 50, 25);
 
-		let increaseEvent = "damage-by-player";
+		let increaseEvent = "souls-gained";
 		let decreaseEvent = "souls-spent";
 
 		this.value = 0;

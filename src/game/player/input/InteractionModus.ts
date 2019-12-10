@@ -3,6 +3,7 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { EnemyCircle } from "../../enemies/units/EnemyCircle";
 import { campColors } from "../../../globals/globalColors";
 import { Gameplay } from "../../../scenes/Gameplay";
+import { Tower } from "../towers/Tower";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -31,7 +32,6 @@ export class InteractionModus {
 
 		this.scene = scene;
 
-		//TODO: remove (building destroyed, unit killed)
 		scene.events.on("interaction-ele-added", ele => {
 			this.interactionElements.push(ele);
 		});
@@ -84,6 +84,9 @@ export class InteractionModus {
 					const element = this.interactionElements[key];
 					if (element.color === targetColor) this.unitKilllist.push(element);
 				}
+			} else if (ele instanceof Tower) {
+				this.scene.events.emit("remove-tower", ele);
+				this.towerModus.unlockGhostTower();
 			}
 		}
 	}

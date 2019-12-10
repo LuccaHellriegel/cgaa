@@ -123,7 +123,7 @@ export class Collision {
 
 		this.scene.events.emit("damage-" + enemy.unitType, damage);
 		if (weapon.owner.unitType === "player") {
-			this.scene.events.emit("damage-by-player", damage);
+			this.scene.events.emit("souls-gained", damage);
 		}
 
 		enemy.damage(weapon.amount);
@@ -135,7 +135,7 @@ export class Collision {
 		enemy.damage(bullet.amount);
 		let damage = bullet.amount > enemy.healthbar.value ? enemy.healthbar.value : bullet.amount;
 
-		this.scene.events.emit("damage-by-player", damage);
+		this.scene.events.emit("souls-gained", damage);
 		if (enemy.state !== "ambush") {
 			enemy.spotted = bullet.owner;
 			enemy.state = "guard";
