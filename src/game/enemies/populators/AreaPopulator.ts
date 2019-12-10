@@ -37,6 +37,7 @@ export class AreaPopulator extends Populator {
 		let enemy = EnemyFactory.createEnemy(this.enemyConfig);
 
 		enemy.state = "guard";
+		enemy.dontAttackList = this.dontAttackList;
 		return enemy;
 	}
 

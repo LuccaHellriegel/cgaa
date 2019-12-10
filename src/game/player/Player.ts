@@ -4,6 +4,7 @@ import { ChainWeapon } from "../weapons/ChainWeapon";
 import { normalCircleRadius } from "../../globals/globalSizes";
 import { CirclePolygon } from "../base/polygons/CirclePolygon";
 export class Player extends Circle {
+	color: string;
 	constructor(scene, physicsGroup, weapon) {
 		let polygon = new CirclePolygon(playerStartX, playerStartY, normalCircleRadius);
 
@@ -17,7 +18,7 @@ export class Player extends Circle {
 			weapon,
 			radius: normalCircleRadius
 		});
-
+		this.color = "blue";
 		this.unitType = "player";
 	}
 

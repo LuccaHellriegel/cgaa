@@ -5,10 +5,15 @@ export abstract class Populator {
 	enemyCount: number = 0;
 	scene: Gameplay;
 	spawnManager: SpawnManager;
+	dontAttackList: any[] = [];
 
 	constructor(scene: Gameplay, spawnManager) {
 		this.scene = scene;
 		this.spawnManager = spawnManager;
+	}
+
+	establishCooperation(cooperationColor) {
+		this.dontAttackList.push(cooperationColor);
 	}
 
 	abstract createEnemy();
@@ -18,7 +23,6 @@ export abstract class Populator {
 	startPopulating() {
 		let enemy = this.createEnemy();
 		if (enemy != null) {
-			this.scene.events.emit("enemy-spawned", enemy);
 			this.enemyCount++;
 		}
 		if (this.doMoreSpawn()) {

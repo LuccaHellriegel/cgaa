@@ -29,6 +29,7 @@ export class Area {
 	relativeTopLeftY: number;
 	color: string;
 	physicsGroup: any;
+	exitPositions: any[] = [];
 
 	constructor(config) {
 		let { sizeOfXAxis, sizeOfYAxis, topLeftX, topLeftY, unitForPart, color, physicsGroup } = config;
@@ -63,21 +64,37 @@ export class Area {
 			case "top":
 				for (let index = 0; index < exit.width; index++) {
 					this.parts[0][exit.position + index].setAsExit();
+					this.exitPositions.push({
+						row: 0 + this.relativeTopLeftY,
+						column: exit.position + index + this.relativeTopLeftX
+					});
 				}
 				break;
 			case "bottom":
 				for (let index = 0; index < exit.width; index++) {
 					this.parts[this.sizeOfYAxis - 1][exit.position + index].setAsExit();
+					this.exitPositions.push({
+						row: this.sizeOfYAxis - 1 + this.relativeTopLeftY,
+						column: exit.position + index + this.relativeTopLeftX
+					});
 				}
 				break;
 			case "left":
 				for (let index = 0; index < exit.width; index++) {
 					this.parts[exit.position + index][0].setAsExit();
+					this.exitPositions.push({
+						column: 0 + this.relativeTopLeftX,
+						row: exit.position + index + this.relativeTopLeftY
+					});
 				}
 				break;
 			case "right":
 				for (let index = 0; index < exit.width; index++) {
 					this.parts[exit.position + index][this.sizeOfXAxis - 1].setAsExit();
+					this.exitPositions.push({
+						column: this.sizeOfYAxis - 1 + this.relativeTopLeftX,
+						row: exit.position + index + this.relativeTopLeftY
+					});
 				}
 				break;
 		}

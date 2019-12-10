@@ -3,6 +3,7 @@ import { getRelativePosOfElements, getRelativePosOfElementsAndAroundElements } f
 import { Area } from "../areas/Area";
 import { Areas } from "../areas/Areas";
 import { Camp } from "./Camp";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class Enemies {
 	enemyPhysicGroups = {};
@@ -10,7 +11,7 @@ export class Enemies {
 	units: EnemyCircle[] = [];
 	camps: Camp[] = [];
 	campIndex = 0;
-	scene: any;
+	scene: Gameplay;
 
 	constructor(scene, areas: Areas, spawnManager, pathManager, enemyPhysicGroups, weaponPhysicGroups) {
 		this.enemyPhysicGroups = enemyPhysicGroups;
@@ -29,6 +30,9 @@ export class Enemies {
 		scene.events.on("enemy-spawned", (enemy: EnemyCircle) => {
 			this.units.push(enemy);
 		});
+		scene.events.on("cooperation-established", (campColor, cooperationColor) =>
+			this.establishCooperation(campColor, cooperationColor)
+		);
 	}
 
 	getRelativeEnemyPositions() {
@@ -55,6 +59,21 @@ export class Enemies {
 			callback: this.spawnWaveUnits,
 			callbackScope: this,
 			repeat: 0
+		});
+	}
+
+	addInteractionUnits() {
+		this.camps.forEach(camp => camp.addInteractionUnit());
+	}
+
+	establishCooperation(campColor, cooperationColor) {
+		this.units.forEach(unit => {
+			if (unit.color == campColor) {
+				unit.dontAttackList.push(cooperationColor);
+			}
+		});
+		this.camps.forEach(camp => {
+			if (camp.color === campColor) camp.establishCooperation(cooperationColor);
 		});
 	}
 }

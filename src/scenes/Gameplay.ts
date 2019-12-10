@@ -11,6 +11,7 @@ import { TowerModus } from "../game/player/input/TowerModus";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/player/input/mouse";
+import { InteractionModus } from "../game/player/input/InteractionModus";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -46,9 +47,6 @@ export class Gameplay extends Phaser.Scene {
 			physicsGroups.enemyWeapons
 		);
 		spawnManager.setEnemies(enemies);
-		pathManager.calculateBuildingSpecificPaths();
-		enemies.spawnAreaUnits();
-		enemies.spawnWaveUnits();
 
 		let towerModus = new TowerModus(this);
 		let towerManager = new TowerManager(
@@ -60,9 +58,16 @@ export class Gameplay extends Phaser.Scene {
 			spawnManager
 		);
 
+		let interactionModus = new InteractionModus(this, towerModus);
+		towerModus.setInteractionModus(interactionModus);
+		enemies.addInteractionUnits();
+		pathManager.calculateBuildingSpecificPaths();
+		enemies.spawnAreaUnits();
+		enemies.spawnWaveUnits();
+
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
-		setupPointerEvents(this, player, towerModus, towerManager);
+		setupPointerEvents(this, player, towerModus, towerManager, interactionModus);
 		this.movement = new Movement(this, player);
 	}
 

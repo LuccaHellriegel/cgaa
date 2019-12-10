@@ -140,13 +140,16 @@ export class Collision {
 			enemy.syncPolygon();
 			let collision = weapon.polygon.checkForCollision(enemy.polygon);
 			return collision;
-		} else if (weapon.owner.unitType !== "player" && weapon.owner.state !== "ambush") {
-			if ((weapon.owner as EnemyCircle).color !== enemy.color) {
-				if (weapon.owner.state !== "guard") {
-					(weapon.owner as EnemyCircle).spotted = enemy;
-					weapon.owner.state = "guard";
-				}
-			}
+		} else if (
+			weapon.owner.unitType !== "player" &&
+			weapon.owner.state !== "ambush" &&
+			weapon.owner.state !== "interaction" &&
+			(weapon.owner as EnemyCircle).color !== enemy.color &&
+			weapon.owner.state !== "guard" &&
+			!(weapon.owner as EnemyCircle).dontAttackList.includes(enemy.color)
+		) {
+			(weapon.owner as EnemyCircle).spotted = enemy;
+			weapon.owner.state = "guard";
 		}
 		return false;
 	}
@@ -162,8 +165,10 @@ export class Collision {
 		unit.setPosition(x1, y1);
 		unit.setVelocity(0, 0);
 
-		unit.barrier = obj;
-		unit.state = "obstacle";
+		if (unit.unitType !== "player" && !unit.dontAttackList.includes(obj.color)) {
+			unit.barrier = obj;
+			unit.state = "obstacle";
+		}
 	}
 
 	private addEnvCollider() {

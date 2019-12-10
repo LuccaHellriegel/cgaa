@@ -47,6 +47,7 @@ export class BuildingPopulator extends Populator {
 
 			enemy.pathContainer = this.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
 			enemy.state = "ambush";
+			enemy.dontAttackList = this.dontAttackList;
 			return enemy;
 		}
 		return null;

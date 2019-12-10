@@ -17,6 +17,8 @@ export class EnemyCircle extends Circle implements damageable {
 	pursuing: any;
 	barrier: any;
 	velo: any;
+	purpose: string;
+	dontAttackList: any[] = [];
 
 	constructor(config, velo) {
 		super(config);
@@ -37,6 +39,11 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	destroy() {
+		//TODO: need to remove it also if I attack it, but not from arr otherwise destroy check does not work
+		//TODO: state: has been attacked by player
+		if (this.scene && this.purpose == "interaction") {
+			this.scene.events.emit("interaction-ele-removed", this);
+		}
 		super.destroy();
 		this.healthbar.destroy();
 	}
@@ -64,6 +71,10 @@ export class EnemyCircle extends Circle implements damageable {
 			}
 			case "obstacle": {
 				this.obstacle();
+				break;
+			}
+			case "interaction": {
+				this.interaction();
 				break;
 			}
 		}
@@ -154,4 +165,6 @@ export class EnemyCircle extends Circle implements damageable {
 			this.setVelocity(0, 0);
 		}
 	}
+
+	private interaction() {}
 }

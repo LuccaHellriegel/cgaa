@@ -1,4 +1,13 @@
-export function setupPointerEvents(scene, player, towerModus, towerManager) {
+import { TowerModus } from "./TowerModus";
+import { InteractionModus } from "./InteractionModus";
+
+export function setupPointerEvents(
+	scene,
+	player,
+	towerModus: TowerModus,
+	towerManager,
+	interactionModus: InteractionModus
+) {
 	let input = scene.input;
 
 	input.on("pointermove", function(pointer) {
@@ -15,7 +24,9 @@ export function setupPointerEvents(scene, player, towerModus, towerManager) {
 	input.on("pointerdown", function(pointer) {
 		//TODO: only left click
 		if (pointer) {
-			if (towerModus.isOn) {
+			if (interactionModus.isOn) {
+				interactionModus.interactWithClosestEle();
+			} else if (towerModus.isOn) {
 				towerManager.spawnNewTower(towerModus.ghostTower.x, towerModus.ghostTower.y);
 			} else {
 				player.attack();
