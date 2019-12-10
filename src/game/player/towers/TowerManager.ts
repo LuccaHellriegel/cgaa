@@ -4,7 +4,7 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { getRelativePosOfElementsAndAroundElements } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
 import { TowerModus } from "../input/TowerModus";
-import { SpawnManager } from "../../enemies/spawn/SpawnManager";
+import { SpawnManager } from "../../spawn/SpawnManager";
 import { towerCost } from "../../../globals/globalConfig";
 import { gainSouls, spendSouls } from "../../base/events";
 

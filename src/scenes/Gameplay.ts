@@ -5,7 +5,7 @@ import { Collision } from "../game/collision/Collision";
 import { Areas } from "../game/areas/Areas";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { PathManager } from "../game/enemies/path/PathManager";
-import { SpawnManager } from "../game/enemies/spawn/SpawnManager";
+import { SpawnManager } from "../game/spawn/SpawnManager";
 import { Enemies } from "../game/enemies/Enemies";
 import { TowerModus } from "../game/player/input/TowerModus";
 import { TowerManager } from "../game/player/towers/TowerManager";

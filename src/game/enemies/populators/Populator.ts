@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { SpawnManager } from "../spawn/SpawnManager";
+import { SpawnManager } from "../../spawn/SpawnManager";
 
 export abstract class Populator {
 	enemyCount: number = 0;

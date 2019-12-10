@@ -2,7 +2,7 @@ import { Area } from "../areas/Area";
 import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
-import { SpawnManager } from "./spawn/SpawnManager";
+import { SpawnManager } from "../spawn/SpawnManager";
 import { PathManager } from "./path/PathManager";
 import {
 	circleSizeNames,
@@ -15,7 +15,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { relativePosToRealPos, realPosToRelativePos, realPosToRelativePosInArea } from "../base/position";
 import { addInteractionEle } from "../base/events";
 import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "../base/spawn";
-import { Building } from "./buildings/Building";
+import { Building } from "./units/Building";
 import { exitSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
 export class Camp {

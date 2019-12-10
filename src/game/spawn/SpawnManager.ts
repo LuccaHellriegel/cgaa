@@ -1,11 +1,11 @@
-import { Area } from "../../areas/Area";
-import { Tower } from "../../player/towers/Tower";
-import { Building } from "../buildings/Building";
-import { towerSymbol, buildingSymbol } from "../../../globals/globalSymbols";
-import { realPosToRelativePos } from "../../base/position";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArrForArea } from "../../base/spawn";
-import { updateMapWithElementAndAroundElements, updateMapWithElement } from "../../base/map";
-import { Enemies } from "../Enemies";
+import { Area } from "../areas/Area";
+import { Tower } from "../player/towers/Tower";
+import { Building } from "../enemies/units/Building";
+import { towerSymbol, buildingSymbol } from "../../globals/globalSymbols";
+import { realPosToRelativePos } from "../base/position";
+import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArrForArea } from "../base/spawn";
+import { updateMapWithElementAndAroundElements, updateMapWithElement } from "../base/map";
+import { Enemies } from "../enemies/Enemies";
 
 export class SpawnManager {
 	spawnableArrForEnemiesBase;

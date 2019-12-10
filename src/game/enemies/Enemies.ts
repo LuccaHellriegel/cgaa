@@ -4,7 +4,7 @@ import { Area } from "../areas/Area";
 import { Areas } from "../areas/Areas";
 import { Camp } from "./Camp";
 import { Gameplay } from "../../scenes/Gameplay";
-import { Building } from "./buildings/Building";
+import { Building } from "./units/Building";
 import { getRandomCampColorOrder } from "../../globals/global";
 
 export class Enemies {

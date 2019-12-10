@@ -41,9 +41,6 @@ export class Tower extends Image implements damageable {
 			value: 100
 		});
 
-		//TODO: only one target at a time
-		//TODO: just make camps offlimit for towers in general
-		//TODO: sometimes I cant place any tower and no error
 		this.bulletGroup = bulletGroup;
 		this.sightElement = new Image({ scene, x: this.x, y: this.y, texture: "", physicsGroup: sightGroup });
 		this.sightElement.setVisible(false);
@@ -88,8 +85,8 @@ export class Tower extends Image implements damageable {
 
 	destroy() {
 		removeInteractionEle(this.scene, this);
-		super.destroy();
 		this.healthbar.destroy();
 		this.bullets.forEach(bullet => bullet.destroy());
+		super.destroy();
 	}
 }

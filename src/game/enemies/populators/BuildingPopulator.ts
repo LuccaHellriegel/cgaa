@@ -1,10 +1,10 @@
 import { Populator } from "./Populator";
-import { Building } from "../buildings/Building";
+import { Building } from "../units/Building";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 import { realPosToRelativePos, relativePosToRealPos } from "../../base/position";
 import EasyStar from "easystarjs";
 import { calculateRelativeSpawnPositionsAround } from "../../base/spawn";
-import { SpawnManager } from "../spawn/SpawnManager";
+import { SpawnManager } from "../../spawn/SpawnManager";
 import { PathManager } from "../path/PathManager";
 
 export class BuildingPopulator extends Populator {

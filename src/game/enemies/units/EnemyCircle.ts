@@ -3,7 +3,7 @@ import { Circle } from "../../base/classes/Circle";
 import { PathContainer } from "../path/PathContainer";
 import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../areas/WallPart";
-import { Building } from "../buildings/Building";
+import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
 import { relativePosToRealPos } from "../../base/position";
 import { removeInteractionEle } from "../../base/events";
