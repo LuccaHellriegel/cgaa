@@ -8,15 +8,14 @@ import {
 	circleSizeNames,
 	rectBuildinghalfHeight,
 	wallPartHalfSize,
-	rectBuildingHalfWidth,
-	rectBuildingInWallParts
+	rectBuildingHalfWidth
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
-import { relativePosToRealPos, realPosToRelativePos, realPosToRelativePosInArea } from "../base/position";
+import { relativePosToRealPos, realPosToRelativePosInArea } from "../base/position";
 import { addInteractionEle } from "../base/events";
-import { updateBuildingSpawnableArr, extractSpawnPosFromSpawnableArr } from "../base/spawn";
+import { extractSpawnPosFromSpawnableArr } from "../base/spawn";
 import { Building } from "./units/Building";
-import { exitSymbol, buildingSymbol } from "../../globals/globalSymbols";
+import { exitSymbol, buildingSymbol, wallSymbol } from "../../globals/globalSymbols";
 
 export class Camp {
 	color: string;
@@ -67,8 +66,43 @@ export class Camp {
 		});
 	}
 
+	private addDistanceBetweenWallAndSpawnPos() {
+		for (let row = 0; row < this.spawnableArrForBuildings.length; row++) {
+			for (let column = 0; column < this.spawnableArrForBuildings[0].length; column++) {
+				let isLeftWall = column === 0;
+				let isRightWall = column === this.spawnableArrForBuildings.length - 1;
+				let isTopWall = row === 0;
+				let isBottomWall = row === this.spawnableArrForBuildings[0].length - 1;
+
+				if (isTopWall) {
+					this.spawnableArrForBuildings[row + 1][column] = wallSymbol;
+					this.spawnableArrForBuildings[row + 2][column] = wallSymbol;
+					continue;
+				}
+
+				if (isBottomWall) {
+					this.spawnableArrForBuildings[row - 1][column] = wallSymbol;
+					this.spawnableArrForBuildings[row - 2][column] = wallSymbol;
+					continue;
+				}
+
+				if (isLeftWall) {
+					this.spawnableArrForBuildings[row][column + 1] = wallSymbol;
+					this.spawnableArrForBuildings[row][column + 2] = wallSymbol;
+					continue;
+				}
+
+				if (isRightWall) {
+					this.spawnableArrForBuildings[row][column - 1] = wallSymbol;
+					this.spawnableArrForBuildings[row][column - 2] = wallSymbol;
+					continue;
+				}
+			}
+		}
+	}
+
 	private calculateRandBuildingSpawnPos() {
-		updateBuildingSpawnableArr(this.spawnableArrForBuildings);
+		this.addDistanceBetweenWallAndSpawnPos();
 		let spawnablePos = extractSpawnPosFromSpawnableArr(this.spawnableArrForBuildings);
 		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
 		return relativePosToRealPos(pos.column + this.area.relativeTopLeftX, pos.row + this.area.relativeTopLeftY);
@@ -95,8 +129,22 @@ export class Camp {
 
 		//TODO: only works if building is 3 long
 		this.spawnableArrForBuildings[row][column] = buildingSymbol;
+		this.spawnableArrForBuildings[row][column - 2] = buildingSymbol;
 		this.spawnableArrForBuildings[row][column - 1] = buildingSymbol;
 		this.spawnableArrForBuildings[row][column + 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row][column + 2] = buildingSymbol;
+
+		this.spawnableArrForBuildings[row - 1][column] = buildingSymbol;
+		this.spawnableArrForBuildings[row - 1][column - 2] = buildingSymbol;
+		this.spawnableArrForBuildings[row - 1][column - 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row - 1][column + 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row - 1][column + 2] = buildingSymbol;
+
+		this.spawnableArrForBuildings[row + 2][column] = buildingSymbol;
+		this.spawnableArrForBuildings[row + 2][column - 2] = buildingSymbol;
+		this.spawnableArrForBuildings[row + 2][column - 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row + 2][column + 1] = buildingSymbol;
+		this.spawnableArrForBuildings[row + 2][column + 2] = buildingSymbol;
 	}
 
 	private buildBuilding(spawnUnit, buildingPhysicGroup) {
