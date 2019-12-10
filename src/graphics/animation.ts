@@ -13,7 +13,7 @@ function createNonRepeatingAnim(anims: Phaser.Animations.AnimationManager, key, 
 function createWeaponAnims(anims) {
 	let speedPerSize = {
 		Small: 20,
-		Normal: 10,
+		Normal: 8,
 		Big: 5
 	};
 

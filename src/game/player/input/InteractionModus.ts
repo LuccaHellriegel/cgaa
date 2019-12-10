@@ -39,12 +39,14 @@ export class InteractionModus {
 			let index = this.interactionElements.indexOf(ele);
 			this.interactionElements.splice(index, 1);
 			index = this.unitKilllist.indexOf(ele);
-			this.unitKilllist.splice(index, 1);
+			if (index > -1) this.unitKilllist.splice(index, 1);
 
-			let destroyed = this.checkIfCampDestroy(ele.color);
-			if (destroyed) {
-				//TODO: multiple camp cooperation
-				this.scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
+			if (index > -1) {
+				let destroyed = this.checkIfCampDestroy(ele.color);
+				if (destroyed) {
+					//TODO: multiple camp cooperation
+					this.scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
+				}
 			}
 		});
 		let keyObj = scene.input.keyboard.addKey("E");
