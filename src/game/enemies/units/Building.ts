@@ -4,7 +4,7 @@ import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { rectBuildinghalfHeight } from "../../../globals/globalSizes";
-import { removeInteractionEle, addInteractionEle, addEle, removeEle } from "../../base/events";
+import { addEle, removeEle, addInteractionEle, removeInteractionEle } from "../../base/events/elements";
 
 export class Building extends Image implements damageable {
 	healthbar: HealthBar;

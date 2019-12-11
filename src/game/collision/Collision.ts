@@ -2,7 +2,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
 import { EnemyCircle } from "../enemies/units/EnemyCircle";
 import { executeOverAllCamps } from "../../globals/global";
-import { gainSouls } from "../base/events";
+import { gainSouls } from "../base/events/player";
 
 export class Collision {
 	player: Phaser.Physics.Arcade.Group;

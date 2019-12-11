@@ -2,10 +2,10 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { EnemyCircle } from "../../enemies/units/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
-import { establishCooperation, gainLife } from "../../base/events";
 import { getRandomCampColorOrder } from "../../../globals/global";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../Square";
+import { establishCooperation, gainLife } from "../../base/events/player";
 
 export class InteractionModus {
 	isOn: Boolean = false;

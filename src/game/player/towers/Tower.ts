@@ -5,7 +5,7 @@ import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { towerHalfSize, wallPartHalfSize } from "../../../globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/extend";
-import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events";
+import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;

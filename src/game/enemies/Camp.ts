@@ -11,7 +11,7 @@ import {
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
 import { relativePosToRealPos } from "../base/position";
-import { addInteractionEle } from "../base/events";
+import { addInteractionEle } from "../base/events/elements";
 import { extractSpawnPosFromSpawnableMap } from "../base/spawn";
 import { Building } from "./units/Building";
 import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";

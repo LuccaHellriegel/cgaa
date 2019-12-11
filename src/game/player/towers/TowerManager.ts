@@ -4,9 +4,9 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { snapXYToGrid } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "../../base/towers";
 import { towerCost } from "../../../globals/globalConfig";
-import { gainSouls, spendSouls } from "../../base/events";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
 import { GhostTower } from "../modi/GhostTower";
+import { gainSouls, spendSouls } from "../../base/events/player";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;

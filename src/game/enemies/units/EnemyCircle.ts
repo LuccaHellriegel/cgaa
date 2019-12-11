@@ -6,7 +6,7 @@ import { WallPart } from "../../areas/WallPart";
 import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
 import { relativePosToRealPos } from "../../base/position";
-import { removeInteractionEle, addEle } from "../../base/events";
+import { addEle, removeInteractionEle } from "../../base/events/elements";
 
 export class EnemyCircle extends Circle implements damageable {
 	hasBeenAttacked: boolean;
