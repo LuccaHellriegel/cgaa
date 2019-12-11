@@ -39,9 +39,8 @@ export class InteractionModus {
 			let index = this.interactionElements.indexOf(ele);
 			this.interactionElements.splice(index, 1);
 			index = this.unitKilllist.indexOf(ele);
-			if (index > -1) this.unitKilllist.splice(index, 1);
-
 			if (index > -1) {
+				this.unitKilllist.splice(index, 1);
 				let destroyed = this.checkIfCampDestroy(ele.color);
 				if (destroyed) {
 					//TODO: multiple camp cooperation
@@ -75,23 +74,28 @@ export class InteractionModus {
 	interactWithClosestEle() {
 		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
-			if (ele instanceof EnemyCircle) {
-				let targetColor = this.rivalries[ele.color];
-				//TODO: error if getting two rivals in kill list
-				if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
-					this.colorKilllist.push(targetColor);
-					this.scene.events.emit("added-to-killlist", targetColor);
-				}
+			switch (ele.constructor) {
+				case EnemyCircle:
+					let targetColor = this.rivalries[ele.color];
+					if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
+						this.colorKilllist.push(targetColor);
+						this.scene.events.emit("added-to-killlist", targetColor);
+					}
 
-				for (const key in this.interactionElements) {
-					const element = this.interactionElements[key];
-					if (element.color === targetColor) this.unitKilllist.push(element);
-				}
-			} else if (ele instanceof Tower) {
-				this.scene.events.emit("remove-tower", ele);
-				this.ghostTower.toggleLock();
-			} else if (ele instanceof Square) {
-				gainLife(this.scene, 20);
+					for (const key in this.interactionElements) {
+						const element = this.interactionElements[key];
+						if (element.color === targetColor) this.unitKilllist.push(element);
+					}
+					break;
+				case Tower:
+					this.scene.events.emit("sold-tower", ele);
+					this.ghostTower.toggleLock();
+					break;
+				case Square:
+					gainLife(this.scene, 20);
+					break;
+				default:
+					break;
 			}
 		}
 	}

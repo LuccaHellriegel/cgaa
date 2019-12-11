@@ -1,10 +1,10 @@
-import { EnemyCircle } from "./units/EnemyCircle";
-import { Area } from "../areas/Area";
+import { EnemyCircle } from "./EnemyCircle";
+import { Area } from "../../areas/Area";
 import { Camp } from "./Camp";
-import { Gameplay } from "../../scenes/Gameplay";
-import { Building } from "./units/Building";
-import { getRandomCampColorOrder } from "../../globals/global";
-import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { Building } from "./Building";
+import { getRandomCampColorOrder } from "../../../globals/global";
+import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
 
 export class Enemies {
 	enemyPhysicGroups = {};
@@ -81,6 +81,17 @@ export class Enemies {
 			callback: this.spawnWaveUnits,
 			callbackScope: this,
 			repeat: 0
+		});
+	}
+
+	bringUnitsToTop() {
+		this.units.forEach(unit => {
+			this.scene.children.bringToTop(unit);
+			this.scene.children.bringToTop(unit.weapon);
+		});
+		let buildings = this.getBuildings();
+		buildings.forEach(building => {
+			this.scene.children.bringToTop(building);
 		});
 	}
 

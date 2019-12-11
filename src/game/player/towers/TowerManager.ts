@@ -26,11 +26,16 @@ export class TowerManager {
 	) {
 		this.scene = scene;
 
-		scene.events.on("remove-tower", tower => {
+		scene.events.on("sold-tower", tower => {
 			let index = this.towers.indexOf(tower);
 			this.towers.splice(index, 1);
 			tower.destroy();
 			gainSouls(this.scene, towerCost);
+		});
+
+		scene.events.on("removed-tower", tower => {
+			let index = this.towers.indexOf(tower);
+			this.towers.splice(index, 1);
 		});
 
 		scene.events.on("can-build", () => {
@@ -45,7 +50,6 @@ export class TowerManager {
 		this.ghostTower = ghostTower;
 
 		this.towerGroup = towerGroup;
-
 		this.sightGroup = sightGroup;
 		this.bulletGroup = bulletGroup;
 	}

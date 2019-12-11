@@ -9,6 +9,7 @@ import { campHexColors } from "../globals/globalColors";
 import { circleSizes } from "../globals/globalSizes";
 import { executeOverAllCampsAndSizes } from "../globals/global";
 import { SquareGenerator } from "./generators/SquareGenerator";
+import { PathMarkingGenerator } from "./generators/PathMarkingGenerator";
 
 export function generateTextures(scene) {
 	new RectGenerator(scene, 0x013220, "tower", towerHalfSize, towerHalfSize, 2 * towerHalfSize, 2 * towerHalfSize);
@@ -53,4 +54,6 @@ function generateEnvironment(scene) {
 		2 * wallPartHalfSize,
 		2 * wallPartHalfSize
 	);
+
+	new PathMarkingGenerator(scene);
 }

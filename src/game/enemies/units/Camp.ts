@@ -1,22 +1,22 @@
-import { Area } from "../areas/Area";
-import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
-import { AreaPopulator } from "./populators/AreaPopulator";
-import { BuildingPopulator } from "./populators/BuildingPopulator";
-import { PathManager } from "./path/PathManager";
+import { Area } from "../../areas/Area";
+import { EnemyConfig, EnemyFactory } from "./EnemyFactory";
+import { AreaPopulator } from "../populators/AreaPopulator";
+import { BuildingPopulator } from "../populators/BuildingPopulator";
+import { PathManager } from "../path/PathManager";
 import {
 	circleSizeNames,
 	rectBuildinghalfHeight,
 	wallPartHalfSize,
 	rectBuildingHalfWidth
-} from "../../globals/globalSizes";
-import { Gameplay } from "../../scenes/Gameplay";
-import { addInteractionEle } from "../base/events/elements";
-import { extractSpawnPosFromSpawnableMap } from "../base/map/extract";
-import { Building } from "./units/Building";
-import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";
-import { updateAreaMapWithBuilding } from "../base/map/update";
-import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
-import { relativePosToRealPos } from "../base/map/position";
+} from "../../../globals/globalSizes";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { addInteractionEle } from "../../base/events/elements";
+import { extractSpawnPosFromSpawnableMap } from "../../base/map/extract";
+import { Building } from "./Building";
+import { exitSymbol, wallSymbol } from "../../../globals/globalSymbols";
+import { updateAreaMapWithBuilding } from "../../base/map/update";
+import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
+import { relativePosToRealPos } from "../../base/map/position";
 
 export class Camp {
 	color: string;

@@ -74,3 +74,18 @@ export function getRelativePosOfElements(elements) {
 	});
 	return relativePositions;
 }
+
+export function calculateRelativeCrossPostioning(x, y, x2, y2) {
+	let xDirection = x2 < x;
+	let yDirection = y2 < y;
+	if (xDirection) {
+		return "left";
+	}
+	if (yDirection) {
+		return "top";
+	}
+	if (x2 == x) {
+		return "bottom";
+	}
+	return "right";
+}
