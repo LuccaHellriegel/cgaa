@@ -5,8 +5,8 @@ import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../areas/WallPart";
 import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
-import { relativePosToRealPos } from "../../base/position";
 import { addEle, removeInteractionEle } from "../../base/events/elements";
+import { relativePosToRealPos } from "../../base/map/position";
 
 export class EnemyCircle extends Circle implements damageable {
 	hasBeenAttacked: boolean;

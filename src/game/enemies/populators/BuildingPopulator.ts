@@ -1,11 +1,11 @@
 import { Populator } from "./Populator";
 import { Building } from "../units/Building";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
-import { realPosToRelativePos, relativePosToRealPos } from "../../base/position";
 import EasyStar from "easystarjs";
-import { calculateRelativeSpawnPositionsAround } from "../../base/spawn";
 import { PathManager } from "../path/PathManager";
 import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
+import { calculateRelativeSpawnPositionsAround } from "../../base/map/calculate";
+import { realPosToRelativePos, relativePosToRealPos } from "../../base/map/position";
 
 export class BuildingPopulator extends Populator {
 	easyStar: EasyStar.js;

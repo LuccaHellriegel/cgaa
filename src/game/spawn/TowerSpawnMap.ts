@@ -1,7 +1,7 @@
 import { SpawnMap } from "./SpawnMap";
-import { getRelativePosOfElements } from "../base/position";
 import { enemySmybol, towerSymbol } from "../../globals/globalSymbols";
-import { updateMapWithElement, markCampsAsNonWalkable } from "../base/map";
+import { updateMapWithElement, markCampsAsNonWalkable } from "../base/map/update";
+import { getRelativePosOfElements } from "../base/map/position";
 
 export class TowerSpawnMap extends SpawnMap {
 	constructor(scene, baseMap, movingUnitsArr) {

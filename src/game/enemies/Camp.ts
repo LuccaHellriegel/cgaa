@@ -10,13 +10,13 @@ import {
 	rectBuildingHalfWidth
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
-import { relativePosToRealPos } from "../base/position";
 import { addInteractionEle } from "../base/events/elements";
-import { extractSpawnPosFromSpawnableMap } from "../base/spawn";
+import { extractSpawnPosFromSpawnableMap } from "../base/map/extract";
 import { Building } from "./units/Building";
 import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";
-import { updateAreaMapWithBuilding } from "../base/map";
+import { updateAreaMapWithBuilding } from "../base/map/update";
 import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
+import { relativePosToRealPos } from "../base/map/position";
 
 export class Camp {
 	color: string;

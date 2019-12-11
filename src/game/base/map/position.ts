@@ -1,4 +1,4 @@
-import { wallPartHalfSize } from "../../globals/globalSizes";
+import { wallPartHalfSize } from "../../../globals/globalSizes";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;

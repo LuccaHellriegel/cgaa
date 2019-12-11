@@ -1,7 +1,7 @@
-import { realPosToRelativePos } from "../base/position";
 import { Area } from "../areas/Area";
-import { extractSpawnPosFromSpawnableMapForArea } from "../base/spawn";
+import { extractSpawnPosFromSpawnableMapForArea } from "../base/map/extract";
 import { walkableSymbol } from "../../globals/globalSymbols";
+import { realPosToRelativePos } from "../base/map/position";
 
 export abstract class SpawnMap {
 	baseMap;

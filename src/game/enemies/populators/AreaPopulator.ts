@@ -1,8 +1,8 @@
 import { Populator } from "./Populator";
 import { Area } from "../../areas/Area";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
-import { relativePosToRealPos } from "../../base/position";
 import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
+import { relativePosToRealPos } from "../../base/map/position";
 
 export class AreaPopulator extends Populator {
 	area: Area;

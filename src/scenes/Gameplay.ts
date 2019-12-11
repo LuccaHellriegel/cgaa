@@ -10,13 +10,13 @@ import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/base/pointer";
 import { InteractionModus } from "../game/player/modi/InteractionModus";
-import { calculateUnifiedMap } from "../game/base/map";
 import { EnemySpawnMap } from "../game/spawn/EnemySpawnMap";
 import { TowerSpawnMap } from "../game/spawn/TowerSpawnMap";
 import { Square } from "../game/player/Square";
 import { playerStartX, playerStartY } from "../globals/globalConfig";
 import { GhostTower } from "../game/player/modi/GhostTower";
 import { Modi } from "../game/player/modi/Modi";
+import { calculateUnifiedMap } from "../game/base/map/calculate";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;

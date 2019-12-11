@@ -1,12 +1,12 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerHalfSize } from "../../../globals/globalSizes";
-import { snapXYToGrid } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "../../base/towers";
 import { towerCost } from "../../../globals/globalConfig";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
 import { GhostTower } from "../modi/GhostTower";
 import { gainSouls, spendSouls } from "../../base/events/player";
+import { snapXYToGrid } from "../../base/map/position";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
@@ -68,19 +68,6 @@ export class TowerManager {
 			let snappedXY = snapXYToGrid(x, y);
 			x = snappedXY.newX;
 			y = snappedXY.newY;
-
-			let { closestTower, dist } = findClosestTower(this.towers, x, y);
-			if (dist < 3.5 * towerHalfSize) {
-				let resultXY = snapTowerPosToClosestTower(closestTower, x, y);
-				if (resultXY === null) {
-					this.playInvalidTowerPosAnim();
-					return;
-				}
-
-				let { newX, newY } = resultXY;
-				x = newX;
-				y = newY;
-			}
 
 			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, towerCost);

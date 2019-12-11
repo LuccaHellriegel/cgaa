@@ -1,7 +1,7 @@
 import { SpawnMap } from "./SpawnMap";
-import { getRelativePosOfElements } from "../base/position";
 import { enemySmybol } from "../../globals/globalSymbols";
-import { updateMapWithBuilding } from "../base/map";
+import { updateMapWithBuilding } from "../base/map/update";
+import { getRelativePosOfElements } from "../base/map/position";
 
 export class EnemySpawnMap extends SpawnMap {
 	constructor(scene, baseMap, movingUnitsArr) {
