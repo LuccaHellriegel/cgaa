@@ -35,7 +35,11 @@ export abstract class SpawnMap {
 	evaluateRealPos(x, y) {
 		this.updateRelativeMap();
 		let { row, column } = realPosToRelativePos(x, y);
-		return this.relativeMap[row][column] === walkableSymbol;
+		if (this.relativeMap[row][column] === walkableSymbol) {
+			return true;
+		}
+		console.log(this.relativeMap);
+		return false;
 	}
 
 	filterPositions(positions) {

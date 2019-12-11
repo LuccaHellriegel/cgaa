@@ -55,6 +55,7 @@ export class Gameplay extends Phaser.Scene {
 			towerSpawnMap
 		);
 		let interactionModus = new InteractionModus(this, towerModus);
+		towerModus.setInteractionModus(interactionModus);
 
 		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
 		let enemies = new Enemies(
@@ -68,9 +69,8 @@ export class Gameplay extends Phaser.Scene {
 			enemyArr
 		);
 
-		towerModus.setInteractionModus(interactionModus);
-		enemies.addInteractionUnits();
 		pathManager.calculateBuildingSpecificPaths(enemies.getBuildings());
+
 		enemies.spawnAreaUnits();
 		enemies.spawnWaveUnits();
 

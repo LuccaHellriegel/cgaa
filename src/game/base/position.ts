@@ -67,8 +67,11 @@ export function realPosToRelativePosInArea(x, y, area) {
 export function getRelativePosOfElements(elements) {
 	let relativePositions: any[] = [];
 	elements.forEach(ele => {
-		let pos = realPosToRelativePos(ele.x, ele.y);
-		relativePositions.push(pos);
+		let eleNotDestroyed = ele.scene;
+		if (eleNotDestroyed) {
+			let pos = realPosToRelativePos(ele.x, ele.y);
+			relativePositions.push(pos);
+		}
 	});
 	return relativePositions;
 }

@@ -15,7 +15,7 @@ import { addInteractionEle } from "../base/events";
 import { extractSpawnPosFromSpawnableMap } from "../base/spawn";
 import { Building } from "./units/Building";
 import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";
-import { updateMapWithBuilding, updateAreaMapWithBuilding } from "../base/map";
+import { updateAreaMapWithBuilding } from "../base/map";
 import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
 
 export class Camp {
@@ -66,6 +66,8 @@ export class Camp {
 			enemyConfig.size = building.spawnUnit;
 			this.buildingPopulators.push(new BuildingPopulator({ ...enemyConfig }, building, enemySpawnMap, pathManager));
 		});
+
+		this.addInteractionUnit();
 	}
 
 	private addDistanceBetweenWallAndSpawnPos() {

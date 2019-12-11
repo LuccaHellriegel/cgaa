@@ -86,10 +86,6 @@ export class Enemies {
 		});
 	}
 
-	addInteractionUnits() {
-		this.camps.forEach(camp => camp.addInteractionUnit());
-	}
-
 	establishCooperation(campColor, cooperationColor) {
 		this.units.forEach(unit => {
 			if (unit.color == campColor) {
