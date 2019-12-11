@@ -71,8 +71,6 @@ export class EnemyFactory {
 		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
-		scene.events.emit("enemy-spawned", circle);
-
 		return circle;
 	}
 }

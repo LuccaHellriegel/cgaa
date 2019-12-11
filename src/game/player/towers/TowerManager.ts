@@ -1,12 +1,12 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerHalfSize } from "../../../globals/globalSizes";
-import { getRelativePosOfElementsAndAroundElements, snapXYToGrid } from "../../base/position";
+import { snapXYToGrid } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
-import { TowerModus } from "../modi/TowerModus";
 import { towerCost } from "../../../globals/globalConfig";
 import { gainSouls, spendSouls } from "../../base/events";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
+import { GhostTower } from "../modi/GhostTower";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
@@ -14,11 +14,18 @@ export class TowerManager {
 	sightGroup: Phaser.Physics.Arcade.StaticGroup;
 	bulletGroup: Phaser.Physics.Arcade.Group;
 	towers: Tower[] = [];
-	towerModus: TowerModus;
 	towerSpawnMap: TowerSpawnMap;
 	canBuild = false;
+	ghostTower: GhostTower;
 
-	constructor(scene: Gameplay, towerGroup, sightGroup, bulletGroup, towerModus, towerSpawnMap: TowerSpawnMap) {
+	constructor(
+		scene: Gameplay,
+		towerGroup,
+		sightGroup,
+		bulletGroup,
+		towerSpawnMap: TowerSpawnMap,
+		ghostTower: GhostTower
+	) {
 		this.scene = scene;
 
 		scene.events.on("remove-tower", tower => {
@@ -37,7 +44,7 @@ export class TowerManager {
 		});
 		this.towerSpawnMap = towerSpawnMap;
 
-		this.towerModus = towerModus;
+		this.ghostTower = ghostTower;
 
 		this.towerGroup = towerGroup;
 
@@ -45,19 +52,18 @@ export class TowerManager {
 		this.bulletGroup = bulletGroup;
 	}
 
-	getRelativeTowerPositionsAndAroundTowerPositions() {
-		return getRelativePosOfElementsAndAroundElements(this.towers, 1, 1);
-	}
-
 	private playInvalidTowerPosAnim() {
-		this.towerModus.ghostTower.anims.play("invalid-tower-pos");
+		this.ghostTower.anims.play("invalid-tower-pos");
 	}
 
-	spawnNewTower(x, y) {
+	spawnNewTower() {
 		if (!this.canBuild) {
 			this.playInvalidTowerPosAnim();
 			return;
 		}
+
+		let x = this.ghostTower.x;
+		let y = this.ghostTower.y;
 		if (!(x < 0 || y < 0)) {
 			let snappedXY = snapXYToGrid(x, y);
 			x = snappedXY.newX;
@@ -77,8 +83,8 @@ export class TowerManager {
 			}
 
 			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
-				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
 				spendSouls(this.scene, towerCost);
+				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
 				this.towers.push(tower);
 			} else {
 				this.playInvalidTowerPosAnim();

@@ -1,21 +1,21 @@
-import { TowerModus } from "./TowerModus";
 import { towerHalfSize } from "../../../globals/globalSizes";
 import { EnemyCircle } from "../../enemies/units/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
 import { establishCooperation } from "../../base/events";
 import { getRandomCampColorOrder } from "../../../globals/global";
+import { GhostTower } from "./GhostTower";
 
 export class InteractionModus {
 	isOn: Boolean = false;
 	interactionElements: any[] = [];
-	towerModus: TowerModus;
+	ghostTower: GhostTower;
 	colorKilllist: any[] = [];
 	unitKilllist: any[] = [];
 	rivalries = {};
 	scene: Gameplay;
 
-	constructor(scene: Gameplay, towerModus: TowerModus) {
+	constructor(scene: Gameplay, ghostTower: GhostTower) {
 		let colors = getRandomCampColorOrder();
 
 		let color = colors.pop();
@@ -27,7 +27,7 @@ export class InteractionModus {
 		this.rivalries[color] = secondColor;
 		this.rivalries[secondColor] = color;
 
-		this.towerModus = towerModus;
+		this.ghostTower = ghostTower;
 
 		this.scene = scene;
 
@@ -48,16 +48,19 @@ export class InteractionModus {
 				}
 			}
 		});
-		let keyObj = scene.input.keyboard.addKey("E");
-		keyObj.on("down", () => {
-			this.isOn = !this.isOn;
-			if (!this.isOn) {
-				this.towerModus.unlockGhostTower();
-			} else {
-				let ele = this.findClosestInteractionElement(this.towerModus.ghostTower.x, this.towerModus.ghostTower.y);
-				if (ele !== null) this.towerModus.lockGhostTower(ele.x, ele.y);
-			}
-		});
+	}
+
+	lockGhostTower() {
+		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
+		console.log(this.interactionElements);
+		if (ele !== null) {
+			this.ghostTower.setPosition(ele.x, ele.y);
+			this.ghostTower.toggleLock();
+		}
+	}
+
+	toggle() {
+		this.isOn = !this.isOn;
 	}
 
 	checkIfCampDestroy(color) {
@@ -69,7 +72,7 @@ export class InteractionModus {
 	}
 
 	interactWithClosestEle() {
-		let ele = this.findClosestInteractionElement(this.towerModus.ghostTower.x, this.towerModus.ghostTower.y);
+		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			if (ele instanceof EnemyCircle) {
 				let targetColor = this.rivalries[ele.color];
@@ -85,7 +88,7 @@ export class InteractionModus {
 				}
 			} else if (ele instanceof Tower) {
 				this.scene.events.emit("remove-tower", ele);
-				this.towerModus.unlockGhostTower();
+				this.ghostTower.toggleLock();
 			}
 		}
 	}

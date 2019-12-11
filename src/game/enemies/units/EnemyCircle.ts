@@ -6,7 +6,7 @@ import { WallPart } from "../../areas/WallPart";
 import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
 import { relativePosToRealPos } from "../../base/position";
-import { removeInteractionEle } from "../../base/events";
+import { removeInteractionEle, addEle } from "../../base/events";
 
 export class EnemyCircle extends Circle implements damageable {
 	hasBeenAttacked: boolean;
@@ -28,6 +28,7 @@ export class EnemyCircle extends Circle implements damageable {
 		this.setCollideWorldBounds(true);
 		this.color = config.color;
 		this.velo = velo;
+		addEle(config.scene, "enemy", this);
 	}
 
 	damage(amount) {

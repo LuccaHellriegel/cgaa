@@ -17,7 +17,7 @@ export class Enemies {
 
 	constructor(
 		scene,
-		areas: Areas,
+		areasForBuildings,
 		enemySpawnMap: EnemySpawnMap,
 		pathManager,
 		enemyPhysicGroups,
@@ -30,7 +30,6 @@ export class Enemies {
 		this.enemyPhysicGroups = enemyPhysicGroups;
 		this.weaponPhysicGroups = weaponPhysicGroups;
 		this.setupEventListeners(scene);
-		let areasForBuildings = areas.getAreaForBuildings();
 		areasForBuildings.forEach((area: Area) => {
 			let color = colors.pop();
 			let enemyPhysicGroup = this.enemyPhysicGroups[color];
@@ -53,7 +52,7 @@ export class Enemies {
 	}
 
 	private setupEventListeners(scene) {
-		scene.events.on("enemy-spawned", (enemy: EnemyCircle) => {
+		scene.events.on("added-enemy", (enemy: EnemyCircle) => {
 			this.units.push(enemy);
 		});
 		scene.events.on("cooperation-established", (campColor, cooperationColor) =>

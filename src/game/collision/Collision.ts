@@ -210,6 +210,7 @@ export class Collision {
 				() => true
 			);
 			this.addCollider(this.towerBulletGroup, this.enemies[color], this.doDamageBullet, () => true);
+			this.addCollider(this.towerBulletGroup, this.buildings[color], this.doDamageBullet, () => true);
 		};
 
 		executeOverAllCamps(func);
