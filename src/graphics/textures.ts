@@ -8,6 +8,7 @@ import { GhostTowerGenerator } from "./generators/GhostTowerGenerator";
 import { campHexColors } from "../globals/globalColors";
 import { circleSizes } from "../globals/globalSizes";
 import { executeOverAllCampsAndSizes } from "../globals/global";
+import { SquareGenerator } from "./generators/SquareGenerator";
 
 export function generateTextures(scene) {
 	new RectGenerator(scene, 0x013220, "tower", towerHalfSize, towerHalfSize, 2 * towerHalfSize, 2 * towerHalfSize);
@@ -29,6 +30,7 @@ function generateWeapons(scene) {
 
 function generateUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
+	new SquareGenerator(scene);
 
 	executeOverAllCampsAndSizes((color, colorIndex, sizeName, sizeNameIndex) => {
 		let title = color + sizeName + "Circle";

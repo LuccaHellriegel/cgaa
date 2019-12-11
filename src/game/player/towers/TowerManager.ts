@@ -1,9 +1,9 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerHalfSize } from "../../../globals/globalSizes";
-import { getRelativePosOfElementsAndAroundElements } from "../../base/position";
+import { getRelativePosOfElementsAndAroundElements, snapXYToGrid } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
-import { TowerModus } from "../input/TowerModus";
+import { TowerModus } from "../modi/TowerModus";
 import { towerCost } from "../../../globals/globalConfig";
 import { gainSouls, spendSouls } from "../../base/events";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
@@ -59,6 +59,10 @@ export class TowerManager {
 			return;
 		}
 		if (!(x < 0 || y < 0)) {
+			let snappedXY = snapXYToGrid(x, y);
+			x = snappedXY.newX;
+			y = snappedXY.newY;
+
 			let { closestTower, dist } = findClosestTower(this.towers, x, y);
 			if (dist < 3.5 * towerHalfSize) {
 				let resultXY = snapTowerPosToClosestTower(closestTower, x, y);
@@ -74,7 +78,6 @@ export class TowerManager {
 
 			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
 				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
-				this.scene.events.emit("added-tower", tower);
 				spendSouls(this.scene, towerCost);
 				this.towers.push(tower);
 			} else {

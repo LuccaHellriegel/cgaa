@@ -6,14 +6,16 @@ import { Areas } from "../game/areas/Areas";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { PathManager } from "../game/enemies/path/PathManager";
 import { Enemies } from "../game/enemies/Enemies";
-import { TowerModus } from "../game/player/input/TowerModus";
+import { TowerModus } from "../game/player/modi/TowerModus";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/player/input/mouse";
-import { InteractionModus } from "../game/player/input/InteractionModus";
+import { InteractionModus } from "../game/player/modi/InteractionModus";
 import { calculateUnifiedMap } from "../game/base/map";
 import { EnemySpawnMap } from "../game/spawn/EnemySpawnMap";
 import { TowerSpawnMap } from "../game/spawn/TowerSpawnMap";
+import { Square } from "../game/player/Square";
+import { playerStartX, playerStartY } from "../globals/globalConfig";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -74,6 +76,7 @@ export class Gameplay extends Phaser.Scene {
 		enemies.spawnAreaUnits();
 		enemies.spawnWaveUnits();
 
+		new Square(this, playerStartX, playerStartY, physicsGroups.player);
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
 		setupPointerEvents(this, player, towerModus, towerManager, interactionModus);

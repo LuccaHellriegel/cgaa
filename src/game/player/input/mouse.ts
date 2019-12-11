@@ -1,5 +1,5 @@
-import { TowerModus } from "./TowerModus";
-import { InteractionModus } from "./InteractionModus";
+import { TowerModus } from "../modi/TowerModus";
+import { InteractionModus } from "../modi/InteractionModus";
 
 export function setupPointerEvents(
 	scene,
