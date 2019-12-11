@@ -1,7 +1,5 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { towerHalfSize } from "../../../globals/globalSizes";
-import { findClosestTower, snapTowerPosToClosestTower } from "../../base/towers";
 import { towerCost } from "../../../globals/globalConfig";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
 import { GhostTower } from "../modi/GhostTower";
