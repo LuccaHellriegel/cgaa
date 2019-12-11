@@ -4,19 +4,18 @@ import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 import { realPosToRelativePos, relativePosToRealPos } from "../../base/position";
 import EasyStar from "easystarjs";
 import { calculateRelativeSpawnPositionsAround } from "../../base/spawn";
-import { SpawnManager } from "../../spawn/SpawnManager";
 import { PathManager } from "../path/PathManager";
+import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
 
 export class BuildingPopulator extends Populator {
 	easyStar: EasyStar.js;
 	building: Building;
 	validSpawnPositions: { column: any; row: any }[];
 	enemyConfig: EnemyConfig;
-	spawnManager: SpawnManager;
 	pathManager: PathManager;
 
-	constructor(enemyConfig: EnemyConfig, building: Building, spawnManager: SpawnManager, pathManager: PathManager) {
-		super(enemyConfig.scene, spawnManager);
+	constructor(enemyConfig: EnemyConfig, building: Building, enemySpawnMap: EnemySpawnMap, pathManager: PathManager) {
+		super(enemyConfig.scene, enemySpawnMap);
 		this.pathManager = pathManager;
 		this.enemyConfig = enemyConfig;
 		this.building = building;
@@ -26,7 +25,7 @@ export class BuildingPopulator extends Populator {
 	}
 
 	calculateRandUnitSpawnPosition() {
-		let curValidPos = this.spawnManager.filterForValidEnemySpawnPos(this.validSpawnPositions);
+		let curValidPos = this.enemySpawnMap.filterPositions(this.validSpawnPositions);
 		return curValidPos[Phaser.Math.Between(0, curValidPos.length - 1)];
 	}
 

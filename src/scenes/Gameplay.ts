@@ -5,7 +5,6 @@ import { Collision } from "../game/collision/Collision";
 import { Areas } from "../game/areas/Areas";
 import { wallPartHalfSize } from "../globals/globalSizes";
 import { PathManager } from "../game/enemies/path/PathManager";
-import { SpawnManager } from "../game/spawn/SpawnManager";
 import { Enemies } from "../game/enemies/Enemies";
 import { TowerModus } from "../game/player/input/TowerModus";
 import { TowerManager } from "../game/player/towers/TowerManager";
@@ -13,6 +12,8 @@ import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/player/input/mouse";
 import { InteractionModus } from "../game/player/input/InteractionModus";
 import { calculateUnifiedMap } from "../game/base/map";
+import { EnemySpawnMap } from "../game/spawn/EnemySpawnMap";
+import { TowerSpawnMap } from "../game/spawn/TowerSpawnMap";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -40,7 +41,10 @@ export class Gameplay extends Phaser.Scene {
 
 		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
 		let pathManager = new PathManager(unifiedMap);
-		let spawnManager = new SpawnManager(this, unifiedMap);
+
+		let enemyArr = [];
+
+		let towerSpawnMap = new TowerSpawnMap(this, unifiedMap, enemyArr);
 		let towerModus = new TowerModus(this);
 		let towerManager = new TowerManager(
 			this,
@@ -48,20 +52,21 @@ export class Gameplay extends Phaser.Scene {
 			physicsGroups.towerSightGroup,
 			physicsGroups.towerBulletGroup,
 			towerModus,
-			spawnManager
+			towerSpawnMap
 		);
-
 		let interactionModus = new InteractionModus(this, towerModus);
+
+		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
 		let enemies = new Enemies(
 			this,
 			areas,
-			spawnManager,
+			enemySpawnMap,
 			pathManager,
 			physicsGroups.enemies,
 			physicsGroups.enemyWeapons,
-			physicsGroups.buildings
+			physicsGroups.buildings,
+			enemyArr
 		);
-		spawnManager.setEnemies(enemies);
 
 		towerModus.setInteractionModus(interactionModus);
 		enemies.addInteractionUnits();

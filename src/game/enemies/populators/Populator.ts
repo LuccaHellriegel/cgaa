@@ -1,15 +1,15 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { SpawnManager } from "../../spawn/SpawnManager";
+import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
 
 export abstract class Populator {
 	enemyCount: number = 0;
 	scene: Gameplay;
-	spawnManager: SpawnManager;
+	enemySpawnMap: EnemySpawnMap;
 	dontAttackList: any[] = [];
 
-	constructor(scene: Gameplay, spawnManager) {
+	constructor(scene: Gameplay, enemySpawnMap) {
 		this.scene = scene;
-		this.spawnManager = spawnManager;
+		this.enemySpawnMap = enemySpawnMap;
 	}
 
 	establishCooperation(cooperationColor) {

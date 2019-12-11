@@ -4,9 +4,9 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { getRelativePosOfElementsAndAroundElements } from "../../base/position";
 import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
 import { TowerModus } from "../input/TowerModus";
-import { SpawnManager } from "../../spawn/SpawnManager";
 import { towerCost } from "../../../globals/globalConfig";
 import { gainSouls, spendSouls } from "../../base/events";
+import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
@@ -15,10 +15,10 @@ export class TowerManager {
 	bulletGroup: Phaser.Physics.Arcade.Group;
 	towers: Tower[] = [];
 	towerModus: TowerModus;
-	spawnManager: SpawnManager;
+	towerSpawnMap: TowerSpawnMap;
 	canBuild = false;
 
-	constructor(scene: Gameplay, towerGroup, sightGroup, bulletGroup, towerModus, spawnManager) {
+	constructor(scene: Gameplay, towerGroup, sightGroup, bulletGroup, towerModus, towerSpawnMap: TowerSpawnMap) {
 		this.scene = scene;
 
 		scene.events.on("remove-tower", tower => {
@@ -35,7 +35,7 @@ export class TowerManager {
 		scene.events.on("can-not-build", () => {
 			this.canBuild = false;
 		});
-		this.spawnManager = spawnManager;
+		this.towerSpawnMap = towerSpawnMap;
 
 		this.towerModus = towerModus;
 
@@ -72,7 +72,7 @@ export class TowerManager {
 				y = newY;
 			}
 
-			if (this.spawnManager.evaluateRealSpawnPosOfTower(x, y)) {
+			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
 				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
 				this.scene.events.emit("added-tower", tower);
 				spendSouls(this.scene, towerCost);

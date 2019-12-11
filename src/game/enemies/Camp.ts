@@ -2,7 +2,6 @@ import { Area } from "../areas/Area";
 import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
-import { SpawnManager } from "../spawn/SpawnManager";
 import { PathManager } from "./path/PathManager";
 import {
 	circleSizeNames,
@@ -11,11 +10,13 @@ import {
 	rectBuildingHalfWidth
 } from "../../globals/globalSizes";
 import { Gameplay } from "../../scenes/Gameplay";
-import { relativePosToRealPos, realPosToRelativePosInArea } from "../base/position";
+import { relativePosToRealPos } from "../base/position";
 import { addInteractionEle } from "../base/events";
-import { extractSpawnPosFromSpawnableArr } from "../base/spawn";
+import { extractSpawnPosFromSpawnableMap } from "../base/spawn";
 import { Building } from "./units/Building";
-import { exitSymbol, buildingSymbol, wallSymbol } from "../../globals/globalSymbols";
+import { exitSymbol, wallSymbol } from "../../globals/globalSymbols";
+import { updateMapWithBuilding, updateAreaMapWithBuilding } from "../base/map";
+import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
 
 export class Camp {
 	color: string;
@@ -26,13 +27,13 @@ export class Camp {
 	enemyPhysicGroup: any;
 	weaponPhysicGroup: any;
 	scene: Gameplay;
-	spawnableArrForBuildings: any;
+	SpawnableMapForBuildings: any;
 	buildings: Building[] = [];
 
 	constructor(
 		scene,
 		area: Area,
-		spawnManager: SpawnManager,
+		enemySpawnMap: EnemySpawnMap,
 		pathManager: PathManager,
 		color,
 		enemyPhysicGroup,
@@ -51,50 +52,51 @@ export class Camp {
 		};
 		this.color = color;
 		this.area = area;
-		this.spawnableArrForBuildings = JSON.parse(JSON.stringify(area.map));
+		this.SpawnableMapForBuildings = JSON.parse(JSON.stringify(area.map));
 
 		this.scene = scene;
 		this.enemyPhysicGroup = enemyPhysicGroup;
 		this.weaponPhysicGroup = weaponPhysicGroup;
 
+		this.addDistanceBetweenWallAndSpawnPos();
 		this.buildBuildings(this.numbOfBuildings, circleSizeNames, buildingPhysicGroup);
 
-		this.areaPopulator = new AreaPopulator(enemyConfig, area, spawnManager);
+		this.areaPopulator = new AreaPopulator(enemyConfig, area, enemySpawnMap);
 		this.buildings.forEach(building => {
 			enemyConfig.size = building.spawnUnit;
-			this.buildingPopulators.push(new BuildingPopulator({ ...enemyConfig }, building, spawnManager, pathManager));
+			this.buildingPopulators.push(new BuildingPopulator({ ...enemyConfig }, building, enemySpawnMap, pathManager));
 		});
 	}
 
 	private addDistanceBetweenWallAndSpawnPos() {
-		for (let row = 0; row < this.spawnableArrForBuildings.length; row++) {
-			for (let column = 0; column < this.spawnableArrForBuildings[0].length; column++) {
+		for (let row = 0; row < this.SpawnableMapForBuildings.length; row++) {
+			for (let column = 0; column < this.SpawnableMapForBuildings[0].length; column++) {
 				let isLeftWall = column === 0;
-				let isRightWall = column === this.spawnableArrForBuildings.length - 1;
+				let isRightWall = column === this.SpawnableMapForBuildings.length - 1;
 				let isTopWall = row === 0;
-				let isBottomWall = row === this.spawnableArrForBuildings[0].length - 1;
+				let isBottomWall = row === this.SpawnableMapForBuildings[0].length - 1;
 
 				if (isTopWall) {
-					this.spawnableArrForBuildings[row + 1][column] = wallSymbol;
-					this.spawnableArrForBuildings[row + 2][column] = wallSymbol;
+					this.SpawnableMapForBuildings[row + 1][column] = wallSymbol;
+					this.SpawnableMapForBuildings[row + 2][column] = wallSymbol;
 					continue;
 				}
 
 				if (isBottomWall) {
-					this.spawnableArrForBuildings[row - 1][column] = wallSymbol;
-					this.spawnableArrForBuildings[row - 2][column] = wallSymbol;
+					this.SpawnableMapForBuildings[row - 1][column] = wallSymbol;
+					this.SpawnableMapForBuildings[row - 2][column] = wallSymbol;
 					continue;
 				}
 
 				if (isLeftWall) {
-					this.spawnableArrForBuildings[row][column + 1] = wallSymbol;
-					this.spawnableArrForBuildings[row][column + 2] = wallSymbol;
+					this.SpawnableMapForBuildings[row][column + 1] = wallSymbol;
+					this.SpawnableMapForBuildings[row][column + 2] = wallSymbol;
 					continue;
 				}
 
 				if (isRightWall) {
-					this.spawnableArrForBuildings[row][column - 1] = wallSymbol;
-					this.spawnableArrForBuildings[row][column - 2] = wallSymbol;
+					this.SpawnableMapForBuildings[row][column - 1] = wallSymbol;
+					this.SpawnableMapForBuildings[row][column - 2] = wallSymbol;
 					continue;
 				}
 			}
@@ -102,8 +104,7 @@ export class Camp {
 	}
 
 	private calculateRandBuildingSpawnPos() {
-		this.addDistanceBetweenWallAndSpawnPos();
-		let spawnablePos = extractSpawnPosFromSpawnableArr(this.spawnableArrForBuildings);
+		let spawnablePos = extractSpawnPosFromSpawnableMap(this.SpawnableMapForBuildings);
 		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
 		return relativePosToRealPos(pos.column + this.area.relativeTopLeftX, pos.row + this.area.relativeTopLeftY);
 	}
@@ -124,29 +125,6 @@ export class Camp {
 		return false;
 	}
 
-	private addBuildingToMap(building: Building) {
-		let { row, column } = realPosToRelativePosInArea(building.x, building.y, this.area);
-
-		//TODO: only works if building is 3 long
-		this.spawnableArrForBuildings[row][column] = buildingSymbol;
-		this.spawnableArrForBuildings[row][column - 2] = buildingSymbol;
-		this.spawnableArrForBuildings[row][column - 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row][column + 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row][column + 2] = buildingSymbol;
-
-		this.spawnableArrForBuildings[row - 1][column] = buildingSymbol;
-		this.spawnableArrForBuildings[row - 1][column - 2] = buildingSymbol;
-		this.spawnableArrForBuildings[row - 1][column - 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row - 1][column + 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row - 1][column + 2] = buildingSymbol;
-
-		this.spawnableArrForBuildings[row + 2][column] = buildingSymbol;
-		this.spawnableArrForBuildings[row + 2][column - 2] = buildingSymbol;
-		this.spawnableArrForBuildings[row + 2][column - 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row + 2][column + 1] = buildingSymbol;
-		this.spawnableArrForBuildings[row + 2][column + 2] = buildingSymbol;
-	}
-
 	private buildBuilding(spawnUnit, buildingPhysicGroup) {
 		let { x, y } = this.calculateRandBuildingSpawnPos();
 		let count = 0;
@@ -159,7 +137,7 @@ export class Camp {
 		}
 
 		let building = new Building(this.scene, x, y, buildingPhysicGroup, spawnUnit, this.color);
-		this.addBuildingToMap(building);
+		updateAreaMapWithBuilding(this.SpawnableMapForBuildings, building, this.area, false);
 		this.buildings.push(building);
 	}
 

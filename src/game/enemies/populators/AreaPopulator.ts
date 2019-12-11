@@ -2,19 +2,20 @@ import { Populator } from "./Populator";
 import { Area } from "../../areas/Area";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
 import { relativePosToRealPos } from "../../base/position";
+import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
 
 export class AreaPopulator extends Populator {
 	area: Area;
 	enemyConfig: EnemyConfig;
 
-	constructor(enemyConfig: EnemyConfig, area: Area, spawnManager) {
-		super(enemyConfig.scene, spawnManager);
+	constructor(enemyConfig: EnemyConfig, area: Area, enemySpawnMap: EnemySpawnMap) {
+		super(enemyConfig.scene, enemySpawnMap);
 		this.enemyConfig = enemyConfig;
 		this.area = area;
 	}
 
 	calculateRandUnitSpawnPosition(area) {
-		let spawnablePos = this.spawnManager.getValidSpawnPosForEnemiesInArea(area);
+		let spawnablePos = this.enemySpawnMap.getValidSpawnPosInArea(area);
 
 		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
 		return pos;

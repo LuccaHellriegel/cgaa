@@ -23,24 +23,24 @@ export function calculateRelativeSpawnPositionsAround(column, row, width, height
 	return validPositions;
 }
 
-export function extractSpawnPosFromSpawnableArr(spawnableArr) {
+export function extractSpawnPosFromSpawnableMap(SpawnableMap) {
 	let spawnPos = [];
-	for (let row = 0; row < spawnableArr.length; row++) {
-		for (let column = 0; column < spawnableArr[0].length; column++) {
-			if (spawnableArr[row][column] === 0) spawnPos.push({ row: row, column: column });
+	for (let row = 0; row < SpawnableMap.length; row++) {
+		for (let column = 0; column < SpawnableMap[0].length; column++) {
+			if (SpawnableMap[row][column] === 0) spawnPos.push({ row: row, column: column });
 		}
 	}
 	return spawnPos;
 }
 
-export function extractSpawnPosFromSpawnableArrForArea(
+export function extractSpawnPosFromSpawnableMapForArea(
 	relativeAreaTopLeftX,
 	realtiveAreaTopLeftY,
 	relativeAreaWidth,
 	relativeAreaHeight,
-	spawnableArr: any[]
+	SpawnableMap: any[]
 ) {
-	let spawnPos = this.extractSpawnPosFromSpawnableArr(spawnableArr);
+	let spawnPos = this.extractSpawnPosFromSpawnableMap(SpawnableMap);
 	let areaSpawnPos = [];
 	spawnPos.forEach(pos => {
 		if (

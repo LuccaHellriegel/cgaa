@@ -1,16 +1,16 @@
 import { EnemyCircle } from "./units/EnemyCircle";
-import { getRelativePosOfElements, getRelativePosOfElementsAndAroundElements } from "../base/position";
 import { Area } from "../areas/Area";
 import { Areas } from "../areas/Areas";
 import { Camp } from "./Camp";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "./units/Building";
 import { getRandomCampColorOrder } from "../../globals/global";
+import { EnemySpawnMap } from "../spawn/EnemySpawnMap";
 
 export class Enemies {
 	enemyPhysicGroups = {};
 	weaponPhysicGroups = {};
-	units: EnemyCircle[] = [];
+	units: EnemyCircle[];
 	camps: Camp[] = [];
 	campIndex = 0;
 	scene: Gameplay;
@@ -18,12 +18,14 @@ export class Enemies {
 	constructor(
 		scene,
 		areas: Areas,
-		spawnManager,
+		enemySpawnMap: EnemySpawnMap,
 		pathManager,
 		enemyPhysicGroups,
 		weaponPhysicGroups,
-		buildingPhysicGroups
+		buildingPhysicGroups,
+		enemyArr
 	) {
+		this.units = enemyArr;
 		let colors = getRandomCampColorOrder();
 		this.enemyPhysicGroups = enemyPhysicGroups;
 		this.weaponPhysicGroups = weaponPhysicGroups;
@@ -38,7 +40,7 @@ export class Enemies {
 				new Camp(
 					scene,
 					area,
-					spawnManager,
+					enemySpawnMap,
 					pathManager,
 					color,
 					enemyPhysicGroup,
@@ -57,14 +59,6 @@ export class Enemies {
 		scene.events.on("cooperation-established", (campColor, cooperationColor) =>
 			this.establishCooperation(campColor, cooperationColor)
 		);
-	}
-
-	getRelativeEnemyPositions() {
-		return getRelativePosOfElements(this.units);
-	}
-
-	getRelativeEnemyPositionsAndAroundEnemyPositions() {
-		return getRelativePosOfElementsAndAroundElements(this.units, 1, 1);
 	}
 
 	getBuildings() {
