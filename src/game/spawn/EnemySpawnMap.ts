@@ -1,25 +1,16 @@
 import { SpawnMap } from "./SpawnMap";
 import { getRelativePosOfElements } from "../base/position";
-import { enemySmybol, towerSymbol } from "../../globals/globalSymbols";
-import { updateMapWithElementAndAroundElements, updateMapWithBuilding } from "../base/map";
-import { Tower } from "../player/towers/Tower";
-import { Building } from "../enemies/units/Building";
+import { enemySmybol } from "../../globals/globalSymbols";
+import { updateMapWithBuilding } from "../base/map";
 
 export class EnemySpawnMap extends SpawnMap {
 	constructor(scene, baseMap, movingUnitsArr) {
-		let baseRelevantUnitTypeNames = ["tower", "building"];
+		let baseRelevantUnitTypeNames = ["building"];
 		super(scene, JSON.parse(JSON.stringify(baseMap)), movingUnitsArr, baseRelevantUnitTypeNames);
 	}
 
 	updateBaseMap(unit, remove) {
-		if (unit instanceof Tower) {
-			updateMapWithElementAndAroundElements(this.baseMap, unit, towerSymbol, remove, 1, 1);
-			return;
-		}
-
-		if (unit instanceof Building) {
-			updateMapWithBuilding(this.baseMap, unit, remove);
-		}
+		updateMapWithBuilding(this.baseMap, unit, remove);
 	}
 
 	updateRelativeMapWithMovingUnits() {

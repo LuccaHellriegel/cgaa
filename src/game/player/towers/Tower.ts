@@ -40,6 +40,7 @@ export class Tower extends Image implements damageable {
 			healthLength: 12,
 			value: 100
 		});
+		this.healthbar.move(x, y);
 
 		this.bulletGroup = bulletGroup;
 		this.sightElement = new Image({ scene, x: this.x, y: this.y, texture: "", physicsGroup: sightGroup });

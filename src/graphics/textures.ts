@@ -1,24 +1,16 @@
 import { RandWeaponGenerator } from "./generators/weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./generators/CircleGenerator";
-import { normalCircleRadius, wallPartHalfSize, circleSizeNames } from "../globals/globalSizes";
+import { normalCircleRadius, wallPartHalfSize, circleSizeNames, towerHalfSize } from "../globals/globalSizes";
 import { ChainWeaponGenerator } from "./generators/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./generators/BuildingGenerator";
 import { RectGenerator } from "./generators/RectGenerator";
 import { GhostTowerGenerator } from "./generators/GhostTowerGenerator";
 import { campHexColors } from "../globals/globalColors";
 import { circleSizes } from "../globals/globalSizes";
-import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../globals/global";
+import { executeOverAllCampsAndSizes } from "../globals/global";
 
 export function generateTextures(scene) {
-	new RectGenerator(
-		scene,
-		0x013220,
-		"tower",
-		1.5 * wallPartHalfSize,
-		1.5 * wallPartHalfSize,
-		3 * wallPartHalfSize,
-		3 * wallPartHalfSize
-	);
+	new RectGenerator(scene, 0x013220, "tower", towerHalfSize, towerHalfSize, 2 * towerHalfSize, 2 * towerHalfSize);
 	new GhostTowerGenerator(scene);
 	generateUnits(scene);
 	generateWeapons(scene);
