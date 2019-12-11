@@ -26,6 +26,9 @@ export class HUD extends Phaser.Scene {
 			},
 			this
 		);
+		this.ourGame.events.on("life-gained", amount => {
+			this.playerHealthBar.increase(amount);
+		});
 	}
 
 	create() {

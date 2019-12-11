@@ -27,6 +27,28 @@ export class Gameplay extends Phaser.Scene {
 
 	preload() {}
 
+	private createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas) {
+		let pathManager = new PathManager(unifiedMap);
+
+		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
+		let enemies = new Enemies(
+			this,
+			areas.getAreaForBuildings(),
+			enemySpawnMap,
+			pathManager,
+			physicsGroups.enemies,
+			physicsGroups.enemyWeapons,
+			physicsGroups.buildings,
+			enemyArr
+		);
+		pathManager.calculateBuildingSpecificPaths(enemies.getBuildings());
+
+		enemies.spawnAreaUnits();
+		enemies.spawnWaveUnits();
+
+		new Square(this, playerStartX, playerStartY, physicsGroups.player);
+	}
+
 	create() {
 		generateTextures(this);
 		createAnims(this.anims);
@@ -42,12 +64,11 @@ export class Gameplay extends Phaser.Scene {
 			borderWall.width - 4 * wallPartHalfSize
 		);
 
-		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
-		let enemyArr = [];
-
-		new Square(this, playerStartX, playerStartY, physicsGroups.player);
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
+
+		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
+		let enemyArr = [];
 
 		let keyObjF = this.input.keyboard.addKey("F");
 		let keyObjE = this.input.keyboard.addKey("E");
@@ -63,28 +84,14 @@ export class Gameplay extends Phaser.Scene {
 			ghostTower
 		);
 		let interactionModus = new InteractionModus(this, ghostTower);
+		this.createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas);
 		let modi = new Modi(this, keyObjF, keyObjE, interactionModus, towerManager);
 		setupPointerEvents(this, player, ghostTower, modi);
+
 		this.movement = new Movement(this, player);
 
-		let pathManager = new PathManager(unifiedMap);
-
-		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
-		let enemies = new Enemies(
-			this,
-			areas.getAreaForBuildings(),
-			enemySpawnMap,
-			pathManager,
-			physicsGroups.enemies,
-			physicsGroups.enemyWeapons,
-			physicsGroups.buildings,
-			enemyArr
-		);
-
-		pathManager.calculateBuildingSpecificPaths(enemies.getBuildings());
-
-		enemies.spawnAreaUnits();
-		enemies.spawnWaveUnits();
+		this.children.bringToTop(player);
+		this.children.bringToTop(ghostTower);
 	}
 
 	update() {

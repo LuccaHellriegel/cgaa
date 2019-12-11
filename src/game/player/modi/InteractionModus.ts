@@ -2,9 +2,10 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { EnemyCircle } from "../../enemies/units/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
-import { establishCooperation } from "../../base/events";
+import { establishCooperation, gainLife } from "../../base/events";
 import { getRandomCampColorOrder } from "../../../globals/global";
 import { GhostTower } from "./GhostTower";
+import { Square } from "../Square";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -44,6 +45,7 @@ export class InteractionModus {
 				let destroyed = this.checkIfCampDestroy(ele.color);
 				if (destroyed) {
 					//TODO: multiple camp cooperation
+					console.log(this.rivalries[ele.color], ele.color);
 					establishCooperation(scene, this.rivalries[ele.color], "blue");
 				}
 			}
@@ -52,7 +54,6 @@ export class InteractionModus {
 
 	lockGhostTower() {
 		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
-		console.log(this.interactionElements);
 		if (ele !== null) {
 			this.ghostTower.setPosition(ele.x, ele.y);
 			this.ghostTower.toggleLock();
@@ -89,6 +90,8 @@ export class InteractionModus {
 			} else if (ele instanceof Tower) {
 				this.scene.events.emit("remove-tower", ele);
 				this.ghostTower.toggleLock();
+			} else if (ele instanceof Square) {
+				gainLife(this.scene, 20);
 			}
 		}
 	}

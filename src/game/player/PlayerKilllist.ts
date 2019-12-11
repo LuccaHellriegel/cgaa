@@ -21,7 +21,6 @@ export class PlayerKilllist {
 			fill: "#ADFF2F"
 		});
 		sceneToListen.events.on("added-to-killlist", color => {
-			//TODO: multiple colors
 			this.colors.push(color);
 			this.redrawList();
 		});
@@ -41,7 +40,7 @@ export class PlayerKilllist {
 	private redrawList() {
 		let colorStr = "";
 		this.colors.forEach(col => {
-			colorStr += col + " \n ";
+			colorStr += col + "\n";
 		});
 		this.playerKilllistText.setText(colorStr);
 	}

@@ -6,6 +6,10 @@ export function spendSouls(scene: Phaser.Scene, amount) {
 	scene.events.emit("souls-spent", amount);
 }
 
+export function gainLife(scene: Phaser.Scene, amount) {
+	scene.events.emit("life-gained", amount);
+}
+
 export function addInteractionEle(scene: Phaser.Scene, ele) {
 	scene.events.emit("interaction-ele-added", ele);
 }

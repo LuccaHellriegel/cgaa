@@ -1,6 +1,5 @@
 import { EnemyCircle } from "./units/EnemyCircle";
 import { Area } from "../areas/Area";
-import { Areas } from "../areas/Areas";
 import { Camp } from "./Camp";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Building } from "./units/Building";
