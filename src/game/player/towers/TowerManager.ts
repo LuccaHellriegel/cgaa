@@ -2,7 +2,7 @@ import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerHalfSize } from "../../../globals/globalSizes";
 import { snapXYToGrid } from "../../base/position";
-import { findClosestTower, snapTowerPosToClosestTower } from "./towers";
+import { findClosestTower, snapTowerPosToClosestTower } from "../../base/towers";
 import { towerCost } from "../../../globals/globalConfig";
 import { gainSouls, spendSouls } from "../../base/events";
 import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";

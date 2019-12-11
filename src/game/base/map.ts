@@ -1,8 +1,4 @@
-import {
-	getRelativePosOfElementsAndAroundElements,
-	realPosToRelativePos,
-	realPosToRelativePosInArea
-} from "./position";
+import { realPosToRelativePos, realPosToRelativePosInArea } from "./position";
 import { walkableSymbol, wallSymbol, exitSymbol, buildingSymbol } from "../../globals/globalSymbols";
 
 export function updateMapWithElement(map, element, eleSymbol, removed) {

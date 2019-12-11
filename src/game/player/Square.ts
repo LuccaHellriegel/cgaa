@@ -25,7 +25,6 @@ export class Square extends Image implements damageable {
 
 		this.setSize(this.polygon.width, this.polygon.height);
 
-		extendWithNewId(this);
 		this.healthbar = new HealthBar(x, y, {
 			scene,
 			posCorrectionX: -26,
@@ -37,6 +36,7 @@ export class Square extends Image implements damageable {
 		this.healthbar.move(x, y);
 
 		this.color = "blue";
+		extendWithNewId(this);
 		addInteractionEle(scene, this);
 	}
 

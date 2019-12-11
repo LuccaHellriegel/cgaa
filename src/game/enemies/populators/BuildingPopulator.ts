@@ -54,11 +54,6 @@ export class BuildingPopulator extends Populator {
 	}
 
 	doMoreSpawn() {
-		let isDestroyed = this.building.destroyed;
-		if (isDestroyed) {
-			//TODO
-			return false;
-		}
 		return this.enemyCount != 3;
 	}
 }

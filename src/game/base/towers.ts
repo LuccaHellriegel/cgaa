@@ -1,4 +1,4 @@
-import { towerHalfSize } from "../../../globals/globalSizes";
+import { towerHalfSize } from "../../globals/globalSizes";
 
 export function findClosestTower(towers, x, y) {
 	let dist = Infinity;

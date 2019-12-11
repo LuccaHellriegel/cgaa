@@ -1,5 +1,4 @@
 import { wallPartHalfSize } from "../../globals/globalSizes";
-import { calculateRelativeSpawnPositionsAround } from "./spawn";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
@@ -74,14 +73,4 @@ export function getRelativePosOfElements(elements) {
 		}
 	});
 	return relativePositions;
-}
-
-export function getRelativePosOfElementsAndAroundElements(elements, width, height) {
-	let relativePositions: any[] = getRelativePosOfElements(elements);
-	let relativePositionsAround: any[] = [];
-	relativePositions.forEach(pos => {
-		let posAround = calculateRelativeSpawnPositionsAround(pos.column, pos.row, width, height);
-		relativePositionsAround = relativePositionsAround.concat(posAround);
-	});
-	return relativePositions.concat(relativePositionsAround);
 }

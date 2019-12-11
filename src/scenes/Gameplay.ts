@@ -8,7 +8,7 @@ import { PathManager } from "../game/enemies/path/PathManager";
 import { Enemies } from "../game/enemies/Enemies";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
-import { setupPointerEvents } from "../game/player/input/pointer";
+import { setupPointerEvents } from "../game/base/pointer";
 import { InteractionModus } from "../game/player/modi/InteractionModus";
 import { calculateUnifiedMap } from "../game/base/map";
 import { EnemySpawnMap } from "../game/spawn/EnemySpawnMap";

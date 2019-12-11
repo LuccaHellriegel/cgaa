@@ -1,5 +1,5 @@
 import { SpawnMap } from "./SpawnMap";
-import { getRelativePosOfElementsAndAroundElements } from "../base/position";
+import { getRelativePosOfElements } from "../base/position";
 import { enemySmybol, towerSymbol } from "../../globals/globalSymbols";
 import { updateMapWithElement, markCampsAsNonWalkable } from "../base/map";
 
@@ -17,7 +17,7 @@ export class TowerSpawnMap extends SpawnMap {
 	}
 
 	updateRelativeMapWithMovingUnits() {
-		let relativePositions = getRelativePosOfElementsAndAroundElements(this.movingUnitsArr, 1, 1);
+		let relativePositions = getRelativePosOfElements(this.movingUnitsArr);
 
 		relativePositions.forEach(pos => {
 			this.relativeMap[pos.row][pos.column] = enemySmybol;

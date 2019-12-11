@@ -13,7 +13,6 @@ export class Building extends Image implements damageable {
 	spawnUnit: any;
 	health;
 	polygon: any;
-	destroyed = false;
 
 	constructor(scene: Gameplay, x, y, physicsGroup, spawnUnit, color: string) {
 		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
@@ -43,7 +42,6 @@ export class Building extends Image implements damageable {
 	}
 
 	destroy() {
-		this.destroyed = true;
 		super.destroy();
 		this.healthbar.destroy();
 	}
