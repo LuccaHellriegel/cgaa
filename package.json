@@ -4,7 +4,7 @@
 	"description": "Circle Gladiator Army Arena",
 	"main": "index.html",
 	"scripts": {
-		"build": "parcel build index.html --public-url ./",
+		"build": "npm run clean && parcel build index.html --public-url ./ && cp -r ./dist ../cgaa-page && cd ../cgaa-page && git add -A && git commit -m 'update' && git push",
 		"watch": "parcel watch index.html",
 		"start": "parcel serve index.html",
 		"clean": "rm -v dist/*",

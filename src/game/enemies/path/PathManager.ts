@@ -28,37 +28,17 @@ export class PathManager {
 		let containers: PathContainer[] = [];
 
 		validSpawnPositions.forEach(pos => {
-			let saveReference = new PathContainer(pos.column, pos.row);
-			this.easyStar.setGrid(this.unifiedMap);
-			this.easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
-			this.easyStar.findPath(
+			let saveReference = new PathContainer(
 				pos.column,
 				pos.row,
 				this.realtiveGoalPositionColumn,
 				this.relativeGoalPositionRow,
-				function(path) {
-					if (path === null) {
-						console.log("Path was not found.");
-					} else {
-						let realPath = this.relativePathToRealPath(path);
-						this.drawPath(realPath);
-						saveReference.updatePath(realPath);
-					}
-				}.bind(this)
+				this.easyStar,
+				this.unifiedMap
 			);
-			this.easyStar.calculate();
 			containers.push(saveReference);
 		});
 		return containers;
-	}
-
-	private relativePathToRealPath(path) {
-		let realPath: any[] = [];
-
-		path.forEach(pos => {
-			realPath.push(relativePosToRealPos(pos.x, pos.y));
-		});
-		return realPath;
 	}
 
 	private drawPath(realPath) {
