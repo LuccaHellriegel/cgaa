@@ -4,7 +4,7 @@
 	"description": "Circle Gladiator Army Arena",
 	"main": "index.html",
 	"scripts": {
-		"build": "npm run clean && parcel build index.html --public-url ./ && cp -r ./dist ../cgaa-page && cd ../cgaa-page && git add -A && git commit -m 'update' && git push",
+		"build": "npm run clean && parcel build index.html --public-url ./ && rm -v ../cgaa-page/dist/* && cp -r ./dist ../cgaa-page && cd ../cgaa-page && git pull && git add -A && git commit -m 'update' && git push",
 		"watch": "parcel watch index.html",
 		"start": "parcel serve index.html",
 		"clean": "rm -v dist/*",
@@ -33,6 +33,7 @@
 		"mocha": "^6.2.2",
 		"ts-mockito": "^2.5.0",
 		"ts-node": "^8.5.2",
+		"tslint": "^5.20.1",
 		"typescript": "^3.7.2"
 	}
 }

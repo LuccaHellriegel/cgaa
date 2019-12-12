@@ -71,7 +71,8 @@ export class Tower extends Image implements damageable {
 					delay: 300,
 					callback: () => {
 						this.canFire = true;
-						if (target.healthbar.value > 0) this.fire(target);
+						if (target.healthbar.value > 0 && Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) < 445)
+							this.fire(target);
 					},
 					callbackScope: this,
 					repeat: 0
