@@ -28,7 +28,7 @@ export class Gameplay extends Phaser.Scene {
 	preload() {}
 
 	private createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas) {
-		let pathManager = new PathManager(this, unifiedMap);
+		let pathManager = new PathManager(this, unifiedMap, areas.getAreaForBuildings());
 
 		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
 		let enemies = new Enemies(

@@ -113,4 +113,17 @@ export class Area {
 			x = this.topLeftX + wallPartHalfSize;
 		}
 	}
+
+	findFirstExit() {
+		let pos;
+		for (let row = 0; row < this.map.length; row++) {
+			for (let column = 0; column < this.map[0].length; column++) {
+				if (this.map[row][column] === exitSymbol) {
+					pos = { column: column + this.relativeTopLeftX, row: row + this.relativeTopLeftY };
+					break;
+				}
+			}
+		}
+		return pos;
+	}
 }

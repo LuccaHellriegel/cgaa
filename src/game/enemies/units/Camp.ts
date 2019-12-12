@@ -162,15 +162,7 @@ export class Camp {
 	}
 
 	addInteractionUnit() {
-		let pos;
-		for (let row = 0; row < this.area.map.length; row++) {
-			for (let column = 0; column < this.area.map[0].length; column++) {
-				if (this.area.map[row][column] === exitSymbol) {
-					pos = { column: column + this.area.relativeTopLeftX, row: row + this.area.relativeTopLeftY };
-					break;
-				}
-			}
-		}
+		let pos = this.area.findFirstExit();
 
 		let { x, y } = relativePosToRealPos(pos.column, pos.row);
 		let enemyConfig: EnemyConfig = {

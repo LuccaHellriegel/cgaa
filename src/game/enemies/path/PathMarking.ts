@@ -4,5 +4,6 @@ export class PathMarking extends Phaser.Physics.Arcade.Image {
 		super(scene, x, y, texture);
 
 		scene.add.existing(this);
+		this.setActive(false);
 	}
 }

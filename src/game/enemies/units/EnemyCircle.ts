@@ -154,6 +154,8 @@ export class EnemyCircle extends Circle implements damageable {
 			let x = this.pathContainer.path[this.curPosInPath].x;
 			let y = this.pathContainer.path[this.curPosInPath].y;
 
+			if (x > 10000) console.log(this.pathContainer.path);
+
 			this.turnTo({ x, y });
 			if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {
 				this.curPosInPath++;

@@ -1,10 +1,13 @@
 import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
-import { relativePosToRealPos } from "../../base/map/position";
+import { relativePosToRealPos, calculateRelativeCrossPostioning } from "../../base/map/position";
+import { PathMarking } from "./PathMarking";
+
+export type PathCointainerType = { path; id: string };
 
 export class PathContainer {
 	path;
 	id: string;
-	constructor(column, row, goalColumn, goalRow, easyStar, unifiedMap) {
+	constructor(scene, column, row, goalColumn, goalRow, easyStar, unifiedMap, pathToAdd: PathCointainerType) {
 		this.id = [column, row].join("");
 
 		//	this.id = [column, row, goalColumn, goalRow].join("");
@@ -15,13 +18,25 @@ export class PathContainer {
 			row,
 			goalColumn,
 			goalRow,
-			function(path) {
-				if (path === null) {
+			function(newPath) {
+				if (newPath === null) {
 					console.log("Path was not found.");
 				} else {
-					let realPath = this.relativePathToRealPath(path);
-					//	this.drawPath(realPath);
-					this.path = realPath;
+					let realPath = this.relativePathToRealPath(newPath);
+					this.drawPath(scene, realPath);
+					if (pathToAdd.path) {
+						this.path = realPath.concat(pathToAdd.path);
+					} else {
+						const timer = setInterval(
+							function() {
+								if (pathToAdd.path) {
+									this.path = realPath.concat(pathToAdd.path);
+									clearInterval(timer);
+								}
+							}.bind(this),
+							4000
+						);
+					}
 				}
 			}.bind(this)
 		);
@@ -35,5 +50,26 @@ export class PathContainer {
 			realPath.push(relativePosToRealPos(pos.x, pos.y));
 		});
 		return realPath;
+	}
+
+	private drawPath(scene, realPath) {
+		let curPos = realPath[0];
+		let prevDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, curPos.x - 1, curPos.y);
+		let nextPos = realPath[1];
+		let nextDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, nextPos.x, nextPos.y);
+		new PathMarking(scene, curPos.x, curPos.y, prevDirection, nextDirection);
+		for (let index = 1; index < realPath.length - 1; index++) {
+			let prevPos = realPath[index - 1];
+			curPos = realPath[index];
+			prevDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, prevPos.x, prevPos.y);
+			nextPos = realPath[index + 1];
+			nextDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, nextPos.x, nextPos.y);
+			new PathMarking(scene, curPos.x, curPos.y, prevDirection, nextDirection);
+		}
+		let prevPos = realPath[realPath.length - 1 - 1];
+		curPos = realPath[realPath.length - 1];
+		prevDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, prevPos.x, prevPos.y);
+		nextDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, curPos.x + 1, curPos.y);
+		new PathMarking(scene, curPos.x, curPos.y, prevDirection, nextDirection);
 	}
 }
