@@ -2,7 +2,7 @@ import { Image } from "../../base/classes/BasePhaser";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { damageable } from "../../base/interfaces";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { towerHalfSize, wallPartHalfSize } from "../../../globals/globalSizes";
+import { towerHalfSize } from "../../../globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/extend";
 import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";
@@ -11,14 +11,13 @@ export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
-	sightElement: Image;
 	bulletGroup: any;
 	bullets: Bullet[] = [];
 	bulletPool: Bullet[] = [];
 	canFire = true;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup, sightGroup, bulletGroup) {
+	constructor(scene, x, y, physicsGroup, bulletGroup) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
 		this.setImmovable(true);
 
@@ -43,10 +42,6 @@ export class Tower extends Image implements damageable {
 		this.healthbar.move(x, y);
 
 		this.bulletGroup = bulletGroup;
-		this.sightElement = new Image({ scene, x: this.x, y: this.y, texture: "", physicsGroup: sightGroup });
-		this.sightElement.setVisible(false);
-		this.sightElement.owner = this;
-		this.sightElement.setSize(12 * wallPartHalfSize, 12 * wallPartHalfSize);
 
 		for (let index = 0; index < 10; index++) {
 			let bullet = new Bullet(scene, bulletGroup, this);
@@ -76,6 +71,7 @@ export class Tower extends Image implements damageable {
 					delay: 300,
 					callback: () => {
 						this.canFire = true;
+						if (target.healthbar.value > 0) this.fire(target);
 					},
 					callbackScope: this,
 					repeat: 0

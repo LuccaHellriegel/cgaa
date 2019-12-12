@@ -9,21 +9,13 @@ import { snapXYToGrid } from "../../base/map/position";
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
 	scene: Gameplay;
-	sightGroup: Phaser.Physics.Arcade.StaticGroup;
 	bulletGroup: Phaser.Physics.Arcade.Group;
 	towers: Tower[] = [];
 	towerSpawnMap: TowerSpawnMap;
 	canBuild = false;
 	ghostTower: GhostTower;
 
-	constructor(
-		scene: Gameplay,
-		towerGroup,
-		sightGroup,
-		bulletGroup,
-		towerSpawnMap: TowerSpawnMap,
-		ghostTower: GhostTower
-	) {
+	constructor(scene: Gameplay, towerGroup, bulletGroup, towerSpawnMap: TowerSpawnMap, ghostTower: GhostTower) {
 		this.scene = scene;
 
 		scene.events.on("sold-tower", tower => {
@@ -50,7 +42,6 @@ export class TowerManager {
 		this.ghostTower = ghostTower;
 
 		this.towerGroup = towerGroup;
-		this.sightGroup = sightGroup;
 		this.bulletGroup = bulletGroup;
 	}
 
@@ -73,7 +64,7 @@ export class TowerManager {
 
 			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, towerCost);
-				let tower = new Tower(this.scene, x, y, this.towerGroup, this.sightGroup, this.bulletGroup);
+				let tower = new Tower(this.scene, x, y, this.towerGroup, this.bulletGroup);
 				this.towers.push(tower);
 			} else {
 				this.playInvalidTowerPosAnim();

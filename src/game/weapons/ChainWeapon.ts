@@ -48,11 +48,6 @@ export class ChainWeapon extends Weapon {
 		this.createPolygons();
 		//TODO: better distinction between unit offset and physics sprite offset
 		this.setOffSetArr();
-		this.setSize(
-			2 * this.polygonArr[this.polygonArr.length - 1].height,
-			2 * this.polygonArr[this.polygonArr.length - 1].height
-		);
-
 		this.amount = sizes.amount;
 	}
 

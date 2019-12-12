@@ -17,6 +17,7 @@ export class Bullet extends Sprite {
 	}
 
 	reset() {
+		this.setVelocity(0, 0);
 		this.setActive(false);
 		this.setVisible(false);
 		this.x = this.owner.x;

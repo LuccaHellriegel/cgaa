@@ -38,6 +38,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		this.polygonArr = polygonArr;
 		this.owner = owner;
 		this.ownerSize = ownerSize;
+		this.setSize(444, 444);
 	}
 
 	movePolygon() {

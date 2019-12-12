@@ -23,7 +23,6 @@ export class RandWeapon extends Weapon {
 			[ownerSize, -ownerSize]
 		];
 		super(scene, x, y, ownerSizeName + "randWeapon", weaponGroup, polygonArr, offSetArr, owner, ownerSize);
-		this.setSize(this.polygonArr[polygonArr.length - 1].width, this.polygonArr[polygonArr.length - 1].height);
 
 		this.amount = sizes.amount;
 	}

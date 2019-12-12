@@ -88,6 +88,7 @@ export class Enemies {
 		this.units.forEach(unit => {
 			this.scene.children.bringToTop(unit);
 			this.scene.children.bringToTop(unit.weapon);
+			this.scene.children.bringToTop(unit.healthbar.bar);
 		});
 		let buildings = this.getBuildings();
 		buildings.forEach(building => {

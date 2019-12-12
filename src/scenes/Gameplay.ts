@@ -66,9 +66,6 @@ export class Gameplay extends Phaser.Scene {
 			borderWall.width - 4 * wallPartHalfSize
 		);
 
-		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
-		this.cameras.main.startFollow(player);
-
 		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
 		let enemyArr = [];
 
@@ -80,7 +77,6 @@ export class Gameplay extends Phaser.Scene {
 		let towerManager = new TowerManager(
 			this,
 			physicsGroups.towers,
-			physicsGroups.towerSightGroup,
 			physicsGroups.towerBulletGroup,
 			towerSpawnMap,
 			ghostTower
@@ -88,6 +84,9 @@ export class Gameplay extends Phaser.Scene {
 		let interactionModus = new InteractionModus(this, ghostTower);
 		let enemies = this.createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas);
 		let modi = new Modi(this, keyObjF, keyObjE, interactionModus, towerManager);
+
+		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
+		this.cameras.main.startFollow(player);
 		setupPointerEvents(this, player, ghostTower, modi);
 
 		this.movement = new Movement(this, player);

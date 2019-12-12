@@ -3,6 +3,7 @@ import { Weapon } from "../weapons/Weapon";
 import { EnemyCircle } from "../enemies/units/EnemyCircle";
 import { executeOverAllCamps } from "../../globals/global";
 import { gainSouls } from "../base/events/player";
+import { Tower } from "../player/towers/Tower";
 
 export class Collision {
 	player: Phaser.Physics.Arcade.Group;
@@ -12,7 +13,6 @@ export class Collision {
 	enemyWeapons: {};
 	scene: Gameplay;
 	areas: any;
-	towerSightGroup: Phaser.Physics.Arcade.StaticGroup;
 	towerBulletGroup: Phaser.Physics.Arcade.Group;
 	buildings: {};
 
@@ -23,7 +23,6 @@ export class Collision {
 		this.playerWeapon = scene.physics.add.group();
 
 		this.towers = scene.physics.add.staticGroup();
-		this.towerSightGroup = scene.physics.add.staticGroup();
 		this.towerBulletGroup = scene.physics.add.group();
 
 		this.enemies = {};
@@ -45,7 +44,6 @@ export class Collision {
 			player: this.player,
 			playerWeapon: this.playerWeapon,
 			towers: this.towers,
-			towerSightGroup: this.towerSightGroup,
 			towerBulletGroup: this.towerBulletGroup,
 
 			enemies: this.enemies,
@@ -161,6 +159,10 @@ export class Collision {
 			(weapon.owner as EnemyCircle).spotted = enemy;
 			weapon.owner.state = "guard";
 		}
+
+		if (enemy instanceof Tower && !weapon.owner.dontAttackList.includes("blue")) {
+			enemy.fire(weapon.owner);
+		}
 		return false;
 	}
 
@@ -201,14 +203,6 @@ export class Collision {
 
 	private addBulletCollision() {
 		let func = color => {
-			this.addOverlap(
-				this.towerSightGroup,
-				this.enemies[color],
-				(sightElement, enemy) => {
-					if (!enemy.dontAttackList.includes("blue")) sightElement.owner.fire(enemy);
-				},
-				() => true
-			);
 			this.addCollider(this.towerBulletGroup, this.enemies[color], this.doDamageBullet, () => true);
 			this.addCollider(this.towerBulletGroup, this.buildings[color], this.doDamageBullet, () => true);
 		};
