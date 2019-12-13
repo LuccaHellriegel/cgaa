@@ -2,12 +2,10 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { Circle } from "../../base/classes/Circle";
 import { PathContainer } from "../path/PathContainer";
 import { damageable } from "../../base/interfaces";
-import { WallPart } from "../../areas/WallPart";
+import { WallPart } from "../../area/WallPart";
 import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
-import { addEle, removeInteractionEle } from "../../base/events/elements";
-import { relativePosToRealPos } from "../../base/map/position";
-
+import { removeInteractionEle } from "../../base/events/elements";
 export class EnemyCircle extends Circle implements damageable {
 	hasBeenAttacked: boolean;
 	healthbar: HealthBar;
@@ -28,7 +26,6 @@ export class EnemyCircle extends Circle implements damageable {
 		this.setCollideWorldBounds(true);
 		this.color = config.color;
 		this.velo = velo;
-		addEle(config.scene, "enemy", this);
 	}
 
 	damage(amount) {
@@ -153,8 +150,6 @@ export class EnemyCircle extends Circle implements damageable {
 		if (this.pathContainer.path && this.pathContainer.path[this.curPosInPath]) {
 			let x = this.pathContainer.path[this.curPosInPath].x;
 			let y = this.pathContainer.path[this.curPosInPath].y;
-
-			if (x > 10000) console.log(this.pathContainer.path);
 
 			this.turnTo({ x, y });
 			if (Math.abs(this.x - x) < 2 && Math.abs(this.y - y) < 2) {

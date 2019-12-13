@@ -1,4 +1,4 @@
-import { extendWithNewId } from "../extend";
+import { extendWithNewId } from "../id";
 
 export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
 	id: string;

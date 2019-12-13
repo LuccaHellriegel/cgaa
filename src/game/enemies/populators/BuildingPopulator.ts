@@ -1,38 +1,23 @@
 import { Populator } from "./Populator";
-import { Building } from "../units/Building";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
-import EasyStar from "easystarjs";
-import { PathManager } from "../path/PathManager";
-import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
-import { calculateRelativeSpawnPositionsAround } from "../../base/map/calculate";
-import { realPosToRelativePos, relativePosToRealPos } from "../../base/map/position";
+import { relativePosToRealPos } from "../../base/map/position";
+import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
+import { constructColumnRowID } from "../../base/id";
 
 export class BuildingPopulator extends Populator {
-	easyStar: EasyStar.js;
-	building: Building;
-	validSpawnPositions: { column: any; row: any }[];
 	enemyConfig: EnemyConfig;
-	pathManager: PathManager;
+	pathDict;
 
-	constructor(enemyConfig: EnemyConfig, building: Building, enemySpawnMap: EnemySpawnMap, pathManager: PathManager) {
-		super(enemyConfig.scene, enemySpawnMap);
-		this.pathManager = pathManager;
+	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj, pathDict) {
+		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
+		this.pathDict = pathDict;
 		this.enemyConfig = enemyConfig;
-		this.building = building;
-
-		let { column, row } = realPosToRelativePos(building.x, building.y);
-		this.validSpawnPositions = calculateRelativeSpawnPositionsAround(column, row, 3, 1);
-	}
-
-	calculateRandUnitSpawnPosition() {
-		let curValidPos = this.enemySpawnMap.filterPositions(this.validSpawnPositions);
-		return curValidPos[Phaser.Math.Between(0, curValidPos.length - 1)];
 	}
 
 	createEnemy() {
-		let spawnPosition = this.calculateRandUnitSpawnPosition();
+		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
-			let { x, y } = relativePosToRealPos(spawnPosition.column, spawnPosition.row);
+			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
 
 			this.enemyConfig.x = x;
 			this.enemyConfig.y = y;
@@ -44,10 +29,10 @@ export class BuildingPopulator extends Populator {
 				this.enemyConfig.weaponType = "chain";
 			}
 			let enemy = EnemyFactory.createEnemy(this.enemyConfig);
-
-			enemy.pathContainer = this.pathManager.getSpecificPathForSpawnPos(spawnPosition.column, spawnPosition.row);
+			enemy.pathContainer = this.pathDict[constructColumnRowID(spawnPosition[0], spawnPosition[1])];
 			enemy.state = "ambush";
 			enemy.dontAttackList = this.dontAttackList;
+
 			return enemy;
 		}
 		return null;

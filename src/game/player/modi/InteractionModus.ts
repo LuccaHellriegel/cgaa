@@ -6,6 +6,7 @@ import { getRandomCampColorOrder } from "../../../globals/global";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../Square";
 import { establishCooperation, gainLife } from "../../base/events/player";
+import { campColors } from "../../../globals/globalColors";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -44,7 +45,6 @@ export class InteractionModus {
 				let destroyed = this.checkIfCampDestroy(ele.color);
 				if (destroyed) {
 					//TODO: multiple camp cooperation
-					console.log(this.rivalries[ele.color], ele.color);
 					establishCooperation(scene, this.rivalries[ele.color], "blue");
 				}
 			}
@@ -80,12 +80,19 @@ export class InteractionModus {
 					if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
 						this.colorKilllist.push(targetColor);
 						this.scene.events.emit("added-to-killlist", targetColor);
-					}
 
-					for (const key in this.interactionElements) {
-						const element = this.interactionElements[key];
-						if (element.color === targetColor) this.unitKilllist.push(element);
+						for (const key in this.interactionElements) {
+							const element = this.interactionElements[key];
+							if (element.color === targetColor) this.unitKilllist.push(element);
+						}
 					}
+					// else if (this.colorKilllist.includes(targetColor) && this.checkIfCampDestroy(targetColor)) {
+					// 	let index = campColors.indexOf(targetColor);
+					// 	let leftOverColors = campColors.splice(index, 1);
+					// 	index = leftOverColors.indexOf(ele.color);
+					// 	leftOverColors = leftOverColors.splice(index, 1);
+					// 	this.scene.events.emit("added-to-attacklist", ele.color, leftOverColors[0]);
+					// }
 					break;
 				case Tower:
 					this.scene.events.emit("sold-tower", ele);

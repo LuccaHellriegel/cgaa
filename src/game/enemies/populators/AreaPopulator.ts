@@ -1,45 +1,37 @@
 import { Populator } from "./Populator";
-import { Area } from "../../areas/Area";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
-import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
+import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
 import { relativePosToRealPos } from "../../base/map/position";
 
 export class AreaPopulator extends Populator {
-	area: Area;
 	enemyConfig: EnemyConfig;
 
-	constructor(enemyConfig: EnemyConfig, area: Area, enemySpawnMap: EnemySpawnMap) {
-		super(enemyConfig.scene, enemySpawnMap);
+	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj) {
+		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
 		this.enemyConfig = enemyConfig;
-		this.area = area;
-	}
-
-	calculateRandUnitSpawnPosition(area) {
-		let spawnablePos = this.enemySpawnMap.getValidSpawnPosInArea(area);
-
-		let pos = spawnablePos[Phaser.Math.Between(0, spawnablePos.length - 1)];
-		return pos;
 	}
 
 	createEnemy() {
-		let spawnPosition = this.calculateRandUnitSpawnPosition(this.area);
-		let { x, y } = relativePosToRealPos(spawnPosition.column, spawnPosition.row);
+		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
+		if (spawnPosition) {
+			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
+			this.enemyConfig.x = x;
+			this.enemyConfig.y = y;
 
-		this.enemyConfig.x = x;
-		this.enemyConfig.y = y;
+			let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
+			if (choseRandWeapon) {
+				this.enemyConfig.weaponType = "rand";
+			} else {
+				this.enemyConfig.weaponType = "chain";
+			}
 
-		let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-		if (choseRandWeapon) {
-			this.enemyConfig.weaponType = "rand";
-		} else {
-			this.enemyConfig.weaponType = "chain";
+			let enemy = EnemyFactory.createEnemy(this.enemyConfig);
+
+			enemy.state = "guard";
+			enemy.dontAttackList = this.dontAttackList;
+			return enemy;
 		}
-
-		let enemy = EnemyFactory.createEnemy(this.enemyConfig);
-
-		enemy.state = "guard";
-		enemy.dontAttackList = this.dontAttackList;
-		return enemy;
+		return null;
 	}
 
 	doMoreSpawn() {

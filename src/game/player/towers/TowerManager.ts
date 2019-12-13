@@ -1,7 +1,7 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerCost } from "../../../globals/globalConfig";
-import { TowerSpawnMap } from "../../spawn/TowerSpawnMap";
+import { TowerSpawnObj } from "../../spawn/TowerSpawnObj";
 import { GhostTower } from "../modi/GhostTower";
 import { gainSouls, spendSouls } from "../../base/events/player";
 import { snapXYToGrid } from "../../base/map/position";
@@ -11,11 +11,11 @@ export class TowerManager {
 	scene: Gameplay;
 	bulletGroup: Phaser.Physics.Arcade.Group;
 	towers: Tower[] = [];
-	towerSpawnMap: TowerSpawnMap;
+	towerSpawnObj: TowerSpawnObj;
 	canBuild = false;
 	ghostTower: GhostTower;
 
-	constructor(scene: Gameplay, towerGroup, bulletGroup, towerSpawnMap: TowerSpawnMap, ghostTower: GhostTower) {
+	constructor(scene: Gameplay, towerGroup, bulletGroup, towerSpawnObj: TowerSpawnObj, ghostTower: GhostTower) {
 		this.scene = scene;
 
 		scene.events.on("sold-tower", tower => {
@@ -37,7 +37,7 @@ export class TowerManager {
 		scene.events.on("can-not-build", () => {
 			this.canBuild = false;
 		});
-		this.towerSpawnMap = towerSpawnMap;
+		this.towerSpawnObj = towerSpawnObj;
 
 		this.ghostTower = ghostTower;
 
@@ -62,7 +62,7 @@ export class TowerManager {
 			x = snappedXY.newX;
 			y = snappedXY.newY;
 
-			if (this.towerSpawnMap.evaluateRealPos(x, y)) {
+			if (this.towerSpawnObj.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, towerCost);
 				let tower = new Tower(this.scene, x, y, this.towerGroup, this.bulletGroup);
 				this.towers.push(tower);

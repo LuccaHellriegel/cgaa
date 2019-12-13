@@ -42,10 +42,19 @@ export function snapXYToGrid(x, y) {
 	return { newX, newY };
 }
 
+export function relativeCoordinateToReal(coordinate) {
+	return 0 + wallPartHalfSize + coordinate * 2 * wallPartHalfSize;
+}
+
 export function relativePosToRealPos(column, row) {
-	let x = 0 + wallPartHalfSize + column * 2 * wallPartHalfSize;
-	let y = 0 + wallPartHalfSize + row * 2 * wallPartHalfSize;
+	let x = relativeCoordinateToReal(column);
+	let y = relativeCoordinateToReal(row);
 	return { x, y };
+}
+
+export function realCoordinateToRelative(coordinate) {
+	coordinate = snapCoordinateToGrid(coordinate);
+	return (coordinate - wallPartHalfSize) / (2 * wallPartHalfSize);
 }
 
 export function realPosToRelativePos(x, y) {

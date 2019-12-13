@@ -5,14 +5,25 @@ import { executeOverAllCamps } from "../../globals/global";
 import { gainSouls } from "../base/events/player";
 import { Tower } from "../player/towers/Tower";
 
+export interface PhysicGroups {
+	player: Phaser.Physics.Arcade.Group;
+	playerWeapon: Phaser.Physics.Arcade.Group;
+	towers: Phaser.Physics.Arcade.StaticGroup;
+	enemies: {};
+	enemyWeapons: {};
+	areas: Phaser.Physics.Arcade.StaticGroup;
+	towerBulletGroup: Phaser.Physics.Arcade.Group;
+	buildings: {};
+}
+
 export class Collision {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
-	towers: any;
+	towers: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
 	enemyWeapons: {};
 	scene: Gameplay;
-	areas: any;
+	areas: Phaser.Physics.Arcade.StaticGroup;
 	towerBulletGroup: Phaser.Physics.Arcade.Group;
 	buildings: {};
 
@@ -39,7 +50,7 @@ export class Collision {
 		this.addCollisionDetection();
 	}
 
-	getPhysicGroups() {
+	getPhysicGroups(): PhysicGroups {
 		return {
 			player: this.player,
 			playerWeapon: this.playerWeapon,

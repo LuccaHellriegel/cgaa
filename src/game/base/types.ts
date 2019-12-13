@@ -1,3 +1,7 @@
-export type Exit = { position: number; width: number; wallSide: "top" | "bottom" | "left" | "right" };
+import { Gameplay } from "../../scenes/Gameplay";
 
-export type AreaType = "empty" | "camp";
+export type Exit = { exitPosition: number; exitWidth: number; exitWallSide: string };
+
+export type StaticConfig = { scene: Gameplay; physicsGroup: Phaser.Physics.Arcade.StaticGroup };
+
+export type RelativePosition = { column: number; row: number };

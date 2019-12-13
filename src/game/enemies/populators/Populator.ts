@@ -1,26 +1,33 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemySpawnMap } from "../../spawn/EnemySpawnMap";
+import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
 
 export abstract class Populator {
 	enemyCount: number = 0;
 	scene: Gameplay;
-	enemySpawnMap: EnemySpawnMap;
-	dontAttackList: any[] = [];
+	enemySpawnObj: EnemySpawnObj;
+	dontAttackList: string[] = [];
 
-	constructor(scene: Gameplay, enemySpawnMap) {
+	constructor(scene: Gameplay, enemySpawnObj: EnemySpawnObj, color: string) {
 		this.scene = scene;
-		this.enemySpawnMap = enemySpawnMap;
-	}
+		this.enemySpawnObj = enemySpawnObj;
+		scene.events.on(
+			"start-wave-" + color,
+			function() {
+				this.enemyCount = 0;
+				this.startPopulating();
+			}.bind(this)
+		);
 
-	establishCooperation(cooperationColor) {
-		this.dontAttackList.push(cooperationColor);
+		scene.events.on("cooperation-established-" + color, function(cooperationColor) {
+			this.dontAttackList.push(cooperationColor);
+		});
 	}
 
 	abstract createEnemy();
 
 	abstract doMoreSpawn();
 
-	startPopulating() {
+	private startPopulating() {
 		let enemy = this.createEnemy();
 		if (enemy != null) {
 			this.enemyCount++;

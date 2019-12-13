@@ -2,21 +2,24 @@ import { createAnims } from "../graphics/animation";
 import { generateTextures } from "../graphics/textures";
 import { Movement } from "../game/player/input/Movement";
 import { Collision } from "../game/collision/Collision";
-import { Areas } from "../game/areas/Areas";
 import { wallPartHalfSize } from "../globals/globalSizes";
-import { PathManager } from "../game/enemies/path/PathManager";
-import { Enemies } from "../game/enemies/units/Enemies";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/Player";
 import { setupPointerEvents } from "../game/base/pointer";
 import { InteractionModus } from "../game/player/modi/InteractionModus";
-import { EnemySpawnMap } from "../game/spawn/EnemySpawnMap";
-import { TowerSpawnMap } from "../game/spawn/TowerSpawnMap";
 import { Square } from "../game/player/Square";
-import { playerStartX, playerStartY } from "../globals/globalConfig";
 import { GhostTower } from "../game/player/modi/GhostTower";
 import { Modi } from "../game/player/modi/Modi";
-import { calculateUnifiedMap } from "../game/base/map/calculate";
+import { realPosToRelativePos, relativePosToRealPos } from "../game/base/map/position";
+import { constructAreaConfigs, constructBorderwallConfig } from "../game/area/config";
+import { createAreas } from "../game/area/create";
+import { StaticConfig } from "../game/base/types";
+import { createBorderWall } from "../game/area/walls";
+import { createTowerSpawnObj } from "../game/base/spawn";
+import { constructCampConfigs } from "../game/enemies/config";
+import { CampConfig, createCamps } from "../game/enemies/camp";
+import { calculatePaths } from "../game/enemies/path/path";
+import { spawnWave } from "../game/enemies/wave";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -27,62 +30,60 @@ export class Gameplay extends Phaser.Scene {
 
 	preload() {}
 
-	private createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas) {
-		let pathManager = new PathManager(this, unifiedMap, areas.getAreaForBuildings());
-
-		let enemySpawnMap = new EnemySpawnMap(this, unifiedMap, enemyArr);
-		let enemies = new Enemies(
-			this,
-			areas.getAreaForBuildings(),
-			enemySpawnMap,
-			pathManager,
-			physicsGroups.enemies,
-			physicsGroups.enemyWeapons,
-			physicsGroups.buildings,
-			enemyArr
-		);
-		pathManager.calculateBuildingSpecificPaths(enemies.getBuildings());
-
-		enemies.spawnAreaUnits();
-		enemies.spawnWaveUnits();
-
-		new Square(this, playerStartX, playerStartY, physicsGroups.player);
-
-		return enemies;
-	}
-
 	create() {
 		generateTextures(this);
 		createAnims(this.anims);
 
 		let physicsGroups = new Collision(this).getPhysicGroups();
 
-		let areas = new Areas(this, physicsGroups.areas);
-		let borderWall = areas.getBorderWall();
+		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: physicsGroups.areas };
+		let areaConfigs = constructAreaConfigs(areaStaticConfig);
+		let unifiedMap = createAreas(areaConfigs);
+		let borderWallConfig = constructBorderwallConfig(areaStaticConfig);
+		let borderWallSize = createBorderWall(borderWallConfig);
+
 		this.physics.world.setBounds(
 			0,
 			0,
-			borderWall.width - 4 * wallPartHalfSize,
-			borderWall.width - 4 * wallPartHalfSize
+			borderWallSize.width - 4 * wallPartHalfSize,
+			borderWallSize.height - 4 * wallPartHalfSize
 		);
 
-		let unifiedMap = calculateUnifiedMap(areas.getAllMaps());
 		let enemyArr = [];
 
 		let keyObjF = this.input.keyboard.addKey("F");
 		let keyObjE = this.input.keyboard.addKey("E");
 
 		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
-		let towerSpawnMap = new TowerSpawnMap(this, unifiedMap, enemyArr);
+		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyArr);
 		let towerManager = new TowerManager(
 			this,
 			physicsGroups.towers,
 			physicsGroups.towerBulletGroup,
-			towerSpawnMap,
+			towerSpawnObj,
 			ghostTower
 		);
 		let interactionModus = new InteractionModus(this, ghostTower);
-		let enemies = this.createInteractionRelevantEles(physicsGroups, unifiedMap, enemyArr, areas);
+
+		let pathDict = {};
+		let campConfigs: CampConfig[] = constructCampConfigs(
+			this,
+			unifiedMap,
+			areaConfigs,
+			enemyArr,
+			physicsGroups,
+			pathDict
+		);
+		let buildingPositions = createCamps(campConfigs);
+
+		let middlePos = realPosToRelativePos(borderWallSize.width / 2, borderWallSize.height / 2);
+
+		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingPositions });
+
+		spawnWave(this, 0);
+
+		let pos = relativePosToRealPos(middlePos.column, middlePos.row);
+		new Square(this, pos.x, pos.y, physicsGroups.player);
 		let modi = new Modi(this, keyObjF, keyObjE, interactionModus, towerManager);
 
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
@@ -91,17 +92,17 @@ export class Gameplay extends Phaser.Scene {
 
 		this.movement = new Movement(this, player);
 
-		this.time.addEvent({
-			delay: 4000,
-			callback: () => {
-				this.children.bringToTop(player);
-				this.children.bringToTop(player.weapon);
-				this.children.bringToTop(ghostTower);
-				enemies.bringUnitsToTop();
-			},
-			callbackScope: this,
-			repeat: 0
-		});
+		// this.time.addEvent({
+		// 	delay: 4000,
+		// 	callback: () => {
+		// 		this.children.bringToTop(player);
+		// 		this.children.bringToTop(player.weapon);
+		// 		this.children.bringToTop(ghostTower);
+		// 		enemies.bringUnitsToTop();
+		// 	},
+		// 	callbackScope: this,
+		// 	repeat: 0
+		// });
 	}
 
 	update() {

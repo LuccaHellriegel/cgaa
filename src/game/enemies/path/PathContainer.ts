@@ -61,6 +61,7 @@ export class PathContainer {
 		for (let index = 1; index < realPath.length - 1; index++) {
 			let prevPos = realPath[index - 1];
 			curPos = realPath[index];
+
 			prevDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, prevPos.x, prevPos.y);
 			nextPos = realPath[index + 1];
 			nextDirection = calculateRelativeCrossPostioning(curPos.x, curPos.y, nextPos.x, nextPos.y);
