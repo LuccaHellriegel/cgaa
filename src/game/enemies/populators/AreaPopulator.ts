@@ -45,6 +45,6 @@ export class AreaPopulator extends Populator {
 	}
 
 	doMoreSpawn() {
-		return this.enemyCount != 20;
+		return this.enemyCount != 5;
 	}
 }
