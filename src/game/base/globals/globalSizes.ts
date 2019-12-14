@@ -10,5 +10,3 @@ export const bigCircleRadius = gridPartHalfSize - 2;
 
 export const circleSizeNames = ["Normal", "Small", "Big"];
 export const circleSizes = [normalCircleRadius, smallCircleRadius, bigCircleRadius];
-
-export const towerHalfSize = gridPartHalfSize;

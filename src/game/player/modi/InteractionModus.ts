@@ -1,4 +1,4 @@
-import { towerHalfSize } from "../../base/globals/globalSizes";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
@@ -117,7 +117,7 @@ export class InteractionModus {
 				ele = element;
 			}
 		}
-		if (dist > towerHalfSize) return null;
+		if (dist > gridPartHalfSize) return null;
 		return ele;
 	}
 }

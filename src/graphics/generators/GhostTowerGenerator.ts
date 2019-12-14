@@ -1,7 +1,7 @@
 import { Generator } from "./Generator";
 import { RectPolygon } from "../../game/base/polygons/RectPolygon";
 import { Gameplay } from "../../scenes/Gameplay";
-import { towerHalfSize } from "../../game/base/globals/globalSizes";
+import { gridPartHalfSize } from "../../game/base/globals/globalSizes";
 
 export class GhostTowerGenerator extends Generator {
 	title: string;
@@ -21,8 +21,8 @@ export class GhostTowerGenerator extends Generator {
 	generateTexture() {
 		this.graphics.generateTexture(
 			this.title,
-			4 * towerHalfSize + 4 * this.lineWidth,
-			2 * towerHalfSize + 4 * this.lineWidth
+			4 * gridPartHalfSize + 4 * this.lineWidth,
+			2 * gridPartHalfSize + 4 * this.lineWidth
 		);
 	}
 	addFrames() {
@@ -31,25 +31,25 @@ export class GhostTowerGenerator extends Generator {
 			0,
 			0,
 			0,
-			2 * towerHalfSize + 2 * this.lineWidth,
-			2 * towerHalfSize + 2 * this.lineWidth
+			2 * gridPartHalfSize + 2 * this.lineWidth,
+			2 * gridPartHalfSize + 2 * this.lineWidth
 		);
 		this.scene.textures.list[this.title].add(
 			2,
 			0,
-			2 * towerHalfSize + 2 * this.lineWidth,
+			2 * gridPartHalfSize + 2 * this.lineWidth,
 			0,
-			2 * towerHalfSize + 2 * this.lineWidth,
-			2 * towerHalfSize + 2 * this.lineWidth
+			2 * gridPartHalfSize + 2 * this.lineWidth,
+			2 * gridPartHalfSize + 2 * this.lineWidth
 		);
 	}
 
 	private drawFristRect() {
 		let rect = new RectPolygon(
-			towerHalfSize + this.lineWidth,
-			towerHalfSize + this.lineWidth,
-			2 * towerHalfSize,
-			2 * towerHalfSize
+			gridPartHalfSize + this.lineWidth,
+			gridPartHalfSize + this.lineWidth,
+			2 * gridPartHalfSize,
+			2 * gridPartHalfSize
 		);
 		let points = rect.points;
 		this.graphics.lineStyle(this.lineWidth, 0xffffff);
@@ -64,10 +64,10 @@ export class GhostTowerGenerator extends Generator {
 
 	private drawErrorRect() {
 		let rect = new RectPolygon(
-			3 * towerHalfSize + 3 * this.lineWidth,
-			towerHalfSize + this.lineWidth,
-			2 * towerHalfSize,
-			2 * towerHalfSize
+			3 * gridPartHalfSize + 3 * this.lineWidth,
+			gridPartHalfSize + this.lineWidth,
+			2 * gridPartHalfSize,
+			2 * gridPartHalfSize
 		);
 		let points = rect.points;
 		this.graphics.lineStyle(this.lineWidth, 0xcc0000);

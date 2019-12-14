@@ -1,7 +1,7 @@
 import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { towerHalfSize } from "../../base/globals/globalSizes";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { extendWithNewId } from "../../base/id";
 import { addInteractionEle, removeInteractionEle } from "../../base/events/elements";
 import { Image } from "../../base/classes/BasePhaser";
@@ -19,8 +19,8 @@ export class Square extends Image implements damageable {
 		this.polygon = new RectPolygon(
 			x + scene.cameras.main.scrollX,
 			y + scene.cameras.main.scrollY,
-			2 * towerHalfSize,
-			2 * towerHalfSize
+			2 * gridPartHalfSize,
+			2 * gridPartHalfSize
 		);
 
 		this.setSize(this.polygon.width, this.polygon.height);
