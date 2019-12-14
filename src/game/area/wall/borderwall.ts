@@ -2,8 +2,8 @@ import { StaticConfig, RelativePosition, WallBase } from "../../base/types";
 import { WallsConfig, isWall } from "./wall";
 import { areaSize } from "../../../globals/globalConfig";
 import { wallPartHalfSize, gridPartHalfSize } from "../../../globals/globalSizes";
-import { WallPart } from "./WallPart";
 import { realPosToRelativePos } from "../../base/position";
+import { BorderWallPart } from "./BorderWallPart";
 
 function constructBorderwallConfig(staticConfig: StaticConfig): WallsConfig {
 	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 3 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
@@ -26,7 +26,7 @@ function createBorderWall(config: WallsConfig): RelativePosition {
 	for (let row = 0; row < config.wallBase.sizeOfYAxis; row++) {
 		for (let column = 0; column < config.wallBase.sizeOfXAxis; column++) {
 			if (isWall(config, column, row)) {
-				new WallPart(config.wallBase.staticConfig.scene, x, y, config.wallBase.staticConfig.physicsGroup);
+				new BorderWallPart(config.wallBase.staticConfig.scene, x, y);
 			}
 			x += 2 * wallPartHalfSize;
 		}
