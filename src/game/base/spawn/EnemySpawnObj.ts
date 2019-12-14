@@ -56,4 +56,9 @@ export class EnemySpawnObj {
 		let arr = key.split(" ");
 		return [parseInt(arr[0]), parseInt(arr[1])];
 	}
+
+	destroy() {
+		this.baseObj = undefined;
+		this.relativeObj = undefined;
+	}
 }

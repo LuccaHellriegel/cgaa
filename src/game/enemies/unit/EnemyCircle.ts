@@ -153,7 +153,6 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	private ambush() {
-		console.log(this);
 		if (this.pathContainer.path && this.pathContainer.path[this.curPosInPath]) {
 			let x = this.pathContainer.path[this.curPosInPath].x;
 			let y = this.pathContainer.path[this.curPosInPath].y;

@@ -6,21 +6,26 @@ export abstract class Populator {
 	scene: Gameplay;
 	enemySpawnObj: EnemySpawnObj;
 	dontAttackList: string[] = [];
+	shouldPopulate = true;
+	color: string;
 
 	constructor(scene: Gameplay, enemySpawnObj: EnemySpawnObj, color: string) {
 		this.scene = scene;
+		this.color = color;
 		this.enemySpawnObj = enemySpawnObj;
-		scene.events.on(
-			"start-wave-" + color,
-			function() {
-				this.enemyCount = 0;
-				this.startPopulating();
-			}.bind(this)
-		);
+		scene.events.once("start-wave-" + color, this.startWave.bind(this));
 
-		scene.events.on("cooperation-established-" + color, function(cooperationColor) {
+		scene.events.once("cooperation-established-" + color, function(cooperationColor) {
 			this.dontAttackList.push(cooperationColor);
 		});
+	}
+
+	private startWave() {
+		if (this.shouldPopulate) {
+			this.enemyCount = 0;
+			this.startPopulating();
+			this.scene.events.once("start-wave-" + this.color, this.startWave.bind(this));
+		}
 	}
 
 	abstract createEnemy();
@@ -41,5 +46,10 @@ export abstract class Populator {
 				repeat: 0
 			});
 		}
+	}
+
+	destroy() {
+		this.shouldPopulate = false;
+		this.enemySpawnObj.destroy();
 	}
 }
