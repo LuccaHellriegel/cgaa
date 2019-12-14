@@ -13,10 +13,9 @@ import { relativePosToRealPos } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
-import { constructCampConfigs } from "../game/enemies/config";
-import { CampConfig, createCamps } from "../game/enemies/camp";
 import { calculatePaths } from "../game/enemies/path/path";
 import { spawnWave } from "../game/enemies/wave";
+import { mainCamp } from "../game/enemies/camp";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -54,15 +53,7 @@ export class Gameplay extends Phaser.Scene {
 		let interactionModus = new InteractionModus(this, ghostTower);
 
 		let pathDict = {};
-		let campConfigs: CampConfig[] = constructCampConfigs(
-			this,
-			unifiedMap,
-			areaConfigs,
-			enemyArr,
-			physicsGroups,
-			pathDict
-		);
-		let buildingPositions = createCamps(campConfigs);
+		let buildingPositions = mainCamp(this, unifiedMap, areaConfigs, enemyArr, physicsGroups, pathDict);
 
 		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingPositions });
 

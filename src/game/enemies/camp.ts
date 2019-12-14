@@ -8,6 +8,9 @@ import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
 import { addInteractionEle } from "../base/events/elements";
 import { relativePosToRealPos, exitToGlobalPositon } from "../base/position";
 import { AreaConfig } from "../base/interfaces";
+import { Gameplay } from "../../scenes/Gameplay";
+import { PhysicGroups } from "../collision/Collision";
+import { getRandomCampColorOrder } from "../../globals/global";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -18,6 +21,34 @@ export interface CampConfig {
 	pathDict;
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
 	weaponPhysicGroup: Phaser.Physics.Arcade.Group;
+}
+
+function constructCampConfigs(
+	scene: Gameplay,
+	map: ZeroOneMap,
+	areaConfigs: AreaConfig[],
+	enemies: EnemyCircle[],
+	physicGroups: PhysicGroups,
+	pathDict
+): CampConfig[] {
+	let campConfigs: CampConfig[] = [];
+	let colors = getRandomCampColorOrder();
+	for (let index = 0, length = colors.length; index < length; index++) {
+		let color = colors[index];
+		let areaConfig = areaConfigs[index];
+		let campConfig: CampConfig = {
+			color,
+			pathDict,
+			enemies,
+			map,
+			areaConfig,
+			staticConfig: { scene, physicsGroup: physicGroups.buildings[color] },
+			enemyPhysicGroup: physicGroups.enemies[color],
+			weaponPhysicGroup: physicGroups.enemyWeapons[color]
+		};
+		campConfigs.push(campConfig);
+	}
+	return campConfigs;
 }
 
 function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
@@ -51,7 +82,7 @@ function createBuildingPopulators(config: CampConfig, positions) {
 	}
 }
 
-export function createCamp(config: CampConfig): number[][] {
+function createCamp(config: CampConfig): number[][] {
 	let buildingSpawnObj = createBuildingSpawnObj(config.map, config.areaConfig);
 	let positions = spawnBuildings({ buildingSpawnObj, color: config.color, staticConfig: config.staticConfig });
 	updateMapWithBuildings(config.map, positions);
@@ -77,10 +108,22 @@ export function createCamp(config: CampConfig): number[][] {
 	return positions;
 }
 
-export function createCamps(configs: CampConfig[]): number[][] {
+function createCamps(configs: CampConfig[]): number[][] {
 	let positions: number[][] = [];
 	for (let index = 0, length = configs.length; index < length; index++) {
 		positions = positions.concat(createCamp(configs[index]));
 	}
 	return positions;
+}
+
+export function mainCamp(
+	scene: Gameplay,
+	map: ZeroOneMap,
+	areaConfigs: AreaConfig[],
+	enemies: EnemyCircle[],
+	physicGroups: PhysicGroups,
+	pathDict
+): number[][] {
+	let campConfigs: CampConfig[] = constructCampConfigs(scene, map, areaConfigs, enemies, physicGroups, pathDict);
+	return createCamps(campConfigs);
 }
