@@ -1,8 +1,7 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
-import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
+import { createBuildingSpawnObj, createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
 import { AreaPopulator } from "../populators/AreaPopulator";
-import { BuildingPopulator } from "../populators/BuildingPopulator";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { addToInteractionElements } from "../../base/events/elements";
 import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
@@ -64,26 +63,20 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	config.enemyDict[circle.id] = circle;
 }
 
-function createBuildingPopulators(config: CampConfig, positions) {
-	for (let index = 0, length = positions.length; index < length; index++) {
-		let enemySpawnObj = createBuildingEnemySpawnObj(positions[index][0], positions[index][1], config.enemyDict);
-		let enemyConfig: EnemyConfig = {
-			scene: config.staticConfig.scene,
-			color: config.color,
-			size: "Big",
-			x: -100,
-			y: -100,
-			weaponType: "rand",
-			physicsGroup: config.enemyPhysicGroup,
-			weaponGroup: config.weaponPhysicGroup
-		};
-		new BuildingPopulator(enemyConfig, enemySpawnObj, config.pathDict);
-	}
-}
-
 function createCamp(config: CampConfig): number[][] {
 	let buildingSpawnObj = createBuildingSpawnObj(config.map, config.areaConfig);
-	let positions = spawnBuildings({ buildingSpawnObj, color: config.color, staticConfig: config.staticConfig });
+	let spawnConfig = {
+		enemyDict: config.enemyDict,
+		pathDict: config.pathDict,
+		enemyPhysicGroup: config.enemyPhysicGroup,
+		weaponPhysicGroup: config.weaponPhysicGroup
+	};
+	let positions = spawnBuildings({
+		buildingSpawnObj,
+		color: config.color,
+		staticConfig: config.staticConfig,
+		spawnConfig
+	});
 	updateMapWithBuildings(config.map, positions);
 
 	let enemyConfig: EnemyConfig = {
@@ -101,8 +94,6 @@ function createCamp(config: CampConfig): number[][] {
 	new AreaPopulator(enemyConfig, areaEnemySpawnObj);
 
 	createInteractionUnit(config, enemyConfig);
-
-	createBuildingPopulators(config, positions);
 
 	return positions;
 }

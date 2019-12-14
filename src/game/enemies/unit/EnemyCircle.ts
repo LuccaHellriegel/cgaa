@@ -5,7 +5,7 @@ import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "./Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { removeInteractionEle } from "../../base/events/elements";
+import { removeFromInteractionElements } from "../../base/events/elements";
 import { addToInactivePool } from "../../base/events/pool";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
@@ -36,7 +36,7 @@ export class EnemyCircle extends Circle implements damageable {
 
 	destroy() {
 		if (this.scene && this.purpose == "interaction") {
-			removeInteractionEle(this.scene, this);
+			removeFromInteractionElements(this.scene, this);
 		}
 		super.destroy();
 		this.healthbar.value = 100;
@@ -153,6 +153,7 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	private ambush() {
+		console.log(this);
 		if (this.pathContainer.path && this.pathContainer.path[this.curPosInPath]) {
 			let x = this.pathContainer.path[this.curPosInPath].x;
 			let y = this.pathContainer.path[this.curPosInPath].y;

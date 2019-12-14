@@ -1,14 +1,16 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { relativeCoordinateToReal } from "../../base/position";
-import { circleSizeNames } from "../../base/globals/globalSizes";
-import { Building } from "../unit/Building";
+import { circleSizeNames, rectBuildinghalfHeight } from "../../base/globals/globalSizes";
+import { Building, BuildingSpawnConfig } from "../unit/Building";
 import { buildingSymbol } from "../../base/globals/globalSymbols";
 import { BuildingSpawnObj } from "../../base/spawn/BuildingSpawnObj";
+import { HealthBar } from "../../base/classes/HealthBar";
 
 interface BuildingsConfig {
 	staticConfig: StaticConfig;
 	buildingSpawnObj: BuildingSpawnObj;
 	color: string;
+	spawnConfig: BuildingSpawnConfig;
 }
 
 const numberOfBuildings = 3;
@@ -20,13 +22,25 @@ export function spawnBuildings(config: BuildingsConfig) {
 
 		let x = relativeCoordinateToReal(pos[0]);
 		let y = relativeCoordinateToReal(pos[1]);
+
+		let healthbar = new HealthBar(x - 25, y - rectBuildinghalfHeight, {
+			posCorrectionX: 0,
+			posCorrectionY: -rectBuildinghalfHeight,
+			healthWidth: 46,
+			healthLength: 12,
+			value: 100,
+			scene: config.staticConfig.scene
+		});
+
 		new Building(
 			config.staticConfig.scene,
 			x,
 			y,
 			config.staticConfig.physicsGroup,
 			circleSizeNames[index],
-			config.color
+			config.color,
+			healthbar,
+			config.spawnConfig
 		);
 	}
 	return positions;
