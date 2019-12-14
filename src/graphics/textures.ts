@@ -1,11 +1,6 @@
 import { RandWeaponGenerator } from "./generators/weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./generators/CircleGenerator";
-import {
-	normalCircleRadius,
-	gridPartHalfSize,
-	circleSizeNames,
-	gridPartHalfSize
-} from "../game/base/globals/globalSizes";
+import { normalCircleRadius, circleSizeNames, gridPartHalfSize } from "../game/base/globals/globalSizes";
 import { ChainWeaponGenerator } from "./generators/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./generators/BuildingGenerator";
 import { RectGenerator } from "./generators/RectGenerator";

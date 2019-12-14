@@ -5,7 +5,7 @@ import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
-import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";
+import { addToInteractionElements, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";
 import { addToInactivePool } from "../../base/events/pool";
 
 export class Tower extends Image implements damageable {
@@ -50,7 +50,7 @@ export class Tower extends Image implements damageable {
 		}
 
 		this.color = "blue";
-		addInteractionEle(scene, this);
+		addToInteractionElements(scene, this);
 	}
 
 	damage(amount: number) {

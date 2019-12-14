@@ -8,7 +8,6 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { removeInteractionEle } from "../../base/events/elements";
 import { addToInactivePool } from "../../base/events/pool";
 export class EnemyCircle extends Circle implements damageable {
-	hasBeenAttacked: boolean;
 	healthbar: HealthBar;
 	pathContainer: PathContainer;
 	curPosInPath = 0;
@@ -22,9 +21,7 @@ export class EnemyCircle extends Circle implements damageable {
 
 	constructor(config, velo) {
 		super(config);
-		this.hasBeenAttacked = false;
 		this.healthbar = config.healthbar;
-		this.setCollideWorldBounds(true);
 		this.color = config.color;
 		this.velo = velo;
 	}
@@ -34,7 +31,6 @@ export class EnemyCircle extends Circle implements damageable {
 			this.destroy();
 		} else {
 			super.damage(amount);
-			this.hasBeenAttacked = true;
 		}
 	}
 

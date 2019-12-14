@@ -6,7 +6,7 @@ export function removeEle(scene, name, ele) {
 	scene.events.emit("removed-" + name, ele);
 }
 
-export function addInteractionEle(scene: Phaser.Scene, ele) {
+export function addToInteractionElements(scene: Phaser.Scene, ele) {
 	scene.events.emit("interaction-ele-added", ele);
 }
 

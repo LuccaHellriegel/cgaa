@@ -3,7 +3,7 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { extendWithNewId } from "../../base/id";
-import { addInteractionEle, removeInteractionEle } from "../../base/events/elements";
+import { addToInteractionElements, removeInteractionEle } from "../../base/events/elements";
 import { Image } from "../../base/classes/BasePhaser";
 
 export class Square extends Image implements damageable {
@@ -37,7 +37,7 @@ export class Square extends Image implements damageable {
 
 		this.color = "blue";
 		extendWithNewId(this);
-		addInteractionEle(scene, this);
+		addToInteractionElements(scene, this);
 	}
 
 	damage(amount: number) {

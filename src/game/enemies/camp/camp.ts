@@ -4,7 +4,7 @@ import { spawnBuildings, updateMapWithBuildings } from "./building";
 import { AreaPopulator } from "../populators/AreaPopulator";
 import { BuildingPopulator } from "../populators/BuildingPopulator";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
-import { addInteractionEle } from "../../base/events/elements";
+import { addToInteractionElements } from "../../base/events/elements";
 import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
 import { AreaConfig } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
@@ -60,7 +60,7 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	let circle = EnemyFactory.createEnemy(enemyConfig);
 	circle.state = "interaction";
 	circle.purpose = "interaction";
-	addInteractionEle(config.staticConfig.scene, circle);
+	addToInteractionElements(config.staticConfig.scene, circle);
 	config.enemyDict[circle.id] = circle;
 }
 
