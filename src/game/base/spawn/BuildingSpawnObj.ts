@@ -56,7 +56,6 @@ export class BuildingSpawnObj {
 		while (foundPos !== numberOfPositions) {
 			curPosition = this.getRandomSpawnPosition(copyObj, keys);
 			if (curPosition) {
-				console.log(curPosition);
 				let arr = columnRowIDToIntArr(curPosition);
 				curPositions.push(arr);
 				updateObj(arr[0], arr[1], copyObj);

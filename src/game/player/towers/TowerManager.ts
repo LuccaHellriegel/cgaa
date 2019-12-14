@@ -1,34 +1,20 @@
-import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerCost } from "../../../globals/globalConfig";
 import { GhostTower } from "../modi/GhostTower";
-import { gainSouls, spendSouls } from "../../base/events/player";
+import { spendSouls } from "../../base/events/player";
 import { snapXYToGrid } from "../../base/position";
 import { TowerSpawnObj } from "../../base/spawn/TowerSpawnObj";
+import { TowerPool } from "./TowerPool";
 
 export class TowerManager {
-	towerGroup: Phaser.Physics.Arcade.StaticGroup;
 	scene: Gameplay;
-	bulletGroup: Phaser.Physics.Arcade.Group;
-	towers: Tower[] = [];
 	towerSpawnObj: TowerSpawnObj;
 	canBuild = false;
 	ghostTower: GhostTower;
+	towerPool: TowerPool;
 
 	constructor(scene: Gameplay, towerGroup, bulletGroup, towerSpawnObj: TowerSpawnObj, ghostTower: GhostTower) {
 		this.scene = scene;
-
-		scene.events.on("sold-tower", tower => {
-			let index = this.towers.indexOf(tower);
-			this.towers.splice(index, 1);
-			tower.destroy();
-			gainSouls(this.scene, towerCost);
-		});
-
-		scene.events.on("removed-tower", tower => {
-			let index = this.towers.indexOf(tower);
-			this.towers.splice(index, 1);
-		});
 
 		scene.events.on("can-build", () => {
 			this.canBuild = true;
@@ -41,8 +27,7 @@ export class TowerManager {
 
 		this.ghostTower = ghostTower;
 
-		this.towerGroup = towerGroup;
-		this.bulletGroup = bulletGroup;
+		this.towerPool = new TowerPool({ scene, towerGroup, bulletGroup, numberOfTowers: 15 });
 	}
 
 	private playInvalidTowerPosAnim() {
@@ -64,8 +49,8 @@ export class TowerManager {
 
 			if (this.towerSpawnObj.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, towerCost);
-				let tower = new Tower(this.scene, x, y, this.towerGroup, this.bulletGroup);
-				this.towers.push(tower);
+				let tower = this.towerPool.pop();
+				tower.activate(x, y);
 			} else {
 				this.playInvalidTowerPosAnim();
 			}

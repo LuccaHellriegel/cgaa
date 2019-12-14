@@ -40,7 +40,6 @@ export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 function createArea(config: AreaConfig) {
 	let map: ZeroOneMap = createEmptyMap(config.wallBase);
 	for (let index = 0; index < config.exit.exitWidth; index++) {
-		console.log(map);
 		map[config.exit.exitPosition.row + index][config.exit.exitPosition.column] = exitSymbol;
 	}
 	createWalls(config, map);

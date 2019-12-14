@@ -6,6 +6,7 @@ import { towerHalfSize } from "../../../globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
 import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";
+import { addToInactivePool } from "../../base/events/pool";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -50,13 +51,10 @@ export class Tower extends Image implements damageable {
 
 		this.color = "blue";
 		addInteractionEle(scene, this);
-		addEle(scene, "tower", this);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			removeInteractionEle(this.scene, this);
-			removeEle(this.scene, "tower", this);
 			this.destroy();
 		}
 	}
@@ -85,8 +83,17 @@ export class Tower extends Image implements damageable {
 	}
 
 	destroy() {
-		this.healthbar.destroy();
-		this.bullets.forEach(bullet => bullet.destroy());
-		super.destroy();
+		this.setPosition(-1000, -1000);
+		this.disableBody(true, true);
+		this.healthbar.value = 100;
+		this.healthbar.bar.setActive(false).setVisible(false);
+		this.bullets.forEach(bullet => bullet.reset());
+		addToInactivePool(this.scene, this);
+	}
+
+	activate(x, y) {
+		this.enableBody(true, x, y, true, true);
+		this.healthbar.bar.setActive(true).setVisible(true);
+		this.healthbar.move(this.x, this.y);
 	}
 }
