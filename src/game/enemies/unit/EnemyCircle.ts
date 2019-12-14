@@ -49,11 +49,10 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	activate(x, y) {
-		this.setPosition(x, y);
-		this.weapon.setActive(true).setVisible(true);
+		this.weapon.enableBody(true, x, y, true, true);
+		this.enableBody(true, x, y, true, true);
 		this.healthbar.bar.setActive(true).setVisible(true);
 		this.healthbar.move(this.x, this.y);
-		this.setActive(true).setVisible(true);
 	}
 
 	preUpdate(time, delta) {

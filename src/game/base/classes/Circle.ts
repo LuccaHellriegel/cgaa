@@ -37,8 +37,10 @@ export class Circle extends SpriteWithAnimEvents {
 	}
 
 	destroy() {
-		this.setActive(false).setVisible(false);
-		this.weapon.setActive(false).setVisible(false);
+		this.setPosition(-100, -100);
+		this.weapon.setPosition(-100, -100);
+		this.disableBody(true, true);
+		this.weapon.disableBody(true, true);
 	}
 
 	preUpdate(time, delta) {

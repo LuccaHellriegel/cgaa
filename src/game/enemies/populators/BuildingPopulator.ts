@@ -3,15 +3,26 @@ import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { relativePosToRealPos } from "../../base/position";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { constructColumnRowID } from "../../base/id";
+import { EnemyPool } from "./EnemyPool";
 
 export class BuildingPopulator extends Populator {
-	enemyConfig: EnemyConfig;
 	pathDict;
+	enemyPool: EnemyPool;
 
 	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj, pathDict) {
 		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
 		this.pathDict = pathDict;
-		this.enemyConfig = enemyConfig;
+
+		let bigCircleWithRand = { weaponType: "rand", size: "Big" };
+		let bigCircleWithChain = { weaponType: "chain", size: "Big" };
+		let normalCircleWithRand = { weaponType: "rand", size: "Normal" };
+		let normalCircleWithChain = { weaponType: "chain", size: "Normal" };
+
+		this.enemyPool = new EnemyPool({
+			enemyConfig,
+			numberOfGroups: 1,
+			groupComposition: [bigCircleWithRand, bigCircleWithChain, normalCircleWithRand, normalCircleWithChain]
+		});
 	}
 
 	createEnemy() {
@@ -19,20 +30,11 @@ export class BuildingPopulator extends Populator {
 		if (spawnPosition) {
 			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
 
-			this.enemyConfig.x = x;
-			this.enemyConfig.y = y;
-
-			let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-			if (choseRandWeapon) {
-				this.enemyConfig.weaponType = "rand";
-			} else {
-				this.enemyConfig.weaponType = "chain";
-			}
-			let enemy = EnemyFactory.createEnemy(this.enemyConfig);
+			let enemy = this.enemyPool.pop();
 			enemy.pathContainer = this.pathDict[constructColumnRowID(spawnPosition[0], spawnPosition[1])];
 			enemy.state = "ambush";
 			enemy.dontAttackList = this.dontAttackList;
-
+			enemy.activate(x, y);
 			return enemy;
 		}
 		return null;
