@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
 import { constructColumnRowID, columnRowIDToIntArr } from "../id";
-import { buildingSymbol, walkableSymbol } from "../../../globals/globalSymbols";
+import { buildingSymbol, walkableSymbol } from "../globals/globalSymbols";
 
 export function getAllBuildingRelevantPositions(column, row) {
 	let positions: number[][] = [];

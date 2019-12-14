@@ -1,10 +1,10 @@
-import { damageable } from "../base/interfaces";
-import { HealthBar } from "../base/classes/HealthBar";
-import { RectPolygon } from "../base/polygons/RectPolygon";
-import { towerHalfSize } from "../../globals/globalSizes";
-import { extendWithNewId } from "../base/id";
-import { addInteractionEle, removeInteractionEle } from "../base/events/elements";
-import { Image } from "../base/classes/BasePhaser";
+import { damageable } from "../../base/interfaces";
+import { HealthBar } from "../../base/classes/HealthBar";
+import { RectPolygon } from "../../base/polygons/RectPolygon";
+import { towerHalfSize } from "../../base/globals/globalSizes";
+import { extendWithNewId } from "../../base/id";
+import { addInteractionEle, removeInteractionEle } from "../../base/events/elements";
+import { Image } from "../../base/classes/BasePhaser";
 
 export class Square extends Image implements damageable {
 	healthbar: HealthBar;

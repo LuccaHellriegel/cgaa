@@ -18,9 +18,10 @@
 	"dependencies": {
 		"@babel/runtime": "^7.7.4",
 		"easystarjs": "^0.4.3",
+		"lodash": "^4.17.15",
 		"phaser": "^3.20.1",
 		"polygon-collision": "0.0.1",
-		"lodash": "^4.17.15"
+		"statsjs": "^1.0.7"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.7.4",

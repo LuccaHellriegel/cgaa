@@ -1,4 +1,4 @@
-import { Player } from "../Player";
+import { Player } from "../unit/Player";
 
 export class Movement {
 	left: Boolean;

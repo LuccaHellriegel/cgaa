@@ -1,7 +1,7 @@
-import { HUD } from "../../../scenes/HUD";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { SymmetricCrossPolygon } from "../../base/polygons/SymmetricCrossPolygon";
-import { towerCost } from "../../../globals/globalConfig";
+import { HUD } from "../../../../scenes/HUD";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { SymmetricCrossPolygon } from "../../../base/polygons/SymmetricCrossPolygon";
+import { towerCost } from "../../../base/globals/globalConfig";
 
 export class PlayerSoulCounter {
 	value: number;

@@ -1,5 +1,5 @@
-import { wallPartHalfSize } from "../../../globals/globalSizes";
-import { exitSymbol, wallSymbol } from "../../../globals/globalSymbols";
+import { wallPartHalfSize } from "../../base/globals/globalSizes";
+import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
 import { WallPart } from "./WallPart";
 import { WallBase, ZeroOneMap } from "../../base/types";
 

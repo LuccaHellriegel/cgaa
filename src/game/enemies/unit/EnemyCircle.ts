@@ -4,7 +4,7 @@ import { PathContainer } from "../path/PathContainer";
 import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "./Building";
-import { wallPartHalfSize } from "../../../globals/globalSizes";
+import { wallPartHalfSize } from "../../base/globals/globalSizes";
 import { removeInteractionEle } from "../../base/events/elements";
 import { addToInactivePool } from "../../base/events/pool";
 export class EnemyCircle extends Circle implements damageable {

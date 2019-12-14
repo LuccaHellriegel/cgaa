@@ -2,7 +2,7 @@ import { EnemySpawnObj } from "./EnemySpawnObj";
 import { Tower } from "../../player/towers/Tower";
 import { constructColumnRowID } from "../id";
 import { realCoordinateToRelative } from "../position";
-import { walkableSymbol, towerSymbol } from "../../../globals/globalSymbols";
+import { walkableSymbol, towerSymbol } from "../globals/globalSymbols";
 
 export class TowerSpawnObj extends EnemySpawnObj {
 	constructor(baseObj, movingUnitsDict) {

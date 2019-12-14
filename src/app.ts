@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
-import { debugModus } from "./globals/globalConfig";
+import { debugModus } from "./game/base/globals/globalConfig";
 
 //TODO: on firefox WEBGL produces bad performance
 let gameConfig = {
@@ -20,11 +20,7 @@ let gameConfig = {
 	scene: {}
 };
 
-function makeGame() {
-	let gameConfigWithScene = gameConfig;
-	gameConfigWithScene.scene = [Gameplay, HUD];
+let gameConfigWithScene = gameConfig;
+gameConfigWithScene.scene = [Gameplay, HUD];
 
-	let game = new Phaser.Game(gameConfigWithScene);
-}
-
-makeGame();
+new Phaser.Game(gameConfigWithScene);

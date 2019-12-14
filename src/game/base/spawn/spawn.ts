@@ -2,7 +2,7 @@ import { TowerSpawnObj } from "./TowerSpawnObj";
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { BuildingSpawnObj } from "./BuildingSpawnObj";
 import { constructColumnRowID } from "../id";
-import { walkableSymbol } from "../../../globals/globalSymbols";
+import { walkableSymbol } from "../globals/globalSymbols";
 import { realCoordinateToRelative } from "../position";
 import { ZeroOneMap } from "../types";
 import { AreaConfig } from "../interfaces";

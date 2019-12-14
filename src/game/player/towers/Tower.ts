@@ -2,7 +2,7 @@ import { Image } from "../../base/classes/BasePhaser";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { damageable } from "../../base/interfaces";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { towerHalfSize } from "../../../globals/globalSizes";
+import { towerHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
 import { addInteractionEle, removeInteractionEle, addEle, removeEle } from "../../base/events/elements";

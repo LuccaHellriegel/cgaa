@@ -1,7 +1,7 @@
 import { StaticConfig, RelativePosition, WallBase } from "../../base/types";
 import { WallsConfig, isWall } from "./wall";
-import { areaSize } from "../../../globals/globalConfig";
-import { wallPartHalfSize, gridPartHalfSize } from "../../../globals/globalSizes";
+import { areaSize } from "../../base/globals/globalConfig";
+import { wallPartHalfSize, gridPartHalfSize } from "../../base/globals/globalSizes";
 import { realPosToRelativePos } from "../../base/position";
 import { BorderWallPart } from "./BorderWallPart";
 

@@ -2,9 +2,9 @@ import { StaticConfig, ZeroOneMap, WallBase } from "../base/types";
 import { createWalls } from "./wall/wall";
 import { calculateUnifiedAreasMap, createEmptyMap } from "./map";
 import { mainBorderwall } from "./wall/borderwall";
-import { areaSize, layout } from "../../globals/globalConfig";
+import { areaSize, layout } from "../base/globals/globalConfig";
 import { relativeCoordinateToReal } from "../base/position";
-import { exitSymbol } from "../../globals/globalSymbols";
+import { exitSymbol } from "../base/globals/globalSymbols";
 import { AreaConfig } from "../base/interfaces";
 
 const exitWidth = 3;

@@ -1,4 +1,4 @@
-import { wallPartHalfSize } from "../../globals/globalSizes";
+import { wallPartHalfSize } from "./globals/globalSizes";
 import { RelativePosition } from "./types";
 import { AreaConfig } from "./interfaces";
 

@@ -1,13 +1,13 @@
 import { RandWeaponGenerator } from "./generators/weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./generators/CircleGenerator";
-import { normalCircleRadius, wallPartHalfSize, circleSizeNames, towerHalfSize } from "../globals/globalSizes";
+import { normalCircleRadius, wallPartHalfSize, circleSizeNames, towerHalfSize } from "../game/base/globals/globalSizes";
 import { ChainWeaponGenerator } from "./generators/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./generators/BuildingGenerator";
 import { RectGenerator } from "./generators/RectGenerator";
 import { GhostTowerGenerator } from "./generators/GhostTowerGenerator";
-import { campHexColors } from "../globals/globalColors";
-import { circleSizes } from "../globals/globalSizes";
-import { executeOverAllCampsAndSizes } from "../globals/global";
+import { campHexColors } from "../game/base/globals/globalColors";
+import { circleSizes } from "../game/base/globals/globalSizes";
+import { executeOverAllCampsAndSizes } from "../game/base/globals/global";
 import { SquareGenerator } from "./generators/SquareGenerator";
 import { PathMarkingGenerator } from "./generators/PathMarkingGenerator";
 

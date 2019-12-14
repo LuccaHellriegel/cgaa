@@ -1,7 +1,7 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "./Tower";
 import { gainSouls } from "../../base/events/player";
-import { towerCost } from "../../../globals/globalConfig";
+import { towerCost } from "../../base/globals/globalConfig";
 
 interface TowerPoolParams {
 	scene: Gameplay;

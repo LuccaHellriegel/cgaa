@@ -1,7 +1,7 @@
 import { Generator } from "./Generator";
 import { RectPolygon } from "../../game/base/polygons/RectPolygon";
 import { Gameplay } from "../../scenes/Gameplay";
-import { towerHalfSize } from "../../globals/globalSizes";
+import { towerHalfSize } from "../../game/base/globals/globalSizes";
 
 export class GhostTowerGenerator extends Generator {
 	title: string;

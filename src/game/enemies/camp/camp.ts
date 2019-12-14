@@ -9,7 +9,7 @@ import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
 import { AreaConfig } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { PhysicGroups } from "../../collision/Collision";
-import { getRandomCampColorOrder } from "../../../globals/global";
+import { getRandomCampColorOrder } from "../../base/globals/global";
 
 interface CampConfig {
 	staticConfig: StaticConfig;

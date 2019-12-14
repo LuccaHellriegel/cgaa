@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { campColors } from "../../globals/globalColors";
+import { campColors } from "../base/globals/globalColors";
 
 export function spawnWave(scene: Gameplay, index) {
 	scene.events.emit("start-wave-" + campColors[index]);

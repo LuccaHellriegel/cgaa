@@ -1,6 +1,6 @@
-import { RectPolygon } from "../base/polygons/RectPolygon";
-import { Gameplay } from "../../scenes/Gameplay";
-import { HUD } from "../../scenes/HUD";
+import { RectPolygon } from "../../base/polygons/RectPolygon";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { HUD } from "../../../scenes/HUD";
 
 export class PlayerKilllist {
 	playerKilllistText: Phaser.GameObjects.Text;

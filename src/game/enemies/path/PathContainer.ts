@@ -1,4 +1,4 @@
-import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
+import { walkableSymbol, exitSymbol } from "../../base/globals/globalSymbols";
 import { relativePosToRealPos, calculateRelativeCrossPostioning } from "../../base/position";
 import { PathMarking } from "./PathMarking";
 

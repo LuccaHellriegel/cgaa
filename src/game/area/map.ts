@@ -1,4 +1,4 @@
-import { areaSize, layout } from "../../globals/globalConfig";
+import { areaSize, layout } from "../base/globals/globalConfig";
 import { ZeroOneMap } from "../base/types";
 
 interface MapConfig {

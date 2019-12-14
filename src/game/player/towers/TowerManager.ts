@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { towerCost } from "../../../globals/globalConfig";
+import { towerCost } from "../../base/globals/globalConfig";
 import { GhostTower } from "../modi/GhostTower";
 import { spendSouls } from "../../base/events/player";
 import { snapXYToGrid } from "../../base/position";

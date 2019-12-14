@@ -3,7 +3,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { rectBuildinghalfHeight } from "../../../globals/globalSizes";
+import { rectBuildinghalfHeight } from "../../base/globals/globalSizes";
 import { addEle, removeEle, addInteractionEle, removeInteractionEle } from "../../base/events/elements";
 
 export class Building extends Image implements damageable {
