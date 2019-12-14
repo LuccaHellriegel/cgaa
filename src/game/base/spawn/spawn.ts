@@ -1,5 +1,5 @@
 import { TowerSpawnObj } from "./TowerSpawnObj";
-import { EnemyCircle } from "../../enemies/units/EnemyCircle";
+import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { BuildingSpawnObj } from "./BuildingSpawnObj";
 import { constructColumnRowID } from "../id";

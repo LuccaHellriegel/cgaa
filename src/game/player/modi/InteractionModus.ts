@@ -1,5 +1,5 @@
 import { towerHalfSize } from "../../../globals/globalSizes";
-import { EnemyCircle } from "../../enemies/units/EnemyCircle";
+import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "../towers/Tower";
 import { getRandomCampColorOrder } from "../../../globals/global";

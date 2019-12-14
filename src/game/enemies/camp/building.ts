@@ -1,9 +1,9 @@
-import { StaticConfig, ZeroOneMap } from "../base/types";
-import { relativeCoordinateToReal } from "../base/position";
-import { circleSizeNames } from "../../globals/globalSizes";
-import { Building } from "./units/Building";
-import { buildingSymbol } from "../../globals/globalSymbols";
-import { BuildingSpawnObj } from "../base/spawn/BuildingSpawnObj";
+import { StaticConfig, ZeroOneMap } from "../../base/types";
+import { relativeCoordinateToReal } from "../../base/position";
+import { circleSizeNames } from "../../../globals/globalSizes";
+import { Building } from "../unit/Building";
+import { buildingSymbol } from "../../../globals/globalSymbols";
+import { BuildingSpawnObj } from "../../base/spawn/BuildingSpawnObj";
 
 export interface BuildingsConfig {
 	staticConfig: StaticConfig;

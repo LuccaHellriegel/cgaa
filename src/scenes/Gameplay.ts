@@ -15,7 +15,7 @@ import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
 import { calculatePaths } from "../game/enemies/path/path";
 import { spawnWave } from "../game/enemies/wave";
-import { mainCamp } from "../game/enemies/camp";
+import { mainCamp } from "../game/enemies/camp/camp";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;

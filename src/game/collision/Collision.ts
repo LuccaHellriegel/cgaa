@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
-import { EnemyCircle } from "../enemies/units/EnemyCircle";
+import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 import { executeOverAllCamps } from "../../globals/global";
 import { gainSouls } from "../base/events/player";
 import { Tower } from "../player/towers/Tower";

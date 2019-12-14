@@ -1,18 +1,18 @@
-import { StaticConfig, ZeroOneMap } from "../base/types";
-import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../base/spawn/spawn";
+import { StaticConfig, ZeroOneMap } from "../../base/types";
+import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
-import { EnemyCircle } from "./units/EnemyCircle";
-import { AreaPopulator } from "./populators/AreaPopulator";
-import { BuildingPopulator } from "./populators/BuildingPopulator";
-import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
-import { addInteractionEle } from "../base/events/elements";
-import { relativePosToRealPos, exitToGlobalPositon } from "../base/position";
-import { AreaConfig } from "../base/interfaces";
-import { Gameplay } from "../../scenes/Gameplay";
-import { PhysicGroups } from "../collision/Collision";
-import { getRandomCampColorOrder } from "../../globals/global";
+import { EnemyCircle } from "../unit/EnemyCircle";
+import { AreaPopulator } from "../populators/AreaPopulator";
+import { BuildingPopulator } from "../populators/BuildingPopulator";
+import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
+import { addInteractionEle } from "../../base/events/elements";
+import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
+import { AreaConfig } from "../../base/interfaces";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { PhysicGroups } from "../../collision/Collision";
+import { getRandomCampColorOrder } from "../../../globals/global";
 
-export interface CampConfig {
+interface CampConfig {
 	staticConfig: StaticConfig;
 	map: ZeroOneMap;
 	areaConfig: AreaConfig;

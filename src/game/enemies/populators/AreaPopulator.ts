@@ -1,5 +1,5 @@
 import { Populator } from "./Populator";
-import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
+import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { relativePosToRealPos } from "../../base/position";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 
