@@ -1,7 +1,6 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
-import { EnemyCircle } from "../unit/EnemyCircle";
 import { AreaPopulator } from "../populators/AreaPopulator";
 import { BuildingPopulator } from "../populators/BuildingPopulator";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
@@ -17,7 +16,7 @@ interface CampConfig {
 	map: ZeroOneMap;
 	areaConfig: AreaConfig;
 	color: string;
-	enemies: EnemyCircle[];
+	enemyDict;
 	pathDict;
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
 	weaponPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -27,7 +26,7 @@ function constructCampConfigs(
 	scene: Gameplay,
 	map: ZeroOneMap,
 	areaConfigs: AreaConfig[],
-	enemies: EnemyCircle[],
+	enemyDict,
 	physicGroups: PhysicGroups,
 	pathDict
 ): CampConfig[] {
@@ -39,7 +38,7 @@ function constructCampConfigs(
 		let campConfig: CampConfig = {
 			color,
 			pathDict,
-			enemies,
+			enemyDict,
 			map,
 			areaConfig,
 			staticConfig: { scene, physicsGroup: physicGroups.buildings[color] },
@@ -62,12 +61,12 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	circle.state = "interaction";
 	circle.purpose = "interaction";
 	addInteractionEle(config.staticConfig.scene, circle);
-	config.enemies.push(circle);
+	config.enemyDict[circle.id] = circle;
 }
 
 function createBuildingPopulators(config: CampConfig, positions) {
 	for (let index = 0, length = positions.length; index < length; index++) {
-		let enemySpawnObj = createBuildingEnemySpawnObj(positions[index][0], positions[index][1], config.enemies);
+		let enemySpawnObj = createBuildingEnemySpawnObj(positions[index][0], positions[index][1], config.enemyDict);
 		let enemyConfig: EnemyConfig = {
 			scene: config.staticConfig.scene,
 			color: config.color,
@@ -98,7 +97,7 @@ function createCamp(config: CampConfig): number[][] {
 		weaponGroup: config.weaponPhysicGroup
 	};
 
-	let areaEnemySpawnObj = createAreaEnemySpawnObj(config.map, config.areaConfig, config.enemies);
+	let areaEnemySpawnObj = createAreaEnemySpawnObj(config.map, config.areaConfig, config.enemyDict);
 	new AreaPopulator(enemyConfig, areaEnemySpawnObj);
 
 	createInteractionUnit(config, enemyConfig);
@@ -120,10 +119,10 @@ export function mainCamp(
 	scene: Gameplay,
 	map: ZeroOneMap,
 	areaConfigs: AreaConfig[],
-	enemies: EnemyCircle[],
+	enemyDict,
 	physicGroups: PhysicGroups,
 	pathDict
 ): number[][] {
-	let campConfigs: CampConfig[] = constructCampConfigs(scene, map, areaConfigs, enemies, physicGroups, pathDict);
+	let campConfigs: CampConfig[] = constructCampConfigs(scene, map, areaConfigs, enemyDict, physicGroups, pathDict);
 	return createCamps(campConfigs);
 }

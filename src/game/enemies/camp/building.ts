@@ -5,7 +5,7 @@ import { Building } from "../unit/Building";
 import { buildingSymbol } from "../../../globals/globalSymbols";
 import { BuildingSpawnObj } from "../../base/spawn/BuildingSpawnObj";
 
-export interface BuildingsConfig {
+interface BuildingsConfig {
 	staticConfig: StaticConfig;
 	buildingSpawnObj: BuildingSpawnObj;
 	color: string;

@@ -1,5 +1,4 @@
 import { TowerSpawnObj } from "./TowerSpawnObj";
-import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { BuildingSpawnObj } from "./BuildingSpawnObj";
 import { constructColumnRowID } from "../id";
@@ -109,16 +108,12 @@ function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	return dict;
 }
 
-export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: EnemyCircle[]): TowerSpawnObj {
-	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
+export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemyDict): TowerSpawnObj {
+	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemyDict);
 }
 
-export function createAreaEnemySpawnObj(
-	map: ZeroOneMap,
-	areaConfig: AreaConfig,
-	enemies: EnemyCircle[]
-): EnemySpawnObj {
-	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemies);
+export function createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemyDict): EnemySpawnObj {
+	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemyDict);
 }
 
 function createBuildingSpawnableDict(column, row) {
@@ -137,8 +132,8 @@ function createBuildingSpawnableDict(column, row) {
 	return dict;
 }
 
-export function createBuildingEnemySpawnObj(column, row, enemies: EnemyCircle[]): EnemySpawnObj {
-	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemies);
+export function createBuildingEnemySpawnObj(column, row, enemyDict): EnemySpawnObj {
+	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemyDict);
 }
 
 export function createBuildingSpawnObj(map: ZeroOneMap, areaConfig: AreaConfig) {

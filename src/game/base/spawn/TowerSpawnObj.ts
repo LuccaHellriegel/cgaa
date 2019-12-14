@@ -5,8 +5,8 @@ import { realCoordinateToRelative } from "../position";
 import { walkableSymbol, towerSymbol } from "../../../globals/globalSymbols";
 
 export class TowerSpawnObj extends EnemySpawnObj {
-	constructor(baseObj, movingUnitsArr) {
-		super(baseObj, movingUnitsArr);
+	constructor(baseObj, movingUnitsDict) {
+		super(baseObj, movingUnitsDict);
 	}
 
 	updateBaseObj(tower: Tower, remove) {

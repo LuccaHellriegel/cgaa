@@ -31,6 +31,7 @@ export abstract class Populator {
 		let enemy = this.createEnemy();
 		if (enemy != null) {
 			this.enemyCount++;
+			this.enemySpawnObj.add(enemy);
 		}
 		if (this.doMoreSpawn()) {
 			this.scene.time.addEvent({

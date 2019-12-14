@@ -2,19 +2,20 @@ import { cloneDeep } from "lodash";
 import { getRelativePosOfElements, realPosToRelativePos } from "../position";
 import { constructColumnRowID } from "../id";
 import { enemySmybol, walkableSymbol } from "../../../globals/globalSymbols";
+import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 
 export class EnemySpawnObj {
 	baseObj;
 	relativeObj;
-	movingUnitsArr;
+	movingUnitsDict;
 
-	constructor(baseObj, movingUnitsArr) {
+	constructor(baseObj, movingUnitsDict) {
 		this.baseObj = baseObj;
-		this.movingUnitsArr = movingUnitsArr;
+		this.movingUnitsDict = movingUnitsDict;
 	}
 
 	private updateRelativeObjWithMovingUnits() {
-		let relativePositions = getRelativePosOfElements(this.movingUnitsArr);
+		let relativePositions = getRelativePosOfElements(Object.values(this.movingUnitsDict));
 
 		relativePositions.forEach(pos => {
 			let id = constructColumnRowID(pos.column, pos.row);
@@ -25,6 +26,10 @@ export class EnemySpawnObj {
 	private updateRelativeObj() {
 		this.relativeObj = cloneDeep(this.baseObj);
 		this.updateRelativeObjWithMovingUnits();
+	}
+
+	add(anEnemy: EnemyCircle) {
+		this.movingUnitsDict[anEnemy.id] = anEnemy;
 	}
 
 	evaluateRealPos(x, y) {

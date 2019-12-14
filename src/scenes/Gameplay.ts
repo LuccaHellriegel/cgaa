@@ -36,13 +36,13 @@ export class Gameplay extends Phaser.Scene {
 		let areaConfigs = constructAreaConfigs(areaStaticConfig);
 		let { unifiedMap, middlePos } = createAreas(areaConfigs);
 
-		let enemyArr = [];
+		let enemyDict = {};
 
 		let keyObjF = this.input.keyboard.addKey("F");
 		let keyObjE = this.input.keyboard.addKey("E");
 
 		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
-		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyArr);
+		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyDict);
 		let towerManager = new TowerManager(
 			this,
 			physicsGroups.towers,
@@ -53,7 +53,7 @@ export class Gameplay extends Phaser.Scene {
 		let interactionModus = new InteractionModus(this, ghostTower);
 
 		let pathDict = {};
-		let buildingPositions = mainCamp(this, unifiedMap, areaConfigs, enemyArr, physicsGroups, pathDict);
+		let buildingPositions = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
 
 		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingPositions });
 
