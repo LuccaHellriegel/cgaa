@@ -56,7 +56,7 @@ export class Circle extends SpriteWithAnimEvents {
 		);
 	}
 
-	damage(amount) {
+	damage() {
 		this.anims.play("damage-" + this.texture.key);
 	}
 

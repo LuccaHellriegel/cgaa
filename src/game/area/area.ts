@@ -21,7 +21,7 @@ export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 			if (layout[layoutRow][layoutColumn] === "area") {
 				let topLeftX = relativeCoordinateToReal(startX + layoutColumn * wallBase.sizeOfXAxis);
 				let topLeftY = relativeCoordinateToReal(startY + layoutRow * wallBase.sizeOfYAxis);
-				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis : 0;
+				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
 				let row = 6;
 				let exit = { exitPosition: { column, row }, exitWidth };
 				areaConfigs.push({
@@ -41,7 +41,7 @@ function createArea(config: AreaConfig) {
 	let map: ZeroOneMap = createEmptyMap(config.wallBase);
 	for (let index = 0; index < config.exit.exitWidth; index++) {
 		console.log(map);
-		map[config.exit.exitPosition.row][config.exit.exitPosition.column + index] = exitSymbol;
+		map[config.exit.exitPosition.row + index][config.exit.exitPosition.column] = exitSymbol;
 	}
 	createWalls(config, map);
 	return map;
