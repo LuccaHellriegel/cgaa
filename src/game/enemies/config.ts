@@ -1,10 +1,10 @@
 import { CampConfig } from "./camp";
-import { ZeroOneMap } from "../base/map/map";
-import { AreaConfig } from "../area/create";
 import { EnemyCircle } from "./units/EnemyCircle";
 import { PhysicGroups } from "../collision/Collision";
 import { getRandomCampColorOrder } from "../../globals/global";
 import { Gameplay } from "../../scenes/Gameplay";
+import { ZeroOneMap } from "../base/types";
+import { AreaConfig } from "../base/interfaces";
 
 export function constructCampConfigs(
 	scene: Gameplay,

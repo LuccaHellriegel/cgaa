@@ -1,7 +1,7 @@
 import { Populator } from "./Populator";
 import { EnemyConfig, EnemyFactory } from "../units/EnemyFactory";
-import { relativePosToRealPos } from "../../base/map/position";
-import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
+import { relativePosToRealPos } from "../../base/position";
+import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { constructColumnRowID } from "../../base/id";
 
 export class BuildingPopulator extends Populator {

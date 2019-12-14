@@ -1,4 +1,6 @@
-import { wallPartHalfSize } from "../../../globals/globalSizes";
+import { wallPartHalfSize } from "../../globals/globalSizes";
+import { RelativePosition } from "./types";
+import { AreaConfig } from "./interfaces";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
@@ -97,4 +99,10 @@ export function calculateRelativeCrossPostioning(x, y, x2, y2) {
 		return "bottom";
 	}
 	return "right";
+}
+
+export function exitToGlobalPositon(areaConfig: AreaConfig): RelativePosition {
+	let column = areaConfig.exit.exitPosition.column + realCoordinateToRelative(areaConfig.topLeftX);
+	let row = areaConfig.exit.exitPosition.row + realCoordinateToRelative(areaConfig.topLeftY);
+	return { column, row };
 }

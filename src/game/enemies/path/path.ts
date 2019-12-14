@@ -1,11 +1,10 @@
 import EasyStar from "easystarjs";
-import { exitToPosition } from "../../area/calculate";
 import { PathContainer } from "./PathContainer";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { ZeroOneMap, getAllPositionsAroundBuilding } from "../../base/map/map";
-import { AreaConfig } from "../../area/create";
 import { constructColumnRowID } from "../../base/id";
-import { RelativePosition } from "../../base/types";
+import { RelativePosition, ZeroOneMap } from "../../base/types";
+import { exitToGlobalPositon } from "../../base/position";
+import { AreaConfig } from "../../base/interfaces";
 
 export interface PathCalcConfig {
 	scene: Gameplay;
@@ -21,7 +20,7 @@ function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	let middleColumn = config.middlePos.column;
 	let middleRow = config.middlePos.row;
 	config.areaConfigs.forEach(area => {
-		let pos: RelativePosition = exitToPosition(area);
+		let pos: RelativePosition = exitToGlobalPositon(area);
 		config.pathDict[constructColumnRowID(pos.column, pos.row)] = new PathContainer(
 			config.scene,
 			pos.column,
@@ -45,8 +44,24 @@ function findClosestExit(exits, column, row): { column: number; row: number } {
 			dist = curDist;
 		}
 	}
-
 	return exits[exit];
+}
+
+function getAllPositionsAroundBuilding(column, row) {
+	let positions: number[][] = [];
+	let rows = [row - 1, row + 1];
+
+	positions.push([column + 2, row]);
+	positions.push([column - 2, row]);
+	for (let index = 0, length = rows.length; index < length; index++) {
+		positions.push([column - 2, rows[index]]);
+		positions.push([column - 1, rows[index]]);
+		positions.push([column, rows[index]]);
+		positions.push([column + 1, rows[index]]);
+		positions.push([column + 2, rows[index]]);
+	}
+
+	return positions;
 }
 
 function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits) {
@@ -94,7 +109,7 @@ export function calculatePaths(config: PathCalcConfig) {
 	const easyStar = new EasyStar.js();
 	let exitPositions: { column: number; row: number }[] = [];
 	for (let index = 0, length = config.areaConfigs.length; index < length; index++) {
-		exitPositions.push(exitToPosition(config.areaConfigs[index]));
+		exitPositions.push(exitToGlobalPositon(config.areaConfigs[index]));
 	}
 	calculatePathsFromExit(config, easyStar);
 	calculateAllBuildingSpecificPaths(config, easyStar, exitPositions);

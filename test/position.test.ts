@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { wallPartHalfSize } from "../src/globals/globalSizes";
 import { snapXYToGrid, snapCoordinateToGrid } from "../src/game/base/map/position";
 
-describe("Test PositionService", function() {
+describe("Test position", function() {
 	describe("Snap real pos to real grid pos", function() {
 		it("X and Y should be snapped back to 200", function() {
 			let { newX, newY } = snapXYToGrid(5 * wallPartHalfSize - 7, 5 * wallPartHalfSize - 7);

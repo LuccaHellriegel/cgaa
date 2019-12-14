@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 
 export abstract class Populator {
 	enemyCount: number = 0;

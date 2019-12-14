@@ -1,28 +1,14 @@
+import { TowerSpawnObj } from "./TowerSpawnObj";
+import { EnemyCircle } from "../../enemies/units/EnemyCircle";
+import { EnemySpawnObj } from "./EnemySpawnObj";
+import { BuildingSpawnObj } from "./BuildingSpawnObj";
 import { constructColumnRowID } from "../id";
-import { AreaConfig } from "../../area/create";
-import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
-import { realCoordinateToRelative } from "./position";
-import { Exit } from "../types";
+import { walkableSymbol } from "../../../globals/globalSymbols";
+import { realCoordinateToRelative } from "../position";
+import { ZeroOneMap } from "../types";
+import { AreaConfig } from "../interfaces";
 
-export type ZeroOneMap = number[][];
-
-export interface MapConfig {
-	sizeOfXAxis: number;
-	sizeOfYAxis: number;
-}
-
-export function createEmptyMap(config: MapConfig) {
-	let map: ZeroOneMap = [];
-	for (let row = 0; row < config.sizeOfYAxis; row++) {
-		map[row] = [];
-		for (let column = 0; column < config.sizeOfXAxis; column++) {
-			map[row].push(0);
-		}
-	}
-	return map;
-}
-
-export function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
+function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
 	let dict = {};
 	let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
 	let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
@@ -43,15 +29,32 @@ export function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) 
 	return dict;
 }
 
+function getAllPositionsAroundBuildingInclusive(column, row) {
+	let positions: number[][] = [];
+	let rows = [row - 1, row, row + 1];
+	for (let index = 0, length = rows.length; index < length; index++) {
+		positions.push([column - 2, rows[index]]);
+		positions.push([column - 1, rows[index]]);
+		positions.push([column, rows[index]]);
+		positions.push([column + 1, rows[index]]);
+		positions.push([column + 2, rows[index]]);
+	}
+
+	return positions;
+}
+
 function hasSpaceForBuilding(map: ZeroOneMap, column, row) {
-	let positionArr = getAllBuildingRelevantPositions(column, row);
+	let positionArr = getAllPositionsAroundBuildingInclusive(column, row);
 	for (let index = 0, positionLength = positionArr.length; index < positionLength; index++) {
-		if (!(map[positionArr[index][0]][positionArr[index][1]] === walkableSymbol)) return false;
+		let column = positionArr[index][0];
+		let row = positionArr[index][1];
+
+		if (!(map[row][column] === walkableSymbol)) return false;
 	}
 	return true;
 }
 
-export function mapToAreaBuildingSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
+function mapToAreaBuildingSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
 	let dict = {};
 	let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
 	let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
@@ -86,7 +89,7 @@ function isInArea(column, row, areaConfig: AreaConfig) {
 	);
 }
 
-export function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
+function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	let dict = {};
 
 	for (let row = 0; row < map.length; row++) {
@@ -106,47 +109,38 @@ export function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConf
 	return dict;
 }
 
-export function getAllBuildingRelevantPositions(column, row) {
-	let positions: number[][] = [];
-	let rows = [row - 1, row, row + 1];
-	for (let index = 0, length = rows.length; index < length; index++) {
-		positions.push([column, rows[index]]);
-		positions.push([column + 1, rows[index]]);
-		positions.push([column + 2, rows[index]]);
-		positions.push([column - 1, rows[index]]);
-		positions.push([column - 2, rows[index]]);
-	}
-
-	return positions;
+export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: EnemyCircle[]): TowerSpawnObj {
+	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
 }
 
-export function getAllPositionsAroundBuilding(column, row) {
-	let positions: number[][] = [];
+export function createAreaEnemySpawnObj(
+	map: ZeroOneMap,
+	areaConfig: AreaConfig,
+	enemies: EnemyCircle[]
+): EnemySpawnObj {
+	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemies);
+}
+
+function createBuildingSpawnableDict(column, row) {
+	let dict = {};
 	let rows = [row - 1, row + 1];
 	for (let index = 0, length = rows.length; index < length; index++) {
-		positions.push([column, rows[index]]);
-		positions.push([column + 1, rows[index]]);
-		positions.push([column + 2, rows[index]]);
-		positions.push([column - 1, rows[index]]);
-		positions.push([column - 2, rows[index]]);
+		dict[constructColumnRowID(column, rows[index])] = walkableSymbol;
+		dict[constructColumnRowID(column + 1, rows[index])] = walkableSymbol;
+		dict[constructColumnRowID(column + 2, rows[index])] = walkableSymbol;
+		dict[constructColumnRowID(column - 1, rows[index])] = walkableSymbol;
+		dict[constructColumnRowID(column - 2, rows[index])] = walkableSymbol;
 	}
-	positions.push([column + 2, row]);
-	positions.push([column - 2, row]);
+	dict[constructColumnRowID(column + 2, row)] = walkableSymbol;
+	dict[constructColumnRowID(column - 2, row)] = walkableSymbol;
 
-	return positions;
+	return dict;
 }
 
-export function updateMapWithExit(map: ZeroOneMap, exit: Exit) {
-	switch (exit.exitWallSide) {
-		case "left":
-			for (let index = 0; index < exit.exitWidth; index++) {
-				map[exit.exitPosition + index][0] = exitSymbol;
-			}
-			break;
-		case "right":
-			for (let index = 0; index < exit.exitWidth; index++) {
-				map[exit.exitPosition + index][map[0].length - 1] = exitSymbol;
-			}
-			break;
-	}
+export function createBuildingEnemySpawnObj(column, row, enemies: EnemyCircle[]): EnemySpawnObj {
+	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemies);
+}
+
+export function createBuildingSpawnObj(map: ZeroOneMap, areaConfig: AreaConfig) {
+	return new BuildingSpawnObj(mapToAreaBuildingSpawnableDict(map, areaConfig));
 }

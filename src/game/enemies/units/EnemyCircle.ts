@@ -2,7 +2,7 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { Circle } from "../../base/classes/Circle";
 import { PathContainer } from "../path/PathContainer";
 import { damageable } from "../../base/interfaces";
-import { WallPart } from "../../area/WallPart";
+import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "./Building";
 import { wallPartHalfSize } from "../../../globals/globalSizes";
 import { removeInteractionEle } from "../../base/events/elements";

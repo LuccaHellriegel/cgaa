@@ -1,6 +1,7 @@
-import { walkableSymbol, enemySmybol } from "../../globals/globalSymbols";
-import { realPosToRelativePos, getRelativePosOfElements } from "../base/map/position";
-import { constructColumnRowID } from "../base/id";
+import { cloneDeep } from "lodash";
+import { getRelativePosOfElements, realPosToRelativePos } from "../position";
+import { constructColumnRowID } from "../id";
+import { enemySmybol, walkableSymbol } from "../../../globals/globalSymbols";
 
 export class EnemySpawnObj {
 	baseObj;
@@ -17,11 +18,12 @@ export class EnemySpawnObj {
 
 		relativePositions.forEach(pos => {
 			let id = constructColumnRowID(pos.column, pos.row);
-			if (this.relativeObj[id]) this.relativeObj[id] = enemySmybol;
+			if (this.relativeObj[id] !== undefined) this.relativeObj[id] = enemySmybol;
 		});
 	}
+
 	private updateRelativeObj() {
-		this.relativeObj = JSON.parse(JSON.stringify(this.baseObj));
+		this.relativeObj = cloneDeep(this.baseObj);
 		this.updateRelativeObjWithMovingUnits();
 	}
 

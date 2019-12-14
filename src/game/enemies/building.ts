@@ -1,10 +1,9 @@
-import { BuildingSpawnObj } from "../spawn/BuildingSpawnObj";
-import { StaticConfig } from "../base/types";
-import { relativeCoordinateToReal } from "../base/map/position";
+import { StaticConfig, ZeroOneMap } from "../base/types";
+import { relativeCoordinateToReal } from "../base/position";
 import { circleSizeNames } from "../../globals/globalSizes";
 import { Building } from "./units/Building";
-import { ZeroOneMap } from "../base/map/map";
 import { buildingSymbol } from "../../globals/globalSymbols";
+import { BuildingSpawnObj } from "../base/spawn/BuildingSpawnObj";
 
 export interface BuildingsConfig {
 	staticConfig: StaticConfig;

@@ -1,5 +1,5 @@
 import { walkableSymbol, exitSymbol } from "../../../globals/globalSymbols";
-import { relativePosToRealPos, calculateRelativeCrossPostioning } from "../../base/map/position";
+import { relativePosToRealPos, calculateRelativeCrossPostioning } from "../../base/position";
 import { PathMarking } from "./PathMarking";
 
 export type PathCointainerType = { path; id: string };
@@ -23,7 +23,7 @@ export class PathContainer {
 					console.log("Path was not found.");
 				} else {
 					let realPath = this.relativePathToRealPath(newPath);
-					this.drawPath(scene, realPath);
+					//	this.drawPath(scene, realPath);
 					if (pathToAdd.path) {
 						this.path = realPath.concat(pathToAdd.path);
 					} else {

@@ -1,15 +1,13 @@
-import { StaticConfig } from "../base/types";
-import { ZeroOneMap } from "../base/map/map";
-import { AreaConfig } from "../area/create";
-import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../base/spawn";
+import { StaticConfig, ZeroOneMap } from "../base/types";
+import { createBuildingSpawnObj, createAreaEnemySpawnObj, createBuildingEnemySpawnObj } from "../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
 import { EnemyCircle } from "./units/EnemyCircle";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { BuildingPopulator } from "./populators/BuildingPopulator";
 import { EnemyConfig, EnemyFactory } from "./units/EnemyFactory";
-import { relativePosToRealPos } from "../base/map/position";
 import { addInteractionEle } from "../base/events/elements";
-import { exitToPosition } from "../area/calculate";
+import { relativePosToRealPos, exitToGlobalPositon } from "../base/position";
+import { AreaConfig } from "../base/interfaces";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -23,7 +21,7 @@ export interface CampConfig {
 }
 
 function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
-	let pos = exitToPosition(config.areaConfig);
+	let pos = exitToGlobalPositon(config.areaConfig);
 	let { x, y } = relativePosToRealPos(pos.column, pos.row);
 	enemyConfig.size = "Normal";
 	enemyConfig.weaponType = "chain";

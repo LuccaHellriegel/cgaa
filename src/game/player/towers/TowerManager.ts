@@ -1,10 +1,10 @@
 import { Tower } from "./Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerCost } from "../../../globals/globalConfig";
-import { TowerSpawnObj } from "../../spawn/TowerSpawnObj";
 import { GhostTower } from "../modi/GhostTower";
 import { gainSouls, spendSouls } from "../../base/events/player";
-import { snapXYToGrid } from "../../base/map/position";
+import { snapXYToGrid } from "../../base/position";
+import { TowerSpawnObj } from "../../base/spawn/TowerSpawnObj";
 
 export class TowerManager {
 	towerGroup: Phaser.Physics.Arcade.StaticGroup;
