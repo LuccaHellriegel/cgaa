@@ -1,6 +1,6 @@
 import { RandWeaponGenerator } from "./generators/weapons/RandWeaponGenerator";
 import { CircleGenerator } from "./generators/CircleGenerator";
-import { normalCircleRadius, wallPartHalfSize, circleSizeNames, towerHalfSize } from "../game/base/globals/globalSizes";
+import { normalCircleRadius, gridPartHalfSize, circleSizeNames, towerHalfSize } from "../game/base/globals/globalSizes";
 import { ChainWeaponGenerator } from "./generators/weapons/ChainWeaponGenerator";
 import { BuildingGenerator } from "./generators/BuildingGenerator";
 import { RectGenerator } from "./generators/RectGenerator";
@@ -49,10 +49,10 @@ function generateEnvironment(scene) {
 		scene,
 		0xa9a9a9,
 		"wallPart",
-		wallPartHalfSize,
-		wallPartHalfSize,
-		2 * wallPartHalfSize,
-		2 * wallPartHalfSize
+		gridPartHalfSize,
+		gridPartHalfSize,
+		2 * gridPartHalfSize,
+		2 * gridPartHalfSize
 	);
 
 	new PathMarkingGenerator(scene);

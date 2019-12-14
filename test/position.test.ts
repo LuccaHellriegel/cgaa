@@ -1,32 +1,32 @@
 import { expect } from "chai";
-import { wallPartHalfSize } from "../src/globals/globalSizes";
+import { gridPartHalfSize } from "../src/globals/globalSizes";
 import { snapXYToGrid, snapCoordinateToGrid } from "../src/game/base/map/position";
 
 describe("Test position", function() {
 	describe("Snap real pos to real grid pos", function() {
 		it("X and Y should be snapped back to 200", function() {
-			let { newX, newY } = snapXYToGrid(5 * wallPartHalfSize - 7, 5 * wallPartHalfSize - 7);
+			let { newX, newY } = snapXYToGrid(5 * gridPartHalfSize - 7, 5 * gridPartHalfSize - 7);
 
-			expect(newX).to.equal(5 * wallPartHalfSize);
-			expect(newY).to.equal(5 * wallPartHalfSize);
+			expect(newX).to.equal(5 * gridPartHalfSize);
+			expect(newY).to.equal(5 * gridPartHalfSize);
 		});
 		it("X and Y should remain 200", function() {
-			let { newX, newY } = snapXYToGrid(5 * wallPartHalfSize, 5 * wallPartHalfSize);
+			let { newX, newY } = snapXYToGrid(5 * gridPartHalfSize, 5 * gridPartHalfSize);
 
-			expect(newX).to.equal(5 * wallPartHalfSize);
-			expect(newY).to.equal(5 * wallPartHalfSize);
+			expect(newX).to.equal(5 * gridPartHalfSize);
+			expect(newY).to.equal(5 * gridPartHalfSize);
 		});
 		it("If X and Y is between tiles it should go to the closest (the right one)", function() {
-			let { newX, newY } = snapXYToGrid(2 * wallPartHalfSize + 2, wallPartHalfSize);
+			let { newX, newY } = snapXYToGrid(2 * gridPartHalfSize + 2, gridPartHalfSize);
 
-			expect(newX).to.equal(3 * wallPartHalfSize);
-			expect(newY).to.equal(wallPartHalfSize);
+			expect(newX).to.equal(3 * gridPartHalfSize);
+			expect(newY).to.equal(gridPartHalfSize);
 		});
 		it("If X and Y is between tiles it should go to the closest (the left one)", function() {
-			let { newX, newY } = snapXYToGrid(2 * wallPartHalfSize - 2, wallPartHalfSize);
+			let { newX, newY } = snapXYToGrid(2 * gridPartHalfSize - 2, gridPartHalfSize);
 
-			expect(newX).to.equal(wallPartHalfSize);
-			expect(newY).to.equal(wallPartHalfSize);
+			expect(newX).to.equal(gridPartHalfSize);
+			expect(newY).to.equal(gridPartHalfSize);
 		});
 		it("560 is between tiles and should be snapped left ", function() {
 			let newX = snapCoordinateToGrid(560);
@@ -42,7 +42,7 @@ describe("Test position", function() {
 
 	// describe("getRelativePosOfElementsAndAroundElements", function() {
 	// 	it("Element is in (1,1) and around elements form circle", function() {
-	// 		let element = { x: 3 * wallPartHalfSize, y: 3 * wallPartHalfSize };
+	// 		let element = { x: 3 * gridPartHalfSize, y: 3 * gridPartHalfSize };
 	// 		let relativePositions = getRelativePosOfElementsAndAroundElements([element], 1, 1);
 	// 		let expectedPositions = [
 	// 			{ row: 0, column: 0 },

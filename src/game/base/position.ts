@@ -1,19 +1,19 @@
-import { wallPartHalfSize } from "./globals/globalSizes";
+import { gridPartHalfSize } from "./globals/globalSizes";
 import { RelativePosition } from "./types";
 import { AreaConfig } from "./interfaces";
 
 export function snapCoordinateToGrid(coordinate) {
-	let ceil = Math.ceil(coordinate / wallPartHalfSize) * wallPartHalfSize;
-	let floor = Math.floor(coordinate / wallPartHalfSize) * wallPartHalfSize;
+	let ceil = Math.ceil(coordinate / gridPartHalfSize) * gridPartHalfSize;
+	let floor = Math.floor(coordinate / gridPartHalfSize) * gridPartHalfSize;
 
-	if ((ceil / wallPartHalfSize) % 2 === 0) ceil = Infinity;
-	if ((floor / wallPartHalfSize) % 2 === 0) floor = Infinity;
+	if ((ceil / gridPartHalfSize) % 2 === 0) ceil = Infinity;
+	if ((floor / gridPartHalfSize) % 2 === 0) floor = Infinity;
 
 	let diffCeil = Math.abs(ceil - coordinate);
 	let diffFloor = Math.abs(floor - coordinate);
 
 	if (ceil === Infinity && floor === Infinity) {
-		return coordinate - wallPartHalfSize;
+		return coordinate - gridPartHalfSize;
 	} else if (diffCeil < diffFloor) {
 		return ceil;
 	} else {
@@ -22,8 +22,8 @@ export function snapCoordinateToGrid(coordinate) {
 }
 
 export function snapXYToGrid(x, y) {
-	let needToSnapX = (x - wallPartHalfSize) % (2 * wallPartHalfSize) !== 0;
-	let needToSnapY = (y - wallPartHalfSize) % (2 * wallPartHalfSize) !== 0;
+	let needToSnapX = (x - gridPartHalfSize) % (2 * gridPartHalfSize) !== 0;
+	let needToSnapY = (y - gridPartHalfSize) % (2 * gridPartHalfSize) !== 0;
 
 	if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
 
@@ -45,7 +45,7 @@ export function snapXYToGrid(x, y) {
 }
 
 export function relativeCoordinateToReal(coordinate) {
-	return 0 + wallPartHalfSize + coordinate * 2 * wallPartHalfSize;
+	return 0 + gridPartHalfSize + coordinate * 2 * gridPartHalfSize;
 }
 
 export function relativePosToRealPos(column, row) {
@@ -56,13 +56,13 @@ export function relativePosToRealPos(column, row) {
 
 export function realCoordinateToRelative(coordinate) {
 	coordinate = snapCoordinateToGrid(coordinate);
-	return (coordinate - wallPartHalfSize) / (2 * wallPartHalfSize);
+	return (coordinate - gridPartHalfSize) / (2 * gridPartHalfSize);
 }
 
 export function realPosToRelativePos(x, y) {
 	let { newX, newY } = snapXYToGrid(x, y);
-	let row = (newY - wallPartHalfSize) / (2 * wallPartHalfSize);
-	let column = (newX - wallPartHalfSize) / (2 * wallPartHalfSize);
+	let row = (newY - gridPartHalfSize) / (2 * gridPartHalfSize);
+	let column = (newX - gridPartHalfSize) / (2 * gridPartHalfSize);
 	return { row: row, column: column };
 }
 

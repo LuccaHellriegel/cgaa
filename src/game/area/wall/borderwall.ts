@@ -1,22 +1,22 @@
 import { StaticConfig, RelativePosition, WallBase } from "../../base/types";
 import { WallsConfig, isWall } from "./wall";
 import { areaSize } from "../../base/globals/globalConfig";
-import { wallPartHalfSize, gridPartHalfSize } from "../../base/globals/globalSizes";
+import { gridPartHalfSize, gridPartHalfSize } from "../../base/globals/globalSizes";
 import { realPosToRelativePos } from "../../base/position";
 import { BorderWallPart } from "./BorderWallPart";
 
 function constructBorderwallConfig(staticConfig: StaticConfig): WallsConfig {
 	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 3 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
-	let topLeftX = -wallPartHalfSize;
-	let topLeftY = -wallPartHalfSize;
+	let topLeftX = -gridPartHalfSize;
+	let topLeftY = -gridPartHalfSize;
 
 	return { wallBase, topLeftX, topLeftY };
 }
 
 function calculateBorderWallSize(config: WallsConfig): { width: number; height: number } {
 	return {
-		width: config.wallBase.sizeOfXAxis * 2 * wallPartHalfSize,
-		height: config.wallBase.sizeOfYAxis * 2 * wallPartHalfSize
+		width: config.wallBase.sizeOfXAxis * 2 * gridPartHalfSize,
+		height: config.wallBase.sizeOfYAxis * 2 * gridPartHalfSize
 	};
 }
 
@@ -28,9 +28,9 @@ function createBorderWall(config: WallsConfig): RelativePosition {
 			if (isWall(config, column, row)) {
 				new BorderWallPart(config.wallBase.staticConfig.scene, x, y);
 			}
-			x += 2 * wallPartHalfSize;
+			x += 2 * gridPartHalfSize;
 		}
-		y += 2 * wallPartHalfSize;
+		y += 2 * gridPartHalfSize;
 		x = config.topLeftX;
 	}
 

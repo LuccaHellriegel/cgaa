@@ -1,7 +1,7 @@
 import { RectPolygon } from "../../game/base/polygons/RectPolygon";
 import { Generator } from "./Generator";
 import { Gameplay } from "../../scenes/Gameplay";
-import { wallPartHalfSize } from "../../game/base/globals/globalSizes";
+import { gridPartHalfSize } from "../../game/base/globals/globalSizes";
 
 export class SquareGenerator extends Generator {
 	rect: RectPolygon;
@@ -13,10 +13,10 @@ export class SquareGenerator extends Generator {
 	constructor(scene: Gameplay) {
 		let hexColor = 0xa9a9a9;
 		let textureName = "square";
-		let centerX = wallPartHalfSize;
-		let centerY = wallPartHalfSize;
-		let width = 2 * wallPartHalfSize;
-		let height = 2 * wallPartHalfSize;
+		let centerX = gridPartHalfSize;
+		let centerY = gridPartHalfSize;
+		let width = 2 * gridPartHalfSize;
+		let height = 2 * gridPartHalfSize;
 
 		super(hexColor, scene);
 		this.rect = new RectPolygon(centerX, centerY, width, height);

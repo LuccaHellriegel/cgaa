@@ -1,8 +1,12 @@
 import { Circle } from "../../base/classes/Circle";
-import { playerStartX, playerStartY, playerTextureName } from "../../base/globals/globalConfig";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { normalCircleRadius } from "../../base/globals/globalSizes";
 import { CirclePolygon } from "../../base/polygons/CirclePolygon";
+
+const playerStartX = 1400;
+const playerStartY = 1200;
+const playerTextureName = "blueCircle";
+
 export class Player extends Circle {
 	color: string;
 	constructor(scene, physicsGroup, weapon) {

@@ -1,4 +1,4 @@
-import { wallPartHalfSize } from "../../base/globals/globalSizes";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
 import { WallPart } from "./WallPart";
 import { WallBase, ZeroOneMap } from "../../base/types";
@@ -27,9 +27,9 @@ export function createWalls(config: WallsConfig, map: ZeroOneMap) {
 				map[row][column] = wallSymbol;
 				new WallPart(config.wallBase.staticConfig.scene, x, y, config.wallBase.staticConfig.physicsGroup);
 			}
-			x += 2 * wallPartHalfSize;
+			x += 2 * gridPartHalfSize;
 		}
-		y += 2 * wallPartHalfSize;
+		y += 2 * gridPartHalfSize;
 		x = config.topLeftX;
 	}
 }

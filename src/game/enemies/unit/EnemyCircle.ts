@@ -4,7 +4,7 @@ import { PathContainer } from "../path/PathContainer";
 import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "./Building";
-import { wallPartHalfSize } from "../../base/globals/globalSizes";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { removeInteractionEle } from "../../base/events/elements";
 import { addToInactivePool } from "../../base/events/pool";
 export class EnemyCircle extends Circle implements damageable {
@@ -125,7 +125,7 @@ export class EnemyCircle extends Circle implements damageable {
 
 	private spottedOutOfSight() {
 		let dist = Phaser.Math.Distance.Between(this.x, this.y, this.spotted.x, this.spotted.y);
-		return dist > 6 * wallPartHalfSize;
+		return dist > 6 * gridPartHalfSize;
 	}
 
 	private guard() {
