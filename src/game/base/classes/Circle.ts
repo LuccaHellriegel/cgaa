@@ -37,8 +37,8 @@ export class Circle extends SpriteWithAnimEvents {
 	}
 
 	destroy() {
-		super.destroy();
-		this.weapon.destroy();
+		this.setActive(false).setVisible(false);
+		this.weapon.setActive(false).setVisible(false);
 	}
 
 	preUpdate(time, delta) {
@@ -56,7 +56,7 @@ export class Circle extends SpriteWithAnimEvents {
 		);
 	}
 
-	damage() {
+	damage(damage) {
 		this.anims.play("damage-" + this.texture.key);
 	}
 

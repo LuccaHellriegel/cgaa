@@ -1,34 +1,44 @@
 import { Populator } from "./Populator";
-import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
+import { EnemyConfig } from "../unit/EnemyFactory";
 import { relativePosToRealPos } from "../../base/position";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemyPool } from "./EnemyPool";
 
 export class AreaPopulator extends Populator {
 	enemyConfig: EnemyConfig;
+	enemyPool: EnemyPool;
 
 	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj) {
 		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
-		this.enemyConfig = enemyConfig;
+
+		let bigCircleWithRand = { weaponType: "rand", size: "Big" };
+		let bigCircleWithChain = { weaponType: "chain", size: "Big" };
+		let normalCircleWithRand = { weaponType: "rand", size: "Normal" };
+		let normalCircleWithChain = { weaponType: "chain", size: "Normal" };
+
+		this.enemyPool = new EnemyPool({
+			enemyConfig,
+			numberOfGroups: 4,
+			groupComposition: [
+				bigCircleWithRand,
+				bigCircleWithChain,
+				bigCircleWithChain,
+				normalCircleWithRand,
+				normalCircleWithChain
+			]
+		});
 	}
 
 	createEnemy() {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
 			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
-			this.enemyConfig.x = x;
-			this.enemyConfig.y = y;
 
-			let choseRandWeapon = Phaser.Math.Between(0, 1) === 0 ? true : false;
-			if (choseRandWeapon) {
-				this.enemyConfig.weaponType = "rand";
-			} else {
-				this.enemyConfig.weaponType = "chain";
-			}
-
-			let enemy = EnemyFactory.createEnemy(this.enemyConfig);
+			let enemy = this.enemyPool.pop();
 
 			enemy.state = "guard";
 			enemy.dontAttackList = this.dontAttackList;
+			enemy.activate(x, y);
 			return enemy;
 		}
 		return null;

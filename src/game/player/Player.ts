@@ -44,7 +44,7 @@ export class Player extends Circle {
 		);
 		let circle = new Player(scene, playerPhysicsGroup, weapon);
 		weapon.owner = circle;
-		weapon.amount = 40;
+		weapon.amount = 4000;
 		return circle;
 	}
 }

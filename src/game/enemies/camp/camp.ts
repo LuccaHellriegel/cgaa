@@ -71,8 +71,8 @@ function createBuildingPopulators(config: CampConfig, positions) {
 			scene: config.staticConfig.scene,
 			color: config.color,
 			size: "Big",
-			x: 0,
-			y: 0,
+			x: -100,
+			y: -100,
 			weaponType: "rand",
 			physicsGroup: config.enemyPhysicGroup,
 			weaponGroup: config.weaponPhysicGroup
