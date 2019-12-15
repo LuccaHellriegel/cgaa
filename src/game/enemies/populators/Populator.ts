@@ -1,5 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemyPool } from "./EnemyPool";
 
 export abstract class Populator {
 	enemyCount: number = 0;
@@ -8,6 +9,7 @@ export abstract class Populator {
 	dontAttackList: string[] = [];
 	shouldPopulate = true;
 	color: string;
+	abstract enemyPool: EnemyPool;
 
 	constructor(scene: Gameplay, enemySpawnObj: EnemySpawnObj, color: string) {
 		this.scene = scene;
@@ -50,6 +52,6 @@ export abstract class Populator {
 
 	destroy() {
 		this.shouldPopulate = false;
-		this.enemySpawnObj.destroy();
+		this.enemyPool.destroy();
 	}
 }

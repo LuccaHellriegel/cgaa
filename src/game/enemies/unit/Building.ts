@@ -74,7 +74,6 @@ export class Building extends Image implements damageable {
 		super.destroy();
 		this.healthbar.destroy();
 		this.populator.destroy();
-		this.populator = undefined;
 	}
 
 	syncPolygon() {}

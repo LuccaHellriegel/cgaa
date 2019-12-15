@@ -14,20 +14,26 @@ export class EnemyPool {
 	activeIDArr: string[] = [];
 	inactiveIDArr: string[] = [];
 	params: PoolParams;
+	isNeeded = true;
 
 	constructor(params: PoolParams) {
 		this.initPool(params);
 
 		let keys = Object.keys(this.enemyDict);
 		for (const key in keys) {
-			params.enemyConfig.scene.events.on("inactive-" + key, id => {
-				let index = this.activeIDArr.indexOf(id);
-				this.activeIDArr.splice(index, 1);
-				this.inactiveIDArr.push(id);
-			});
+			params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
 		}
 
 		this.params = params;
+	}
+
+	private makeInactive(key) {
+		if (this.isNeeded) {
+			let index = this.activeIDArr.indexOf(key);
+			this.activeIDArr.splice(index, 1);
+			this.inactiveIDArr.unshift(key);
+			this.params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
+		}
 	}
 
 	private initPool(params: PoolParams) {
@@ -55,8 +61,9 @@ export class EnemyPool {
 	}
 
 	destroy() {
-		for (const id in this.inactiveIDArr) {
-			this.enemyDict[id].destroy();
+		this.isNeeded = false;
+		for (const key in this.inactiveIDArr) {
+			this.enemyDict[this.inactiveIDArr[key]].destroy();
 		}
 	}
 }

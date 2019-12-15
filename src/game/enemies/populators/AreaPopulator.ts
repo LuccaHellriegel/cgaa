@@ -5,9 +5,7 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 
 export class AreaPopulator extends Populator {
-	enemyConfig: EnemyConfig;
 	enemyPool: EnemyPool;
-
 	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj) {
 		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
 

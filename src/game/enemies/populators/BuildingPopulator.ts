@@ -6,8 +6,8 @@ import { constructColumnRowID } from "../../base/id";
 import { EnemyPool } from "./EnemyPool";
 
 export class BuildingPopulator extends Populator {
-	pathDict;
 	enemyPool: EnemyPool;
+	pathDict;
 
 	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj, pathDict) {
 		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
