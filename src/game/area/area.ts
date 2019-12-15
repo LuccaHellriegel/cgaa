@@ -8,6 +8,7 @@ import { exitSymbol } from "../base/globals/globalSymbols";
 import { AreaConfig } from "../base/interfaces";
 
 const exitWidth = 3;
+const exitRow = 6;
 
 export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 	let areaConfigs: AreaConfig[] = [];
@@ -21,9 +22,10 @@ export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 			if (layout[layoutRow][layoutColumn] === "area") {
 				let topLeftX = relativeCoordinateToReal(startX + layoutColumn * wallBase.sizeOfXAxis);
 				let topLeftY = relativeCoordinateToReal(startY + layoutRow * wallBase.sizeOfYAxis);
-				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
-				let row = 6;
-				let exit = { exitPosition: { column, row }, exitWidth };
+				let wallSide = layoutColumn === 0 ? "right" : "left";
+				let column = wallSide ? wallBase.sizeOfXAxis - 1 : 0;
+				let row = exitRow;
+				let exit = { exitPosition: { column, row }, exitWidth, wallSide };
 				areaConfigs.push({
 					wallBase,
 					topLeftX,

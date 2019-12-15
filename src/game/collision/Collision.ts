@@ -178,15 +178,15 @@ export class Collision {
 	}
 
 	private bounceCallback(unit: EnemyCircle, obj) {
-		let x = unit.x;
-		let y = unit.y;
-		let angle = Phaser.Math.Angle.Between(obj.x, obj.y, x, y);
+		// let x = unit.x;
+		// let y = unit.y;
+		// let angle = Phaser.Math.Angle.Between(obj.x, obj.y, x, y);
 
-		let bounceBackDistance = 0.5;
-		let x1 = x + Math.cos(angle) * bounceBackDistance;
-		let y1 = y + Math.sin(angle) * bounceBackDistance;
-		unit.setPosition(x1, y1);
-		unit.setVelocity(0, 0);
+		// let bounceBackDistance = 0.5;
+		// let x1 = x + Math.cos(angle) * bounceBackDistance;
+		// let y1 = y + Math.sin(angle) * bounceBackDistance;
+		// unit.setPosition(x1, y1);
+		// unit.setVelocity(0, 0);
 
 		if (unit.unitType !== "player" && unit.dontAttackList && !unit.dontAttackList.includes(obj.color)) {
 			unit.barrier = obj;

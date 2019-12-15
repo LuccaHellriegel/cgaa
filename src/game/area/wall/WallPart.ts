@@ -1,8 +1,8 @@
-import { Image } from "../../base/classes/BasePhaser";
+import { Gameplay } from "../../../scenes/Gameplay";
 
-export class WallPart extends Image {
-	constructor(scene, x, y, physicsGroup) {
-		super({ scene, x, y, texture: "wallPart", physicsGroup });
-		this.setImmovable(true);
+export class WallPart extends Phaser.GameObjects.Image {
+	constructor(scene: Gameplay, x, y) {
+		super(scene, x, y, "wallPart");
+		scene.add.existing(this);
 	}
 }

@@ -1,11 +1,10 @@
 import { StaticConfig, RelativePosition, WallBase } from "../../base/types";
-import { WallsConfig, isWall } from "./wall";
 import { areaSize } from "../../base/globals/globalConfig";
-import { gridPartHalfSize, gridPartHalfSize } from "../../base/globals/globalSizes";
 import { realPosToRelativePos } from "../../base/position";
-import { BorderWallPart } from "./BorderWallPart";
+import { WallPart } from "./WallPart";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
-function constructBorderwallConfig(staticConfig: StaticConfig): WallsConfig {
+function constructBorderwallConfig(staticConfig: StaticConfig) {
 	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 3 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
 	let topLeftX = -gridPartHalfSize;
 	let topLeftY = -gridPartHalfSize;
@@ -13,20 +12,25 @@ function constructBorderwallConfig(staticConfig: StaticConfig): WallsConfig {
 	return { wallBase, topLeftX, topLeftY };
 }
 
-function calculateBorderWallSize(config: WallsConfig): { width: number; height: number } {
+function calculateBorderWallSize(config): { width: number; height: number } {
 	return {
 		width: config.wallBase.sizeOfXAxis * 2 * gridPartHalfSize,
 		height: config.wallBase.sizeOfYAxis * 2 * gridPartHalfSize
 	};
 }
 
-function createBorderWall(config: WallsConfig): RelativePosition {
+function createBorderWall(config): RelativePosition {
 	let x = config.topLeftX;
 	let y = config.topLeftY;
 	for (let row = 0; row < config.wallBase.sizeOfYAxis; row++) {
 		for (let column = 0; column < config.wallBase.sizeOfXAxis; column++) {
-			if (isWall(config, column, row)) {
-				new BorderWallPart(config.wallBase.staticConfig.scene, x, y);
+			let isLeftWall = column === 0;
+			let isRightWall = column === config.wallBase.sizeOfXAxis - 1;
+			let isTopWall = row === 0;
+			let isBottomWall = row === config.wallBase.sizeOfYAxis - 1;
+			let isWall = isLeftWall || isRightWall || isTopWall || isBottomWall;
+			if (isWall) {
+				new WallPart(config.wallBase.staticConfig.scene, x, y);
 			}
 			x += 2 * gridPartHalfSize;
 		}

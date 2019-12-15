@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
 
-//TODO: on firefox WEBGL produces bad performance
 let gameConfig = {
 	type: Phaser.WEBGL,
 	width: 1280,
