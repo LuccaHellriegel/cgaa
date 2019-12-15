@@ -6,7 +6,7 @@ import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "./Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { removeFromInteractionElements } from "../../base/events/elements";
-import { destroyPoolUnit, disableForPool } from "../../base/pool";
+import { disableForPool, activateForPool, addToInactivePool } from "../../base/pool";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	pathContainer: PathContainer;
@@ -44,16 +44,13 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	poolDestroy() {
-		destroyPoolUnit(this);
-		disableForPool(this.weapon, this.healthbar.bar);
+		addToInactivePool(this);
+		disableForPool(this, this.weapon, this.healthbar.bar);
 		this.healthbar.value = 100;
 	}
 
 	activate(x, y) {
-		this.weapon.enableBody(true, x, y, true, true);
-		this.enableBody(true, x, y, true, true);
-		this.healthbar.bar.setActive(true).setVisible(true);
-		this.healthbar.move(x, y);
+		activateForPool(x, y, this, this.weapon, this.healthbar.bar);
 	}
 
 	preUpdate(time, delta) {

@@ -1,4 +1,4 @@
-function addToInactivePool(unit) {
+export function addToInactivePool(unit) {
 	unit.scene.events.emit("inactive-" + unit.id, unit.id);
 }
 
@@ -9,11 +9,15 @@ export function disableForPool(...objs) {
 		} else {
 			obj.setActive(false).setVisible(false);
 		}
-		obj.setPosition(-1000, -1000);
 	});
 }
 
-export function destroyPoolUnit(unit) {
-	disableForPool(unit);
-	addToInactivePool(unit);
+export function activateForPool(x, y, ...objs) {
+	objs.forEach(obj => {
+		if (obj.enableBody) {
+			obj.enableBody(true, x, y, true, true);
+		} else {
+			obj.setActive(true).setVisible(true);
+		}
+	});
 }
