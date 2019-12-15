@@ -1,4 +1,4 @@
-import { InteractionModus } from "./InteractionModus";
+import { InteractionModus } from "./interaction/InteractionModus";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { TowerManager } from "../../towers/TowerManager";
 

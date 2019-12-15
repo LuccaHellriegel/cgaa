@@ -5,7 +5,7 @@ import { Collision } from "../game/collision/Collision";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/unit/Player";
 import { setupPointerEvents } from "../game/player/input/pointer";
-import { InteractionModus } from "../game/player/input/modi/InteractionModus";
+import { InteractionModus } from "../game/player/input/modi/interaction/InteractionModus";
 import { Square } from "../game/player/unit/Square";
 import { GhostTower } from "../game/player/input/modi/GhostTower";
 import { Modi } from "../game/player/input/modi/Modi";

@@ -1,7 +1,8 @@
 import { RelativePosition } from "../../base/types";
 import { constructXYIDfromColumnRow } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
-import { PathCalcConfig, getAllPositionsAroundBuilding, findClosestExit } from "./pathBase";
+import { PathCalcConfig, getAllPositionsAroundBuilding } from "./pathBase";
+import { findClosestRelativePosition } from "../../base/find";
 
 export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits: RelativePosition[]) {
 	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {
@@ -14,7 +15,7 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 			const positionsAround = getAllPositionsAroundBuilding(buildingPosition[0], buildingPosition[1]);
 			for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
 				const pos = positionsAround[posIndex];
-				const exit = findClosestExit(exits, pos[0], pos[1]);
+				const exit = findClosestRelativePosition(exits, pos[0], pos[1]);
 				let mainPath = config.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
 				let saveReference = new PathContainer(
 					config.scene,

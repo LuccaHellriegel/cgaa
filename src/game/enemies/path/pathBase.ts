@@ -11,19 +11,6 @@ export interface PathCalcConfig {
 	buildingInfos: BuildingInfo[];
 }
 
-export function findClosestExit(exits: RelativePosition[], column, row): RelativePosition {
-	let exit;
-	let dist = Infinity;
-	for (const curExit in exits) {
-		let curDist = Phaser.Math.Distance.Between(column, row, exits[curExit].column, exits[curExit].row);
-		if (curDist < dist) {
-			exit = curExit;
-			dist = curDist;
-		}
-	}
-	return exits[exit];
-}
-
 export function findClosestBuilding(buildingInfos: BuildingInfo[], column: number, row: number): BuildingInfo {
 	let buildingInfo;
 	let dist = Infinity;

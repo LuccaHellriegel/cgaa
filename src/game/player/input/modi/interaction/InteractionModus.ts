@@ -1,11 +1,12 @@
-import { gridPartHalfSize } from "../../../base/globals/globalSizes";
-import { Gameplay } from "../../../../scenes/Gameplay";
-import { Tower } from "../../towers/Tower";
-import { getRandomCampColorOrder } from "../../../base/globals/global";
-import { GhostTower } from "./GhostTower";
-import { Square } from "../../unit/Square";
-import { establishCooperation, gainLife } from "../../../base/events/player";
-import { InterationCircle } from "../../../enemies/camp/unit/InteractionCircle";
+import { gridPartHalfSize } from "../../../../base/globals/globalSizes";
+import { Gameplay } from "../../../../../scenes/Gameplay";
+import { Tower } from "../../../towers/Tower";
+import { getRandomCampColorOrder } from "../../../../base/globals/global";
+import { GhostTower } from "../GhostTower";
+import { Square } from "../../../unit/Square";
+import { establishCooperation, gainLife } from "../../../../base/events/player";
+import { InterationCircle } from "../../../../enemies/camp/unit/InteractionCircle";
+import { interactWithCircle } from "./circle";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -75,17 +76,14 @@ export class InteractionModus {
 		if (ele !== null) {
 			switch (ele.constructor) {
 				case InterationCircle:
-					let targetColor = this.rivalries[ele.color];
-					if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
-						this.colorKilllist.push(targetColor);
-						this.scene.events.emit("added-to-killlist", targetColor);
-
-						for (const key in this.interactionElements) {
-							const element = this.interactionElements[key];
-							if (element.color === targetColor) this.unitKilllist.push(element);
-						}
-					}
-
+					interactWithCircle(
+						ele,
+						this.rivalries,
+						this.colorKilllist,
+						this.unitKilllist,
+						this.scene,
+						this.interactionElements
+					);
 					break;
 				case Tower:
 					this.scene.events.emit("sold-tower", ele);
