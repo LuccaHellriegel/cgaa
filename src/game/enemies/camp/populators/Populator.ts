@@ -1,5 +1,5 @@
-import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 
 export abstract class Populator {

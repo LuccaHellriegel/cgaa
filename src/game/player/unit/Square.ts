@@ -3,7 +3,7 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { extendWithNewId } from "../../base/id";
-import { addToInteractionElements, removeFromInteractionElements } from "../../base/events/elements";
+import { addToInteractionElements, removeFromInteractionElements } from "../../base/events/interaction";
 import { Image } from "../../base/classes/BasePhaser";
 
 export class Square extends Image implements damageable {

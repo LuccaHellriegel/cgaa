@@ -1,7 +1,7 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { relativeCoordinateToReal } from "../../base/position";
 import { circleSizeNames, rectBuildinghalfHeight } from "../../base/globals/globalSizes";
-import { Building, BuildingSpawnConfig } from "../unit/Building";
+import { Building, BuildingSpawnConfig } from "./unit/Building";
 import { buildingSymbol } from "../../base/globals/globalSymbols";
 import { BuildingSpawnObj } from "../../base/spawn/BuildingSpawnObj";
 import { HealthBar } from "../../base/classes/HealthBar";

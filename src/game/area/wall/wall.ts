@@ -7,7 +7,6 @@ import { AreaConfig } from "../../base/interfaces";
 import { exitToGlobalPositon, relativePosToRealPos } from "../../base/position";
 
 function splitupAtExit(exitPosition, positionArr) {
-	console.log(positionArr);
 	let firstPositionArr: Point[] = [];
 	let secondPositionArr: Point[] = [];
 
@@ -22,7 +21,6 @@ function splitupAtExit(exitPosition, positionArr) {
 			exitWidth++;
 		}
 	});
-	console.log(firstPositionArr, secondPositionArr);
 	return [firstPositionArr, secondPositionArr];
 }
 
@@ -71,7 +69,6 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 
 	positionArrs.push(splitupArrs[0], splitupArrs[1]);
 
-	console.log(positionArrs);
 	positionArrs.forEach(positions => {
 		new WallSide(config.wallBase.staticConfig.scene, config.wallBase.staticConfig.physicsGroup, positions);
 	});

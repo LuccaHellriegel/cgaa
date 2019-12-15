@@ -1,4 +1,4 @@
-import { Modi } from "../player/modi/Modi";
+import { Modi } from "./modi/Modi";
 
 function rotatePlayerTowardsMouse(newX, newY, player) {
 	let x = player.x;

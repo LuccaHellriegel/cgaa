@@ -1,6 +1,6 @@
 import { InteractionModus } from "./InteractionModus";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { TowerManager } from "../towers/TowerManager";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { TowerManager } from "../../towers/TowerManager";
 
 export class Modi {
 	towerModus: boolean;

@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerCost } from "../../base/globals/globalConfig";
-import { GhostTower } from "../modi/GhostTower";
+import { GhostTower } from "../input/modi/GhostTower";
 import { spendSouls } from "../../base/events/player";
 import { snapXYToGrid } from "../../base/position";
 import { TowerSpawnObj } from "../../base/spawn/TowerSpawnObj";

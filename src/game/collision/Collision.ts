@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapons/Weapon";
-import { EnemyCircle } from "../enemies/unit/EnemyCircle";
+import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
 import { executeOverAllCamps } from "../base/globals/global";
 import { gainSouls } from "../base/events/player";
 import { Tower } from "../player/towers/Tower";
@@ -178,16 +178,6 @@ export class Collision {
 	}
 
 	private bounceCallback(unit: EnemyCircle, obj) {
-		// let x = unit.x;
-		// let y = unit.y;
-		// let angle = Phaser.Math.Angle.Between(obj.x, obj.y, x, y);
-
-		// let bounceBackDistance = 0.5;
-		// let x1 = x + Math.cos(angle) * bounceBackDistance;
-		// let y1 = y + Math.sin(angle) * bounceBackDistance;
-		// unit.setPosition(x1, y1);
-		// unit.setVelocity(0, 0);
-
 		if (unit.unitType !== "player" && unit.dontAttackList && !unit.dontAttackList.includes(obj.color)) {
 			unit.barrier = obj;
 			unit.state = "obstacle";

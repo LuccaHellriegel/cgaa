@@ -1,8 +1,23 @@
 import { walkableSymbol, exitSymbol } from "../../base/globals/globalSymbols";
-import { relativePosToRealPos, calculateRelativeCrossPostioning } from "../../base/position";
+import { relativePosToRealPos } from "../../base/position";
 import { PathMarking } from "./PathMarking";
 
 export type PathCointainerType = { path; id: string };
+
+function calculateRelativeCrossPostioning(x, y, x2, y2) {
+	let xDirection = x2 < x;
+	let yDirection = y2 < y;
+	if (xDirection) {
+		return "left";
+	}
+	if (yDirection) {
+		return "top";
+	}
+	if (x2 == x) {
+		return "bottom";
+	}
+	return "right";
+}
 
 export class PathContainer {
 	path;

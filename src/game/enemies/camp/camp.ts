@@ -1,9 +1,9 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { createBuildingSpawnObj, createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
-import { AreaPopulator } from "../populators/AreaPopulator";
-import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
-import { addToInteractionElements } from "../../base/events/elements";
+import { AreaPopulator } from "./populators/AreaPopulator";
+import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
+import { addToInteractionElements } from "../../base/events/interaction";
 import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
 import { AreaConfig } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";

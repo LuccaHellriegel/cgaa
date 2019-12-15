@@ -1,11 +1,11 @@
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { Tower } from "../towers/Tower";
-import { getRandomCampColorOrder } from "../../base/globals/global";
+import { gridPartHalfSize } from "../../../base/globals/globalSizes";
+import { EnemyCircle } from "../../../enemies/camp/unit/EnemyCircle";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { Tower } from "../../towers/Tower";
+import { getRandomCampColorOrder } from "../../../base/globals/global";
 import { GhostTower } from "./GhostTower";
-import { Square } from "../unit/Square";
-import { establishCooperation, gainLife } from "../../base/events/player";
+import { Square } from "../../unit/Square";
+import { establishCooperation, gainLife } from "../../../base/events/player";
 
 export class InteractionModus {
 	isOn: Boolean = false;

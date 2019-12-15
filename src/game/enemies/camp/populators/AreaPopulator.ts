@@ -1,7 +1,7 @@
 import { Populator } from "./Populator";
 import { EnemyConfig } from "../unit/EnemyFactory";
-import { relativePosToRealPos } from "../../base/position";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { relativePosToRealPos } from "../../../base/position";
+import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 
 export class AreaPopulator extends Populator {

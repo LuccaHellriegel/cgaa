@@ -2,7 +2,7 @@ import { cloneDeep } from "lodash";
 import { getRelativePosOfElements, realPosToRelativePos } from "../position";
 import { constructColumnRowID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
-import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
+import { EnemyCircle } from "../../enemies/camp/unit/EnemyCircle";
 
 export class EnemySpawnObj {
 	baseObj;

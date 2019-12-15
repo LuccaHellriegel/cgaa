@@ -12,12 +12,6 @@ export class WallSide extends Phaser.Physics.Arcade.Image {
 		let lastPositionY = partPositions[partPositions.length - 1].y;
 		let height = lastPositionY - firstPositionY + 2 * gridPartHalfSize;
 
-		// if (height > width) {
-		// 	let temp = height;
-		// 	height = width;
-		// 	width = temp;
-		// }
-
 		super(scene, firstPositionX + width / 2 - gridPartHalfSize, firstPositionY + height / 2 - gridPartHalfSize, "");
 
 		scene.add.existing(this);

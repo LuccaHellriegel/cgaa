@@ -1,12 +1,12 @@
-import { HealthBar } from "../../base/classes/HealthBar";
-import { Circle } from "../../base/classes/Circle";
-import { PathContainer } from "../path/PathContainer";
-import { damageable } from "../../base/interfaces";
-import { WallPart } from "../../area/wall/WallPart";
+import { HealthBar } from "../../../base/classes/HealthBar";
+import { Circle } from "../../../base/classes/Circle";
+import { PathContainer } from "../../path/PathContainer";
+import { damageable } from "../../../base/interfaces";
+import { WallPart } from "../../../area/wall/WallPart";
 import { Building } from "./Building";
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { removeFromInteractionElements } from "../../base/events/elements";
-import { disableForPool, activateForPool, addToInactivePool } from "../../base/pool";
+import { gridPartHalfSize } from "../../../base/globals/globalSizes";
+import { removeFromInteractionElements } from "../../../base/events/interaction";
+import { disableForPool, activateForPool, addToInactivePool } from "../../../base/pool";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	pathContainer: PathContainer;

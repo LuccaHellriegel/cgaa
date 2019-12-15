@@ -1,13 +1,13 @@
-import { Image } from "../../base/classes/BasePhaser";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { damageable } from "../../base/interfaces";
-import { HealthBar } from "../../base/classes/HealthBar";
-import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { removeEle, addToInteractionElements, removeFromInteractionElements } from "../../base/events/elements";
+import { Image } from "../../../base/classes/BasePhaser";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { damageable } from "../../../base/interfaces";
+import { HealthBar } from "../../../base/classes/HealthBar";
+import { RectPolygon } from "../../../base/polygons/RectPolygon";
+import { addToInteractionElements, removeFromInteractionElements } from "../../../base/events/interaction";
 import { BuildingPopulator } from "../populators/BuildingPopulator";
-import { createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
+import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { EnemyConfig } from "./EnemyFactory";
-import { realCoordinateToRelative } from "../../base/position";
+import { realCoordinateToRelative } from "../../../base/position";
 
 export interface BuildingSpawnConfig {
 	enemyDict;
@@ -65,7 +65,6 @@ export class Building extends Image implements damageable {
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
 			removeFromInteractionElements(this.scene, this);
-			removeEle(this.scene, "building", this);
 			this.destroy();
 		}
 	}

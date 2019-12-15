@@ -86,21 +86,6 @@ export function getRelativePosOfElements(elements) {
 	return relativePositions;
 }
 
-export function calculateRelativeCrossPostioning(x, y, x2, y2) {
-	let xDirection = x2 < x;
-	let yDirection = y2 < y;
-	if (xDirection) {
-		return "left";
-	}
-	if (yDirection) {
-		return "top";
-	}
-	if (x2 == x) {
-		return "bottom";
-	}
-	return "right";
-}
-
 export function exitToGlobalPositon(areaConfig: AreaConfig): RelativePosition {
 	let column = areaConfig.exit.exitPosition.column + realCoordinateToRelative(areaConfig.topLeftX);
 	let row = areaConfig.exit.exitPosition.row + realCoordinateToRelative(areaConfig.topLeftY);
