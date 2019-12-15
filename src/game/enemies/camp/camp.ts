@@ -52,15 +52,10 @@ function constructCampConfigs(
 
 function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	let { x, y } = exitToGlobalPoint(config.areaConfig);
-	enemyConfig.size = "Normal";
-	enemyConfig.weaponType = "chain";
 	enemyConfig.x = x;
 	enemyConfig.y = y;
-	let circle = EnemyFactory.createEnemy(enemyConfig);
-	circle.state = "interaction";
-	circle.purpose = "interaction";
+	let circle = EnemyFactory.createInteractionCircle(enemyConfig);
 	addToInteractionElements(config.staticConfig.scene, circle);
-	config.enemyDict[circle.id] = circle;
 }
 
 const numberOfBuildings = 3;

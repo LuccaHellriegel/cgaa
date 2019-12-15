@@ -4,6 +4,7 @@ import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
 import { executeOverAllCamps } from "../base/globals/global";
 import { gainSouls } from "../base/events/player";
 import { Tower } from "../player/towers/Tower";
+import { InterationCircle } from "../enemies/camp/unit/InteractionCircle";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
@@ -162,7 +163,7 @@ export class Collision {
 		} else if (
 			weapon.owner.unitType !== "player" &&
 			weapon.owner.state !== "ambush" &&
-			weapon.owner.state !== "interaction" &&
+			!(weapon.owner instanceof InterationCircle) &&
 			(weapon.owner as EnemyCircle).color !== enemy.color &&
 			weapon.owner.state !== "guard" &&
 			!(weapon.owner as EnemyCircle).dontAttackList.includes(enemy.color)

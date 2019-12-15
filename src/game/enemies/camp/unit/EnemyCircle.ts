@@ -5,7 +5,6 @@ import { damageable } from "../../../base/interfaces";
 import { WallPart } from "../../../area/wall/WallPart";
 import { Building } from "./Building";
 import { gridPartHalfSize } from "../../../base/globals/globalSizes";
-import { removeFromInteractionElements } from "../../../base/events/interaction";
 import { disableForPool, activateForPool, addToInactivePool } from "../../../base/pool";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
@@ -16,7 +15,6 @@ export class EnemyCircle extends Circle implements damageable {
 	pursuing: any;
 	barrier: any;
 	velo: any;
-	purpose: string;
 	dontAttackList: any[] = [];
 
 	constructor(config, velo) {
@@ -35,9 +33,6 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	destroy() {
-		if (this.scene && this.purpose == "interaction") {
-			removeFromInteractionElements(this.scene, this);
-		}
 		super.destroy();
 		this.weapon.destroy();
 		this.healthbar.bar.destroy();
@@ -76,10 +71,6 @@ export class EnemyCircle extends Circle implements damageable {
 			}
 			case "obstacle": {
 				this.obstacle();
-				break;
-			}
-			case "interaction": {
-				this.interaction();
 				break;
 			}
 		}
@@ -169,6 +160,4 @@ export class EnemyCircle extends Circle implements damageable {
 			this.setVelocity(0, 0);
 		}
 	}
-
-	private interaction() {}
 }

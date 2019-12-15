@@ -1,11 +1,11 @@
 import { gridPartHalfSize } from "../../../base/globals/globalSizes";
-import { EnemyCircle } from "../../../enemies/camp/unit/EnemyCircle";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { Tower } from "../../towers/Tower";
 import { getRandomCampColorOrder } from "../../../base/globals/global";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../../unit/Square";
 import { establishCooperation, gainLife } from "../../../base/events/player";
+import { InterationCircle } from "../../../enemies/camp/unit/InteractionCircle";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -74,7 +74,7 @@ export class InteractionModus {
 		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			switch (ele.constructor) {
-				case EnemyCircle:
+				case InterationCircle:
 					let targetColor = this.rivalries[ele.color];
 					if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
 						this.colorKilllist.push(targetColor);
@@ -85,13 +85,7 @@ export class InteractionModus {
 							if (element.color === targetColor) this.unitKilllist.push(element);
 						}
 					}
-					// else if (this.colorKilllist.includes(targetColor) && this.checkIfCampDestroy(targetColor)) {
-					// 	let index = campColors.indexOf(targetColor);
-					// 	let leftOverColors = campColors.splice(index, 1);
-					// 	index = leftOverColors.indexOf(ele.color);
-					// 	leftOverColors = leftOverColors.splice(index, 1);
-					// 	this.scene.events.emit("added-to-attacklist", ele.color, leftOverColors[0]);
-					// }
+
 					break;
 				case Tower:
 					this.scene.events.emit("sold-tower", ele);

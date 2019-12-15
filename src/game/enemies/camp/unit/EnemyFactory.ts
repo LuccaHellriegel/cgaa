@@ -5,6 +5,7 @@ import { ChainWeapon } from "../../../weapons/ChainWeapon";
 import { RandWeapon } from "../../../weapons/RandWeapon";
 import { CirclePolygon } from "../../../base/polygons/CirclePolygon";
 import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../../base/globals/globalSizes";
+import { InterationCircle } from "./InteractionCircle";
 
 const healthBarConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
@@ -69,6 +70,41 @@ export class EnemyFactory {
 		};
 
 		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
+		weapon.owner = circle;
+		scene.children.bringToTop(healthbar.bar);
+		return circle;
+	}
+
+	static createInteractionCircle(config) {
+		let { scene, color, x, y, physicsGroup, weaponGroup } = config;
+
+		let healthBarConfig = healthBarConfigs["Normal"];
+		healthBarConfig["scene"] = scene;
+
+		let healthbar = new HealthBar(x, y, healthBarConfig);
+
+		let radius = radiusConfigs["Normal"];
+
+		let weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, "Normal");
+
+		let polygon = new CirclePolygon(x, y, radius);
+
+		let texture = color + "InteractionCircle";
+
+		let circleConfig = {
+			scene,
+			color,
+			x,
+			y,
+			weapon,
+			polygon,
+			texture,
+			healthbar,
+			radius,
+			physicsGroup
+		};
+
+		let circle = new InterationCircle(circleConfig);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 		return circle;
