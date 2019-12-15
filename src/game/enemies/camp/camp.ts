@@ -7,7 +7,7 @@ import { addToInteractionElements } from "../../base/events/interaction";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { PhysicGroups } from "../../collision/Collision";
+import { PhysicGroups } from "../../collision/collision";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { getRandomBuildingSpawnPositions } from "./buildingSpawn";
 

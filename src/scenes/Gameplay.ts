@@ -1,7 +1,6 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/input/Movement";
-import { Collision } from "../game/collision/Collision";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/unit/Player";
 import { setupPointerEvents } from "../game/player/input/pointer";
@@ -16,6 +15,7 @@ import { createTowerSpawnObj } from "../game/base/spawn/spawn";
 import { calculatePaths } from "../game/enemies/path/path";
 import { spawnWave } from "../game/enemies/wave";
 import { mainCamp } from "../game/enemies/camp/camp";
+import { enableCollision } from "../game/collision/collision";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -30,7 +30,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	create() {
-		let physicsGroups = new Collision(this).getPhysicGroups();
+		let physicsGroups = enableCollision(this);
 
 		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: physicsGroups.areas };
 		let areaConfigs = constructAreaConfigs(areaStaticConfig);
