@@ -7,7 +7,7 @@ import { Player } from "../game/player/unit/Player";
 import { setupPointerEvents } from "../game/player/input/pointer";
 import { InteractionModus } from "../game/player/input/modi/interaction/InteractionModus";
 import { Square } from "../game/player/unit/Square";
-import { GhostTower } from "../game/player/input/modi/GhostTower";
+import { GhostTower } from "../game/player/input/modi/interaction/GhostTower";
 import { Modi } from "../game/player/input/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";

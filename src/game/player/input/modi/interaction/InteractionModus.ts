@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../../../scenes/Gameplay";
 import { Tower } from "../../../towers/Tower";
-import { GhostTower } from "../GhostTower";
+import { GhostTower } from "./GhostTower";
 import { Square } from "../../../unit/Square";
 import { InterationCircle } from "../../../../enemies/camp/unit/InteractionCircle";
 import { findClosestPoint } from "../../../../base/find";

@@ -1,4 +1,4 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
+import { Gameplay } from "../../../../../scenes/Gameplay";
 
 export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Gameplay, x, y, keyObj) {

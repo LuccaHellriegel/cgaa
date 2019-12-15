@@ -1,10 +1,12 @@
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
 import { establishCooperation } from "../../../../base/events/player";
+import { campColors } from "../../../../base/globals/globalColors";
 
 export class Cooperation {
 	private colorKilllist: any[] = [];
 	private unitKilllist: any[] = [];
 	private rivalries = {};
+	private rerouteObj = {};
 
 	constructor() {
 		this.setupRivalries();
@@ -23,16 +25,41 @@ export class Cooperation {
 		this.rivalries[secondColor] = color;
 	}
 
+	private addToKilllist(targetColor, scene, interactionElements) {
+		this.colorKilllist.push(targetColor);
+		scene.events.emit("added-to-killlist", targetColor);
+
+		for (const key in interactionElements) {
+			const element = interactionElements[key];
+			if (element.color === targetColor) this.unitKilllist.push(element);
+		}
+	}
+
+	private rerouteTroops(color, scene) {
+		if (!this.rerouteObj[color]) {
+			let arr = [];
+			campColors.forEach(otherColor => {
+				if (otherColor !== color && otherColor !== this.rivalries[color]) {
+					arr.push(otherColor);
+				}
+			});
+			this.rerouteObj[color] = arr;
+		}
+		scene.events.emit("reroute-" + color, this.rerouteObj[color][0]);
+		this.rerouteObj[color].reverse();
+	}
+
 	interactWithCircle(ele, scene, interactionElements) {
 		let targetColor = this.rivalries[ele.color];
-		if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color)) {
-			this.colorKilllist.push(targetColor);
-			scene.events.emit("added-to-killlist", targetColor);
+		let establishKillQuest = !this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color);
 
-			for (const key in interactionElements) {
-				const element = interactionElements[key];
-				if (element.color === targetColor) this.unitKilllist.push(element);
-			}
+		let hasKilledAllRivals = !this.unitKilllist.includes(targetColor);
+		let hasAccessToTroops = hasKilledAllRivals && this.colorKilllist.includes(targetColor);
+
+		if (establishKillQuest) {
+			this.addToKilllist(targetColor, scene, interactionElements);
+		} else if (hasAccessToTroops) {
+			this.rerouteTroops(ele.color, scene);
 		}
 	}
 
