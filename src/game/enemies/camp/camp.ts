@@ -5,7 +5,7 @@ import { AreaPopulator } from "./populators/AreaPopulator";
 import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
 import { addToInteractionElements } from "../../base/events/interaction";
 import { exitToGlobalPoint } from "../../base/position";
-import { AreaConfig } from "../../base/interfaces";
+import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { PhysicGroups } from "../../collision/Collision";
 import { getRandomCampColorOrder } from "../../base/globals/global";
@@ -65,7 +65,7 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 
 const numberOfBuildings = 3;
 
-function createCamp(config: CampConfig): number[][] {
+function createCamp(config: CampConfig): BuildingInfo {
 	let spawnPositions = getRandomBuildingSpawnPositions(config.map, config.areaConfig, numberOfBuildings);
 	let spawnConfig = {
 		enemyDict: config.enemyDict,
@@ -96,13 +96,13 @@ function createCamp(config: CampConfig): number[][] {
 
 	createInteractionUnit(config, enemyConfig);
 
-	return spawnPositions;
+	return { spawnPositions, color: config.color };
 }
 
-function createCamps(configs: CampConfig[]): number[][] {
-	let positions: number[][] = [];
+function createCamps(configs: CampConfig[]): BuildingInfo[] {
+	let positions: BuildingInfo[] = [];
 	for (let index = 0, length = configs.length; index < length; index++) {
-		positions = positions.concat(createCamp(configs[index]));
+		positions.push(createCamp(configs[index]));
 	}
 	return positions;
 }
@@ -114,7 +114,7 @@ export function mainCamp(
 	enemyDict,
 	physicGroups: PhysicGroups,
 	pathDict
-): number[][] {
+): BuildingInfo[] {
 	let campConfigs: CampConfig[] = constructCampConfigs(scene, map, areaConfigs, enemyDict, physicGroups, pathDict);
 	return createCamps(campConfigs);
 }

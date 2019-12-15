@@ -4,7 +4,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { constructXYIDfromColumnRow, constructXYID } from "../../base/id";
 import { ZeroOneMap, RelativePosition, Point } from "../../base/types";
 import { exitToGlobalPoint, realCoordinateToRelative, exitToGlobalRelativePosition } from "../../base/position";
-import { AreaConfig } from "../../base/interfaces";
+import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 
 export interface PathCalcConfig {
 	scene: Gameplay;
@@ -12,7 +12,7 @@ export interface PathCalcConfig {
 	unifiedMap: ZeroOneMap;
 	areaConfigs: AreaConfig[];
 	middlePos: RelativePosition;
-	buildingPositions: number[][];
+	buildingInfos: BuildingInfo[];
 }
 
 function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
@@ -65,24 +65,30 @@ function getAllPositionsAroundBuilding(column, row) {
 }
 
 function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits: RelativePosition[]) {
-	for (let index = 0, length = config.buildingPositions.length; index < length; index++) {
-		const buildingPosition = config.buildingPositions[index];
-		const positionsAround = getAllPositionsAroundBuilding(buildingPosition[0], buildingPosition[1]);
-		for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
-			const pos = positionsAround[posIndex];
-			const exit = findClosestExit(exits, pos[0], pos[1]);
-			let mainPath = config.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
-			let saveReference = new PathContainer(
-				config.scene,
-				pos[0],
-				pos[1],
-				exit.column,
-				exit.row,
-				easyStar,
-				config.unifiedMap,
-				mainPath
-			);
-			config.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
+	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {
+		for (
+			let posIndex = 0, posLength = config.buildingInfos[index].spawnPositions.length;
+			posIndex < posLength;
+			posIndex++
+		) {
+			const buildingPosition = config.buildingInfos[index].spawnPositions[posIndex];
+			const positionsAround = getAllPositionsAroundBuilding(buildingPosition[0], buildingPosition[1]);
+			for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
+				const pos = positionsAround[posIndex];
+				const exit = findClosestExit(exits, pos[0], pos[1]);
+				let mainPath = config.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
+				let saveReference = new PathContainer(
+					config.scene,
+					pos[0],
+					pos[1],
+					exit.column,
+					exit.row,
+					easyStar,
+					config.unifiedMap,
+					mainPath
+				);
+				config.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
+			}
 		}
 	}
 }

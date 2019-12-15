@@ -9,11 +9,14 @@ export interface damageable {
 	id: string;
 }
 
-export interface unmovable {}
-
 export interface AreaConfig {
 	wallBase: WallBase;
 	topLeftX: number;
 	topLeftY: number;
 	exit: Exit;
+}
+
+export interface BuildingInfo {
+	color: string;
+	spawnPositions: number[][];
 }

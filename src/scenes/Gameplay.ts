@@ -55,9 +55,9 @@ export class Gameplay extends Phaser.Scene {
 		);
 
 		let pathDict = {};
-		let buildingPositions = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
+		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
 
-		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingPositions });
+		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
 		spawnWave(this, 0);
 
