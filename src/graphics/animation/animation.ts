@@ -1,5 +1,5 @@
-import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../game/base/globals/global";
-import { circleSizeNames } from "../game/base/globals/globalSizes";
+import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../../game/base/globals/global";
+import { circleSizeNames } from "../../game/base/globals/globalSizes";
 
 function createNonRepeatingAnim(anims: Phaser.Animations.AnimationManager, key, texture, start, end, frameRate) {
 	anims.create({

@@ -1,7 +1,7 @@
-import { RectPolygon } from "../../../game/base/polygons/RectPolygon";
+import { RectPolygon } from "../../../../game/base/polygons/RectPolygon";
 import { Generator } from "../Generator";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { gridPartHalfSize } from "../../../game/base/globals/globalSizes";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { gridPartHalfSize } from "../../../../game/base/globals/globalSizes";
 
 export class SquareGenerator extends Generator {
 	rect: RectPolygon;

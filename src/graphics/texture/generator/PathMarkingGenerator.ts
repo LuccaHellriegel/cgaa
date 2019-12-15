@@ -1,8 +1,8 @@
 import { Generator } from "./Generator";
-import { RectPolygon } from "../../game/base/polygons/RectPolygon";
-import { Gameplay } from "../../scenes/Gameplay";
-import { gridPartHalfSize } from "../../game/base/globals/globalSizes";
-import { CompositePolygon } from "../../game/base/polygons/CompositePolygon";
+import { RectPolygon } from "../../../game/base/polygons/RectPolygon";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { gridPartHalfSize } from "../../../game/base/globals/globalSizes";
+import { CompositePolygon } from "../../../game/base/polygons/CompositePolygon";
 
 export class PathMarkingGenerator extends Generator {
 	rects = {};

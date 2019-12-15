@@ -1,5 +1,5 @@
-import { createAnims } from "../graphics/animation";
-import { generateTextures } from "../graphics/textures";
+import { createAnims } from "../graphics/animation/animation";
+import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/input/Movement";
 import { Collision } from "../game/collision/Collision";
 import { TowerManager } from "../game/player/towers/TowerManager";
