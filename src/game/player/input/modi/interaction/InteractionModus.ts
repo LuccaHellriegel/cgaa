@@ -1,4 +1,3 @@
-import { gridPartHalfSize } from "../../../../base/globals/globalSizes";
 import { Gameplay } from "../../../../../scenes/Gameplay";
 import { Tower } from "../../../towers/Tower";
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
@@ -7,6 +6,7 @@ import { Square } from "../../../unit/Square";
 import { establishCooperation, gainLife } from "../../../../base/events/player";
 import { InterationCircle } from "../../../../enemies/camp/unit/InteractionCircle";
 import { interactWithCircle } from "./circle";
+import { findClosestPoint } from "../../../../base/find";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -52,7 +52,7 @@ export class InteractionModus {
 	}
 
 	lockGhostTower() {
-		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
+		let ele = findClosestPoint(this.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			this.ghostTower.setPosition(ele.x, ele.y);
 			this.ghostTower.toggleLock();
@@ -72,7 +72,7 @@ export class InteractionModus {
 	}
 
 	interactWithClosestEle() {
-		let ele = this.findClosestInteractionElement(this.ghostTower.x, this.ghostTower.y);
+		let ele = findClosestPoint(this.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			switch (ele.constructor) {
 				case InterationCircle:
@@ -96,20 +96,5 @@ export class InteractionModus {
 					break;
 			}
 		}
-	}
-
-	private findClosestInteractionElement(x, y) {
-		let dist = Infinity;
-		let ele = null;
-		for (const key in this.interactionElements) {
-			const element = this.interactionElements[key];
-			let curDist = Phaser.Math.Distance.Between(x, y, element.x, element.y);
-			if (dist > curDist) {
-				dist = curDist;
-				ele = element;
-			}
-		}
-		if (dist > gridPartHalfSize) return null;
-		return ele;
 	}
 }
