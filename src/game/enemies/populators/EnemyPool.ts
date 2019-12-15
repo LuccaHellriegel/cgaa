@@ -38,7 +38,7 @@ export class EnemyPool {
 				params.enemyConfig.weaponType = curComposition.weaponType as WeaponTypes;
 				let enemy: EnemyCircle = EnemyFactory.createEnemy(params.enemyConfig);
 				this.enemyDict[enemy.id] = enemy;
-				enemy.destroy();
+				enemy.poolDestroy();
 				this.inactiveIDArr.push(enemy.id);
 			}
 		}
@@ -52,5 +52,11 @@ export class EnemyPool {
 		let id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);
 		return this.enemyDict[id];
+	}
+
+	destroy() {
+		for (const id in this.inactiveIDArr) {
+			this.enemyDict[id].destroy();
+		}
 	}
 }

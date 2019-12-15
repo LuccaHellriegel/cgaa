@@ -36,13 +36,6 @@ export class Circle extends SpriteWithAnimEvents {
 		this.weapon.setRotation(this.rotation);
 	}
 
-	destroy() {
-		this.setPosition(-100, -100);
-		this.weapon.setPosition(-100, -100);
-		this.disableBody(true, true);
-		this.weapon.disableBody(true, true);
-	}
-
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
 		this.rotateWeaponAroundCircle();

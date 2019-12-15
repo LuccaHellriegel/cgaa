@@ -6,7 +6,7 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
 import { addToInteractionElements } from "../../base/events/elements";
-import { addToInactivePool } from "../../base/events/pool";
+import { destroyPoolUnit, disableForPool } from "../../base/pool";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -55,7 +55,7 @@ export class Tower extends Image implements damageable {
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			this.destroy();
+			this.poolDestroy();
 		}
 	}
 
@@ -82,13 +82,11 @@ export class Tower extends Image implements damageable {
 		this.polygon.setPosition(this.x, this.y);
 	}
 
-	destroy() {
-		this.setPosition(-1000, -1000);
-		this.disableBody(true, true);
-		this.healthbar.value = 100;
-		this.healthbar.bar.setActive(false).setVisible(false);
+	poolDestroy() {
 		this.bullets.forEach(bullet => bullet.reset());
-		addToInactivePool(this.scene, this);
+		destroyPoolUnit(this);
+		disableForPool(this.healthbar.bar);
+		this.healthbar.value = 100;
 	}
 
 	activate(x, y) {

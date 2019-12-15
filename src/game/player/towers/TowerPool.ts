@@ -29,7 +29,7 @@ export class TowerPool {
 		}
 
 		params.scene.events.on("sold-tower", tower => {
-			tower.destroy();
+			tower.poolDestroy();
 			gainSouls(params.scene, towerCost);
 		});
 
@@ -39,7 +39,7 @@ export class TowerPool {
 	private initPool(params: TowerPoolParams) {
 		for (let index = 0; index < params.numberOfTowers; index++) {
 			let tower = new Tower(params.scene, -1000, -1000, params.towerGroup, params.bulletGroup);
-			tower.destroy();
+			tower.poolDestroy();
 			this.towerDict[tower.id] = tower;
 			this.inactiveIDArr.push(tower.id);
 		}
