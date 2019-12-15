@@ -1,4 +1,4 @@
-import { executeOverAllCampsAndSizes } from "../game/base/globals/global";
+import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../game/base/globals/global";
 import { circleSizeNames } from "../game/base/globals/globalSizes";
 
 function createNonRepeatingAnim(anims: Phaser.Animations.AnimationManager, key, texture, start, end, frameRate) {
@@ -43,6 +43,12 @@ function createWeaponAnims(anims) {
 function createCircleAnims(anims) {
 	createNonRepeatingAnim(anims, "idle-blueCircle", "blueCircle", 1, 1, 10);
 	createNonRepeatingAnim(anims, "damage-blueCircle", "blueCircle", 1, 2, 10);
+
+	executeOverAllCamps((color, colorIndex) => {
+		let title = color + "InteractionCircle";
+		createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
+		createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
+	});
 
 	executeOverAllCampsAndSizes((color, colorIndex, sizeName, sizeNameIndex) => {
 		let title = color + sizeName + "Circle";

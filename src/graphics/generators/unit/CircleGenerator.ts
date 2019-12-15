@@ -1,5 +1,5 @@
-import { Generator } from "./Generator";
-import { Gameplay } from "../../scenes/Gameplay";
+import { Generator } from "../Generator";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class CircleGenerator extends Generator {
 	title: string;
