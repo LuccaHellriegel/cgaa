@@ -1,19 +1,10 @@
 import EasyStar from "easystarjs";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { ZeroOneMap, RelativePosition } from "../../base/types";
+import { PathCalcConfig } from "./pathBase";
+import { RelativePosition } from "../../base/types";
 import { exitToGlobalRelativePosition } from "../../base/position";
-import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { calculatePathsFromExit } from "./pathToMiddle";
 import { calculateAllBuildingSpecificPaths } from "./pathFromExit";
-
-export interface PathCalcConfig {
-	scene: Gameplay;
-	pathDict: {};
-	unifiedMap: ZeroOneMap;
-	areaConfigs: AreaConfig[];
-	middlePos: RelativePosition;
-	buildingInfos: BuildingInfo[];
-}
+import { calculatePathToOtherExits } from "./pathToOtherExit";
 
 export function calculatePaths(config: PathCalcConfig) {
 	const easyStar = new EasyStar.js();
@@ -23,4 +14,5 @@ export function calculatePaths(config: PathCalcConfig) {
 	}
 	calculatePathsFromExit(config, easyStar);
 	calculateAllBuildingSpecificPaths(config, easyStar, exitPositions);
+	calculatePathToOtherExits(config, exitPositions);
 }

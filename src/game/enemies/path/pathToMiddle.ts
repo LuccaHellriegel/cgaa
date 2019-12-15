@@ -1,8 +1,8 @@
-import { PathCalcConfig } from "./path";
 import { Point } from "../../base/types";
 import { exitToGlobalPoint, realCoordinateToRelative } from "../../base/position";
 import { constructXYID } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
+import { PathCalcConfig } from "./pathBase";
 
 export function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	const emptyPathContainer = { path: [] };

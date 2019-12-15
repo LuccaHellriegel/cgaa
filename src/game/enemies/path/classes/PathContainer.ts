@@ -1,6 +1,7 @@
 import { walkableSymbol, exitSymbol } from "../../../base/globals/globalSymbols";
 import { relativePositionToPoint } from "../../../base/position";
 import { PathMarking } from "./PathMarking";
+import { Point } from "../../../base/types";
 
 export type PathCointainerType = { path };
 
@@ -20,7 +21,7 @@ function calculateRelativeCrossPostioning(x, y, x2, y2) {
 }
 
 export class PathContainer {
-	path;
+	path: Point[];
 	constructor(scene, column, row, goalColumn, goalRow, easyStar, unifiedMap, pathToAdd: PathCointainerType) {
 		easyStar.setGrid(unifiedMap);
 		easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
