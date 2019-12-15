@@ -1,6 +1,5 @@
 import { cloneDeep } from "lodash";
-import { getRelativePosOfElements, realPosToRelativePos } from "../position";
-import { constructColumnRowID } from "../id";
+import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
 import { EnemyCircle } from "../../enemies/camp/unit/EnemyCircle";
 
@@ -15,10 +14,10 @@ export class EnemySpawnObj {
 	}
 
 	private updateRelativeObjWithMovingUnits() {
-		let relativePositions = getRelativePosOfElements(Object.values(this.movingUnitsDict));
+		let circles: EnemyCircle[] = Object.values(this.movingUnitsDict);
 
-		relativePositions.forEach(pos => {
-			let id = constructColumnRowID(pos.column, pos.row);
+		circles.forEach(pos => {
+			let id = pos.x + " " + pos.y;
 			if (this.relativeObj[id] !== undefined) this.relativeObj[id] = enemySmybol;
 		});
 	}
@@ -34,9 +33,7 @@ export class EnemySpawnObj {
 
 	evaluateRealPos(x, y) {
 		this.updateRelativeObj();
-
-		let { row, column } = realPosToRelativePos(x, y);
-		return this.relativeObj[constructColumnRowID(column, row)] === walkableSymbol;
+		return this.relativeObj[constructXYID(x, y)] === walkableSymbol;
 	}
 
 	getRandomSpawnPosition(): number[] | boolean {

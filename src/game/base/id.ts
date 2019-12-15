@@ -1,3 +1,5 @@
+import { relativeCoordinateToReal } from "./position";
+
 export function extendWithNewId(obj) {
 	obj.id =
 		"_" +
@@ -6,11 +8,12 @@ export function extendWithNewId(obj) {
 			.substr(2, 9);
 }
 
-export function constructColumnRowID(column, row) {
-	return column + " " + row;
+export function constructXYIDfromColumnRow(column, row) {
+	let x = relativeCoordinateToReal(column);
+	let y = relativeCoordinateToReal(row);
+	return x + " " + y;
 }
 
-export function columnRowIDToIntArr(id: string): number[] {
-	let arr = id.split(" ");
-	return [parseInt(arr[0]), parseInt(arr[1])];
+export function constructXYID(x, y) {
+	return x + " " + y;
 }

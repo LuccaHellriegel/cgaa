@@ -9,7 +9,7 @@ import { InteractionModus } from "../game/player/input/modi/InteractionModus";
 import { Square } from "../game/player/unit/Square";
 import { GhostTower } from "../game/player/input/modi/GhostTower";
 import { Modi } from "../game/player/input/modi/Modi";
-import { relativePosToRealPos } from "../game/base/position";
+import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
@@ -61,7 +61,7 @@ export class Gameplay extends Phaser.Scene {
 
 		spawnWave(this, 0);
 
-		let pos = relativePosToRealPos(middlePos.column, middlePos.row);
+		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);
 		let modi = new Modi(this, keyObjF, keyObjE, interactionModus, towerManager);
 

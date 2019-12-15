@@ -1,7 +1,6 @@
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { Tower } from "../../player/towers/Tower";
-import { constructColumnRowID } from "../id";
-import { realCoordinateToRelative } from "../position";
+import { constructXYID } from "../id";
 import { walkableSymbol, towerSymbol } from "../globals/globalSymbols";
 
 export class TowerSpawnObj extends EnemySpawnObj {
@@ -10,7 +9,7 @@ export class TowerSpawnObj extends EnemySpawnObj {
 	}
 
 	updateBaseObj(tower: Tower, remove) {
-		let id = constructColumnRowID(realCoordinateToRelative(tower.x), realCoordinateToRelative(tower.y));
+		let id = constructXYID(tower.x, tower.y);
 		let symbol = remove ? walkableSymbol : towerSymbol;
 		this.relativeObj[id] = symbol;
 	}

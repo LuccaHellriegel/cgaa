@@ -1,6 +1,5 @@
 import { StaticConfig, RelativePosition, WallBase } from "../../base/types";
 import { areaSize } from "../../base/globals/globalConfig";
-import { realPosToRelativePos } from "../../base/position";
 import { WallPart } from "./WallPart";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
@@ -46,7 +45,7 @@ function createBorderWall(config): RelativePosition {
 		size.height - 4 * gridPartHalfSize
 	);
 
-	return realPosToRelativePos(size.width / 2, size.height / 2);
+	return { column: config.wallBase.sizeOfXAxis / 2, row: config.wallBase.sizeOfYAxis / 2 };
 }
 
 export function mainBorderwall(staticConfig: StaticConfig): RelativePosition {

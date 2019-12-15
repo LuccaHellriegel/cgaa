@@ -1,14 +1,15 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
-import { createBuildingSpawnObj, createAreaEnemySpawnObj } from "../../base/spawn/spawn";
+import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
 import { addToInteractionElements } from "../../base/events/interaction";
-import { relativePosToRealPos, exitToGlobalPositon } from "../../base/position";
+import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { PhysicGroups } from "../../collision/Collision";
 import { getRandomCampColorOrder } from "../../base/globals/global";
+import { getRandomBuildingSpawnPositions } from "./buildingSpawn";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -50,8 +51,7 @@ function constructCampConfigs(
 }
 
 function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
-	let pos = exitToGlobalPositon(config.areaConfig);
-	let { x, y } = relativePosToRealPos(pos.column, pos.row);
+	let { x, y } = exitToGlobalPoint(config.areaConfig);
 	enemyConfig.size = "Normal";
 	enemyConfig.weaponType = "chain";
 	enemyConfig.x = x;
@@ -63,21 +63,22 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	config.enemyDict[circle.id] = circle;
 }
 
+const numberOfBuildings = 3;
+
 function createCamp(config: CampConfig): number[][] {
-	let buildingSpawnObj = createBuildingSpawnObj(config.map, config.areaConfig);
+	let spawnPositions = getRandomBuildingSpawnPositions(config.map, config.areaConfig, numberOfBuildings);
 	let spawnConfig = {
 		enemyDict: config.enemyDict,
 		pathDict: config.pathDict,
 		enemyPhysicGroup: config.enemyPhysicGroup,
 		weaponPhysicGroup: config.weaponPhysicGroup
 	};
-	let positions = spawnBuildings({
-		buildingSpawnObj,
+	spawnBuildings(spawnPositions, {
 		color: config.color,
 		staticConfig: config.staticConfig,
 		spawnConfig
 	});
-	updateMapWithBuildings(config.map, positions);
+	updateMapWithBuildings(config.map, spawnPositions);
 
 	let enemyConfig: EnemyConfig = {
 		scene: config.staticConfig.scene,
@@ -95,7 +96,7 @@ function createCamp(config: CampConfig): number[][] {
 
 	createInteractionUnit(config, enemyConfig);
 
-	return positions;
+	return spawnPositions;
 }
 
 function createCamps(configs: CampConfig[]): number[][] {

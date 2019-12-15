@@ -1,10 +1,9 @@
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
-import { ZeroOneMap } from "../../base/types";
-import { Point } from "../../base/polygons/Point";
+import { ZeroOneMap, Point } from "../../base/types";
 import { WallSide } from "./WallSide";
 import { AreaConfig } from "../../base/interfaces";
-import { exitToGlobalPositon, relativePosToRealPos } from "../../base/position";
+import { exitToGlobalPoint } from "../../base/position";
 
 function splitupAtExit(exitPosition, positionArr) {
 	let firstPositionArr: Point[] = [];
@@ -17,7 +16,6 @@ function splitupAtExit(exitPosition, positionArr) {
 		} else if (exitPosition.y < position.y && exitWidth === 3) {
 			secondPositionArr.push(position);
 		} else {
-			console.log("here");
 			exitWidth++;
 		}
 	});
@@ -54,8 +52,7 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 		x = config.topLeftX;
 	}
 
-	let globalPos = exitToGlobalPositon(config);
-	let globalExitPosition = relativePosToRealPos(globalPos.column, globalPos.row);
+	let globalExitPosition = exitToGlobalPoint(config);
 
 	let positionArrs = [topPartPositions, bottomPartPositions];
 	let splitupArrs;

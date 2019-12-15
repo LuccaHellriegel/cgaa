@@ -23,7 +23,7 @@ export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 				let topLeftX = relativeCoordinateToReal(startX + layoutColumn * wallBase.sizeOfXAxis);
 				let topLeftY = relativeCoordinateToReal(startY + layoutRow * wallBase.sizeOfYAxis);
 				let wallSide = layoutColumn === 0 ? "right" : "left";
-				let column = wallSide ? wallBase.sizeOfXAxis - 1 : 0;
+				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
 				let row = exitRow;
 				let exit = { exitPosition: { column, row }, exitWidth, wallSide };
 				areaConfigs.push({

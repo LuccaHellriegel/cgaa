@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { updateObj, getAllBuildingRelevantPositions } from "../src/game/spawn/BuildingSpawnObj";
-import { buildingSymbol, walkableSymbol } from "../src/globals/globalSymbols";
+import { updateObj, getAllBuildingRelevantPositions } from "../src/game/enemies/camp/buildingSpawn";
+import { buildingSymbol, walkableSymbol } from "../src/game/base/globals/globalSymbols";
 
 describe("Test BuildinSpawnObj", function() {
 	describe("updateObj", function() {

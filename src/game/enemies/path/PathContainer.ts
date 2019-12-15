@@ -1,8 +1,8 @@
 import { walkableSymbol, exitSymbol } from "../../base/globals/globalSymbols";
-import { relativePosToRealPos } from "../../base/position";
+import { relativePositionToPoint } from "../../base/position";
 import { PathMarking } from "./PathMarking";
 
-export type PathCointainerType = { path; id: string };
+export type PathCointainerType = { path };
 
 function calculateRelativeCrossPostioning(x, y, x2, y2) {
 	let xDirection = x2 < x;
@@ -21,11 +21,7 @@ function calculateRelativeCrossPostioning(x, y, x2, y2) {
 
 export class PathContainer {
 	path;
-	id: string;
 	constructor(scene, column, row, goalColumn, goalRow, easyStar, unifiedMap, pathToAdd: PathCointainerType) {
-		this.id = [column, row].join("");
-
-		//	this.id = [column, row, goalColumn, goalRow].join("");
 		easyStar.setGrid(unifiedMap);
 		easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
 		easyStar.findPath(
@@ -35,7 +31,7 @@ export class PathContainer {
 			goalRow,
 			function(newPath) {
 				if (newPath === null) {
-					console.log("Path was not found.");
+					console.log("Path was not found.", column, row, goalColumn, goalRow);
 				} else {
 					let realPath = this.relativePathToRealPath(newPath);
 					//	this.drawPath(scene, realPath);
@@ -62,7 +58,7 @@ export class PathContainer {
 		let realPath: any[] = [];
 
 		path.forEach(pos => {
-			realPath.push(relativePosToRealPos(pos.x, pos.y));
+			realPath.push(relativePositionToPoint(pos.x, pos.y));
 		});
 		return realPath;
 	}

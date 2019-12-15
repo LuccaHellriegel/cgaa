@@ -14,7 +14,7 @@ export class RandWeapon extends Weapon {
 			new CompositePolygon([[x, y, sizes.width, sizes.height, "rect"]]),
 			new CompositePolygon([
 				[x, y, sizes.width, sizes.height, "rect"],
-				[x, y - sizes.yCorrection, sizes.secondRectWidth, sizes.secondRectHeight, "rect"]
+				[x, y - sizes.height + sizes.yCorrection, sizes.secondRectWidth, sizes.secondRectHeight, "rect"]
 			])
 		];
 

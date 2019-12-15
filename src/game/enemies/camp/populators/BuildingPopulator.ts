@@ -1,8 +1,8 @@
 import { Populator } from "./Populator";
 import { EnemyConfig } from "../unit/EnemyFactory";
-import { relativePosToRealPos } from "../../../base/position";
+import { relativePositionToPoint } from "../../../base/position";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
-import { constructColumnRowID } from "../../../base/id";
+import { constructXYIDfromColumnRow, constructXYID } from "../../../base/id";
 import { EnemyPool } from "./EnemyPool";
 
 export class BuildingPopulator extends Populator {
@@ -28,13 +28,11 @@ export class BuildingPopulator extends Populator {
 	createEnemy() {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
-			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
-
 			let enemy = this.enemyPool.pop();
-			enemy.pathContainer = this.pathDict[constructColumnRowID(spawnPosition[0], spawnPosition[1])];
+			enemy.pathContainer = this.pathDict[constructXYID(spawnPosition[0], spawnPosition[1])];
 			enemy.state = "ambush";
 			enemy.dontAttackList = this.dontAttackList;
-			enemy.activate(x, y);
+			enemy.activate(spawnPosition[0], spawnPosition[1]);
 			return enemy;
 		}
 		return null;

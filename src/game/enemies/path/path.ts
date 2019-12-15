@@ -1,9 +1,9 @@
 import EasyStar from "easystarjs";
 import { PathContainer } from "./PathContainer";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { constructColumnRowID } from "../../base/id";
-import { RelativePosition, ZeroOneMap } from "../../base/types";
-import { exitToGlobalPositon } from "../../base/position";
+import { constructXYIDfromColumnRow, constructXYID } from "../../base/id";
+import { ZeroOneMap, RelativePosition, Point } from "../../base/types";
+import { exitToGlobalPoint, realCoordinateToRelative, exitToGlobalRelativePosition } from "../../base/position";
 import { AreaConfig } from "../../base/interfaces";
 
 export interface PathCalcConfig {
@@ -11,20 +11,20 @@ export interface PathCalcConfig {
 	pathDict: {};
 	unifiedMap: ZeroOneMap;
 	areaConfigs: AreaConfig[];
-	middlePos: { column: number; row: number };
+	middlePos: RelativePosition;
 	buildingPositions: number[][];
 }
 
 function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
-	const emptyPathContainer = { id: "", path: [] };
+	const emptyPathContainer = { path: [] };
 	let middleColumn = config.middlePos.column;
 	let middleRow = config.middlePos.row;
 	config.areaConfigs.forEach(area => {
-		let pos: RelativePosition = exitToGlobalPositon(area);
-		config.pathDict[constructColumnRowID(pos.column, pos.row)] = new PathContainer(
+		let pos: Point = exitToGlobalPoint(area);
+		config.pathDict[constructXYID(pos.x, pos.y)] = new PathContainer(
 			config.scene,
-			pos.column,
-			pos.row,
+			realCoordinateToRelative(pos.x),
+			realCoordinateToRelative(pos.y),
 			middleColumn,
 			middleRow,
 			easyStar,
@@ -34,7 +34,7 @@ function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	});
 }
 
-function findClosestExit(exits, column, row): { column: number; row: number } {
+function findClosestExit(exits: RelativePosition[], column, row): RelativePosition {
 	let exit;
 	let dist = Infinity;
 	for (const curExit in exits) {
@@ -64,14 +64,14 @@ function getAllPositionsAroundBuilding(column, row) {
 	return positions;
 }
 
-function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits) {
+function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits: RelativePosition[]) {
 	for (let index = 0, length = config.buildingPositions.length; index < length; index++) {
 		const buildingPosition = config.buildingPositions[index];
 		const positionsAround = getAllPositionsAroundBuilding(buildingPosition[0], buildingPosition[1]);
 		for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
 			const pos = positionsAround[posIndex];
 			const exit = findClosestExit(exits, pos[0], pos[1]);
-			let mainPath = config.pathDict[constructColumnRowID(exit.column, exit.row)];
+			let mainPath = config.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
 			let saveReference = new PathContainer(
 				config.scene,
 				pos[0],
@@ -82,34 +82,16 @@ function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exi
 				config.unifiedMap,
 				mainPath
 			);
-			config.pathDict[constructColumnRowID(pos[0], pos[1])] = saveReference;
-			// exits.forEach(otherExit => {
-			// 	if (otherExit !== exit) {
-			// 		const timer = setInterval(
-			// 			function() {
-			// 				let otherExitToMainPath = config.pathDict[constructColumnRowID(otherExit.column, otherExit.row)].path;
-			// 				let curPosToMainPath = config.pathDict[constructColumnRowID(pos[0], pos[1])].path;
-			// 				if (otherExitToMainPath && curPosToMainPath) {
-			// 					const id = constructColumnRowID(pos[0], pos[1]);
-			// 					const reversedOtherExitToMainPath = otherExitToMainPath.slice().reverse();
-			// 					const curPosToOtherExitPath = curPosToMainPath.concat(reversedOtherExitToMainPath);
-			// 					config.pathDict[id] = { id, path: curPosToOtherExitPath };
-			// 					clearInterval(timer);
-			// 				}
-			// 			}.bind(this),
-			// 			4000
-			// 		);
-			// 	}
-			// });
+			config.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
 		}
 	}
 }
 
 export function calculatePaths(config: PathCalcConfig) {
 	const easyStar = new EasyStar.js();
-	let exitPositions: { column: number; row: number }[] = [];
+	let exitPositions: RelativePosition[] = [];
 	for (let index = 0, length = config.areaConfigs.length; index < length; index++) {
-		exitPositions.push(exitToGlobalPositon(config.areaConfigs[index]));
+		exitPositions.push(exitToGlobalRelativePosition(config.areaConfigs[index]));
 	}
 	calculatePathsFromExit(config, easyStar);
 	calculateAllBuildingSpecificPaths(config, easyStar, exitPositions);

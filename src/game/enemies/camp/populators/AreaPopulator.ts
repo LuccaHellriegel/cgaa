@@ -1,6 +1,6 @@
 import { Populator } from "./Populator";
 import { EnemyConfig } from "../unit/EnemyFactory";
-import { relativePosToRealPos } from "../../../base/position";
+import { relativePositionToPoint } from "../../../base/position";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 
@@ -30,7 +30,7 @@ export class AreaPopulator extends Populator {
 	createEnemy() {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
-			let { x, y } = relativePosToRealPos(spawnPosition[0], spawnPosition[1]);
+			let { x, y } = relativePositionToPoint(spawnPosition[0], spawnPosition[1]);
 
 			let enemy = this.enemyPool.pop();
 

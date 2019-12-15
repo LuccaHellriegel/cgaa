@@ -1,6 +1,5 @@
 import { gridPartHalfSize } from "./globals/globalSizes";
-import { RelativePosition } from "./types";
-import { AreaConfig } from "./interfaces";
+import { Point, RelativePosition } from "./types";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / gridPartHalfSize) * gridPartHalfSize;
@@ -48,45 +47,23 @@ export function relativeCoordinateToReal(coordinate) {
 	return 0 + gridPartHalfSize + coordinate * 2 * gridPartHalfSize;
 }
 
-export function relativePosToRealPos(column, row) {
+export function relativePositionToPoint(column, row): Point {
 	let x = relativeCoordinateToReal(column);
 	let y = relativeCoordinateToReal(row);
 	return { x, y };
 }
 
 export function realCoordinateToRelative(coordinate) {
-	coordinate = snapCoordinateToGrid(coordinate);
-	return (coordinate - gridPartHalfSize) / (2 * gridPartHalfSize);
+	return (snapCoordinateToGrid(coordinate) - gridPartHalfSize) / (2 * gridPartHalfSize);
 }
 
-export function realPosToRelativePos(x, y) {
-	let { newX, newY } = snapXYToGrid(x, y);
-	let row = (newY - gridPartHalfSize) / (2 * gridPartHalfSize);
-	let column = (newX - gridPartHalfSize) / (2 * gridPartHalfSize);
-	return { row: row, column: column };
+export function exitToGlobalPoint(areaConfig): Point {
+	let x = relativeCoordinateToReal(areaConfig.exit.exitPosition.column) + areaConfig.topLeftX - gridPartHalfSize;
+	let y = relativeCoordinateToReal(areaConfig.exit.exitPosition.row) + areaConfig.topLeftY - gridPartHalfSize;
+	return { x, y };
 }
 
-export function realPosToRelativePosInArea(x, y, area) {
-	let { row, column } = realPosToRelativePos(x, y);
-
-	let rowRelativeToArea = row - area.relativeTopLeftY;
-	let columnRelativeToArea = column - area.relativeTopLeftX;
-	return { row: rowRelativeToArea, column: columnRelativeToArea };
-}
-
-export function getRelativePosOfElements(elements) {
-	let relativePositions: any[] = [];
-	elements.forEach(ele => {
-		let eleNotDestroyed = ele.scene;
-		if (eleNotDestroyed) {
-			let pos = realPosToRelativePos(ele.x, ele.y);
-			relativePositions.push(pos);
-		}
-	});
-	return relativePositions;
-}
-
-export function exitToGlobalPositon(areaConfig: AreaConfig): RelativePosition {
+export function exitToGlobalRelativePosition(areaConfig): RelativePosition {
 	let column = areaConfig.exit.exitPosition.column + realCoordinateToRelative(areaConfig.topLeftX);
 	let row = areaConfig.exit.exitPosition.row + realCoordinateToRelative(areaConfig.topLeftY);
 	return { column, row };

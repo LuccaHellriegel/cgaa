@@ -3,22 +3,17 @@ import { relativeCoordinateToReal } from "../../base/position";
 import { circleSizeNames, rectBuildinghalfHeight } from "../../base/globals/globalSizes";
 import { Building, BuildingSpawnConfig } from "./unit/Building";
 import { buildingSymbol } from "../../base/globals/globalSymbols";
-import { BuildingSpawnObj } from "../../base/spawn/BuildingSpawnObj";
 import { HealthBar } from "../../base/classes/HealthBar";
 
 interface BuildingsConfig {
 	staticConfig: StaticConfig;
-	buildingSpawnObj: BuildingSpawnObj;
 	color: string;
 	spawnConfig: BuildingSpawnConfig;
 }
 
-const numberOfBuildings = 3;
-
-export function spawnBuildings(config: BuildingsConfig) {
-	let positions = config.buildingSpawnObj.getRandomSpawnPositions(numberOfBuildings);
-	for (let index = 0, length = positions.length; index < length; index++) {
-		let pos = positions[index];
+export function spawnBuildings(spawnPositions, config: BuildingsConfig) {
+	for (let index = 0, length = spawnPositions.length; index < length; index++) {
+		let pos = spawnPositions[index];
 
 		let x = relativeCoordinateToReal(pos[0]);
 		let y = relativeCoordinateToReal(pos[1]);
@@ -43,7 +38,6 @@ export function spawnBuildings(config: BuildingsConfig) {
 			config.spawnConfig
 		);
 	}
-	return positions;
 }
 
 export function updateMapWithBuildings(map: ZeroOneMap, positions) {
