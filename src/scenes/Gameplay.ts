@@ -39,11 +39,10 @@ export class Gameplay extends Phaser.Scene {
 		let enemyDict = {};
 
 		let keyObjF = this.input.keyboard.addKey("F");
-		let keyObjE = this.input.keyboard.addKey("E");
-
 		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
 
-		let interactionModus = new InteractionModus(this, ghostTower);
+		let keyObjE = this.input.keyboard.addKey("E");
+		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
 
 		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyDict);
 		let towerManager = new TowerManager(
@@ -63,7 +62,7 @@ export class Gameplay extends Phaser.Scene {
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);
-		let modi = new Modi(this, keyObjF, keyObjE, interactionModus, towerManager);
+		let modi = new Modi(this, keyObjF, interactionModus, towerManager);
 
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);

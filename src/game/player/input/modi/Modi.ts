@@ -8,17 +8,12 @@ export class Modi {
 	scene: Gameplay;
 	towerManager: TowerManager;
 
-	constructor(scene, keyObjF, keyObjE, interactionModus: InteractionModus, towerManager: TowerManager) {
+	constructor(scene, keyObjF, interactionModus: InteractionModus, towerManager: TowerManager) {
 		this.interactionModus = interactionModus;
 
 		keyObjF.on("down", () => {
 			this.towerModus = !this.towerModus;
 			this.interactionModus.isOn = false;
-		});
-
-		keyObjE.on("down", () => {
-			this.interactionModus.toggle();
-			this.interactionModus.lockGhostTower();
 		});
 
 		this.scene = scene;

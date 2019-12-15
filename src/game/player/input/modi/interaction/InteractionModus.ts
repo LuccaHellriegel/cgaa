@@ -14,12 +14,17 @@ export class InteractionModus {
 	scene: Gameplay;
 	cooperation: Cooperation;
 
-	constructor(scene: Gameplay, ghostTower: GhostTower) {
+	constructor(scene: Gameplay, ghostTower: GhostTower, keyObjE) {
 		this.ghostTower = ghostTower;
 
 		this.scene = scene;
 
 		this.cooperation = new Cooperation();
+
+		keyObjE.on("down", () => {
+			this.toggle();
+			this.lockGhostTower();
+		});
 
 		scene.events.on("interaction-ele-added", ele => {
 			this.interactionElements.push(ele);
@@ -31,7 +36,7 @@ export class InteractionModus {
 		});
 	}
 
-	lockGhostTower() {
+	private lockGhostTower() {
 		let ele = findClosestPoint(this.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			this.ghostTower.setPosition(ele.x, ele.y);
@@ -39,7 +44,7 @@ export class InteractionModus {
 		}
 	}
 
-	toggle() {
+	private toggle() {
 		this.isOn = !this.isOn;
 	}
 
