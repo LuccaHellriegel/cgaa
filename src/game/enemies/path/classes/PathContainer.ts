@@ -1,5 +1,5 @@
-import { walkableSymbol, exitSymbol } from "../../base/globals/globalSymbols";
-import { relativePositionToPoint } from "../../base/position";
+import { walkableSymbol, exitSymbol } from "../../../base/globals/globalSymbols";
+import { relativePositionToPoint } from "../../../base/position";
 import { PathMarking } from "./PathMarking";
 
 export type PathCointainerType = { path };

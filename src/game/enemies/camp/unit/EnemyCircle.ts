@@ -1,6 +1,6 @@
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { Circle } from "../../../base/classes/Circle";
-import { PathContainer } from "../../path/PathContainer";
+import { PathContainer } from "../../path/classes/PathContainer";
 import { damageable } from "../../../base/interfaces";
 import { WallPart } from "../../../area/wall/WallPart";
 import { Building } from "./Building";
