@@ -1,5 +1,4 @@
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
-import { establishCooperation } from "../../../../base/events/player";
 import { campColors } from "../../../../base/globals/globalColors";
 
 export class Cooperation {
@@ -27,7 +26,7 @@ export class Cooperation {
 
 	private addToKilllist(targetColor, scene, interactionElements) {
 		this.colorKilllist.push(targetColor);
-		scene.events.emit("added-to-killlist", targetColor);
+		scene.events.emit("added-to-killlist-" + targetColor);
 
 		for (const key in interactionElements) {
 			const element = interactionElements[key];
@@ -78,7 +77,7 @@ export class Cooperation {
 			let destroyed = this.checkIfCampDestroy(ele.color);
 			if (destroyed) {
 				//TODO: multiple camp cooperation
-				establishCooperation(scene, this.rivalries[ele.color], "blue");
+				scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
 			}
 		}
 	}

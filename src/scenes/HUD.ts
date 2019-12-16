@@ -1,6 +1,10 @@
 import { PlayerHealthBar } from "../game/player/ui/PlayerHealthBar";
 import { PlayerSoulCounter } from "../game/player/ui/counters/PlayerSoulCounter";
 import { PlayerKilllist } from "../game/player/ui/PlayerKilllist";
+import { CampStates } from "../game/player/ui/CampStates";
+import { executeOverAllCamps } from "../game/base/globals/global";
+import { CampState } from "../game/player/ui/CampState";
+import { campHexColors } from "../game/base/globals/globalColors";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -42,8 +46,14 @@ export class HUD extends Phaser.Scene {
 			this.playerHealthBar.y - 20
 		);
 
-		this.playerKilllist = new PlayerKilllist(10 + 30, 10 + 60, this, this.ourGame);
-
 		this.setupEventListeners();
+
+		let halfSize = 30;
+
+		executeOverAllCamps((color, index) => {
+			let x = 0 + halfSize + 5;
+			let y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
+			new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, campHexColors[index]);
+		});
 	}
 }

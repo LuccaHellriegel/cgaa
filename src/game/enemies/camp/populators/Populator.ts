@@ -27,6 +27,8 @@ export abstract class Populator {
 			this.enemyCount = 0;
 			this.startPopulating();
 			this.scene.events.once("start-wave-" + this.color, this.startWave.bind(this));
+		} else {
+			this.enemyPool.destroy();
 		}
 	}
 
@@ -52,6 +54,5 @@ export abstract class Populator {
 
 	destroy() {
 		this.shouldPopulate = false;
-		this.enemyPool.destroy();
 	}
 }

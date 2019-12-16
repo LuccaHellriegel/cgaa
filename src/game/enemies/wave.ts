@@ -2,6 +2,10 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { campColors } from "../base/globals/globalColors";
 
 export function spawnWave(scene: Gameplay, index) {
+	let prevIndex = index - 1;
+	if (index === 0) prevIndex = campColors.length;
+	scene.events.emit("end-wave-" + campColors[prevIndex]);
+
 	scene.events.emit("start-wave-" + campColors[index]);
 	index++;
 	if (index === campColors.length) index = 0;
