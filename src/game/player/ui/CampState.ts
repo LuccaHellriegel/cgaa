@@ -62,6 +62,7 @@ export class CampState {
 		sceneToListen.events.on("destroyed-" + color, () => {
 			this.state.destroyed = true;
 			this.state.onKilllist = false;
+			this.state.onAmbush = false;
 			this.redraw();
 		});
 

@@ -3,9 +3,12 @@ import { EnemyConfig } from "../unit/EnemyFactory";
 import { relativePositionToPoint } from "../../../base/position";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
+import { numberOfBuildings } from "../camp";
 
 export class AreaPopulator extends Populator {
 	enemyPool: EnemyPool;
+	destroyedBuildingCounter = 0;
+
 	constructor(enemyConfig: EnemyConfig, enemySpawnObj: EnemySpawnObj) {
 		super(enemyConfig.scene, enemySpawnObj, enemyConfig.color);
 
@@ -24,6 +27,14 @@ export class AreaPopulator extends Populator {
 				normalCircleWithRand,
 				normalCircleWithChain
 			]
+		});
+
+		enemyConfig.scene.events.on("building-destroyed-" + enemyConfig.color, () => {
+			this.destroyedBuildingCounter++;
+			if (this.destroyedBuildingCounter == numberOfBuildings) {
+				enemyConfig.scene.events.emit("destroyed-" + enemyConfig.color);
+				this.destroy();
+			}
 		});
 	}
 

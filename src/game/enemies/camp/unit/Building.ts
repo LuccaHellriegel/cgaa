@@ -70,6 +70,7 @@ export class Building extends Image implements damageable {
 	}
 
 	destroy() {
+		this.scene.events.emit("building-destroyed-" + this.color);
 		super.destroy();
 		this.healthbar.destroy();
 		this.populator.destroy();

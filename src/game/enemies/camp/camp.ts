@@ -58,7 +58,7 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	addToInteractionElements(config.staticConfig.scene, circle);
 }
 
-const numberOfBuildings = 3;
+export const numberOfBuildings = 3;
 
 function createCamp(config: CampConfig): BuildingInfo {
 	let spawnPositions = getRandomBuildingSpawnPositions(config.map, config.areaConfig, numberOfBuildings);
