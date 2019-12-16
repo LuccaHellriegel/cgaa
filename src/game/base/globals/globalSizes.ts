@@ -6,7 +6,7 @@ export const rectBuildinghalfHeight = (2 * gridPartHalfSize) / 2;
 
 export const normalCircleRadius = gridPartHalfSize - 10;
 export const smallCircleRadius = normalCircleRadius / 2;
-export const bigCircleRadius = gridPartHalfSize - 2;
+export const bigCircleRadius = gridPartHalfSize - 4;
 
 export const circleSizeNames = ["Normal", "Small", "Big"];
 export const circleSizes = [normalCircleRadius, smallCircleRadius, bigCircleRadius];

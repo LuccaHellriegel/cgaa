@@ -3,6 +3,7 @@ import { campColors } from "../base/globals/globalColors";
 import { executeOverAllCamps } from "../base/globals/global";
 
 export function spawnWave(scene: Gameplay, index) {
+	//TODO
 	let destroyedCamps = [];
 	executeOverAllCamps(color => {
 		scene.events.on("destroyed-" + color, () => {
