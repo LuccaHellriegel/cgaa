@@ -6,19 +6,17 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
 import { addToInteractionElements } from "../../base/events/interaction";
-import { disableForPool, activateForPool, addToInactivePool } from "../../base/pool";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
-	bulletGroup: any;
 	bullets: Bullet[] = [];
 	bulletPool: Bullet[] = [];
 	canFire = true;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup, bulletGroup) {
+	constructor(scene, x, y, physicsGroup, private bulletGroup: Phaser.Physics.Arcade.Group) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
 		this.setImmovable(true);
 
@@ -41,8 +39,6 @@ export class Tower extends Image implements damageable {
 			value: 100
 		});
 		this.healthbar.move(x, y);
-
-		this.bulletGroup = bulletGroup;
 
 		for (let index = 0; index < 10; index++) {
 			let bullet = new Bullet(scene, bulletGroup, this);
@@ -84,13 +80,17 @@ export class Tower extends Image implements damageable {
 
 	poolDestroy() {
 		this.bullets.forEach(bullet => bullet.reset());
-		addToInactivePool(this);
-		disableForPool(this, this.healthbar.bar);
+		this.scene.events.emit("inactive-" + this.id, this.id);
+		this.disableBody(true, true);
+		this.healthbar.bar.setActive(false).setVisible(false);
+		//TODO: needs to be default value
+
 		this.healthbar.value = 100;
 	}
 
 	activate(x, y) {
-		activateForPool(x, y, this, this.healthbar.bar);
+		this.enableBody(true, x, y, true, true);
+		this.healthbar.bar.setActive(true).setVisible(true);
 		this.healthbar.move(x, y);
 		this.bullets.forEach(bullet => bullet.reset());
 	}

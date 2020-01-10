@@ -7,7 +7,7 @@ import { addToInteractionElements } from "../../base/events/interaction";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { PhysicGroups } from "../../collision/collision";
+import { PhysicGroups } from "../../collision/collisionBase";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { getRandomBuildingSpawnPositions } from "./buildingSpawn";
 
@@ -79,8 +79,8 @@ function createCamp(config: CampConfig): BuildingInfo {
 		scene: config.staticConfig.scene,
 		color: config.color,
 		size: "Big",
-		x: 0,
-		y: 0,
+		x: 100,
+		y: 100,
 		weaponType: "rand",
 		physicsGroup: config.enemyPhysicGroup,
 		weaponGroup: config.weaponPhysicGroup
