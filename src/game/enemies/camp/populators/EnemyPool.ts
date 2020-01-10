@@ -13,18 +13,15 @@ export class EnemyPool {
 	enemyDict = {};
 	activeIDArr: string[] = [];
 	inactiveIDArr: string[] = [];
-	params: PoolParams;
 	isNeeded = true;
 
-	constructor(params: PoolParams) {
+	constructor(private params: PoolParams) {
 		this.initPool(params);
 
 		let keys = Object.keys(this.enemyDict);
 		for (const key in keys) {
 			params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
 		}
-
-		this.params = params;
 	}
 
 	private makeInactive(key) {

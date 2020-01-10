@@ -47,7 +47,7 @@ export class AreaPopulator extends Populator {
 
 			enemy.state = "guard";
 			enemy.dontAttackList = this.dontAttackList;
-			enemy.activate(x, y);
+			enemy.poolActivate(x, y);
 			return enemy;
 		}
 		return null;

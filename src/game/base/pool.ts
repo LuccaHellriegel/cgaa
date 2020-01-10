@@ -3,7 +3,7 @@ export function addToInactivePool(unit) {
 }
 
 export function disableForPool(...objs) {
-	objs.forEach(obj => {
+	objs.forEach((obj: Phaser.Physics.Arcade.Sprite) => {
 		if (obj.disableBody) {
 			obj.disableBody(true, true);
 			obj.setPosition(-1000, -1000);

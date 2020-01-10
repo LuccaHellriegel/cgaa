@@ -39,7 +39,7 @@ export class BuildingPopulator extends Populator {
 			enemy.pathContainer = this.pathDict[id];
 			enemy.state = "ambush";
 			enemy.dontAttackList = this.dontAttackList;
-			enemy.activate(spawnPosition[0], spawnPosition[1]);
+			enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
 			return enemy;
 		}
 		return null;

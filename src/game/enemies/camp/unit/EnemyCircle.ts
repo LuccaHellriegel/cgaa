@@ -14,14 +14,12 @@ export class EnemyCircle extends Circle implements damageable {
 	spotted: any;
 	pursuing: any;
 	barrier: any;
-	velo: any;
 	dontAttackList: any[] = [];
 
-	constructor(config, velo) {
+	constructor(config, private velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
 		this.color = config.color;
-		this.velo = velo;
 	}
 
 	damage(amount) {
@@ -40,11 +38,12 @@ export class EnemyCircle extends Circle implements damageable {
 
 	poolDestroy() {
 		addToInactivePool(this);
+
 		disableForPool(this, this.weapon, this.healthbar.bar);
 		this.healthbar.value = 100;
 	}
 
-	activate(x, y) {
+	poolActivate(x, y) {
 		activateForPool(x, y, this, this.weapon, this.healthbar.bar);
 	}
 
