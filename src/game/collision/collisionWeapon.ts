@@ -2,11 +2,16 @@ import { addOverlap, PhysicGroups, isInSight } from "./collisionBase";
 import { executeOverAllCamps } from "../base/globals/global";
 import { gainSouls } from "../base/events/player";
 
-function addWeaponOverlap(weapon, unit) {
-	addOverlap(weapon, unit, doDamage, isInSight);
+function addWeaponOverlap(weapon: Phaser.Physics.Arcade.Group, unit) {
+	//otherwise scene might be already deleted if enemy died
+	let withAddedScene = (weapon, unit) => {
+		doDamage(weapon.scene, weapon, unit);
+	};
+
+	addOverlap(weapon, unit, withAddedScene, isInSight);
 }
 
-function doDamage(weapon, enemy) {
+function doDamage(scene: Phaser.Scene, weapon, enemy) {
 	weapon.alreadyAttacked.push(enemy.id);
 
 	let damage;
@@ -18,7 +23,7 @@ function doDamage(weapon, enemy) {
 
 	enemy.scene.events.emit("damage-" + enemy.unitType, damage);
 	if (weapon.owner.unitType === "player") {
-		gainSouls(enemy.scene, damage);
+		gainSouls(scene, damage);
 	}
 
 	enemy.damage(weapon.amount);
