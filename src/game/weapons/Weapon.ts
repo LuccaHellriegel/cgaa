@@ -5,15 +5,11 @@ import { Gameplay } from "../../scenes/Gameplay";
 
 export abstract class Weapon extends SpriteWithAnimEvents {
 	polygon: CompositePolygon;
-	polygonArr: CompositePolygon[];
 	alreadyAttacked: string[];
 	attacking: boolean;
 	unitOffSetX: number;
 	unitOffSetY: number;
-	offSetArr: number[][];
 	amount: number;
-	owner: Circle;
-	ownerSize: number;
 
 	constructor(
 		scene: Gameplay,
@@ -21,10 +17,10 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		y: number,
 		texture: string,
 		weaponGroup: Phaser.Physics.Arcade.Group,
-		polygonArr: any[],
-		offSetArr: any[],
-		owner: Circle,
-		ownerSize: number
+		public polygonArr: CompositePolygon[],
+		private offSetArr: number[][],
+		public owner: Circle,
+		public ownerSize: number
 	) {
 		super({ scene, x, y, texture, physicsGroup: weaponGroup });
 		this.setCollideWorldBounds(false);
@@ -33,11 +29,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		this.setupAnimEvents();
 		this.unitOffSetX = offSetArr[0][0];
 		this.unitOffSetY = offSetArr[0][1];
-		this.offSetArr = offSetArr;
 		this.polygon = polygonArr[0];
-		this.polygonArr = polygonArr;
-		this.owner = owner;
-		this.ownerSize = ownerSize;
 		this.setSize(444, 444);
 	}
 

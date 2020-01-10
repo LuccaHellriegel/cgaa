@@ -41,13 +41,11 @@ export class AreaPopulator extends Populator {
 	createEnemy() {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
-			let { x, y } = relativePositionToPoint(spawnPosition[0], spawnPosition[1]);
-
 			let enemy = this.enemyPool.pop();
 
 			enemy.state = "guard";
 			enemy.dontAttackList = this.dontAttackList;
-			enemy.poolActivate(x, y);
+			enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
 			return enemy;
 		}
 		return null;

@@ -51,8 +51,8 @@ export class Building extends Image implements damageable {
 			scene,
 			color,
 			size: "Big",
-			x: -100,
-			y: -100,
+			x: 100,
+			y: 100,
 			weaponType: "rand",
 			physicsGroup: config.enemyPhysicGroup,
 			weaponGroup: config.weaponPhysicGroup

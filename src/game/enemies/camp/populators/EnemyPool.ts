@@ -42,6 +42,7 @@ export class EnemyPool {
 				let enemy: EnemyCircle = EnemyFactory.createEnemy(params.enemyConfig);
 				this.enemyDict[enemy.id] = enemy;
 				enemy.poolDestroy();
+				//listening for inactive-event is initialized after this function
 				this.inactiveIDArr.push(enemy.id);
 			}
 		}
