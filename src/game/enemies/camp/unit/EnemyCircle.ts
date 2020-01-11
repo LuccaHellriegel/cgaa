@@ -42,8 +42,7 @@ export class EnemyCircle extends Circle implements damageable {
 		this.setPosition(-1000, -1000);
 		this.weapon.disableBody(true, true);
 		this.healthbar.bar.setActive(false).setVisible(false);
-		//TODO: needs to be default value
-		this.healthbar.value = 100;
+		this.healthbar.value = this.healthbar.defaultValue;
 	}
 
 	poolActivate(x, y) {

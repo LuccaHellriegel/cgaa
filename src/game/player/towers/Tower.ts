@@ -83,9 +83,7 @@ export class Tower extends Image implements damageable {
 		this.scene.events.emit("inactive-" + this.id, this.id);
 		this.disableBody(true, true);
 		this.healthbar.bar.setActive(false).setVisible(false);
-		//TODO: needs to be default value
-
-		this.healthbar.value = 100;
+		this.healthbar.value = this.healthbar.defaultValue;
 	}
 
 	activate(x, y) {
