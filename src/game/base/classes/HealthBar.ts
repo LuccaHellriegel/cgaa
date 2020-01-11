@@ -16,7 +16,7 @@ export class HealthBar {
 	posCorrectionX: number;
 	posCorrectionY: number;
 
-	constructor(private x: number, private y: number, config: HealthBarConfig) {
+	constructor(public x: number, public y: number, config: HealthBarConfig) {
 		this.bar = new Phaser.GameObjects.Graphics(config.scene);
 
 		let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } = config;

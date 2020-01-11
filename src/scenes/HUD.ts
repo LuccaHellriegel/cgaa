@@ -1,16 +1,13 @@
 import { PlayerHealthBar } from "../game/player/ui/PlayerHealthBar";
 import { PlayerSoulCounter } from "../game/player/ui/counters/PlayerSoulCounter";
-import { PlayerKilllist } from "../game/player/ui/PlayerKilllist";
-import { CampStates } from "../game/player/ui/CampStates";
 import { executeOverAllCamps } from "../game/base/globals/global";
-import { CampState } from "../game/player/ui/CampState";
+import { CampState } from "../game/player/ui/state/CampState";
 import { campHexColors } from "../game/base/globals/globalColors";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
 	ourGame: any;
 	playerSoulCounter: PlayerSoulCounter;
-	playerKilllist: PlayerKilllist;
 
 	constructor() {
 		super({ key: "HUD", active: true });
