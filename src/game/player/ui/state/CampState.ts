@@ -103,7 +103,7 @@ export class CampState {
 		this.redraw();
 	}
 
-	private listen(scene, args) {
+	private listen(scene: Phaser.Scene, args) {
 		let [event, callback] = args;
 		scene.events.on(event as string, callback as Function);
 	}

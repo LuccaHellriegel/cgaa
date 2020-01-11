@@ -16,9 +16,11 @@ import { calculatePaths } from "../game/enemies/path/path";
 import { spawnWave } from "../game/enemies/wave";
 import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
+import { campColors } from "../game/base/globals/globalColors";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
+	activeCamps = [...campColors].reverse();
 
 	constructor() {
 		super("Gameplay");
@@ -58,7 +60,7 @@ export class Gameplay extends Phaser.Scene {
 
 		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
-		spawnWave(this, 0);
+		spawnWave(this);
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);

@@ -33,6 +33,10 @@ export class AreaPopulator extends Populator {
 			this.destroyedBuildingCounter++;
 			if (this.destroyedBuildingCounter == numberOfBuildings) {
 				enemyConfig.scene.events.emit("destroyed-" + enemyConfig.color);
+				const index = enemyConfig.scene.activeCamps.indexOf(enemyConfig.color);
+				if (index > -1) {
+					enemyConfig.scene.activeCamps.splice(index, 1);
+				}
 				this.destroy();
 			}
 		});

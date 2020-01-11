@@ -1,31 +1,22 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { campColors } from "../base/globals/globalColors";
-import { executeOverAllCamps } from "../base/globals/global";
 
-export function spawnWave(scene: Gameplay, index) {
-	//TODO
-	let destroyedCamps = [];
-	executeOverAllCamps(color => {
-		scene.events.on("destroyed-" + color, () => {
-			destroyedCamps.push(color);
+export function spawnWave(scene: Gameplay) {
+	let allCampsDestroyed = scene.activeCamps.length === 0;
+
+	let prevColor = scene.activeCamps.pop();
+	scene.activeCamps.unshift(prevColor);
+	scene.events.emit("end-wave-" + prevColor);
+
+	if (!allCampsDestroyed) {
+		let curColor = scene.activeCamps[scene.activeCamps.length - 1];
+		scene.events.emit("start-wave-" + curColor);
+
+		scene.time.addEvent({
+			delay: 15000,
+			callback: () => {
+				spawnWave(scene);
+			},
+			repeat: 0
 		});
-	});
-
-	let prevIndex = index - 1;
-	if (index === 0) prevIndex = campColors.length;
-	scene.events.emit("end-wave-" + campColors[prevIndex]);
-
-	let curColor = campColors[index];
-	if (!destroyedCamps.includes(curColor)) scene.events.emit("start-wave-" + curColor);
-
-	index++;
-	if (index === campColors.length) index = 0;
-	scene.time.addEvent({
-		delay: 15000,
-		callback: () => {
-			spawnWave(scene, index);
-		},
-		callbackScope: this,
-		repeat: 0
-	});
+	}
 }
