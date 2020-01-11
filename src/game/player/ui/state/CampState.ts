@@ -52,30 +52,60 @@ export class CampState {
 		this.targetBackground = new RectPolygon(x + 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
 		this.targetForeground = new CirclePolygon(x + 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 
-		sceneToListen.events.on("added-to-killlist-" + color, () => {
-			this.redrawWithKilllistMarking();
-		});
+		let killlistArgs = [
+			"added-to-killlist-" + color,
+			() => {
+				this.redrawWithKilllistMarking();
+			}
+		];
+		this.listen(sceneToListen, killlistArgs);
 
-		sceneToListen.events.on("destroyed-" + color, () => {
-			this.redraw();
-			this.drawDestroyed();
-		});
+		let startWaveArgs = [
+			"start-wave-" + color,
+			() => {
+				this.redraw();
+				this.drawAmbush();
+			}
+		];
+		this.listen(sceneToListen, startWaveArgs);
 
-		sceneToListen.events.on("start-wave-" + color, () => {
-			this.redraw();
-			this.drawAmbush();
-		});
+		let endWaveArgs = [
+			"end-wave-" + color,
+			() => {
+				this.redraw();
+			}
+		];
+		this.listen(sceneToListen, endWaveArgs);
 
-		sceneToListen.events.on("end-wave-" + color, () => {
-			this.redraw();
-		});
+		let rerouteArgs = [
+			"reroute-" + color,
+			targetColor => {
+				this.redraw();
+				this.drawAmbushTarget(colorDict[targetColor]);
+			}
+		];
+		this.listen(sceneToListen, rerouteArgs);
 
-		sceneToListen.events.on("reroute-" + color, targetColor => {
-			this.redraw();
-			this.drawAmbushTarget(colorDict[targetColor]);
-		});
+		let destroyedArgs = [
+			"destroyed-" + color,
+			() => {
+				this.redraw();
+				this.drawDestroyed();
+				let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];
+				args.forEach(arg => {
+					let [event, callback] = arg;
+					sceneToListen.events.removeListener(event as string, callback as Function);
+				});
+			}
+		];
+		this.listen(sceneToListen, destroyedArgs);
 
 		this.redraw();
+	}
+
+	private listen(scene, args) {
+		let [event, callback] = args;
+		scene.events.on(event as string, callback as Function);
 	}
 
 	private redrawWithKilllistMarking() {
