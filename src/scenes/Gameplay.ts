@@ -20,7 +20,7 @@ import { campColors } from "../game/base/globals/globalColors";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
-	activeCamps = [...campColors].reverse();
+	cgaa = { activeCamps: [...campColors].reverse() };
 
 	constructor() {
 		super("Gameplay");
