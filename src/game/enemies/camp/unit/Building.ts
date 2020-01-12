@@ -60,14 +60,13 @@ export class Building extends Image implements damageable {
 		this.populator = new BuildingPopulator(enemyConfig, enemySpawnObj, config.pathDict);
 
 		scene.cgaa.interactionElements.push(this);
-		console.log(scene.cgaa.interactionElements);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
 			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
-			this.scene.events.emit("building-destroyed-" + this.color);
+			removeEle(this, (this.scene as Gameplay).cgaa.camps[this.color].buildings);
 			this.destroy();
 		}
 	}

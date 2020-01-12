@@ -12,6 +12,8 @@ interface BuildingsConfig {
 }
 
 export function spawnBuildings(spawnPositions, config: BuildingsConfig) {
+	let buildings: Building[] = [];
+
 	for (let index = 0, length = spawnPositions.length; index < length; index++) {
 		let pos = spawnPositions[index];
 
@@ -27,17 +29,20 @@ export function spawnBuildings(spawnPositions, config: BuildingsConfig) {
 			scene: config.staticConfig.scene
 		});
 
-		new Building(
-			config.staticConfig.scene,
-			x,
-			y,
-			config.staticConfig.physicsGroup,
-			circleSizeNames[index],
-			config.color,
-			healthbar,
-			config.spawnConfig
+		buildings.push(
+			new Building(
+				config.staticConfig.scene,
+				x,
+				y,
+				config.staticConfig.physicsGroup,
+				circleSizeNames[index],
+				config.color,
+				healthbar,
+				config.spawnConfig
+			)
 		);
 	}
+	return buildings;
 }
 
 export function updateMapWithBuildings(map: ZeroOneMap, positions) {

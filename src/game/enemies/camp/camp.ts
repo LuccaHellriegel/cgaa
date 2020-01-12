@@ -67,7 +67,7 @@ function createCamp(config: CampConfig): BuildingInfo {
 		enemyPhysicGroup: config.enemyPhysicGroup,
 		weaponPhysicGroup: config.weaponPhysicGroup
 	};
-	spawnBuildings(spawnPositions, {
+	let buildings = spawnBuildings(spawnPositions, {
 		color: config.color,
 		staticConfig: config.staticConfig,
 		spawnConfig
@@ -90,7 +90,7 @@ function createCamp(config: CampConfig): BuildingInfo {
 
 	createInteractionUnit(config, enemyConfig);
 
-	return { spawnPositions, color: config.color };
+	return { spawnPositions, color: config.color, buildings };
 }
 
 function createCamps(configs: CampConfig[]): BuildingInfo[] {

@@ -32,7 +32,7 @@ export class PathContainer {
 			goalRow,
 			function(newPath) {
 				if (newPath === null) {
-					console.log("Path was not found.", column, row, goalColumn, goalRow);
+					throw "Path was not found. " + column + " " + row + " " + goalColumn + " " + goalRow;
 				} else {
 					let realPath = this.relativePathToRealPath(newPath);
 					//	this.drawPath(scene, realPath);

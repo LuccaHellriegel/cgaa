@@ -8,11 +8,6 @@ import { colorDict } from "../../../base/globals/globalColors";
 
 const circleCorrection = -5;
 
-interface State {
-	onKilllist: boolean;
-	ambushTargetHex: number;
-}
-
 export class CampState {
 	graphics: Phaser.GameObjects.Graphics;
 	background: RectPolygon;
@@ -20,7 +15,6 @@ export class CampState {
 	redCircle: CirclePolygon;
 	sideArrow: ArrowHeadPolygon;
 	sideCross: SymmetricCrossPolygon;
-	state: State;
 	targetBackground: RectPolygon;
 	targetForeground: CirclePolygon;
 
@@ -56,6 +50,7 @@ export class CampState {
 		let killlistArgs = [
 			"added-to-killlist-" + this.color,
 			() => {
+				//TODO: killlist marking needs to be preserved if other redraw happens
 				this.redrawWithKilllistMarking();
 			}
 		];
