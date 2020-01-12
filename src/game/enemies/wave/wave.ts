@@ -1,4 +1,4 @@
-import { Gameplay } from "../../scenes/Gameplay";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export function spawnWave(scene: Gameplay) {
 	let allCampsDestroyed = scene.cgaa.activeCamps.length === 0;

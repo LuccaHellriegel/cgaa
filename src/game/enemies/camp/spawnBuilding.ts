@@ -1,7 +1,10 @@
-import { ZeroOneMap } from "../../base/types";
-import { AreaConfig } from "../../base/interfaces";
-import { realCoordinateToRelative } from "../../base/position";
+import { ZeroOneMap, StaticConfig } from "../../base/types";
 import { walkableSymbol, buildingSymbol } from "../../base/globals/globalSymbols";
+import { AreaConfig } from "../../base/interfaces";
+import { realCoordinateToRelative, relativeCoordinateToReal } from "../../base/position";
+import { BuildingSpawnConfig, Building } from "./unit/Building";
+import { HealthBar } from "../../base/classes/HealthBar";
+import { rectBuildinghalfHeight, circleSizeNames } from "../../base/globals/globalSizes";
 import { cloneDeep } from "lodash";
 
 function getAllPositionsAroundBuildingInclusive(column, row) {
@@ -51,7 +54,7 @@ function mapToAreaBuildingSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig)
 	return dict;
 }
 
-export function getAllBuildingRelevantPositions(column, row) {
+function getAllBuildingRelevantPositions(column, row) {
 	let positions: number[][] = [];
 	let rows = [row - 1, row, row + 1];
 	for (let index = 0, length = rows.length; index < length; index++) {
@@ -67,7 +70,7 @@ export function getAllBuildingRelevantPositions(column, row) {
 	return positions;
 }
 
-export function updateObj(column, row, obj) {
+function updateObj(column, row, obj) {
 	let positionArr = getAllBuildingRelevantPositions(column, row);
 	for (let index = 0, positionLength = positionArr.length; index < positionLength; index++) {
 		let id = positionArr[index][0] + " " + positionArr[index][1];
@@ -117,4 +120,44 @@ function getRandomSpawnPositions(numberOfPositions, baseObj): number[][] {
 
 export function getRandomBuildingSpawnPositions(map: ZeroOneMap, areaConfig: AreaConfig, numberOfPositions) {
 	return getRandomSpawnPositions(numberOfPositions, mapToAreaBuildingSpawnableDict(map, areaConfig));
+}
+
+interface BuildingsConfig {
+	staticConfig: StaticConfig;
+	color: string;
+	spawnConfig: BuildingSpawnConfig;
+}
+
+export function spawnBuildings(spawnPositions, config: BuildingsConfig) {
+	let buildings: Building[] = [];
+
+	for (let index = 0, length = spawnPositions.length; index < length; index++) {
+		let pos = spawnPositions[index];
+
+		let x = relativeCoordinateToReal(pos[0]);
+		let y = relativeCoordinateToReal(pos[1]);
+
+		let healthbar = new HealthBar(x - 25, y - rectBuildinghalfHeight, {
+			posCorrectionX: 0,
+			posCorrectionY: -rectBuildinghalfHeight,
+			healthWidth: 46,
+			healthLength: 12,
+			value: 100,
+			scene: config.staticConfig.scene
+		});
+
+		buildings.push(
+			new Building(
+				config.staticConfig.scene,
+				x,
+				y,
+				config.staticConfig.physicsGroup,
+				circleSizeNames[index],
+				config.color,
+				healthbar,
+				config.spawnConfig
+			)
+		);
+	}
+	config.staticConfig.scene.cgaa.camps[config.color]["buildings"] = buildings;
 }

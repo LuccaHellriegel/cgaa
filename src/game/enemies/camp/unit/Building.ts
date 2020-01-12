@@ -7,7 +7,7 @@ import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { realCoordinateToRelative } from "../../../base/position";
 import { removeEle } from "../../../base/utils";
 import { extendWithNewId } from "../../../base/id";
-import { setupBuildingPopulation } from "../population/populationBuilding";
+import { setupBuildingPopulation } from "../../wave/waveBuilding";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
