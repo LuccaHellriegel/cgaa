@@ -23,9 +23,7 @@ export function setupAreaPopulation(scene: Gameplay, color: string) {
 		groupComposition: areaGroupComposition
 	});
 
-	scene.events.once("start-wave-" + color, () => {
-		startWave(scene, color);
-	});
+	startWave(scene, color);
 }
 
 function startWave(scene: Gameplay, color: string) {
@@ -42,8 +40,12 @@ function startWave(scene: Gameplay, color: string) {
 		spawnEnemy(scene, enemySpawnObj, enemyPool, leftToSpawn);
 	}
 
-	scene.events.once("start-wave-" + color, () => {
-		startWave(scene, color);
+	scene.time.addEvent({
+		delay: 40000,
+		callback: () => {
+			startWave(scene, color);
+		},
+		repeat: 0
 	});
 }
 
