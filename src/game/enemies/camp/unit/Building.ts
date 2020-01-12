@@ -67,12 +67,12 @@ export class Building extends Image implements damageable {
 		if (this.healthbar.decrease(amount)) {
 			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
+			this.scene.events.emit("building-destroyed-" + this.color);
 			this.destroy();
 		}
 	}
 
 	destroy() {
-		this.scene.events.emit("building-destroyed-" + this.color);
 		super.destroy();
 		this.healthbar.destroy();
 		this.populator.destroy();
