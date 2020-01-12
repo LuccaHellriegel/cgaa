@@ -5,7 +5,7 @@ import { ChainWeapon } from "../../../weapons/ChainWeapon";
 import { RandWeapon } from "../../../weapons/RandWeapon";
 import { CirclePolygon } from "../../../base/polygons/CirclePolygon";
 import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../../base/globals/globalSizes";
-import { InterationCircle } from "./InteractionCircle";
+import { InteractionCircle } from "./InteractionCircle";
 
 const healthBarConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
@@ -104,7 +104,7 @@ export class EnemyFactory {
 			physicsGroup
 		};
 
-		let circle = new InterationCircle(circleConfig);
+		let circle = new InteractionCircle(circleConfig);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 		return circle;

@@ -3,8 +3,9 @@ import { HealthBar } from "../../base/classes/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { extendWithNewId } from "../../base/id";
-import { addToInteractionElements, removeFromInteractionElements } from "../../base/events/interaction";
 import { Image } from "../../base/classes/BasePhaser";
+import { removeEle } from "../../base/utils";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Square extends Image implements damageable {
 	healthbar: HealthBar;
@@ -12,7 +13,7 @@ export class Square extends Image implements damageable {
 	polygon: RectPolygon;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup) {
+	constructor(scene: Gameplay, x, y, physicsGroup) {
 		super({ scene, x, y, texture: "square", physicsGroup });
 		this.setImmovable(true);
 
@@ -37,12 +38,12 @@ export class Square extends Image implements damageable {
 
 		this.color = "blue";
 		extendWithNewId(this);
-		addToInteractionElements(scene, this);
+		scene.cgaa.interactionElements.push(this);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			removeFromInteractionElements(this.scene, this);
+			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			this.destroy();
 		}
 	}

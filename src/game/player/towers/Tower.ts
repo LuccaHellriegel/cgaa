@@ -5,7 +5,6 @@ import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
-import { addToInteractionElements } from "../../base/events/interaction";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -46,7 +45,7 @@ export class Tower extends Image implements damageable {
 		}
 
 		this.color = "blue";
-		addToInteractionElements(scene, this);
+		scene.cgaa.interactionElements.push(this);
 	}
 
 	damage(amount: number) {

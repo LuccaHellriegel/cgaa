@@ -1,5 +1,5 @@
 import { Weapon } from "../weapons/Weapon";
-import { InterationCircle } from "../enemies/camp/unit/InteractionCircle";
+import { InteractionCircle } from "../enemies/camp/unit/InteractionCircle";
 import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
 import { Tower } from "../player/towers/Tower";
 
@@ -31,7 +31,7 @@ export function isInSight(weapon: Weapon, enemy) {
 	} else if (
 		weapon.owner.unitType !== "player" &&
 		weapon.owner.state !== "ambush" &&
-		!(weapon.owner instanceof InterationCircle) &&
+		!(weapon.owner instanceof InteractionCircle) &&
 		(weapon.owner as EnemyCircle).color !== enemy.color &&
 		weapon.owner.state !== "guard" &&
 		!(weapon.owner as EnemyCircle).dontAttackList.includes(enemy.color)

@@ -3,7 +3,6 @@ import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
 import { AreaPopulator } from "./populators/AreaPopulator";
 import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
-import { addToInteractionElements } from "../../base/events/interaction";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
@@ -55,7 +54,7 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
 	enemyConfig.x = x;
 	enemyConfig.y = y;
 	let circle = EnemyFactory.createInteractionCircle(enemyConfig);
-	addToInteractionElements(config.staticConfig.scene, circle);
+	config.staticConfig.scene.cgaa.interactionElements.push(circle);
 }
 
 export const numberOfBuildings = 3;

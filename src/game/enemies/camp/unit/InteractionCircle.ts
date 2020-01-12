@@ -1,9 +1,10 @@
 import { Circle } from "../../../base/classes/Circle";
 import { damageable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/classes/HealthBar";
-import { removeFromInteractionElements } from "../../../base/events/interaction";
+import { removeEle } from "../../../base/utils";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
-export class InterationCircle extends Circle implements damageable {
+export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	color: string;
 	dontAttackList: any[] = [];
@@ -26,7 +27,8 @@ export class InterationCircle extends Circle implements damageable {
 	}
 
 	destroy() {
-		removeFromInteractionElements(this.scene, this);
+		removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
+		(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
 		super.destroy();
 		this.healthbar.bar.destroy();
 		this.weapon.destroy();

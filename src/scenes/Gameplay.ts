@@ -18,9 +18,15 @@ import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
 
+type cgaa = {
+	activeCamps: string[];
+	interactionElements: any[];
+	interactionModus: InteractionModus;
+};
+
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
-	cgaa = { activeCamps: [...campColors].reverse() };
+	cgaa: cgaa;
 
 	constructor() {
 		super("Gameplay");
@@ -45,6 +51,8 @@ export class Gameplay extends Phaser.Scene {
 
 		let keyObjE = this.input.keyboard.addKey("E");
 		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
+
+		this.cgaa = { activeCamps: [...campColors].reverse(), interactionElements: [], interactionModus };
 
 		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyDict);
 		let towerManager = new TowerManager(

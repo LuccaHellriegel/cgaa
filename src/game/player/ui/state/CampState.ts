@@ -15,11 +15,6 @@ interface State {
 
 export class CampState {
 	graphics: Phaser.GameObjects.Graphics;
-	x: any;
-	y: any;
-	halfSize: any;
-	backGroundHexColor: any;
-	foregroundHexColor: any;
 	background: RectPolygon;
 	foreground: CirclePolygon;
 	redCircle: CirclePolygon;
@@ -29,14 +24,17 @@ export class CampState {
 	targetBackground: RectPolygon;
 	targetForeground: CirclePolygon;
 
-	constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y, halfSize, color, backgroundHexColor, foregroundHexColor) {
+	constructor(
+		sceneToUse: HUD,
+		private sceneToListen: Gameplay,
+		x,
+		y,
+		halfSize,
+		private color: string,
+		private backgroundHexColor,
+		private foregroundHexColor
+	) {
 		this.graphics = sceneToUse.add.graphics({});
-
-		this.x = x;
-		this.y = y;
-		this.halfSize = halfSize;
-		this.backGroundHexColor = backgroundHexColor;
-		this.foregroundHexColor = foregroundHexColor;
 
 		this.background = new RectPolygon(x, y, 2 * halfSize, 2 * halfSize);
 		this.foreground = new CirclePolygon(x, y, halfSize + circleCorrection);
@@ -51,54 +49,60 @@ export class CampState {
 
 		this.targetBackground = new RectPolygon(x + 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
 		this.targetForeground = new CirclePolygon(x + 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
+		this.reset();
+	}
 
+	reset() {
 		let killlistArgs = [
-			"added-to-killlist-" + color,
+			"added-to-killlist-" + this.color,
 			() => {
 				this.redrawWithKilllistMarking();
 			}
 		];
-		this.listen(sceneToListen, killlistArgs);
-
-		let startWaveArgs = [
-			"start-wave-" + color,
-			() => {
-				this.redraw();
-				this.drawAmbush();
-			}
-		];
-		this.listen(sceneToListen, startWaveArgs);
-
-		let endWaveArgs = [
-			"end-wave-" + color,
-			() => {
-				this.redraw();
-			}
-		];
-		this.listen(sceneToListen, endWaveArgs);
-
 		let rerouteArgs = [
-			"reroute-" + color,
+			"reroute-" + this.color,
 			targetColor => {
 				this.redraw();
 				this.drawAmbushTarget(colorDict[targetColor]);
 			}
 		];
-		this.listen(sceneToListen, rerouteArgs);
-
+		let startWaveArgs = [
+			"start-wave-" + this.color,
+			() => {
+				this.redraw();
+				this.drawAmbush();
+			}
+		];
+		let endWaveArgs = [
+			"end-wave-" + this.color,
+			() => {
+				this.redraw();
+			}
+		];
 		let destroyedArgs = [
-			"destroyed-" + color,
+			"destroyed-" + this.color,
 			() => {
 				this.redraw();
 				this.drawDestroyed();
 				let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];
 				args.forEach(arg => {
 					let [event, callback] = arg;
-					sceneToListen.events.removeListener(event as string, callback as Function);
+					this.sceneToListen.events.removeListener(event as string, callback as Function);
 				});
 			}
 		];
-		this.listen(sceneToListen, destroyedArgs);
+
+		let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];
+		args.forEach(arg => {
+			let [event, callback] = arg;
+			this.sceneToListen.events.removeListener(event as string, callback as Function);
+		});
+
+		this.listen(this.sceneToListen, killlistArgs);
+		this.listen(this.sceneToListen, startWaveArgs);
+		this.listen(this.sceneToListen, endWaveArgs);
+		this.listen(this.sceneToListen, rerouteArgs);
+		this.listen(this.sceneToListen, destroyedArgs);
 
 		this.redraw();
 	}
@@ -111,7 +115,7 @@ export class CampState {
 	private redrawWithKilllistMarking() {
 		this.graphics.clear();
 
-		this.graphics.fillStyle(this.backGroundHexColor);
+		this.graphics.fillStyle(this.backgroundHexColor);
 		this.background.draw(this.graphics, 0);
 
 		this.graphics.fillStyle(0xb20000);
@@ -122,12 +126,12 @@ export class CampState {
 	}
 
 	private drawDestroyed() {
-		this.graphics.fillStyle(this.backGroundHexColor);
+		this.graphics.fillStyle(this.backgroundHexColor);
 		this.sideCross.draw(this.graphics, 0);
 	}
 
 	private drawAmbushTarget(ambushTargetHex) {
-		this.graphics.fillStyle(this.backGroundHexColor);
+		this.graphics.fillStyle(this.backgroundHexColor);
 		this.targetBackground.draw(this.graphics, 0);
 
 		this.graphics.fillStyle(ambushTargetHex);
@@ -138,13 +142,13 @@ export class CampState {
 	}
 
 	private drawAmbush() {
-		this.graphics.fillStyle(this.backGroundHexColor);
+		this.graphics.fillStyle(this.backgroundHexColor);
 		this.sideArrow.draw(this.graphics, 0);
 	}
 
 	redraw() {
 		this.graphics.clear();
-		this.graphics.fillStyle(this.backGroundHexColor);
+		this.graphics.fillStyle(this.backgroundHexColor);
 		this.background.draw(this.graphics, 0);
 
 		this.graphics.fillStyle(this.foregroundHexColor);
