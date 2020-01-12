@@ -18,6 +18,8 @@ export class CampState {
 	targetBackground: RectPolygon;
 	targetForeground: CirclePolygon;
 	onKillist = false;
+	isRerouted = false;
+	ambushTargetHex;
 
 	constructor(
 		sceneToUse: HUD,
@@ -58,8 +60,9 @@ export class CampState {
 		let rerouteArgs = [
 			"reroute-" + this.color,
 			targetColor => {
+				this.ambushTargetHex = colorDict[targetColor];
+				this.isRerouted = true;
 				this.redraw();
-				this.drawAmbushTarget(colorDict[targetColor]);
 			}
 		];
 		let startWaveArgs = [
@@ -113,11 +116,11 @@ export class CampState {
 		this.sideCross.draw(this.graphics, 0);
 	}
 
-	private drawAmbushTarget(ambushTargetHex) {
+	private drawAmbushTarget() {
 		this.graphics.fillStyle(this.backgroundHexColor);
 		this.targetBackground.draw(this.graphics, 0);
 
-		this.graphics.fillStyle(ambushTargetHex);
+		this.graphics.fillStyle(this.ambushTargetHex);
 		this.targetForeground.draw(this.graphics, 0);
 
 		this.graphics.fillStyle(this.foregroundHexColor);
@@ -141,5 +144,7 @@ export class CampState {
 
 		this.graphics.fillStyle(this.foregroundHexColor);
 		this.foreground.draw(this.graphics, 0);
+
+		if (this.isRerouted) this.drawAmbushTarget();
 	}
 }
