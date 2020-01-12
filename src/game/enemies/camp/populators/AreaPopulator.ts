@@ -1,9 +1,9 @@
 import { Populator } from "./Populator";
 import { EnemyConfig } from "../unit/EnemyFactory";
-import { relativePositionToPoint } from "../../../base/position";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 import { numberOfBuildings } from "../camp";
+import { removeEle } from "../../../base/utils";
 
 export class AreaPopulator extends Populator {
 	enemyPool: EnemyPool;
@@ -33,10 +33,7 @@ export class AreaPopulator extends Populator {
 			this.destroyedBuildingCounter++;
 			if (this.destroyedBuildingCounter == numberOfBuildings) {
 				enemyConfig.scene.events.emit("destroyed-" + enemyConfig.color);
-				const index = enemyConfig.scene.cgaa.activeCamps.indexOf(enemyConfig.color);
-				if (index > -1) {
-					enemyConfig.scene.cgaa.activeCamps.splice(index, 1);
-				}
+				removeEle(enemyConfig.color, enemyConfig.scene.cgaa.activeCamps);
 				this.destroy();
 			}
 		});

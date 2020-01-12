@@ -3,11 +3,11 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 import { damageable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { addToInteractionElements, removeFromInteractionElements } from "../../../base/events/interaction";
 import { BuildingPopulator } from "../populators/BuildingPopulator";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { EnemyConfig } from "./EnemyFactory";
 import { realCoordinateToRelative } from "../../../base/position";
+import { removeEle } from "../../../base/utils";
 
 export interface BuildingSpawnConfig {
 	enemyDict;
@@ -59,12 +59,14 @@ export class Building extends Image implements damageable {
 		};
 		this.populator = new BuildingPopulator(enemyConfig, enemySpawnObj, config.pathDict);
 
-		addToInteractionElements(scene, this);
+		scene.cgaa.interactionElements.push(this);
+		console.log(scene.cgaa.interactionElements);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			removeFromInteractionElements(this.scene, this);
+			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
+			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
 			this.destroy();
 		}
 	}

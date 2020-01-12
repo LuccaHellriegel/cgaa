@@ -1,5 +1,6 @@
 import { EnemyConfig, EnemyFactory, EnemySize, WeaponTypes } from "../unit/EnemyFactory";
 import { EnemyCircle } from "../unit/EnemyCircle";
+import { removeEle } from "../../../base/utils";
 
 type GroupComposition = { weaponType: string; size: string }[];
 
@@ -26,8 +27,7 @@ export class EnemyPool {
 
 	private makeInactive(key) {
 		if (this.isNeeded) {
-			let index = this.activeIDArr.indexOf(key);
-			this.activeIDArr.splice(index, 1);
+			removeEle(key, this.activeIDArr);
 			this.inactiveIDArr.unshift(key);
 			this.params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
 		}

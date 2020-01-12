@@ -2,14 +2,13 @@ import { Gameplay } from "../../../../../scenes/Gameplay";
 import { Tower } from "../../../towers/Tower";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../../../unit/Square";
-import { InterationCircle } from "../../../../enemies/camp/unit/InteractionCircle";
+import { InteractionCircle } from "../../../../enemies/camp/unit/InteractionCircle";
 import { findClosestPoint } from "../../../../base/find";
 import { Cooperation } from "./Cooperation";
 import { gainLife } from "../../../../base/events/player";
 
 export class InteractionModus {
 	isOn: Boolean = false;
-	interactionElements: any[] = [];
 	ghostTower: GhostTower;
 	scene: Gameplay;
 	cooperation: Cooperation;
@@ -25,19 +24,10 @@ export class InteractionModus {
 			this.toggle();
 			this.lockGhostTower();
 		});
-
-		scene.events.on("interaction-ele-added", ele => {
-			this.interactionElements.push(ele);
-		});
-		scene.events.on("interaction-ele-removed", ele => {
-			let index = this.interactionElements.indexOf(ele);
-			this.interactionElements.splice(index, 1);
-			this.cooperation.verifyCooperation(ele, this.scene);
-		});
 	}
 
 	private lockGhostTower() {
-		let ele = findClosestPoint(this.interactionElements, this.ghostTower.x, this.ghostTower.y);
+		let ele = findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			this.ghostTower.setPosition(ele.x, ele.y);
 			this.ghostTower.toggleLock();
@@ -48,12 +38,16 @@ export class InteractionModus {
 		this.isOn = !this.isOn;
 	}
 
+	notifyRemovalOfEle(ele) {
+		this.cooperation.verifyCooperation(ele, this.scene);
+	}
+
 	interactWithClosestEle() {
-		let ele = findClosestPoint(this.interactionElements, this.ghostTower.x, this.ghostTower.y);
+		let ele = findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			switch (ele.constructor) {
-				case InterationCircle:
-					this.cooperation.interactWithCircle(ele, this.scene, this.interactionElements);
+				case InteractionCircle:
+					this.cooperation.interactWithCircle(ele, this.scene, this.scene.cgaa.interactionElements);
 					break;
 				case Tower:
 					this.scene.events.emit("sold-tower", ele);

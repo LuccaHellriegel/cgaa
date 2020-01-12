@@ -2,6 +2,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { Tower } from "./Tower";
 import { gainSouls } from "../../base/events/player";
 import { towerCost } from "../../base/globals/globalConfig";
+import { removeEle } from "../../base/utils";
 
 interface TowerPoolParams {
 	scene: Gameplay;
@@ -22,8 +23,7 @@ export class TowerPool {
 		let keys = Object.keys(this.towerDict);
 		for (const key in keys) {
 			params.scene.events.on("inactive-" + key, id => {
-				let index = this.activeIDArr.indexOf(id);
-				this.activeIDArr.splice(index, 1);
+				removeEle(id, this.activeIDArr);
 				this.inactiveIDArr.push(id);
 			});
 		}
