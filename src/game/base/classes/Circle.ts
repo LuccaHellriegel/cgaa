@@ -6,7 +6,6 @@ export class Circle extends SpriteWithAnimEvents {
 	weapon: Weapon;
 	polygon: CirclePolygon;
 	unitType: string;
-	dontAttackList: any;
 
 	constructor(config) {
 		super(config);

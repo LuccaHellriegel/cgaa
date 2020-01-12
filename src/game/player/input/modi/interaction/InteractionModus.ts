@@ -47,7 +47,8 @@ export class InteractionModus {
 		if (ele !== null) {
 			switch (ele.constructor) {
 				case InteractionCircle:
-					this.cooperation.interactWithCircle(ele, this.scene, this.scene.cgaa.interactionElements);
+					let iEles = this.scene.cgaa.interactionElements;
+					this.cooperation.interactWithCircle(ele, this.scene, iEles);
 					break;
 				case Tower:
 					this.scene.events.emit("sold-tower", ele);

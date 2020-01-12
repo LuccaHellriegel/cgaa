@@ -1,6 +1,7 @@
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
 import { campColors } from "../../../../base/globals/globalColors";
 import { removeEle } from "../../../../base/utils";
+import { Gameplay } from "../../../../../scenes/Gameplay";
 
 export class Cooperation {
 	private colorKilllist: any[] = [];
@@ -71,12 +72,12 @@ export class Cooperation {
 		return true;
 	}
 
-	verifyCooperation(ele, scene) {
+	verifyCooperation(ele, scene: Gameplay) {
 		if (this.unitKilllist.includes(ele)) removeEle(ele, this.unitKilllist);
 		let destroyed = this.checkIfCampDestroy(ele.color);
 		if (destroyed) {
 			//TODO: multiple camp cooperation
-			scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
+			scene.cgaa.camps[this.rivalries[ele.color]].dontAttackList.push("blue");
 		}
 	}
 }

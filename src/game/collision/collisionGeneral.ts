@@ -3,9 +3,12 @@ import { executeOverAllCamps } from "../base/globals/global";
 import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
 
 function bounceCallback(unit: EnemyCircle, obj) {
-	if (unit.unitType !== "player" && unit.dontAttackList && !unit.dontAttackList.includes(obj.color)) {
-		unit.barrier = obj;
-		unit.state = "obstacle";
+	if (unit.color !== "blue") {
+		let dontAttackList = unit.scene.cgaa.camps[unit.color].dontAttackList;
+		if (dontAttackList && !dontAttackList.includes(obj.color)) {
+			unit.barrier = obj;
+			unit.state = "obstacle";
+		}
 	}
 }
 

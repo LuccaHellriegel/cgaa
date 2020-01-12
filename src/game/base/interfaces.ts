@@ -1,5 +1,6 @@
 import { HealthBar } from "./classes/HealthBar";
 import { WallBase, Exit } from "./types";
+import { Building } from "../enemies/camp/unit/Building";
 
 export interface damageable {
 	syncPolygon();
@@ -19,4 +20,5 @@ export interface AreaConfig {
 export interface BuildingInfo {
 	color: string;
 	spawnPositions: number[][];
+	buildings: Building[];
 }

@@ -14,7 +14,6 @@ export class EnemyCircle extends Circle implements damageable {
 	spotted: any;
 	pursuing: any;
 	barrier: any;
-	dontAttackList: any[] = [];
 
 	constructor(config, private velo: number) {
 		super(config);

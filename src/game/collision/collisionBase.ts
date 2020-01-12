@@ -34,13 +34,18 @@ export function isInSight(weapon: Weapon, enemy) {
 		!(weapon.owner instanceof InteractionCircle) &&
 		(weapon.owner as EnemyCircle).color !== enemy.color &&
 		weapon.owner.state !== "guard" &&
-		!(weapon.owner as EnemyCircle).dontAttackList.includes(enemy.color)
+		!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes(
+			enemy.color
+		)
 	) {
 		(weapon.owner as EnemyCircle).spotted = enemy;
 		weapon.owner.state = "guard";
 	}
 
-	if (enemy instanceof Tower && !weapon.owner.dontAttackList.includes("blue")) {
+	if (
+		enemy instanceof Tower &&
+		!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes("blue")
+	) {
 		enemy.fire(weapon.owner);
 	}
 	return false;

@@ -6,7 +6,6 @@ export abstract class Populator {
 	enemyCount: number = 0;
 	scene: Gameplay;
 	enemySpawnObj: EnemySpawnObj;
-	dontAttackList: string[] = [];
 	shouldPopulate = true;
 	color: string;
 	abstract enemyPool: EnemyPool;
@@ -16,10 +15,6 @@ export abstract class Populator {
 		this.color = color;
 		this.enemySpawnObj = enemySpawnObj;
 		scene.events.once("start-wave-" + color, this.startWave.bind(this));
-
-		scene.events.once("cooperation-established-" + color, function(cooperationColor) {
-			this.dontAttackList.push(cooperationColor);
-		});
 	}
 
 	private startWave() {

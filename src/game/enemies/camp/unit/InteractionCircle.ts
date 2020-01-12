@@ -7,16 +7,11 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	color: string;
-	dontAttackList: any[] = [];
 
 	constructor(config) {
 		super(config);
 		this.healthbar = config.healthbar;
 		this.color = config.color;
-
-		config.scene.events.once("cooperation-established-" + config.color, function(cooperationColor) {
-			this.dontAttackList.push(cooperationColor);
-		});
 	}
 
 	damage(amount) {

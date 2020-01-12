@@ -4,8 +4,10 @@ import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 import { EnemyPool } from "./EnemyPool";
 import { numberOfBuildings } from "../camp";
 import { removeEle } from "../../../base/utils";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
 export class AreaPopulator extends Populator {
+	scene: Gameplay;
 	enemyPool: EnemyPool;
 	destroyedBuildingCounter = 0;
 
@@ -29,6 +31,8 @@ export class AreaPopulator extends Populator {
 			]
 		});
 
+		this.scene = enemyConfig.scene;
+
 		enemyConfig.scene.events.on("building-destroyed-" + enemyConfig.color, () => {
 			this.destroyedBuildingCounter++;
 			if (this.destroyedBuildingCounter == numberOfBuildings) {
@@ -45,7 +49,6 @@ export class AreaPopulator extends Populator {
 			let enemy = this.enemyPool.pop();
 
 			enemy.state = "guard";
-			enemy.dontAttackList = this.dontAttackList;
 			enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
 			return enemy;
 		}
@@ -53,6 +56,6 @@ export class AreaPopulator extends Populator {
 	}
 
 	doMoreSpawn() {
-		return this.enemyCount != 5;
+		return this.scene.cgaa.camps[this.color].buildings.length > 0 && this.enemyCount != 5;
 	}
 }
