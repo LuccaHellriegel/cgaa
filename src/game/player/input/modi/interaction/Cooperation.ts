@@ -1,5 +1,6 @@
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
 import { campColors } from "../../../../base/globals/globalColors";
+import { removeEle } from "../../../../base/utils";
 
 export class Cooperation {
 	private colorKilllist: any[] = [];
@@ -71,14 +72,11 @@ export class Cooperation {
 	}
 
 	verifyCooperation(ele, scene) {
-		let index = this.unitKilllist.indexOf(ele);
-		if (index > -1) {
-			this.unitKilllist.splice(index, 1);
-			let destroyed = this.checkIfCampDestroy(ele.color);
-			if (destroyed) {
-				//TODO: multiple camp cooperation
-				scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
-			}
+		if (this.unitKilllist.includes(ele)) removeEle(ele, this.unitKilllist);
+		let destroyed = this.checkIfCampDestroy(ele.color);
+		if (destroyed) {
+			//TODO: multiple camp cooperation
+			scene.events.emit("cooperation-established", this.rivalries[ele.color], "blue");
 		}
 	}
 }
