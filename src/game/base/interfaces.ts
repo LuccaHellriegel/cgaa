@@ -20,5 +20,4 @@ export interface AreaConfig {
 export interface BuildingInfo {
 	color: string;
 	spawnPositions: number[][];
-	buildings: Building[];
 }

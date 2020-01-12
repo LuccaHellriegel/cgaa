@@ -19,13 +19,14 @@ export class EnemyPool {
 	constructor(private params: PoolParams) {
 		this.initPool(params);
 
-		let keys = Object.keys(this.enemyDict);
-		for (const key in keys) {
-			params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
+		let values: EnemyCircle[] = Object.values(this.enemyDict);
+		for (const val of values) {
+			params.enemyConfig.scene.events.once("inactive-" + val.id, this.makeInactive.bind(this));
 		}
 	}
 
 	private makeInactive(key) {
+		console.log("here");
 		if (this.isNeeded) {
 			removeEle(key, this.activeIDArr);
 			this.inactiveIDArr.unshift(key);

@@ -1,7 +1,6 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { spawnBuildings, updateMapWithBuildings } from "./building";
-import { AreaPopulator } from "./populators/AreaPopulator";
 import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
@@ -9,6 +8,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { PhysicGroups } from "../../collision/collisionBase";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { getRandomBuildingSpawnPositions } from "./buildingSpawn";
+import { setupAreaPopulation } from "./populators/aPopulation";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -67,7 +67,7 @@ function createCamp(config: CampConfig): BuildingInfo {
 		enemyPhysicGroup: config.enemyPhysicGroup,
 		weaponPhysicGroup: config.weaponPhysicGroup
 	};
-	let buildings = spawnBuildings(spawnPositions, {
+	spawnBuildings(spawnPositions, {
 		color: config.color,
 		staticConfig: config.staticConfig,
 		spawnConfig
@@ -85,12 +85,18 @@ function createCamp(config: CampConfig): BuildingInfo {
 		weaponGroup: config.weaponPhysicGroup
 	};
 
-	let areaEnemySpawnObj = createAreaEnemySpawnObj(config.map, config.areaConfig, config.enemyDict);
-	new AreaPopulator(enemyConfig, areaEnemySpawnObj);
+	config.staticConfig.scene.cgaa.camps[config.color]["area"] = {};
+	config.staticConfig.scene.cgaa.camps[config.color]["area"]["enemySpawnObj"] = createAreaEnemySpawnObj(
+		config.map,
+		config.areaConfig,
+		config.enemyDict
+	);
+	config.staticConfig.scene.cgaa.camps[config.color]["area"]["enemyConfig"] = enemyConfig;
 
+	setupAreaPopulation(config.staticConfig.scene, config.color);
 	createInteractionUnit(config, enemyConfig);
 
-	return { spawnPositions, color: config.color, buildings };
+	return { spawnPositions, color: config.color };
 }
 
 function createCamps(configs: CampConfig[]): BuildingInfo[] {

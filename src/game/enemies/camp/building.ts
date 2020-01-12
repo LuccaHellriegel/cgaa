@@ -42,7 +42,7 @@ export function spawnBuildings(spawnPositions, config: BuildingsConfig) {
 			)
 		);
 	}
-	return buildings;
+	config.staticConfig.scene.cgaa.camps[config.color]["buildings"] = buildings;
 }
 
 export function updateMapWithBuildings(map: ZeroOneMap, positions) {

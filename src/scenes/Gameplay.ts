@@ -47,7 +47,8 @@ export class Gameplay extends Phaser.Scene {
 		let keyObjE = this.input.keyboard.addKey("E");
 		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
 
-		this.cgaa = { activeCamps: [...campColors].reverse(), interactionElements: [], interactionModus };
+		this.cgaa = { activeCamps: [...campColors].reverse(), interactionElements: [], interactionModus, camps: {} };
+		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: ["blue"] }));
 
 		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyDict);
 		let towerManager = new TowerManager(
@@ -59,18 +60,8 @@ export class Gameplay extends Phaser.Scene {
 		);
 
 		let pathDict = {};
-		let buildingInfos: BuildingInfo[] = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
+		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
 
-		let camps = buildingInfos.reduce((acc, info) => {
-			let buildings = info.buildings;
-			let color = info.color;
-			let obj = { [color]: { buildings, dontAttackList: [] } };
-			return { ...acc, ...obj };
-		}, {});
-
-		this.cgaa.camps = camps;
-
-		console.log(camps);
 		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
 		spawnWave(this);
