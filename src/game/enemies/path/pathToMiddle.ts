@@ -10,7 +10,7 @@ export function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	let middleRow = config.middlePos.row;
 	config.areaConfigs.forEach(area => {
 		let pos: Point = exitToGlobalPoint(area);
-		config.pathDict[constructXYID(pos.x, pos.y)] = new PathContainer(
+		config.scene.cgaa.pathDict[constructXYID(pos.x, pos.y)] = new PathContainer(
 			config.scene,
 			realCoordinateToRelative(pos.x),
 			realCoordinateToRelative(pos.y),

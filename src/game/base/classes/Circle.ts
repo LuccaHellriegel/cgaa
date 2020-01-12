@@ -1,11 +1,13 @@
 import { SpriteWithAnimEvents } from "./BasePhaser";
 import { Weapon } from "../../weapons/Weapon";
 import { CirclePolygon } from "../polygons/CirclePolygon";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Circle extends SpriteWithAnimEvents {
 	weapon: Weapon;
 	polygon: CirclePolygon;
 	unitType: string;
+	public scene: Gameplay;
 
 	constructor(config) {
 		super(config);

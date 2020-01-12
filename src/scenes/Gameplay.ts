@@ -17,7 +17,6 @@ import { spawnWave } from "../game/enemies/wave";
 import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
-import { BuildingInfo } from "../game/base/interfaces";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -32,47 +31,59 @@ export class Gameplay extends Phaser.Scene {
 		createAnims(this.anims);
 	}
 
+	private initCGAA() {
+		this.cgaa = {
+			activeCamps: [...campColors].reverse(),
+			interactionElements: [],
+			enemyDict: {},
+			pathDict: {},
+			camps: {}
+		};
+
+		let keyObjF = this.input.keyboard.addKey("F");
+		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
+		this.cgaa.keyObjF = keyObjF;
+		this.cgaa.ghostTower = ghostTower;
+
+		let keyObjE = this.input.keyboard.addKey("E");
+		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
+
+		this.cgaa.interactionModus = interactionModus;
+
+		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [], rerouteColor: "" }));
+	}
+
 	create() {
+		this.initCGAA();
+
 		let physicsGroups = enableCollision(this);
 
 		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: physicsGroups.areas };
 		let areaConfigs = constructAreaConfigs(areaStaticConfig);
 		let { unifiedMap, middlePos } = createAreas(areaConfigs);
 
-		let enemyDict = {};
-
-		let keyObjF = this.input.keyboard.addKey("F");
-		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
-
-		let keyObjE = this.input.keyboard.addKey("E");
-		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
-
-		this.cgaa = { activeCamps: [...campColors].reverse(), interactionElements: [], interactionModus, camps: {} };
-		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: ["blue"] }));
-
-		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, enemyDict);
+		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs);
 		let towerManager = new TowerManager(
 			this,
 			physicsGroups.towers,
 			physicsGroups.towerBulletGroup,
 			towerSpawnObj,
-			ghostTower
+			this.cgaa.ghostTower
 		);
 
-		let pathDict = {};
-		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, enemyDict, physicsGroups, pathDict);
+		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, physicsGroups);
 
-		calculatePaths({ scene: this, pathDict, unifiedMap, areaConfigs, middlePos, buildingInfos });
+		calculatePaths({ scene: this, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
 		spawnWave(this);
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);
-		let modi = new Modi(this, keyObjF, interactionModus, towerManager);
+		let modi = new Modi(this, this.cgaa.keyObjF, this.cgaa.interactionModus, towerManager);
 
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
-		setupPointerEvents(this, player, ghostTower, modi);
+		setupPointerEvents(this, player, this.cgaa.ghostTower, modi);
 
 		this.movement = new Movement(this, player);
 	}

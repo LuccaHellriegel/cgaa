@@ -3,15 +3,13 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 import { damageable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { BuildingPopulator } from "../populators/BuildingPopulator";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
-import { EnemyConfig } from "./EnemyFactory";
 import { realCoordinateToRelative } from "../../../base/position";
 import { removeEle } from "../../../base/utils";
+import { extendWithNewId } from "../../../base/id";
+import { setupBuildingPopulation } from "../population/populationBuilding";
 
 export interface BuildingSpawnConfig {
-	enemyDict;
-	pathDict;
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
 	weaponPhysicGroup: Phaser.Physics.Arcade.Group;
 }
@@ -22,7 +20,6 @@ export class Building extends Image implements damageable {
 	color: string;
 	spawnUnit: any;
 	polygon: any;
-	populator: BuildingPopulator;
 
 	constructor(
 		scene: Gameplay,
@@ -42,12 +39,15 @@ export class Building extends Image implements damageable {
 		this.polygon = new RectPolygon(x, y, this.width, this.height);
 		this.healthbar = healthbar;
 
-		let enemySpawnObj = createBuildingEnemySpawnObj(
+		extendWithNewId(this);
+
+		scene.cgaa.camps[color].buildingPopulation[this.id] = {};
+		scene.cgaa.camps[color].buildingPopulation[this.id].enemySpawnObj = createBuildingEnemySpawnObj(
 			realCoordinateToRelative(x),
 			realCoordinateToRelative(y),
-			config.enemyDict
+			scene
 		);
-		let enemyConfig: EnemyConfig = {
+		scene.cgaa.camps[color].buildingPopulation[this.id].enemyConfig = {
 			scene,
 			color,
 			size: "Big",
@@ -57,7 +57,8 @@ export class Building extends Image implements damageable {
 			physicsGroup: config.enemyPhysicGroup,
 			weaponGroup: config.weaponPhysicGroup
 		};
-		this.populator = new BuildingPopulator(enemyConfig, enemySpawnObj, config.pathDict);
+
+		setupBuildingPopulation(scene, color, this.id);
 
 		scene.cgaa.interactionElements.push(this);
 	}
@@ -79,7 +80,6 @@ export class Building extends Image implements damageable {
 	destroy() {
 		super.destroy();
 		this.healthbar.destroy();
-		this.populator.destroy();
 	}
 
 	syncPolygon() {}

@@ -2,19 +2,15 @@ import { cloneDeep } from "lodash";
 import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
 import { EnemyCircle } from "../../enemies/camp/unit/EnemyCircle";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class EnemySpawnObj {
-	baseObj;
-	relativeObj;
-	movingUnitsDict;
+	public relativeObj;
 
-	constructor(baseObj, movingUnitsDict) {
-		this.baseObj = baseObj;
-		this.movingUnitsDict = movingUnitsDict;
-	}
+	constructor(private baseObj, private scene: Gameplay) {}
 
 	private updateRelativeObjWithMovingUnits() {
-		let circles: EnemyCircle[] = Object.values(this.movingUnitsDict);
+		let circles: EnemyCircle[] = Object.values(this.scene.cgaa.enemyDict);
 
 		circles.forEach(pos => {
 			let id = pos.x + " " + pos.y;
@@ -28,7 +24,7 @@ export class EnemySpawnObj {
 	}
 
 	add(anEnemy: EnemyCircle) {
-		this.movingUnitsDict[anEnemy.id] = anEnemy;
+		this.scene.cgaa.enemyDict[anEnemy.id] = anEnemy;
 	}
 
 	evaluateRealPos(x, y) {

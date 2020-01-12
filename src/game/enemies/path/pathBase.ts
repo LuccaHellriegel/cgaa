@@ -4,7 +4,6 @@ import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 
 export interface PathCalcConfig {
 	scene: Gameplay;
-	pathDict: {};
 	unifiedMap: ZeroOneMap;
 	areaConfigs: AreaConfig[];
 	middlePos: RelativePosition;
@@ -45,5 +44,3 @@ export function getAllPositionsAroundBuilding(column, row) {
 
 	return positions;
 }
-
-//export function executeOver

@@ -18,7 +18,7 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		texture: string,
 		weaponGroup: Phaser.Physics.Arcade.Group,
 		public polygonArr: CompositePolygon[],
-		private offSetArr: number[][],
+		public offSetArr: number[][],
 		public owner: Circle,
 		public ownerSize: number
 	) {

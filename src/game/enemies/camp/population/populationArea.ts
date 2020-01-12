@@ -1,6 +1,5 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { EnemyPool } from "./EnemyPool";
-import { EnemyConfig } from "../unit/EnemyFactory";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 
 let bigCircleWithRand = { weaponType: "rand", size: "Big" };

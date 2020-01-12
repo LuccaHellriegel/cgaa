@@ -72,6 +72,9 @@ export class EnemyFactory {
 		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
+
+		scene.cgaa.enemyDict[circle.id] = circle;
+
 		return circle;
 	}
 
@@ -107,6 +110,9 @@ export class EnemyFactory {
 		let circle = new InteractionCircle(circleConfig);
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
+
+		scene.cgaa.enemyDict[circle.id] = circle;
+
 		return circle;
 	}
 }

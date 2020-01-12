@@ -17,6 +17,7 @@ export class CampState {
 	sideCross: SymmetricCrossPolygon;
 	targetBackground: RectPolygon;
 	targetForeground: CirclePolygon;
+	onKillist = false;
 
 	constructor(
 		sceneToUse: HUD,
@@ -50,8 +51,8 @@ export class CampState {
 		let killlistArgs = [
 			"added-to-killlist-" + this.color,
 			() => {
-				//TODO: killlist marking needs to be preserved if other redraw happens
-				this.redrawWithKilllistMarking();
+				this.onKillist = true;
+				this.redraw();
 			}
 		];
 		let rerouteArgs = [
@@ -107,19 +108,6 @@ export class CampState {
 		scene.events.on(event as string, callback as Function);
 	}
 
-	private redrawWithKilllistMarking() {
-		this.graphics.clear();
-
-		this.graphics.fillStyle(this.backgroundHexColor);
-		this.background.draw(this.graphics, 0);
-
-		this.graphics.fillStyle(0xb20000);
-		this.redCircle.draw(this.graphics, 0);
-
-		this.graphics.fillStyle(this.foregroundHexColor);
-		this.foreground.draw(this.graphics, 0);
-	}
-
 	private drawDestroyed() {
 		this.graphics.fillStyle(this.backgroundHexColor);
 		this.sideCross.draw(this.graphics, 0);
@@ -145,6 +133,11 @@ export class CampState {
 		this.graphics.clear();
 		this.graphics.fillStyle(this.backgroundHexColor);
 		this.background.draw(this.graphics, 0);
+
+		if (this.onKillist) {
+			this.graphics.fillStyle(0xb20000);
+			this.redCircle.draw(this.graphics, 0);
+		}
 
 		this.graphics.fillStyle(this.foregroundHexColor);
 		this.foreground.draw(this.graphics, 0);

@@ -47,6 +47,7 @@ export class Cooperation {
 			this.rerouteObj[color] = arr;
 		}
 		scene.events.emit("reroute-" + color, this.rerouteObj[color][0]);
+		scene.cgaa.camps[color].rerouteColor = this.rerouteObj[color][0];
 		this.rerouteObj[color].reverse();
 	}
 

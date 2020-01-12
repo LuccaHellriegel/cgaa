@@ -5,6 +5,7 @@ import { walkableSymbol } from "../globals/globalSymbols";
 import { realCoordinateToRelative } from "../position";
 import { ZeroOneMap } from "../types";
 import { AreaConfig } from "../interfaces";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
 	let dict = {};
@@ -60,12 +61,12 @@ function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	return dict;
 }
 
-export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemyDict): TowerSpawnObj {
-	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemyDict);
+export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[]): TowerSpawnObj {
+	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), areaConfigs[0].wallBase.staticConfig.scene);
 }
 
-export function createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemyDict): EnemySpawnObj {
-	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemyDict);
+export function createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig): EnemySpawnObj {
+	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), areaConfig.wallBase.staticConfig.scene);
 }
 
 function createBuildingSpawnableDict(column, row) {
@@ -84,6 +85,6 @@ function createBuildingSpawnableDict(column, row) {
 	return dict;
 }
 
-export function createBuildingEnemySpawnObj(column, row, enemyDict): EnemySpawnObj {
-	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemyDict);
+export function createBuildingEnemySpawnObj(column, row, scene: Gameplay): EnemySpawnObj {
+	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), scene);
 }

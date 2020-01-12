@@ -16,7 +16,7 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 			for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
 				const pos = positionsAround[posIndex];
 				const exit = findClosestRelativePosition(exits, pos[0], pos[1]);
-				let mainPath = config.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
+				let mainPath = config.scene.cgaa.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
 				let saveReference = new PathContainer(
 					config.scene,
 					pos[0],
@@ -27,7 +27,7 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 					config.unifiedMap,
 					mainPath
 				);
-				config.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
+				config.scene.cgaa.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
 			}
 		}
 	}

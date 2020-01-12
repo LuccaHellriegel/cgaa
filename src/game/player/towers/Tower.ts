@@ -45,6 +45,10 @@ export class Tower extends Image implements damageable {
 		}
 
 		this.color = "blue";
+
+		//TODO: on spawn we need to find a way to shoot -> overlap is just evaluated if new units come
+		//TODO: can be spawned ontop of units - why?
+
 		scene.cgaa.interactionElements.push(this);
 	}
 

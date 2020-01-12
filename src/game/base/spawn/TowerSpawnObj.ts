@@ -2,10 +2,11 @@ import { EnemySpawnObj } from "./EnemySpawnObj";
 import { Tower } from "../../player/towers/Tower";
 import { constructXYID } from "../id";
 import { walkableSymbol, towerSymbol } from "../globals/globalSymbols";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class TowerSpawnObj extends EnemySpawnObj {
-	constructor(baseObj, movingUnitsDict) {
-		super(baseObj, movingUnitsDict);
+	constructor(baseObj, scene: Gameplay) {
+		super(baseObj, scene);
 	}
 
 	updateBaseObj(tower: Tower, remove) {
