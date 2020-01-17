@@ -1,16 +1,16 @@
-import { Image } from "../../base/classes/BasePhaser";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { damageable } from "../../base/interfaces";
-import { HealthBar } from "../../base/classes/HealthBar";
-import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
-import { realCoordinateToRelative } from "../../base/position";
-import { removeEle } from "../../base/utils";
-import { extendWithNewId } from "../../base/id";
+import { Image } from "../../../base/classes/BasePhaser";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { damageable } from "../../../base/interfaces";
+import { HealthBar } from "../../../base/classes/HealthBar";
+import { RectPolygon } from "../../../base/polygons/RectPolygon";
+import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
+import { realCoordinateToRelative } from "../../../base/position";
+import { removeEle } from "../../../base/utils";
+import { extendWithNewId } from "../../../base/id";
 import { CampBuildings } from "./CampBuildings";
-import { WavePopulator } from "../wave/WavePopulator";
-import { EnemyPool } from "../population/EnemyPool";
-import { buildingGroupComposition } from "../wave/waveConfig";
+import { WavePopulator } from "../../wave/WavePopulator";
+import { EnemyPool } from "../../population/EnemyPool";
+import { buildingGroupComposition } from "../../wave/waveConfig";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;

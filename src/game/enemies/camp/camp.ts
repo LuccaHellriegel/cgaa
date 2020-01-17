@@ -11,7 +11,7 @@ import { buildingSymbol } from "../../base/globals/globalSymbols";
 import { CampPopulator } from "./CampPopulator";
 import { EnemyPool } from "../population/EnemyPool";
 import { campGroupComposition, numberOfBuildings } from "./campConfig";
-import { CampBuildings } from "../building/CampBuildings";
+import { CampBuildings } from "./building/CampBuildings";
 
 interface CampConfig {
 	staticConfig: StaticConfig;

@@ -1,9 +1,9 @@
 import { Building, BuildingSpawnConfig } from "./Building";
-import { relativeCoordinateToReal } from "../../base/position";
-import { HealthBar } from "../../base/classes/HealthBar";
-import { rectBuildinghalfHeight, circleSizeNames } from "../../base/globals/globalSizes";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { removeEle } from "../../base/utils";
+import { relativeCoordinateToReal } from "../../../base/position";
+import { HealthBar } from "../../../base/classes/HealthBar";
+import { rectBuildinghalfHeight, circleSizeNames } from "../../../base/globals/globalSizes";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { removeEle } from "../../../base/utils";
 
 export class CampBuildings {
 	buildings: Building[] = [];
@@ -12,7 +12,7 @@ export class CampBuildings {
 		private scene: Gameplay,
 		private spawnPositions: number[][],
 		private spawnConfig: BuildingSpawnConfig,
-		private color: string,
+		public color: string,
 		private physicsGroup: Phaser.Physics.Arcade.StaticGroup
 	) {
 		this.spawnBuildings();

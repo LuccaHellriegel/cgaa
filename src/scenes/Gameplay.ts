@@ -18,6 +18,9 @@ import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/input/move/WASD";
+import { WaveController } from "../game/enemies/wave/WaveController";
+import { CampsState } from "../game/enemies/camp/CampsState";
+import { CampBuildings } from "../game/enemies/camp/building/CampBuildings";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -72,7 +75,14 @@ export class Gameplay extends Phaser.Scene {
 
 		calculatePaths({ scene: this, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
-		spawnWave(this);
+		new WaveController(
+			this,
+			new CampsState(
+				Object.values(this.cgaa.camps).map(camp => {
+					return (camp as { buildings: CampBuildings }).buildings;
+				})
+			)
+		);
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);

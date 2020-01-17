@@ -1,5 +1,5 @@
 import { EnemyCircle } from "../unit/EnemyCircle";
-import { CampBuildings } from "../building/CampBuildings";
+import { CampBuildings } from "../camp/building/CampBuildings";
 
 export class Wave {
 	constructor(
