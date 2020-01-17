@@ -17,6 +17,7 @@ import { spawnWave } from "../game/enemies/wave/wave";
 import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
+import { WASD } from "../game/player/input/WASD";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -81,7 +82,7 @@ export class Gameplay extends Phaser.Scene {
 		this.cameras.main.startFollow(player);
 		setupPointerEvents(this, player, this.cgaa.ghostTower, modi);
 
-		this.movement = new Movement(this, player);
+		this.movement = new Movement(new WASD(this), player);
 	}
 
 	update() {
