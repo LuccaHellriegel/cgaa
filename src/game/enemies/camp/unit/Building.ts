@@ -8,6 +8,7 @@ import { realCoordinateToRelative } from "../../../base/position";
 import { removeEle } from "../../../base/utils";
 import { extendWithNewId } from "../../../base/id";
 import { setupBuildingPopulation } from "../../wave/waveBuilding";
+import { CampBuildings } from "../CampBuildings";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -67,9 +68,11 @@ export class Building extends Image implements damageable {
 		if (this.healthbar.decrease(amount)) {
 			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
-			removeEle(this, (this.scene as Gameplay).cgaa.camps[this.color].buildings);
 
-			if ((this.scene as Gameplay).cgaa.camps[this.color].buildings.length === 0) {
+			let buildings: CampBuildings = (this.scene as Gameplay).cgaa.camps[this.color].buildings;
+			buildings.remove(this);
+
+			if (buildings.areDestroyed()) {
 				this.scene.events.emit("destroyed-" + this.color);
 				removeEle(this.color, (this.scene as Gameplay).cgaa.activeCamps);
 			}

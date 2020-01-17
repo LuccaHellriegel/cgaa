@@ -6,7 +6,7 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 type GroupComposition = { weaponType: string; size: string }[];
 
 export class EnemyPool {
-	private activeIDArr: string[] = [];
+	activeIDArr: string[] = [];
 	private inactiveIDArr: string[] = [];
 	private isNeeded = true;
 

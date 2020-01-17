@@ -14,8 +14,7 @@ export class CampPopulator {
 	}
 
 	private startWave() {
-		let campIsDestroyed = this.scene.cgaa.camps[this.color].buildings.length === 0;
-		if (campIsDestroyed) {
+		if (this.scene.cgaa.camps[this.color].buildings.areDestroyed()) {
 			this.enemyPool.destroy();
 			return;
 		}
@@ -39,7 +38,7 @@ export class CampPopulator {
 		if (spawnPosition) {
 			let enemy = this.enemyPool.pop();
 
-			if (this.scene.cgaa.camps[enemy.color].buildings.length === 0) {
+			if (this.scene.cgaa.camps[this.color].buildings.areDestroyed()) {
 				enemy.destroy();
 				return;
 			}

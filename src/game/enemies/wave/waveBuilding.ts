@@ -25,8 +25,7 @@ export function setupBuildingPopulation(scene: Gameplay, color: string, building
 function startWave(scene: Gameplay, color: string, buildingID: string) {
 	let enemyPool = scene.cgaa.camps[color].buildingPopulation[buildingID].enemyPool;
 	let enemySpawnObj = scene.cgaa.camps[color].buildingPopulation[buildingID].enemySpawnObj;
-	let campIsDestroyed = scene.cgaa.camps[color].buildings.length === 0;
-	if (campIsDestroyed) {
+	if (scene.cgaa.camps[color].buildings.areDestroyed()) {
 		enemyPool.destroy();
 		return;
 	}
@@ -43,7 +42,7 @@ function spawnEnemy(scene: Gameplay, enemySpawnObj: EnemySpawnObj, enemyPool: En
 	if (spawnPosition) {
 		let enemy = enemyPool.pop();
 
-		if (scene.cgaa.camps[enemy.color].buildings.length === 0) {
+		if (scene.cgaa.camps[enemy.color].buildings.areDestroyed()) {
 			enemy.destroy();
 			return;
 		}

@@ -1,6 +1,6 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
-import { spawnBuildings, getRandomBuildingSpawnPositions } from "./spawnBuilding";
+import { getRandomBuildingSpawnPositions } from "./spawnBuilding";
 import { EnemyConfig, EnemyFactory } from "./unit/EnemyFactory";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
@@ -11,6 +11,7 @@ import { buildingSymbol } from "../../base/globals/globalSymbols";
 import { CampPopulator } from "./population/CampPopulator";
 import { EnemyPool } from "./population/EnemyPool";
 import { campGroupComposition } from "./population/campConfig";
+import { CampBuildings } from "./CampBuildings";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -74,11 +75,14 @@ function createCamp(config: CampConfig): BuildingInfo {
 	};
 
 	config.staticConfig.scene.cgaa.camps[config.color].buildingPopulation = {};
-	spawnBuildings(spawnPositions, {
-		color: config.color,
-		staticConfig: config.staticConfig,
-		spawnConfig
-	});
+
+	new CampBuildings(
+		config.staticConfig.scene,
+		spawnPositions,
+		spawnConfig,
+		config.color,
+		config.staticConfig.physicsGroup
+	);
 	updateMapWithBuildings(config.map, spawnPositions);
 
 	let enemyConfig: EnemyConfig = {
