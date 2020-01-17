@@ -52,13 +52,11 @@ export class EnemyPool {
 		}
 		let id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);
-		return this.scene.cgaa.enemyDict[id];
+		return this.scene.cgaa.enemies.getEnemy(id);
 	}
 
 	destroy() {
 		this.isNeeded = false;
-		for (const key in this.inactiveIDArr) {
-			this.scene.cgaa.enemyDict[this.inactiveIDArr[key]].destroy();
-		}
+		this.scene.cgaa.enemies.destroyEnemies(this.inactiveIDArr);
 	}
 }

@@ -20,6 +20,8 @@ import { WASD } from "../game/player/input/move/WASD";
 import { WaveController } from "../game/enemies/wave/WaveController";
 import { CampsState } from "../game/enemies/camp/CampsState";
 import { CampBuildings } from "../game/enemies/camp/building/CampBuildings";
+import { Mouse } from "../game/player/input/move/Mouse";
+import { Enemies } from "../game/enemies/unit/Enemies";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -37,7 +39,7 @@ export class Gameplay extends Phaser.Scene {
 	private initCGAA() {
 		this.cgaa = {
 			interactionElements: [],
-			enemyDict: {},
+			enemies: new Enemies(),
 			pathDict: {},
 			camps: {}
 		};
@@ -49,6 +51,17 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.interactionModus = new InteractionModus(this, this.cgaa.ghostTower, this.cgaa.keyObjE);
 
 		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [], rerouteColor: "" }));
+	}
+
+	private startWaves() {
+		new WaveController(
+			this,
+			new CampsState(
+				Object.values(this.cgaa.camps).map(camp => {
+					return (camp as { buildings: CampBuildings }).buildings;
+				})
+			)
+		);
 	}
 
 	create() {
@@ -73,24 +86,18 @@ export class Gameplay extends Phaser.Scene {
 
 		calculatePaths({ scene: this, unifiedMap, areaConfigs, middlePos, buildingInfos });
 
-		new WaveController(
-			this,
-			new CampsState(
-				Object.values(this.cgaa.camps).map(camp => {
-					return (camp as { buildings: CampBuildings }).buildings;
-				})
-			)
-		);
-
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);
 		let modi = new Modi(this.cgaa.keyObjF, this.cgaa.interactionModus, towerManager);
 
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
-		setupPointerEvents(this, player, this.cgaa.ghostTower, modi);
+
+		new Mouse(this, player, this.cgaa.ghostTower, modi);
 
 		this.movement = new Movement(new WASD(this), player);
+
+		this.startWaves();
 	}
 
 	update() {

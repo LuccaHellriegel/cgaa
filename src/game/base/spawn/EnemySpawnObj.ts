@@ -10,9 +10,7 @@ export class EnemySpawnObj {
 	constructor(private baseObj, private scene: Gameplay) {}
 
 	private updateRelativeObjWithMovingUnits() {
-		let circles: EnemyCircle[] = Object.values(this.scene.cgaa.enemyDict);
-
-		circles.forEach(pos => {
+		this.scene.cgaa.enemies.getAllEnemyPositions().forEach(pos => {
 			let id = pos.x + " " + pos.y;
 			if (this.relativeObj[id] !== undefined) this.relativeObj[id] = enemySmybol;
 		});
@@ -21,10 +19,6 @@ export class EnemySpawnObj {
 	private updateRelativeObj() {
 		this.relativeObj = cloneDeep(this.baseObj);
 		this.updateRelativeObjWithMovingUnits();
-	}
-
-	add(anEnemy: EnemyCircle) {
-		this.scene.cgaa.enemyDict[anEnemy.id] = anEnemy;
 	}
 
 	evaluateRealPos(x, y) {

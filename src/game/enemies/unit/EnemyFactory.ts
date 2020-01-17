@@ -73,7 +73,7 @@ export class EnemyFactory {
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 
-		scene.cgaa.enemyDict[circle.id] = circle;
+		scene.cgaa.enemies.addEnemy(circle);
 
 		return circle;
 	}
@@ -111,7 +111,7 @@ export class EnemyFactory {
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 
-		scene.cgaa.enemyDict[circle.id] = circle;
+		scene.cgaa.enemies.addEnemy(circle);
 
 		return circle;
 	}

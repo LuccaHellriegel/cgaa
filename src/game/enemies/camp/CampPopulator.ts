@@ -45,7 +45,6 @@ export class CampPopulator {
 
 			enemy.state = "guard";
 			enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
-			this.enemySpawnObj.add(enemy);
 			leftToSpawn--;
 		}
 		if (leftToSpawn > 0) {

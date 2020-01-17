@@ -38,8 +38,6 @@ export class WavePopulator {
 
 				enemy.pathContainer = this.scene.cgaa.pathDict[id];
 				enemy.state = "ambush";
-				this.enemySpawnObj.add(enemy);
-
 				enemyCircles.push(enemy);
 			} else {
 				break;
