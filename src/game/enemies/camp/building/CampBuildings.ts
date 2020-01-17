@@ -1,9 +1,14 @@
 import { Building, BuildingSpawnConfig } from "./Building";
-import { relativeCoordinateToReal } from "../../../base/position";
+import { relativeCoordinateToReal, realCoordinateToRelative } from "../../../base/position";
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { rectBuildinghalfHeight, circleSizeNames } from "../../../base/globals/globalSizes";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { removeEle } from "../../../base/utils";
+import { WavePopulator } from "../../wave/WavePopulator";
+import { EnemyPool } from "../../population/EnemyPool";
+import { buildingGroupComposition } from "../../wave/waveConfig";
+import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
+import { Enemies } from "../../unit/Enemies";
 
 export class CampBuildings {
 	buildings: Building[] = [];
@@ -13,7 +18,8 @@ export class CampBuildings {
 		private spawnPositions: number[][],
 		private spawnConfig: BuildingSpawnConfig,
 		public color: string,
-		private physicsGroup: Phaser.Physics.Arcade.StaticGroup
+		private physicsGroup: Phaser.Physics.Arcade.StaticGroup,
+		private enemies: Enemies
 	) {
 		this.spawnBuildings();
 	}
@@ -35,16 +41,23 @@ export class CampBuildings {
 			});
 
 			this.buildings.push(
-				new Building(
-					this.scene,
-					x,
-					y,
-					this.physicsGroup,
-					circleSizeNames[index],
-					this.color,
-					healthbar,
-					this.spawnConfig
-				)
+				new Building(this.scene, x, y, this.physicsGroup, circleSizeNames[index], this.color, healthbar)
+			);
+
+			new WavePopulator(
+				this.scene,
+				this.color,
+				new EnemyPool(this.scene, 1, buildingGroupComposition, {
+					scene: this.scene,
+					color: this.color,
+					size: "Big",
+					x: 100,
+					y: 100,
+					weaponType: "rand",
+					physicsGroup: this.spawnConfig.enemyPhysicGroup,
+					weaponGroup: this.spawnConfig.weaponPhysicGroup
+				}),
+				createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies)
 			);
 		}
 	}

@@ -24,16 +24,7 @@ export class Building extends Image implements damageable {
 	spawnUnit: any;
 	polygon: any;
 
-	constructor(
-		scene: Gameplay,
-		x,
-		y,
-		physicsGroup,
-		spawnUnit,
-		color: string,
-		healthbar: HealthBar,
-		config: BuildingSpawnConfig
-	) {
+	constructor(scene: Gameplay, x, y, physicsGroup, spawnUnit, color: string, healthbar: HealthBar) {
 		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
 		this.color = color;
 		this.spawnUnit = spawnUnit;
@@ -43,29 +34,6 @@ export class Building extends Image implements damageable {
 		this.healthbar = healthbar;
 
 		extendWithNewId(this);
-
-		new WavePopulator(
-			scene,
-			color,
-			new EnemyPool(
-				scene,
-				1,
-				buildingGroupComposition,
-
-				{
-					scene,
-					color,
-					size: "Big",
-					x: 100,
-					y: 100,
-					weaponType: "rand",
-					physicsGroup: config.enemyPhysicGroup,
-					weaponGroup: config.weaponPhysicGroup
-				}
-			),
-			createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), scene)
-		);
-
 		scene.cgaa.interactionElements.push(this);
 	}
 

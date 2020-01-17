@@ -73,7 +73,7 @@ export class Gameplay extends Phaser.Scene {
 		let areaConfigs = constructAreaConfigs(areaStaticConfig);
 		let { unifiedMap, middlePos } = createAreas(areaConfigs);
 
-		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs);
+		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, this.cgaa.enemies);
 		let towerManager = new TowerManager(
 			this,
 			physicsGroups.towers,
@@ -82,7 +82,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.ghostTower
 		);
 
-		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, physicsGroups);
+		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies);
 
 		calculatePaths({ scene: this, unifiedMap, areaConfigs, middlePos, buildingInfos });
 

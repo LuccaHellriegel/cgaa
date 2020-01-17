@@ -1,16 +1,15 @@
 import { cloneDeep } from "lodash";
 import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
-import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
-import { Gameplay } from "../../../scenes/Gameplay";
+import { Enemies } from "../../enemies/unit/Enemies";
 
 export class EnemySpawnObj {
 	public relativeObj;
 
-	constructor(private baseObj, private scene: Gameplay) {}
+	constructor(private baseObj, private enemies: Enemies) {}
 
 	private updateRelativeObjWithMovingUnits() {
-		this.scene.cgaa.enemies.getAllEnemyPositions().forEach(pos => {
+		this.enemies.getAllEnemyPositions().forEach(pos => {
 			let id = pos.x + " " + pos.y;
 			if (this.relativeObj[id] !== undefined) this.relativeObj[id] = enemySmybol;
 		});

@@ -12,6 +12,7 @@ import { CampPopulator } from "./CampPopulator";
 import { EnemyPool } from "../population/EnemyPool";
 import { campGroupComposition, numberOfBuildings } from "./campConfig";
 import { CampBuildings } from "./building/CampBuildings";
+import { Enemies } from "../unit/Enemies";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -65,7 +66,7 @@ function updateMapWithBuildings(map: ZeroOneMap, positions) {
 	}
 }
 
-function createCamp(config: CampConfig): BuildingInfo {
+function createCamp(config: CampConfig, enemies: Enemies): BuildingInfo {
 	let spawnPositions = getRandomBuildingSpawnPositions(config.map, config.areaConfig, numberOfBuildings);
 	let spawnConfig = {
 		enemyPhysicGroup: config.enemyPhysicGroup,
@@ -79,7 +80,8 @@ function createCamp(config: CampConfig): BuildingInfo {
 		spawnPositions,
 		spawnConfig,
 		config.color,
-		config.staticConfig.physicsGroup
+		config.staticConfig.physicsGroup,
+		enemies
 	);
 	updateMapWithBuildings(config.map, spawnPositions);
 
@@ -99,17 +101,17 @@ function createCamp(config: CampConfig): BuildingInfo {
 		config.staticConfig.scene,
 		config.color,
 		enemyPool,
-		createAreaEnemySpawnObj(config.map, config.areaConfig)
+		createAreaEnemySpawnObj(config.map, config.areaConfig, enemies)
 	);
 	createInteractionUnit(config, enemyConfig);
 
 	return { spawnPositions, color: config.color };
 }
 
-function createCamps(configs: CampConfig[]): BuildingInfo[] {
+function createCamps(configs: CampConfig[], enemies: Enemies): BuildingInfo[] {
 	let positions: BuildingInfo[] = [];
 	for (let index = 0, length = configs.length; index < length; index++) {
-		positions.push(createCamp(configs[index]));
+		positions.push(createCamp(configs[index], enemies));
 	}
 	return positions;
 }
@@ -118,8 +120,9 @@ export function mainCamp(
 	scene: Gameplay,
 	map: ZeroOneMap,
 	areaConfigs: AreaConfig[],
-	physicGroups: PhysicGroups
+	physicGroups: PhysicGroups,
+	enemies: Enemies
 ): BuildingInfo[] {
 	let campConfigs: CampConfig[] = constructCampConfigs(scene, map, areaConfigs, physicGroups);
-	return createCamps(campConfigs);
+	return createCamps(campConfigs, enemies);
 }
