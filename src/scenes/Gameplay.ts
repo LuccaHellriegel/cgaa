@@ -40,15 +40,11 @@ export class Gameplay extends Phaser.Scene {
 			camps: {}
 		};
 
-		let keyObjF = this.input.keyboard.addKey("F");
-		let ghostTower = new GhostTower(this, 0, 0, keyObjF);
-		this.cgaa.keyObjF = keyObjF;
-		this.cgaa.ghostTower = ghostTower;
+		this.cgaa.keyObjF = this.input.keyboard.addKey("F");
+		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
 
-		let keyObjE = this.input.keyboard.addKey("E");
-		let interactionModus = new InteractionModus(this, ghostTower, keyObjE);
-
-		this.cgaa.interactionModus = interactionModus;
+		this.cgaa.keyObjE = this.input.keyboard.addKey("E");
+		this.cgaa.interactionModus = new InteractionModus(this, this.cgaa.ghostTower, this.cgaa.keyObjE);
 
 		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [], rerouteColor: "" }));
 	}

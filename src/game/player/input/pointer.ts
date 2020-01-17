@@ -1,4 +1,5 @@
 import { Modi } from "./modi/Modi";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 function rotatePlayerTowardsMouse(newX, newY, player) {
 	let x = player.x;
@@ -10,7 +11,7 @@ function rotatePlayerTowardsMouse(newX, newY, player) {
 	player.setRotation(rotation + correctionForPhasersMinus90DegreeTopPostion);
 }
 
-export function setupPointerEvents(scene, player, ghostTower, modi: Modi) {
+export function setupPointerEvents(scene: Gameplay, player, ghostTower, modi: Modi) {
 	let input = scene.input;
 
 	input.on("pointermove", function(pointer) {

@@ -4,6 +4,7 @@ import { executeOverAllCamps } from "../game/base/globals/global";
 import { CampState } from "../game/player/ui/state/CampState";
 import { campHexColors } from "../game/base/globals/globalColors";
 import { Gameplay } from "./Gameplay";
+import { initTutorial } from "../game/player/ui/tutorial/tutorial";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -54,11 +55,16 @@ export class HUD extends Phaser.Scene {
 
 		let campStates = [];
 
+		let x;
+		let y;
+
 		executeOverAllCamps((color, index) => {
-			let x = 0 + halfSize + 5;
-			let y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
+			x = 0 + halfSize + 5;
+			y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
 			campStates.push(new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, campHexColors[index]));
 		});
 		this.campStates = campStates;
+
+		initTutorial(this, this.ourGame, x, y + 300);
 	}
 }
