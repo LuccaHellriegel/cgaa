@@ -6,6 +6,7 @@ import { RandWeapon } from "../../weapons/RandWeapon";
 import { CirclePolygon } from "../../base/polygons/CirclePolygon";
 import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../base/globals/globalSizes";
 import { InteractionCircle } from "./InteractionCircle";
+import { Enemies } from "./Enemies";
 
 const healthBarConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
@@ -35,7 +36,7 @@ export interface EnemyConfig {
 export class EnemyFactory {
 	private constructor() {}
 
-	static createEnemy(enemyConfig: EnemyConfig) {
+	static createEnemy(enemyConfig: EnemyConfig, enemies: Enemies) {
 		let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;
 
 		let healthBarConfig = healthBarConfigs[size];
@@ -73,12 +74,12 @@ export class EnemyFactory {
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 
-		scene.cgaa.enemies.addEnemy(circle);
+		enemies.addEnemy(circle);
 
 		return circle;
 	}
 
-	static createInteractionCircle(config) {
+	static createInteractionCircle(config, enemies: Enemies) {
 		let { scene, color, x, y, physicsGroup, weaponGroup } = config;
 
 		let healthBarConfig = healthBarConfigs["Normal"];
@@ -111,7 +112,7 @@ export class EnemyFactory {
 		weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 
-		scene.cgaa.enemies.addEnemy(circle);
+		enemies.addEnemy(circle);
 
 		return circle;
 	}

@@ -47,11 +47,11 @@ function constructCampConfigs(
 	return campConfigs;
 }
 
-function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig) {
+function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig, enemies: Enemies) {
 	let { x, y } = exitToGlobalPoint(config.areaConfig);
 	enemyConfig.x = x;
 	enemyConfig.y = y;
-	let circle = EnemyFactory.createInteractionCircle(enemyConfig);
+	let circle = EnemyFactory.createInteractionCircle(enemyConfig, enemies);
 	config.staticConfig.scene.cgaa.interactionElements.push(circle);
 }
 
@@ -96,14 +96,14 @@ function createCamp(config: CampConfig, enemies: Enemies): BuildingInfo {
 		weaponGroup: config.weaponPhysicGroup
 	};
 
-	let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemyConfig);
+	let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemyConfig, enemies);
 	new CampPopulator(
 		config.staticConfig.scene,
 		config.color,
 		enemyPool,
 		createAreaEnemySpawnObj(config.map, config.areaConfig, enemies)
 	);
-	createInteractionUnit(config, enemyConfig);
+	createInteractionUnit(config, enemyConfig, enemies);
 
 	return { spawnPositions, color: config.color };
 }

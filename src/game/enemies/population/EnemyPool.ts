@@ -2,6 +2,7 @@ import { EnemyConfig, EnemyFactory, EnemySize, WeaponTypes } from "../unit/Enemy
 import { EnemyCircle } from "../unit/EnemyCircle";
 import { removeEle } from "../../base/utils";
 import { Gameplay } from "../../../scenes/Gameplay";
+import { Enemies } from "../unit/Enemies";
 
 type GroupComposition = { weaponType: string; size: string }[];
 
@@ -14,12 +15,16 @@ export class EnemyPool {
 		private scene: Gameplay,
 		private numberOfGroups: number,
 		private groupComposition: GroupComposition,
-		private enemyConfig: EnemyConfig
+		private enemyConfig: EnemyConfig,
+		private enemies: Enemies
 	) {
 		this.initPool();
+		this.setupEvents();
+	}
 
+	private setupEvents() {
 		for (const id of this.inactiveIDArr) {
-			scene.events.once("inactive-" + id, this.makeInactive.bind(this));
+			this.scene.events.once("inactive-" + id, this.makeInactive.bind(this));
 		}
 	}
 
@@ -37,7 +42,7 @@ export class EnemyPool {
 				const curComposition = this.groupComposition[index];
 				this.enemyConfig.size = curComposition.size as EnemySize;
 				this.enemyConfig.weaponType = curComposition.weaponType as WeaponTypes;
-				let enemy: EnemyCircle = EnemyFactory.createEnemy(this.enemyConfig);
+				let enemy: EnemyCircle = EnemyFactory.createEnemy(this.enemyConfig, this.enemies);
 				enemy.poolDestroy();
 				//listening for inactive-event is initialized after this function
 				this.inactiveIDArr.push(enemy.id);
@@ -52,11 +57,11 @@ export class EnemyPool {
 		}
 		let id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);
-		return this.scene.cgaa.enemies.getEnemy(id);
+		return this.enemies.getEnemy(id);
 	}
 
 	destroy() {
 		this.isNeeded = false;
-		this.scene.cgaa.enemies.destroyEnemies(this.inactiveIDArr);
+		this.enemies.destroyEnemies(this.inactiveIDArr);
 	}
 }

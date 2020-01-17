@@ -47,16 +47,22 @@ export class CampBuildings {
 			new WavePopulator(
 				this.scene,
 				this.color,
-				new EnemyPool(this.scene, 1, buildingGroupComposition, {
-					scene: this.scene,
-					color: this.color,
-					size: "Big",
-					x: 100,
-					y: 100,
-					weaponType: "rand",
-					physicsGroup: this.spawnConfig.enemyPhysicGroup,
-					weaponGroup: this.spawnConfig.weaponPhysicGroup
-				}),
+				new EnemyPool(
+					this.scene,
+					1,
+					buildingGroupComposition,
+					{
+						scene: this.scene,
+						color: this.color,
+						size: "Big",
+						x: 100,
+						y: 100,
+						weaponType: "rand",
+						physicsGroup: this.spawnConfig.enemyPhysicGroup,
+						weaponGroup: this.spawnConfig.weaponPhysicGroup
+					},
+					this.enemies
+				),
 				createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies)
 			);
 		}

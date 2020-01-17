@@ -1,11 +1,11 @@
-import { EnemyCircle } from "./EnemyCircle";
 import { Point } from "../../base/types";
+import { Circle } from "../../base/classes/Circle";
 
 export class Enemies {
 	private idDict = {};
 	constructor() {}
 
-	addEnemy(enemy: EnemyCircle) {
+	addEnemy(enemy: Circle) {
 		this.idDict[enemy.id] = enemy;
 	}
 
