@@ -9,3 +9,5 @@ export const campGroupComposition = [
 	normalCircleWithRand,
 	normalCircleWithChain
 ];
+
+export const campMaxPopulation = 5;

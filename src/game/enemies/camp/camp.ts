@@ -92,11 +92,7 @@ function createCamp(config: CampConfig): BuildingInfo {
 		weaponGroup: config.weaponPhysicGroup
 	};
 
-	let enemyPool = new EnemyPool({
-		enemyConfig,
-		numberOfGroups: 4,
-		groupComposition: campGroupComposition
-	});
+	let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemyConfig);
 	new CampPopulator(
 		config.staticConfig.scene,
 		config.color,

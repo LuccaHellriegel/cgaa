@@ -5,43 +5,39 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 
 type GroupComposition = { weaponType: string; size: string }[];
 
-interface PoolParams {
-	numberOfGroups: number;
-	groupComposition: GroupComposition;
-	enemyConfig: EnemyConfig;
-}
-
 export class EnemyPool {
-	activeIDArr: string[] = [];
-	inactiveIDArr: string[] = [];
-	isNeeded = true;
-	scene: Gameplay;
+	private activeIDArr: string[] = [];
+	private inactiveIDArr: string[] = [];
+	private isNeeded = true;
 
-	constructor(private params: PoolParams) {
-		this.initPool(params);
+	constructor(
+		private scene: Gameplay,
+		private numberOfGroups: number,
+		private groupComposition: GroupComposition,
+		private enemyConfig: EnemyConfig
+	) {
+		this.initPool();
 
 		for (const id of this.inactiveIDArr) {
-			params.enemyConfig.scene.events.once("inactive-" + id, this.makeInactive.bind(this));
+			scene.events.once("inactive-" + id, this.makeInactive.bind(this));
 		}
-
-		this.scene = params.enemyConfig.scene;
 	}
 
 	private makeInactive(key) {
 		if (this.isNeeded) {
 			removeEle(key, this.activeIDArr);
 			this.inactiveIDArr.unshift(key);
-			this.params.enemyConfig.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
+			this.scene.events.once("inactive-" + key, this.makeInactive.bind(this));
 		}
 	}
 
-	private initPool(params: PoolParams) {
-		for (let index = 0; index < params.numberOfGroups; index++) {
-			for (let index = 0, length = params.groupComposition.length; index < length; index++) {
-				const curComposition = params.groupComposition[index];
-				params.enemyConfig.size = curComposition.size as EnemySize;
-				params.enemyConfig.weaponType = curComposition.weaponType as WeaponTypes;
-				let enemy: EnemyCircle = EnemyFactory.createEnemy(params.enemyConfig);
+	private initPool() {
+		for (let index = 0; index < this.numberOfGroups; index++) {
+			for (let index = 0, length = this.groupComposition.length; index < length; index++) {
+				const curComposition = this.groupComposition[index];
+				this.enemyConfig.size = curComposition.size as EnemySize;
+				this.enemyConfig.weaponType = curComposition.weaponType as WeaponTypes;
+				let enemy: EnemyCircle = EnemyFactory.createEnemy(this.enemyConfig);
 				enemy.poolDestroy();
 				//listening for inactive-event is initialized after this function
 				this.inactiveIDArr.push(enemy.id);
@@ -51,8 +47,8 @@ export class EnemyPool {
 
 	pop(): EnemyCircle {
 		if (this.inactiveIDArr.length === 0) {
-			this.params.numberOfGroups = 1;
-			this.initPool(this.params);
+			this.numberOfGroups = 1;
+			this.initPool();
 		}
 		let id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);

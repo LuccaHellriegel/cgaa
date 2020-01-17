@@ -10,12 +10,12 @@ let normalCircleWithChain = { weaponType: "chain", size: "Normal" };
 const buildingGroupComposition = [bigCircleWithRand, bigCircleWithChain, normalCircleWithRand, normalCircleWithChain];
 
 export function setupBuildingPopulation(scene: Gameplay, color: string, buildingID: string) {
-	console.log(scene.cgaa.camps[color].buildingPopulation);
-	scene.cgaa.camps[color].buildingPopulation[buildingID].enemyPool = new EnemyPool({
-		enemyConfig: scene.cgaa.camps[color].buildingPopulation[buildingID].enemyConfig,
-		numberOfGroups: 1,
-		groupComposition: buildingGroupComposition
-	});
+	scene.cgaa.camps[color].buildingPopulation[buildingID].enemyPool = new EnemyPool(
+		scene,
+		1,
+		buildingGroupComposition,
+		scene.cgaa.camps[color].buildingPopulation[buildingID].enemyConfig
+	);
 
 	scene.events.once("start-wave-" + color, () => {
 		startWave(scene, color, buildingID);

@@ -1,8 +1,7 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { EnemyPool } from "./EnemyPool";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
-
-const campMaxPopulation = 5;
+import { campMaxPopulation } from "./campConfig";
 
 export class CampPopulator {
 	constructor(
