@@ -79,7 +79,6 @@ export class Building extends Image implements damageable {
 
 			if (buildings.areDestroyed()) {
 				this.scene.events.emit("destroyed-" + this.color);
-				removeEle(this.color, (this.scene as Gameplay).cgaa.activeCamps);
 			}
 			this.destroy();
 		}

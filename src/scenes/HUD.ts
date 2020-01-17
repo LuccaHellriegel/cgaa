@@ -23,7 +23,6 @@ export class HUD extends Phaser.Scene {
 				if (this.playerHealthBar.decrease(amount)) {
 					console.log("here");
 					//TODO
-					this.ourGame.cgaa.activeCamps = [];
 					this.ourGame.events.emit("");
 					this.ourGame.scene.restart();
 					// this.playerSoulCounter.reset();
