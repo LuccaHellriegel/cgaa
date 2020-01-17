@@ -7,8 +7,10 @@ import { AreaConfig, BuildingInfo } from "../../base/interfaces";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { PhysicGroups } from "../../collision/collisionBase";
 import { getRandomCampColorOrder } from "../../base/globals/global";
-import { setupAreaPopulation } from "./population/populationArea";
 import { buildingSymbol } from "../../base/globals/globalSymbols";
+import { CampPopulator } from "./population/CampPopulator";
+import { EnemyPool } from "./population/EnemyPool";
+import { campGroupComposition } from "./population/campConfig";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -90,14 +92,17 @@ function createCamp(config: CampConfig): BuildingInfo {
 		weaponGroup: config.weaponPhysicGroup
 	};
 
-	config.staticConfig.scene.cgaa.camps[config.color]["area"] = {};
-	config.staticConfig.scene.cgaa.camps[config.color]["area"]["enemySpawnObj"] = createAreaEnemySpawnObj(
-		config.map,
-		config.areaConfig
+	let enemyPool = new EnemyPool({
+		enemyConfig,
+		numberOfGroups: 4,
+		groupComposition: campGroupComposition
+	});
+	new CampPopulator(
+		config.staticConfig.scene,
+		config.color,
+		enemyPool,
+		createAreaEnemySpawnObj(config.map, config.areaConfig)
 	);
-	config.staticConfig.scene.cgaa.camps[config.color]["area"]["enemyConfig"] = enemyConfig;
-
-	setupAreaPopulation(config.staticConfig.scene, config.color);
 	createInteractionUnit(config, enemyConfig);
 
 	return { spawnPositions, color: config.color };
