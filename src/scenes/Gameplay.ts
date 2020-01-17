@@ -13,7 +13,7 @@ import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
 import { calculatePaths } from "../game/enemies/path/path";
-import { spawnWave } from "../game/enemies/wave/wave";
+import { spawnWave } from "../game/enemies/wave/wavesInit";
 import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";

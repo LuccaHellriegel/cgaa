@@ -8,3 +8,5 @@ export const buildingGroupComposition = [
 	normalCircleWithRand,
 	normalCircleWithChain
 ];
+
+export const waveSize = 3;
