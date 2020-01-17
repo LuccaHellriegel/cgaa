@@ -1,6 +1,5 @@
 import { StaticConfig, ZeroOneMap } from "../../base/types";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
-import { getRandomBuildingSpawnPositions } from "./spawnBuilding";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { exitToGlobalPoint } from "../../base/position";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
@@ -13,6 +12,7 @@ import { EnemyPool } from "../population/EnemyPool";
 import { campGroupComposition, numberOfBuildings } from "./campConfig";
 import { CampBuildings } from "./building/CampBuildings";
 import { Enemies } from "../unit/Enemies";
+import { BuildingSpawn } from "./building/BuildingSpawn";
 
 interface CampConfig {
 	staticConfig: StaticConfig;
@@ -55,19 +55,12 @@ function createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig, ene
 	config.staticConfig.scene.cgaa.interactionElements.push(circle);
 }
 
-function updateMapWithBuildings(map: ZeroOneMap, positions) {
-	for (let index = 0, length = positions.length; index < length; index++) {
-		let pos = positions[index];
-		let column = pos[0];
-		let row = pos[1];
-		map[row][column] = buildingSymbol;
-		map[row][column - 1] = buildingSymbol;
-		map[row][column + 1] = buildingSymbol;
-	}
-}
-
 function createCamp(config: CampConfig, enemies: Enemies): BuildingInfo {
-	let spawnPositions = getRandomBuildingSpawnPositions(config.map, config.areaConfig, numberOfBuildings);
+	let spawnPositions = new BuildingSpawn(
+		config.map,
+		config.areaConfig,
+		numberOfBuildings
+	).getRandomBuildingSpawnPositions();
 	let spawnConfig = {
 		enemyPhysicGroup: config.enemyPhysicGroup,
 		weaponPhysicGroup: config.weaponPhysicGroup
@@ -83,7 +76,6 @@ function createCamp(config: CampConfig, enemies: Enemies): BuildingInfo {
 		config.staticConfig.physicsGroup,
 		enemies
 	);
-	updateMapWithBuildings(config.map, spawnPositions);
 
 	let enemyConfig: EnemyConfig = {
 		scene: config.staticConfig.scene,
