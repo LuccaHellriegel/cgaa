@@ -9,6 +9,7 @@ import { EnemyPool } from "../../population/EnemyPool";
 import { buildingGroupComposition } from "../../wave/waveConfig";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { Enemies } from "../../unit/Enemies";
+import { BuildingInfo } from "../../../base/interfaces";
 
 export class CampBuildings {
 	buildings: Building[] = [];
@@ -41,7 +42,7 @@ export class CampBuildings {
 			});
 
 			this.buildings.push(
-				new Building(this.scene, x, y, this.physicsGroup, circleSizeNames[index], this.color, healthbar)
+				new Building(this.scene, x, y, this.physicsGroup, circleSizeNames[index], this.color, healthbar, this)
 			);
 
 			new WavePopulator(
@@ -63,7 +64,8 @@ export class CampBuildings {
 					},
 					this.enemies
 				),
-				createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies)
+				createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
+				this
 			);
 		}
 	}
@@ -74,5 +76,9 @@ export class CampBuildings {
 
 	areDestroyed() {
 		return this.buildings.length === 0;
+	}
+
+	getBuildingInfo(): BuildingInfo {
+		return { color: this.color, spawnPositions: this.spawnPositions };
 	}
 }

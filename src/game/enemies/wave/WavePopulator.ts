@@ -4,13 +4,15 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
+import { CampBuildings } from "../camp/building/CampBuildings";
 
 export class WavePopulator {
 	constructor(
 		private scene: Gameplay,
 		private color: string,
 		private enemyPool: EnemyPool,
-		private enemySpawnObj: EnemySpawnObj
+		private enemySpawnObj: EnemySpawnObj,
+		private campBuildings: CampBuildings
 	) {
 		this.setupInitEvents();
 	}
@@ -48,13 +50,13 @@ export class WavePopulator {
 	}
 
 	private startWave() {
-		if (this.scene.cgaa.camps[this.color].buildings.areDestroyed()) {
+		if (this.campBuildings.areDestroyed()) {
 			this.enemyPool.destroy();
 			return;
 		}
 
 		let { enemyCircles, spawnPositions } = this.prepareWave();
-		new Wave(enemyCircles, spawnPositions, this.scene.cgaa.camps[this.color].buildings, this.scene.time);
+		new Wave(enemyCircles, spawnPositions, this.campBuildings, this.scene.time);
 		this.scene.events.once("start-wave-" + this.color, () => {
 			this.startWave();
 		});

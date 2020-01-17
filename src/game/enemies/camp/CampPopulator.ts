@@ -2,19 +2,20 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemyPool } from "../population/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { campMaxPopulation } from "./campConfig";
+import { CampBuildings } from "./building/CampBuildings";
 
 export class CampPopulator {
 	constructor(
 		private scene: Gameplay,
-		private color: string,
 		private enemyPool: EnemyPool,
-		private enemySpawnObj: EnemySpawnObj
+		private enemySpawnObj: EnemySpawnObj,
+		private campBuildings: CampBuildings
 	) {
 		this.startWave();
 	}
 
 	private startWave() {
-		if (this.scene.cgaa.camps[this.color].buildings.areDestroyed()) {
+		if (this.campBuildings.areDestroyed()) {
 			this.enemyPool.destroy();
 			return;
 		}
@@ -38,7 +39,7 @@ export class CampPopulator {
 		if (spawnPosition) {
 			let enemy = this.enemyPool.pop();
 
-			if (this.scene.cgaa.camps[this.color].buildings.areDestroyed()) {
+			if (this.campBuildings.areDestroyed()) {
 				enemy.destroy();
 				return;
 			}

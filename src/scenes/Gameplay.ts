@@ -3,7 +3,6 @@ import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/input/move/Movement";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/unit/Player";
-import { setupPointerEvents } from "../game/player/input/move/pointer";
 import { InteractionModus } from "../game/player/input/modi/interaction/InteractionModus";
 import { Square } from "../game/player/unit/Square";
 import { GhostTower } from "../game/player/input/modi/interaction/GhostTower";
@@ -13,15 +12,14 @@ import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
 import { calculatePaths } from "../game/enemies/path/path";
-import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/input/move/WASD";
 import { WaveController } from "../game/enemies/wave/WaveController";
 import { CampsState } from "../game/enemies/camp/CampsState";
-import { CampBuildings } from "../game/enemies/camp/building/CampBuildings";
 import { Mouse } from "../game/player/input/move/Mouse";
 import { Enemies } from "../game/enemies/unit/Enemies";
+import { Camps } from "../game/enemies/camp/Camps";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -54,14 +52,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private startWaves() {
-		new WaveController(
-			this,
-			new CampsState(
-				Object.values(this.cgaa.camps).map(camp => {
-					return (camp as { buildings: CampBuildings }).buildings;
-				})
-			)
-		);
+		new WaveController(this, new CampsState(this.cgaa.campsObj.getCampBuildings()));
 	}
 
 	create() {
@@ -82,9 +73,15 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.ghostTower
 		);
 
-		let buildingInfos = mainCamp(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies);
+		this.cgaa.campsObj = new Camps(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies);
 
-		calculatePaths({ scene: this, unifiedMap, areaConfigs, middlePos, buildingInfos });
+		calculatePaths({
+			scene: this,
+			unifiedMap,
+			areaConfigs,
+			middlePos,
+			buildingInfos: this.cgaa.campsObj.getBuildingInfos()
+		});
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);

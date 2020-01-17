@@ -3,14 +3,9 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 import { damageable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
-import { realCoordinateToRelative } from "../../../base/position";
 import { removeEle } from "../../../base/utils";
 import { extendWithNewId } from "../../../base/id";
 import { CampBuildings } from "./CampBuildings";
-import { WavePopulator } from "../../wave/WavePopulator";
-import { EnemyPool } from "../../population/EnemyPool";
-import { buildingGroupComposition } from "../../wave/waveConfig";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -18,20 +13,23 @@ export interface BuildingSpawnConfig {
 }
 
 export class Building extends Image implements damageable {
-	healthbar: HealthBar;
 	id: string;
-	color: string;
-	spawnUnit: any;
 	polygon: any;
 
-	constructor(scene: Gameplay, x, y, physicsGroup, spawnUnit, color: string, healthbar: HealthBar) {
+	constructor(
+		scene: Gameplay,
+		x,
+		y,
+		physicsGroup,
+		spawnUnit,
+		private color: string,
+		public healthbar: HealthBar,
+		private campBuildings: CampBuildings
+	) {
 		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
-		this.color = color;
-		this.spawnUnit = spawnUnit;
 		this.setImmovable(true);
 
 		this.polygon = new RectPolygon(x, y, this.width, this.height);
-		this.healthbar = healthbar;
 
 		extendWithNewId(this);
 		scene.cgaa.interactionElements.push(this);
@@ -42,10 +40,9 @@ export class Building extends Image implements damageable {
 			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
 
-			let buildings: CampBuildings = (this.scene as Gameplay).cgaa.camps[this.color].buildings;
-			buildings.remove(this);
+			this.campBuildings.remove(this);
 
-			if (buildings.areDestroyed()) {
+			if (this.campBuildings.areDestroyed()) {
 				this.scene.events.emit("destroyed-" + this.color);
 			}
 			this.destroy();

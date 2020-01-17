@@ -11,9 +11,7 @@ export class CampsState {
 	private updateActiveCamps() {
 		for (let index = 0; index < this.activeCamps.length; index++) {
 			if (this.camps[index].areDestroyed()) {
-				console.log(this.camps);
 				removeEle(this.camps[index], this.camps);
-				console.log(this.camps);
 				removeEle(this.activeCamps[index], this.activeCamps);
 			}
 		}
