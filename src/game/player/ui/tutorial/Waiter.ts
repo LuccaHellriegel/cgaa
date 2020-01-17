@@ -1,8 +1,5 @@
 import { Ticker } from "./Ticker";
-
-export interface listenable {
-	once(event: any, callback: Function);
-}
+import { listenable } from "../../../base/interfaces";
 
 export class Waiter {
 	constructor(private obj: listenable, private event: string, private parent: Ticker) {}

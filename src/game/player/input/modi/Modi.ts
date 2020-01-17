@@ -1,23 +1,14 @@
 import { InteractionModus } from "./interaction/InteractionModus";
-import { Gameplay } from "../../../../scenes/Gameplay";
 import { TowerManager } from "../../towers/TowerManager";
 
 export class Modi {
 	towerModus: boolean;
-	interactionModus: InteractionModus;
-	scene: Gameplay;
-	towerManager: TowerManager;
 
-	constructor(scene, keyObjF, interactionModus: InteractionModus, towerManager: TowerManager) {
-		this.interactionModus = interactionModus;
-
+	constructor(keyObjF, private interactionModus: InteractionModus, private towerManager: TowerManager) {
 		keyObjF.on("down", () => {
 			this.towerModus = !this.towerModus;
 			this.interactionModus.isOn = false;
 		});
-
-		this.scene = scene;
-		this.towerManager = towerManager;
 	}
 
 	checkModi() {

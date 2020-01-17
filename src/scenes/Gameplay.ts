@@ -76,7 +76,7 @@ export class Gameplay extends Phaser.Scene {
 
 		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
 		new Square(this, pos.x, pos.y, physicsGroups.player);
-		let modi = new Modi(this, this.cgaa.keyObjF, this.cgaa.interactionModus, towerManager);
+		let modi = new Modi(this.cgaa.keyObjF, this.cgaa.interactionModus, towerManager);
 
 		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
 		this.cameras.main.startFollow(player);

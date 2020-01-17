@@ -1,6 +1,5 @@
 import { HealthBar } from "./classes/HealthBar";
 import { WallBase, Exit } from "./types";
-import { Building } from "../enemies/camp/unit/Building";
 
 export interface damageable {
 	syncPolygon();
@@ -8,6 +7,11 @@ export interface damageable {
 	damage(amount: number);
 	healthbar: HealthBar;
 	id: string;
+}
+
+export interface listenable {
+	once(event: any, callback: Function);
+	on(event: any, callback: Function);
 }
 
 export interface AreaConfig {
