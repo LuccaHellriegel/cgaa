@@ -2,7 +2,7 @@ import { Gameplay } from "../../../../../scenes/Gameplay";
 import { Tower } from "../../../towers/Tower";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../../../unit/Square";
-import { InteractionCircle } from "../../../../enemies/camp/unit/InteractionCircle";
+import { InteractionCircle } from "../../../../enemies/unit/InteractionCircle";
 import { Cooperation } from "./Cooperation";
 import { Point } from "../../../../base/types";
 

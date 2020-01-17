@@ -11,3 +11,5 @@ export const campGroupComposition = [
 ];
 
 export const campMaxPopulation = 5;
+
+export const numberOfBuildings = 3;

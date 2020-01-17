@@ -1,10 +1,10 @@
 import { EnemyCircle } from "./EnemyCircle";
-import { Gameplay } from "../../../../scenes/Gameplay";
-import { HealthBar } from "../../../base/classes/HealthBar";
-import { ChainWeapon } from "../../../weapons/ChainWeapon";
-import { RandWeapon } from "../../../weapons/RandWeapon";
-import { CirclePolygon } from "../../../base/polygons/CirclePolygon";
-import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../../base/globals/globalSizes";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { HealthBar } from "../../base/classes/HealthBar";
+import { ChainWeapon } from "../../weapons/ChainWeapon";
+import { RandWeapon } from "../../weapons/RandWeapon";
+import { CirclePolygon } from "../../base/polygons/CirclePolygon";
+import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../base/globals/globalSizes";
 import { InteractionCircle } from "./InteractionCircle";
 
 const healthBarConfigs = {

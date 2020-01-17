@@ -1,6 +1,6 @@
 import { Weapon } from "../weapons/Weapon";
-import { InteractionCircle } from "../enemies/camp/unit/InteractionCircle";
-import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
+import { InteractionCircle } from "../enemies/unit/InteractionCircle";
+import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 import { Tower } from "../player/towers/Tower";
 
 export function addOverlap(first, second, actualCallback, truthyCallback) {

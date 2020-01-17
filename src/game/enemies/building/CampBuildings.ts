@@ -1,5 +1,4 @@
-import { Building, BuildingSpawnConfig } from "./unit/Building";
-import { RelativePosition } from "../../base/types";
+import { Building, BuildingSpawnConfig } from "./Building";
 import { relativeCoordinateToReal } from "../../base/position";
 import { HealthBar } from "../../base/classes/HealthBar";
 import { rectBuildinghalfHeight, circleSizeNames } from "../../base/globals/globalSizes";
@@ -17,7 +16,6 @@ export class CampBuildings {
 		private physicsGroup: Phaser.Physics.Arcade.StaticGroup
 	) {
 		this.spawnBuildings();
-		this.scene.cgaa.camps[this.color]["buildings"] = this;
 	}
 
 	private spawnBuildings() {

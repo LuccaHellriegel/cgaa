@@ -1,6 +1,6 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
-import { EnemyPool } from "./EnemyPool";
-import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { EnemyPool } from "../population/EnemyPool";
+import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { campMaxPopulation } from "./campConfig";
 
 export class CampPopulator {

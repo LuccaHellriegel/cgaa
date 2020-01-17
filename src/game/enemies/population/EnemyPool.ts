@@ -1,7 +1,7 @@
 import { EnemyConfig, EnemyFactory, EnemySize, WeaponTypes } from "../unit/EnemyFactory";
 import { EnemyCircle } from "../unit/EnemyCircle";
-import { removeEle } from "../../../base/utils";
-import { Gameplay } from "../../../../scenes/Gameplay";
+import { removeEle } from "../../base/utils";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 type GroupComposition = { weaponType: string; size: string }[];
 

@@ -1,14 +1,16 @@
-import { Image } from "../../../base/classes/BasePhaser";
-import { Gameplay } from "../../../../scenes/Gameplay";
-import { damageable } from "../../../base/interfaces";
-import { HealthBar } from "../../../base/classes/HealthBar";
-import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
-import { realCoordinateToRelative } from "../../../base/position";
-import { removeEle } from "../../../base/utils";
-import { extendWithNewId } from "../../../base/id";
-import { setupBuildingPopulation } from "../../wave/waveBuilding";
-import { CampBuildings } from "../CampBuildings";
+import { Image } from "../../base/classes/BasePhaser";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { damageable } from "../../base/interfaces";
+import { HealthBar } from "../../base/classes/HealthBar";
+import { RectPolygon } from "../../base/polygons/RectPolygon";
+import { createBuildingEnemySpawnObj } from "../../base/spawn/spawn";
+import { realCoordinateToRelative } from "../../base/position";
+import { removeEle } from "../../base/utils";
+import { extendWithNewId } from "../../base/id";
+import { CampBuildings } from "./CampBuildings";
+import { WavePopulator } from "../wave/WavePopulator";
+import { EnemyPool } from "../population/EnemyPool";
+import { buildingGroupComposition } from "../wave/waveConfig";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -42,24 +44,27 @@ export class Building extends Image implements damageable {
 
 		extendWithNewId(this);
 
-		scene.cgaa.camps[color].buildingPopulation[this.id] = {};
-		scene.cgaa.camps[color].buildingPopulation[this.id].enemySpawnObj = createBuildingEnemySpawnObj(
-			realCoordinateToRelative(x),
-			realCoordinateToRelative(y),
-			scene
-		);
-		scene.cgaa.camps[color].buildingPopulation[this.id].enemyConfig = {
+		new WavePopulator(
 			scene,
 			color,
-			size: "Big",
-			x: 100,
-			y: 100,
-			weaponType: "rand",
-			physicsGroup: config.enemyPhysicGroup,
-			weaponGroup: config.weaponPhysicGroup
-		};
+			new EnemyPool(
+				scene,
+				1,
+				buildingGroupComposition,
 
-		setupBuildingPopulation(scene, color, this.id);
+				{
+					scene,
+					color,
+					size: "Big",
+					x: 100,
+					y: 100,
+					weaponType: "rand",
+					physicsGroup: config.enemyPhysicGroup,
+					weaponGroup: config.weaponPhysicGroup
+				}
+			),
+			createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), scene)
+		);
 
 		scene.cgaa.interactionElements.push(this);
 	}

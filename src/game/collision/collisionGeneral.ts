@@ -1,6 +1,6 @@
 import { addCollider, PhysicGroups } from "./collisionBase";
 import { executeOverAllCamps } from "../base/globals/global";
-import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
+import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 
 function bounceCallback(unit: EnemyCircle, obj) {
 	if (unit.color !== "blue") {

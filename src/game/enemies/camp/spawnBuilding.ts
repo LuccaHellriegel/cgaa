@@ -1,10 +1,7 @@
-import { ZeroOneMap, StaticConfig } from "../../base/types";
+import { ZeroOneMap } from "../../base/types";
 import { walkableSymbol, buildingSymbol } from "../../base/globals/globalSymbols";
 import { AreaConfig } from "../../base/interfaces";
-import { realCoordinateToRelative, relativeCoordinateToReal } from "../../base/position";
-import { BuildingSpawnConfig, Building } from "./unit/Building";
-import { HealthBar } from "../../base/classes/HealthBar";
-import { rectBuildinghalfHeight, circleSizeNames } from "../../base/globals/globalSizes";
+import { realCoordinateToRelative } from "../../base/position";
 import { cloneDeep } from "lodash";
 
 function getAllPositionsAroundBuildingInclusive(column, row) {

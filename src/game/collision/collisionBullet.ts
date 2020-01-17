@@ -2,7 +2,7 @@ import { gainSouls } from "../base/events/player";
 import { PhysicGroups, addCollider } from "./collisionBase";
 import { executeOverAllCamps } from "../base/globals/global";
 import { Bullet } from "../player/towers/Bullet";
-import { EnemyCircle } from "../enemies/camp/unit/EnemyCircle";
+import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 
 function doDamageBullet(scene: Phaser.Scene, bullet: Bullet, enemy: EnemyCircle) {
 	enemy.damage(bullet.amount);

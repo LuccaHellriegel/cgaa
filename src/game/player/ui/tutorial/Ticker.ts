@@ -1,5 +1,6 @@
 import { Box } from "./Box";
-import { Waiter, listenable } from "./Waiter";
+import { Waiter } from "./Waiter";
+import { listenable } from "../../../base/interfaces";
 
 export class Ticker {
 	private index = 0;

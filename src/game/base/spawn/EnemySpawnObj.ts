@@ -1,7 +1,7 @@
 import { cloneDeep } from "lodash";
 import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
-import { EnemyCircle } from "../../enemies/camp/unit/EnemyCircle";
+import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
 
 export class EnemySpawnObj {

@@ -1,8 +1,8 @@
-import { Circle } from "../../../base/classes/Circle";
-import { damageable } from "../../../base/interfaces";
-import { HealthBar } from "../../../base/classes/HealthBar";
-import { removeEle } from "../../../base/utils";
-import { Gameplay } from "../../../../scenes/Gameplay";
+import { Circle } from "../../base/classes/Circle";
+import { damageable } from "../../base/interfaces";
+import { HealthBar } from "../../base/classes/HealthBar";
+import { removeEle } from "../../base/utils";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
