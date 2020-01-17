@@ -65,7 +65,7 @@ export class Cooperation {
 		}
 	}
 
-	private checkIfCampDestroy(color) {
+	private checkIfCampDestroyed(color) {
 		for (const key in this.unitKilllist) {
 			const element = this.unitKilllist[key];
 			if (element.color === color) return false;
@@ -75,7 +75,7 @@ export class Cooperation {
 
 	verifyCooperation(ele, scene: Gameplay) {
 		if (this.unitKilllist.includes(ele)) removeEle(ele, this.unitKilllist);
-		let destroyed = this.checkIfCampDestroy(ele.color);
+		let destroyed = this.checkIfCampDestroyed(ele.color);
 		if (destroyed) {
 			//TODO: multiple camp cooperation
 			scene.cgaa.camps[this.rivalries[ele.color]].dontAttackList.push("blue");

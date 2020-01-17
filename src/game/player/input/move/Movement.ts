@@ -1,4 +1,4 @@
-import { Player } from "../unit/Player";
+import { Player } from "../../unit/Player";
 import { WASD } from "./WASD";
 
 export class Movement {

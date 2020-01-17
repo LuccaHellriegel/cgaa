@@ -3,9 +3,8 @@ import { Tower } from "../../../towers/Tower";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../../../unit/Square";
 import { InteractionCircle } from "../../../../enemies/camp/unit/InteractionCircle";
-import { findClosestPoint } from "../../../../base/find";
 import { Cooperation } from "./Cooperation";
-import { gainLife } from "../../../../base/events/player";
+import { Point } from "../../../../base/types";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -26,8 +25,22 @@ export class InteractionModus {
 		});
 	}
 
+	private findClosestPoint(arr: Point[], x, y): Point {
+		let obj;
+		let dist = Infinity;
+		for (const key in arr) {
+			let curObj = arr[key];
+			let curDist = Phaser.Math.Distance.Between(x, y, curObj.x, curObj.y);
+			if (curDist < dist) {
+				obj = curObj;
+				dist = curDist;
+			}
+		}
+		return obj;
+	}
+
 	private lockGhostTower() {
-		let ele = findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
+		let ele = this.findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			this.ghostTower.setPosition(ele.x, ele.y);
 			this.ghostTower.toggleLock();
@@ -42,20 +55,33 @@ export class InteractionModus {
 		this.cooperation.verifyCooperation(ele, this.scene);
 	}
 
+	private interactWithInteractionCircle(ele) {
+		let iEles = this.scene.cgaa.interactionElements;
+		this.cooperation.interactWithCircle(ele, this.scene, iEles);
+	}
+
+	private interactWithTower(ele) {
+		this.scene.events.emit("sold-tower", ele);
+		this.ghostTower.toggleLock();
+	}
+
+	private interactWithSquare() {
+		this.scene.events.emit("life-gained", 20);
+	}
+
 	interactWithClosestEle() {
-		let ele = findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
+		//TODO: if closest point too far -> dont lock on
+		let ele = this.findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
 		if (ele !== null) {
 			switch (ele.constructor) {
 				case InteractionCircle:
-					let iEles = this.scene.cgaa.interactionElements;
-					this.cooperation.interactWithCircle(ele, this.scene, iEles);
+					this.interactWithInteractionCircle(ele);
 					break;
 				case Tower:
-					this.scene.events.emit("sold-tower", ele);
-					this.ghostTower.toggleLock();
+					this.interactWithTower(ele);
 					break;
 				case Square:
-					gainLife(this.scene, 20);
+					this.interactWithSquare();
 					break;
 				default:
 					break;

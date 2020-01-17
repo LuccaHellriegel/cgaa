@@ -1,9 +1,9 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
-import { Movement } from "../game/player/input/Movement";
+import { Movement } from "../game/player/input/move/Movement";
 import { TowerManager } from "../game/player/towers/TowerManager";
 import { Player } from "../game/player/unit/Player";
-import { setupPointerEvents } from "../game/player/input/pointer";
+import { setupPointerEvents } from "../game/player/input/move/pointer";
 import { InteractionModus } from "../game/player/input/modi/interaction/InteractionModus";
 import { Square } from "../game/player/unit/Square";
 import { GhostTower } from "../game/player/input/modi/interaction/GhostTower";
@@ -17,7 +17,7 @@ import { spawnWave } from "../game/enemies/wave/wave";
 import { mainCamp } from "../game/enemies/camp/camp";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
-import { WASD } from "../game/player/input/WASD";
+import { WASD } from "../game/player/input/move/WASD";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;

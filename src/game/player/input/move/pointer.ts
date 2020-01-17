@@ -1,5 +1,5 @@
-import { Modi } from "./modi/Modi";
-import { Gameplay } from "../../../scenes/Gameplay";
+import { Modi } from "../modi/Modi";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
 function rotatePlayerTowardsMouse(newX, newY, player) {
 	let x = player.x;

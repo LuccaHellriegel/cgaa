@@ -6,10 +6,21 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
 		scene.physics.add.staticGroup(this);
 
+		this.setupAnims();
+		this.setupEvents(keyObj);
+		this.setActive(false).setVisible(false);
+	}
+
+	private setupEvents(keyObj) {
 		keyObj.on("down", () => {
 			this.toggle();
 		});
+		this.scene.events.on("added-tower", () => {
+			this.scene.children.bringToTop(this);
+		});
+	}
 
+	private setupAnims() {
 		this.on(
 			"animationcomplete",
 			function(anim, frame) {
@@ -24,11 +35,6 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 			},
 			this
 		);
-
-		this.setActive(false).setVisible(false);
-		this.scene.events.on("added-tower", () => {
-			this.scene.children.bringToTop(this);
-		});
 	}
 
 	toggle() {
