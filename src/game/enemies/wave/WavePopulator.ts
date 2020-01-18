@@ -5,6 +5,7 @@ import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
 import { CampBuildings } from "../camp/building/CampBuildings";
+import { Rerouter } from "../../player/input/modi/interaction/Rerouter";
 
 export class WavePopulator {
 	constructor(
@@ -12,7 +13,8 @@ export class WavePopulator {
 		private color: string,
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
-		private campBuildings: CampBuildings
+		private campBuildings: CampBuildings,
+		private rerouter: Rerouter
 	) {
 		this.setupInitEvents();
 	}
@@ -33,10 +35,7 @@ export class WavePopulator {
 
 				let enemy = this.enemyPool.pop();
 
-				let id = constructXYID(spawnPosition[0], spawnPosition[1]);
-				if (this.scene.cgaa.camps[enemy.color].rerouteColor !== "") {
-					id += " " + this.scene.cgaa.camps[enemy.color].rerouteColor;
-				}
+				let id = this.rerouter.appendRerouting(enemy.color, constructXYID(spawnPosition[0], spawnPosition[1]));
 
 				enemy.pathContainer = this.scene.cgaa.pathDict[id];
 				enemy.state = "ambush";

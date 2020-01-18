@@ -20,6 +20,8 @@ import { CampsState } from "../game/enemies/camp/CampsState";
 import { Mouse } from "../game/player/input/move/Mouse";
 import { Enemies } from "../game/enemies/unit/Enemies";
 import { Camps } from "../game/enemies/camp/Camps";
+import { Rerouter } from "../game/player/input/modi/interaction/Rerouter";
+import { Rivalries } from "../game/player/input/modi/interaction/Rivalries";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -46,9 +48,18 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
 
 		this.cgaa.keyObjE = this.input.keyboard.addKey("E");
-		this.cgaa.interactionModus = new InteractionModus(this, this.cgaa.ghostTower, this.cgaa.keyObjE);
+		let rivalries = new Rivalries();
+		this.cgaa.rerouter = new Rerouter(this.events, rivalries);
 
-		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [], rerouteColor: "" }));
+		this.cgaa.interactionModus = new InteractionModus(
+			this,
+			this.cgaa.ghostTower,
+			this.cgaa.keyObjE,
+			this.cgaa.rerouter,
+			rivalries
+		);
+
+		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [] }));
 	}
 
 	private startWaves() {
@@ -73,7 +84,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.ghostTower
 		);
 
-		this.cgaa.campsObj = new Camps(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies);
+		this.cgaa.campsObj = new Camps(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies, this.cgaa.rerouter);
 
 		calculatePaths({
 			scene: this,

@@ -8,11 +8,12 @@ import { CampPopulator } from "./CampPopulator";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { exitToGlobalPoint } from "../../base/position";
 import { CampConfig } from "./Camps";
+import { Rerouter } from "../../player/input/modi/interaction/Rerouter";
 
 export class Camp {
 	buildingSpawn: BuildingSpawn;
 	campBuildings: CampBuildings;
-	constructor(config: CampConfig, enemies: Enemies) {
+	constructor(config: CampConfig, enemies: Enemies, rerouter: Rerouter) {
 		this.buildingSpawn = new BuildingSpawn(config.map, config.areaConfig, numberOfBuildings);
 		let spawnPositions = this.buildingSpawn.getRandomBuildingSpawnPositions();
 		let spawnConfig = {
@@ -26,7 +27,8 @@ export class Camp {
 			spawnConfig,
 			config.color,
 			config.staticConfig.physicsGroup,
-			enemies
+			enemies,
+			rerouter
 		);
 
 		let enemyConfig: EnemyConfig = {

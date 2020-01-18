@@ -10,6 +10,7 @@ import { buildingGroupComposition } from "../../wave/waveConfig";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { Enemies } from "../../unit/Enemies";
 import { BuildingInfo } from "../../../base/interfaces";
+import { Rerouter } from "../../../player/input/modi/interaction/Rerouter";
 
 export class CampBuildings {
 	buildings: Building[] = [];
@@ -20,7 +21,8 @@ export class CampBuildings {
 		private spawnConfig: BuildingSpawnConfig,
 		public color: string,
 		private physicsGroup: Phaser.Physics.Arcade.StaticGroup,
-		private enemies: Enemies
+		private enemies: Enemies,
+		private rerouter: Rerouter
 	) {
 		this.spawnBuildings();
 	}
@@ -65,7 +67,8 @@ export class CampBuildings {
 					this.enemies
 				),
 				createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
-				this
+				this,
+				this.rerouter
 			);
 		}
 	}
