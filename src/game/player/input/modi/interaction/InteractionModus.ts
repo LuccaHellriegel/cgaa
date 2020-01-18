@@ -5,6 +5,7 @@ import { Square } from "../../../unit/Square";
 import { InteractionCircle } from "../../../../enemies/unit/InteractionCircle";
 import { Cooperation } from "./Cooperation";
 import { Point } from "../../../../base/types";
+import { Quests } from "./Quest";
 
 export class InteractionModus {
 	isOn: Boolean = false;
@@ -17,7 +18,7 @@ export class InteractionModus {
 
 		this.scene = scene;
 
-		this.cooperation = new Cooperation();
+		this.cooperation = new Cooperation(scene, new Quests(scene));
 
 		keyObjE.on("down", () => {
 			this.toggle();
@@ -52,12 +53,12 @@ export class InteractionModus {
 	}
 
 	notifyRemovalOfEle(ele) {
-		this.cooperation.verifyCooperation(ele, this.scene);
+		this.cooperation.updateCooperationState(ele);
 	}
 
 	private interactWithInteractionCircle(ele) {
 		let iEles = this.scene.cgaa.interactionElements;
-		this.cooperation.interactWithCircle(ele, this.scene, iEles);
+		this.cooperation.interactWithCircle(ele, iEles);
 	}
 
 	private interactWithTower(ele) {

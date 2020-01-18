@@ -1,42 +1,31 @@
 import { getRandomCampColorOrder } from "../../../../base/globals/global";
 import { campColors } from "../../../../base/globals/globalColors";
-import { removeEle } from "../../../../base/utils";
 import { Gameplay } from "../../../../../scenes/Gameplay";
+import { Quests } from "./Quest";
 
 export class Cooperation {
-	private colorKilllist: any[] = [];
-	private unitKilllist: any[] = [];
 	private rivalries = {};
 	private rerouteObj = {};
 
-	constructor() {
-		this.setupRivalries();
+	constructor(private scene: Gameplay, private quests: Quests) {
+		this.setupRivalriesForFourCamps();
 	}
 
-	private setupRivalries() {
+	private setupRivalriesForFourCamps() {
 		let colors = getRandomCampColorOrder();
 
 		let color = colors.pop();
 		let secondColor = colors.pop();
 		this.rivalries[color] = secondColor;
 		this.rivalries[secondColor] = color;
+
 		color = colors.pop();
 		secondColor = colors.pop();
 		this.rivalries[color] = secondColor;
 		this.rivalries[secondColor] = color;
 	}
 
-	private addToKilllist(targetColor, scene, interactionElements) {
-		this.colorKilllist.push(targetColor);
-		scene.events.emit("added-to-killlist-" + targetColor);
-
-		for (const key in interactionElements) {
-			const element = interactionElements[key];
-			if (element.color === targetColor) this.unitKilllist.push(element);
-		}
-	}
-
-	private rerouteTroops(color, scene) {
+	private rerouteTroops(color) {
 		if (!this.rerouteObj[color]) {
 			let arr = [];
 			campColors.forEach(otherColor => {
@@ -46,39 +35,21 @@ export class Cooperation {
 			});
 			this.rerouteObj[color] = arr;
 		}
-		scene.events.emit("reroute-" + color, this.rerouteObj[color][0]);
-		scene.cgaa.camps[color].rerouteColor = this.rerouteObj[color][0];
+		this.scene.events.emit("reroute-" + color, this.rerouteObj[color][0]);
+		this.scene.cgaa.camps[color].rerouteColor = this.rerouteObj[color][0];
 		this.rerouteObj[color].reverse();
 	}
 
-	interactWithCircle(ele, scene, interactionElements) {
-		let targetColor = this.rivalries[ele.color];
-		let establishKillQuest = !this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(ele.color);
-
-		let hasKilledAllRivals = !this.unitKilllist.includes(targetColor);
-		let hasAccessToTroops = hasKilledAllRivals && this.colorKilllist.includes(targetColor);
-
-		if (establishKillQuest) {
-			this.addToKilllist(targetColor, scene, interactionElements);
-		} else if (hasAccessToTroops) {
-			this.rerouteTroops(ele.color, scene);
+	interactWithCircle(ele, interactionElements) {
+		if (this.quests.questIsSolved(this.rivalries[ele.color], ele.color, interactionElements)) {
+			this.rerouteTroops(ele.color);
 		}
 	}
 
-	private checkIfCampDestroyed(color) {
-		for (const key in this.unitKilllist) {
-			const element = this.unitKilllist[key];
-			if (element.color === color) return false;
-		}
-		return true;
-	}
-
-	verifyCooperation(ele, scene: Gameplay) {
-		if (this.unitKilllist.includes(ele)) removeEle(ele, this.unitKilllist);
-		let destroyed = this.checkIfCampDestroyed(ele.color);
-		if (destroyed) {
+	updateCooperationState(ele) {
+		if (this.quests.killSolvedQuest(ele)) {
 			//TODO: multiple camp cooperation
-			scene.cgaa.camps[this.rivalries[ele.color]].dontAttackList.push("blue");
+			this.scene.cgaa.camps[this.rivalries[ele.color]].dontAttackList.push("blue");
 		}
 	}
 }
