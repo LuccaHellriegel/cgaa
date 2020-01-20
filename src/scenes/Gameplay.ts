@@ -22,6 +22,8 @@ import { Enemies } from "../game/enemies/unit/Enemies";
 import { Camps } from "../game/enemies/camp/Camps";
 import { Rerouter } from "../game/enemies/path/Rerouter";
 import { Rivalries } from "../game/enemies/camp/Rivalries";
+import { Cooperation } from "../game/player/state/Cooperation";
+import { Quests } from "../game/player/state/Quest";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;
@@ -55,8 +57,7 @@ export class Gameplay extends Phaser.Scene {
 			this,
 			this.cgaa.ghostTower,
 			this.cgaa.keyObjE,
-			this.cgaa.rerouter,
-			rivalries
+			new Cooperation(this, new Quests(this), this.cgaa.rerouter.rerouter, rivalries)
 		);
 
 		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [] }));

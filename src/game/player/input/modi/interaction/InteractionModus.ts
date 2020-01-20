@@ -5,27 +5,11 @@ import { Square } from "../../../unit/Square";
 import { InteractionCircle } from "../../../../enemies/unit/InteractionCircle";
 import { Cooperation } from "../../../state/Cooperation";
 import { Point } from "../../../../base/types";
-import { Quests } from "../../../state/Quest";
-import { Rerouter } from "../../../../enemies/path/Rerouter";
-import { Rivalries } from "../../../../enemies/camp/Rivalries";
 
 export class InteractionModus {
 	private isOn: Boolean = false;
-	private cooperation: Cooperation;
 
-	constructor(
-		private scene: Gameplay,
-		private ghostTower: GhostTower,
-		keyObjE,
-		rerouter: Rerouter,
-		rivalries: Rivalries
-	) {
-		this.ghostTower = ghostTower;
-
-		this.scene = scene;
-
-		this.cooperation = new Cooperation(scene, new Quests(scene), rerouter, rivalries);
-
+	constructor(private scene: Gameplay, private ghostTower: GhostTower, keyObjE, private cooperation: Cooperation) {
 		keyObjE.on("down", () => {
 			this.toggle();
 			this.lockGhostTower();
