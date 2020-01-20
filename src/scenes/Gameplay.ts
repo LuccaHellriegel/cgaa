@@ -26,7 +26,6 @@ import { Cooperation } from "../game/player/state/Cooperation";
 import { Quests } from "../game/player/state/Quest";
 
 export class Gameplay extends Phaser.Scene {
-	movement: Movement;
 	cgaa;
 
 	constructor() {

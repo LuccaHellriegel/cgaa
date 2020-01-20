@@ -9,6 +9,7 @@ import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { exitToGlobalPoint } from "../../base/position";
 import { CampConfig } from "./Camps";
 import { Rerouter } from "../path/Rerouter";
+import { BuildingFactory } from "./building/BuildingFactory";
 
 export class Camp {
 	buildingSpawn: BuildingSpawn;
@@ -21,14 +22,17 @@ export class Camp {
 			weaponPhysicGroup: config.weaponPhysicGroup
 		};
 
-		this.campBuildings = new CampBuildings(
-			config.staticConfig.scene,
-			spawnPositions,
-			spawnConfig,
-			config.color,
-			config.staticConfig.physicsGroup,
-			enemies,
-			rerouter
+		this.campBuildings = new CampBuildings(spawnPositions, config.color);
+		this.campBuildings.spawnBuildings(
+			new BuildingFactory(
+				config.staticConfig.scene,
+				config.staticConfig.physicsGroup,
+				config.color,
+				enemies,
+				this.campBuildings,
+				spawnConfig,
+				rerouter
+			)
 		);
 
 		let enemyConfig: EnemyConfig = {

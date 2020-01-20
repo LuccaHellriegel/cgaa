@@ -3,12 +3,15 @@ import { Gameplay } from "../../../../../scenes/Gameplay";
 export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Gameplay, x, y, keyObj) {
 		super(scene, x, y, "ghostTower");
-		scene.add.existing(this);
-		scene.physics.add.staticGroup(this);
-
+		this.setupSceneInteraction();
 		this.setupAnims();
 		this.setupEvents(keyObj);
 		this.setActive(false).setVisible(false);
+	}
+
+	private setupSceneInteraction() {
+		this.scene.add.existing(this);
+		this.scene.physics.add.staticGroup(this);
 	}
 
 	private setupEvents(keyObj) {
