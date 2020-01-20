@@ -1,8 +1,12 @@
-import { PathCalcConfig, getAllPositionsAroundBuilding, findClosestBuilding } from "./pathBase";
+import {
+	PathCalcConfig,
+	getAllPositionsAroundBuilding,
+	findClosestBuilding,
+	findClosestRelativePosition
+} from "./pathBase";
 import { RelativePosition } from "../../base/types";
 import { constructXYIDfromColumnRow } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
-import { findClosestRelativePosition } from "../../base/find";
 
 export function calculatePathToOtherExits(config: PathCalcConfig, exits: RelativePosition[]) {
 	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {

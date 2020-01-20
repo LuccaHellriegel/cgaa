@@ -1,8 +1,7 @@
 import { RelativePosition } from "../../base/types";
 import { constructXYIDfromColumnRow } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
-import { PathCalcConfig, getAllPositionsAroundBuilding } from "./pathBase";
-import { findClosestRelativePosition } from "../../base/find";
+import { PathCalcConfig, getAllPositionsAroundBuilding, findClosestRelativePosition } from "./pathBase";
 
 export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits: RelativePosition[]) {
 	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {

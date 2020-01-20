@@ -6,6 +6,8 @@ export type PathCointainerType = { path };
 
 export class PathContainer {
 	path: Point[];
+	realPath: any[];
+	timer: number;
 	constructor(
 		private column,
 		private row,
@@ -25,20 +27,19 @@ export class PathContainer {
 		if (newPath === null) {
 			throw "Path was not found. " + this.column + " " + this.row + " " + this.goalColumn + " " + this.goalRow;
 		} else {
-			let realPath = this.relativePathToRealPath(newPath);
+			this.realPath = this.relativePathToRealPath(newPath);
 			if (this.pathToAdd.path) {
-				this.path = realPath.concat(this.pathToAdd.path);
+				this.path = this.realPath.concat(this.pathToAdd.path);
 			} else {
-				const timer = setInterval(
-					function() {
-						if (this.pathToAdd.path) {
-							this.path = realPath.concat(this.pathToAdd.path);
-							clearInterval(timer);
-						}
-					}.bind(this),
-					4000
-				);
+				this.timer = setInterval(this.pathConcatCallback.bind(this), 4000);
 			}
+		}
+	}
+
+	private pathConcatCallback() {
+		if (this.pathToAdd.path) {
+			this.path = this.realPath.concat(this.pathToAdd.path);
+			clearInterval(this.timer);
 		}
 	}
 

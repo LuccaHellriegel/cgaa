@@ -1,23 +1,24 @@
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
 import { HUD } from "../../../../scenes/HUD";
+import { Content } from "./Tutorial";
+import { displayable } from "./TutorialStep";
 
-export class Box {
-	private xContentOffset = 0;
-	private yContentOffset = 0;
+export class Box implements displayable {
 	private polygon: RectPolygon;
 	private container: Phaser.GameObjects.Text;
 
-	constructor(private x: number, private y: number, private graphics: Phaser.GameObjects.Graphics, sceneToUse: HUD) {
+	constructor(x: number, y: number, private graphics: Phaser.GameObjects.Graphics, sceneToUse: HUD) {
 		this.polygon = new RectPolygon(x, y, 2 * 200, 2 * 30);
 		this.polygon.draw(this.graphics, 0);
-		this.container = sceneToUse.add.text(x - this.xContentOffset, y - this.yContentOffset, "", {
+		this.container = sceneToUse.add.text(x, y, "", {
 			font: "20px Verdana",
 			fill: "#ADFF2F"
 		});
 	}
 
-	draw(content) {
-		this.container.setText(content);
+	display(content: Content) {
+		this.container.setPosition(content.position.x, content.position.y);
+		this.container.setText(content.text);
 	}
 
 	destroy() {

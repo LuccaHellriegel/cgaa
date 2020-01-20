@@ -1,13 +1,9 @@
-import { Ticker } from "./Ticker";
 import { listenable } from "../../../base/interfaces";
 
 export class Waiter {
-	constructor(private obj: listenable, private event: string, private parent: Ticker) {}
+	constructor(private obj: listenable, private event: string) {}
 
-	activate() {
-		let tickback = () => {
-			this.parent.tick();
-		};
-		this.obj.once(this.event, tickback.bind(this));
+	activate(confirmation) {
+		this.obj.once(this.event, confirmation.confirmCompletion.bind(confirmation));
 	}
 }

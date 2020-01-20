@@ -4,7 +4,7 @@ import { executeOverAllCamps } from "../game/base/globals/global";
 import { CampState } from "../game/player/ui/state/CampState";
 import { campHexColors } from "../game/base/globals/globalColors";
 import { Gameplay } from "./Gameplay";
-import { initTutorial } from "../game/player/ui/tutorial/tutorial";
+import { Tutorial } from "../game/player/ui/tutorial/Tutorial";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -21,14 +21,9 @@ export class HUD extends Phaser.Scene {
 			"damage-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
-					console.log("here");
 					//TODO
 					this.ourGame.events.emit("");
 					this.ourGame.scene.restart();
-					// this.playerSoulCounter.reset();
-					// this.playerHealthBar.value = 100;
-					// this.playerHealthBar.decrease(0);
-					// this.campStates.forEach(campState => campState.reset());
 				}
 			},
 			this
@@ -64,6 +59,7 @@ export class HUD extends Phaser.Scene {
 		});
 		this.campStates = campStates;
 
-		initTutorial(this, this.ourGame, x, y + 300);
+		new Tutorial(this, this.ourGame, x, y + 300);
+		//initTutorial(this, this.ourGame, x, y + 300);
 	}
 }
