@@ -5,7 +5,7 @@ import { HealthBar } from "../../../base/classes/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
 import { removeEle } from "../../../base/utils";
 import { extendWithNewId } from "../../../base/id";
-import { CampBuildings } from "./CampBuildings";
+import { Buildings } from "./Buildings";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -24,7 +24,7 @@ export class Building extends Image implements damageable {
 		spawnUnit,
 		private color: string,
 		public healthbar: HealthBar,
-		private campBuildings: CampBuildings
+		private campBuildings: Buildings
 	) {
 		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
 		this.setImmovable(true);

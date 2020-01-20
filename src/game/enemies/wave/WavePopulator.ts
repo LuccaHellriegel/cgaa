@@ -4,7 +4,7 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
-import { CampBuildings } from "../camp/building/CampBuildings";
+import { Buildings } from "../camp/building/Buildings";
 import { Rerouter } from "../path/Rerouter";
 
 export class WavePopulator {
@@ -13,7 +13,7 @@ export class WavePopulator {
 		private color: string,
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
-		private campBuildings: CampBuildings,
+		private campBuildings: Buildings,
 		private rerouter: Rerouter
 	) {
 		this.setupInitEvents();

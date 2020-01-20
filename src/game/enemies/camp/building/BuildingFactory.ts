@@ -2,7 +2,7 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 import { HealthBar } from "../../../base/classes/HealthBar";
 import { rectBuildinghalfHeight } from "../../../base/globals/globalSizes";
 import { Building, BuildingSpawnConfig } from "./Building";
-import { CampBuildings } from "./CampBuildings";
+import { Buildings } from "./Buildings";
 import { Enemies } from "../../unit/Enemies";
 import { WavePopulator } from "../../wave/WavePopulator";
 import { EnemyPool } from "../../population/EnemyPool";
@@ -17,7 +17,7 @@ export class BuildingFactory {
 		private physicsGroup: Phaser.Physics.Arcade.StaticGroup,
 		private color: string,
 		private enemies: Enemies,
-		private campBuildings: CampBuildings,
+		private campBuildings: Buildings,
 		private spawnConfig: BuildingSpawnConfig,
 		private rerouter: Rerouter
 	) {}

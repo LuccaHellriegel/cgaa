@@ -1,11 +1,11 @@
 import { EnemyCircle } from "../unit/EnemyCircle";
-import { CampBuildings } from "../camp/building/CampBuildings";
+import { Buildings } from "../camp/building/Buildings";
 
 export class Wave {
 	constructor(
 		private enemyCircles: EnemyCircle[],
 		private spawnPositions,
-		private campBuildings: CampBuildings,
+		private campBuildings: Buildings,
 		private time
 	) {
 		this.spawnEnemy();

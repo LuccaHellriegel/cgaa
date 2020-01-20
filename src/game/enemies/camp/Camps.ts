@@ -5,7 +5,7 @@ import { PhysicGroups } from "../../collision/collisionBase";
 import { Enemies } from "../unit/Enemies";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
-import { CampBuildings } from "./building/CampBuildings";
+import { Buildings } from "./building/Buildings";
 import { Rerouter } from "../path/Rerouter";
 
 export interface CampConfig {
@@ -57,7 +57,7 @@ export class Camps {
 		return campConfigs;
 	}
 
-	getCampBuildings(): CampBuildings[] {
+	getBuildings(): Buildings[] {
 		return this.camps.map(camp => camp.campBuildings);
 	}
 

@@ -5,7 +5,7 @@ import { removeEle } from "../../../base/utils";
 import { BuildingInfo } from "../../../base/interfaces";
 import { BuildingFactory } from "./BuildingFactory";
 
-export class CampBuildings {
+export class Buildings {
 	private buildings: Building[] = [];
 
 	constructor(private spawnPositions: number[][], public color: string) {}

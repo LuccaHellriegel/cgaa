@@ -1,7 +1,7 @@
 import { BuildingSpawn } from "./building/BuildingSpawn";
 import { Enemies } from "../unit/Enemies";
 import { numberOfBuildings, campGroupComposition } from "./campConfig";
-import { CampBuildings } from "./building/CampBuildings";
+import { Buildings } from "./building/Buildings";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { EnemyPool } from "../population/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
@@ -12,48 +12,54 @@ import { Rerouter } from "../path/Rerouter";
 import { BuildingFactory } from "./building/BuildingFactory";
 
 export class Camp {
-	buildingSpawn: BuildingSpawn;
-	campBuildings: CampBuildings;
-	constructor(config: CampConfig, enemies: Enemies, rerouter: Rerouter) {
-		this.buildingSpawn = new BuildingSpawn(config.map, config.areaConfig, numberOfBuildings);
-		let spawnPositions = this.buildingSpawn.getRandomBuildingSpawnPositions();
-		let spawnConfig = {
-			enemyPhysicGroup: config.enemyPhysicGroup,
-			weaponPhysicGroup: config.weaponPhysicGroup
-		};
+	campBuildings: Buildings;
 
-		this.campBuildings = new CampBuildings(spawnPositions, config.color);
+	constructor(private config: CampConfig, private enemies: Enemies, private rerouter: Rerouter) {
+		this.spawnBuildings();
+		this.populateCamp();
+	}
+
+	private spawnBuildings() {
+		this.campBuildings = new Buildings(
+			new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
+			this.config.color
+		);
 		this.campBuildings.spawnBuildings(
 			new BuildingFactory(
-				config.staticConfig.scene,
-				config.staticConfig.physicsGroup,
-				config.color,
-				enemies,
+				this.config.staticConfig.scene,
+				this.config.staticConfig.physicsGroup,
+				this.config.color,
+				this.enemies,
 				this.campBuildings,
-				spawnConfig,
-				rerouter
+				{
+					enemyPhysicGroup: this.config.enemyPhysicGroup,
+					weaponPhysicGroup: this.config.weaponPhysicGroup
+				},
+				this.rerouter
 			)
 		);
+	}
 
+	private populateCamp() {
 		let enemyConfig: EnemyConfig = {
-			scene: config.staticConfig.scene,
-			color: config.color,
+			scene: this.config.staticConfig.scene,
+			color: this.config.color,
 			size: "Big",
 			x: 100,
 			y: 100,
 			weaponType: "rand",
-			physicsGroup: config.enemyPhysicGroup,
-			weaponGroup: config.weaponPhysicGroup
+			physicsGroup: this.config.enemyPhysicGroup,
+			weaponGroup: this.config.weaponPhysicGroup
 		};
 
-		let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemyConfig, enemies);
+		let enemyPool = new EnemyPool(this.config.staticConfig.scene, 4, campGroupComposition, enemyConfig, this.enemies);
 		new CampPopulator(
-			config.staticConfig.scene,
+			this.config.staticConfig.scene,
 			enemyPool,
-			createAreaEnemySpawnObj(config.map, config.areaConfig, enemies),
+			createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
 			this.campBuildings
 		);
-		this.createInteractionUnit(config, enemyConfig, enemies);
+		this.createInteractionUnit(this.config, enemyConfig, this.enemies);
 	}
 
 	private createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig, enemies: Enemies) {

@@ -2,14 +2,14 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemyPool } from "../population/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { campMaxPopulation } from "./campConfig";
-import { CampBuildings } from "./building/CampBuildings";
+import { Buildings } from "./building/Buildings";
 
 export class CampPopulator {
 	constructor(
 		private scene: Gameplay,
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
-		private campBuildings: CampBuildings
+		private campBuildings: Buildings
 	) {
 		this.startWave();
 	}

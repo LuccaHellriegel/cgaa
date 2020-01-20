@@ -129,7 +129,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private startWaves() {
-		new WaveController(this, new CampsState(this.cgaa.campsObj.getCampBuildings()));
+		new WaveController(this, new CampsState(this.cgaa.campsObj.getBuildings()));
 	}
 
 	create() {

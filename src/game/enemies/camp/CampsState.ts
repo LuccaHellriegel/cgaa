@@ -1,10 +1,10 @@
-import { CampBuildings } from "./building/CampBuildings";
+import { Buildings } from "./building/Buildings";
 import { removeEle } from "../../base/utils";
 
 export class CampsState {
 	private activeCamps = [];
 
-	constructor(private camps: CampBuildings[]) {
+	constructor(private camps: Buildings[]) {
 		camps.forEach(camp => this.activeCamps.push(camp.color));
 	}
 
@@ -25,8 +25,8 @@ export class CampsState {
 		let nextColor = this.activeCamps.pop();
 		this.activeCamps.unshift(nextColor);
 
-		let nextCampBuildings = this.camps.pop();
-		this.camps.unshift(nextCampBuildings);
+		let nextBuildings = this.camps.pop();
+		this.camps.unshift(nextBuildings);
 
 		return nextColor;
 	}
