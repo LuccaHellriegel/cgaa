@@ -1,11 +1,12 @@
 import { damageable } from "../../base/interfaces";
-import { HealthBar } from "../../base/classes/HealthBar";
+import { HealthBar } from "../../base/ui/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { extendWithNewId } from "../../base/id";
 import { Image } from "../../base/classes/BasePhaser";
 import { removeEle } from "../../base/utils";
 import { Gameplay } from "../../../scenes/Gameplay";
+import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 
 export class Square extends Image implements damageable {
 	healthbar: HealthBar;
@@ -18,14 +19,7 @@ export class Square extends Image implements damageable {
 
 		this.initGraphics();
 
-		this.healthbar = new HealthBar(x, y, {
-			scene,
-			posCorrectionX: -26,
-			posCorrectionY: -38,
-			healthWidth: 46,
-			healthLength: 12,
-			value: 100
-		});
+		this.healthbar = HealthBarFactory.createSquareHealthBar(scene, x, y);
 
 		this.initUnitStats();
 	}

@@ -1,6 +1,4 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { HealthBar } from "../../../base/classes/HealthBar";
-import { rectBuildinghalfHeight } from "../../../base/globals/globalSizes";
 import { Building, BuildingSpawnConfig } from "./Building";
 import { Buildings } from "./Buildings";
 import { Enemies } from "../../unit/Enemies";
@@ -23,15 +21,7 @@ export class BuildingFactory {
 	) {}
 
 	private createBuilding(x, y, circleSizeName) {
-		let healthbar = new HealthBar(x - 25, y - rectBuildinghalfHeight, {
-			posCorrectionX: 0,
-			posCorrectionY: -rectBuildinghalfHeight,
-			healthWidth: 46,
-			healthLength: 12,
-			value: 100,
-			scene: this.scene
-		});
-		return new Building(this.scene, x, y, this.physicsGroup, circleSizeName, this.color, healthbar, this.campBuildings);
+		return new Building(this.scene, x, y, this.physicsGroup, circleSizeName, this.color, this.campBuildings);
 	}
 
 	private setupWave(x, y) {

@@ -1,18 +1,12 @@
 import { EnemyCircle } from "./EnemyCircle";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { HealthBar } from "../../base/classes/HealthBar";
 import { ChainWeapon } from "../../weapons/ChainWeapon";
 import { RandWeapon } from "../../weapons/RandWeapon";
 import { CirclePolygon } from "../../base/polygons/CirclePolygon";
 import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../base/globals/globalSizes";
 import { InteractionCircle } from "./InteractionCircle";
 import { Enemies } from "./Enemies";
-
-const healthBarConfigs = {
-	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
-	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
-	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 51, healthLength: 17, value: 200, scene: null }
-};
+import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 
 const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Big: bigCircleRadius };
 
@@ -38,12 +32,6 @@ export class EnemyFactory {
 
 	static createEnemy(enemyConfig: EnemyConfig, enemies: Enemies) {
 		let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;
-
-		let healthBarConfig = healthBarConfigs[size];
-		healthBarConfig["scene"] = scene;
-
-		let healthbar = new HealthBar(x, y, healthBarConfig);
-
 		let radius = radiusConfigs[size];
 
 		let weapon;
@@ -56,6 +44,8 @@ export class EnemyFactory {
 		let polygon = new CirclePolygon(x, y, radius);
 
 		let texture = color + size + "Circle";
+
+		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
 
 		let circleConfig = {
 			scene,
@@ -82,18 +72,17 @@ export class EnemyFactory {
 	static createInteractionCircle(config, enemies: Enemies) {
 		let { scene, color, x, y, physicsGroup, weaponGroup } = config;
 
-		let healthBarConfig = healthBarConfigs["Normal"];
-		healthBarConfig["scene"] = scene;
-
-		let healthbar = new HealthBar(x, y, healthBarConfig);
+		let size = "Normal";
 
 		let radius = radiusConfigs["Normal"];
 
-		let weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, "Normal");
+		let weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, size);
 
 		let polygon = new CirclePolygon(x, y, radius);
 
 		let texture = color + "InteractionCircle";
+
+		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
 
 		let circleConfig = {
 			scene,

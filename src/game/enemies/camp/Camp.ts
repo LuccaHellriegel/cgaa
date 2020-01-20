@@ -21,6 +21,7 @@ export class Camp {
 
 	private spawnBuildings() {
 		this.campBuildings = new Buildings(
+			this.config.staticConfig.scene,
 			new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
 			this.config.color
 		);

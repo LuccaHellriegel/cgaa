@@ -1,10 +1,11 @@
 import { Image } from "../../base/classes/BasePhaser";
-import { HealthBar } from "../../base/classes/HealthBar";
+import { HealthBar } from "../../base/ui/HealthBar";
 import { damageable } from "../../base/interfaces";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
+import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -15,7 +16,7 @@ export class Tower extends Image implements damageable {
 	canFire = true;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup, private bulletGroup: Phaser.Physics.Arcade.Group) {
+	constructor(scene, x, y, physicsGroup, bulletGroup: Phaser.Physics.Arcade.Group) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
 		this.setImmovable(true);
 
@@ -29,14 +30,7 @@ export class Tower extends Image implements damageable {
 		this.setSize(this.polygon.width, this.polygon.height);
 
 		extendWithNewId(this);
-		this.healthbar = new HealthBar(x, y, {
-			scene,
-			posCorrectionX: -26,
-			posCorrectionY: -38,
-			healthWidth: 46,
-			healthLength: 12,
-			value: 100
-		});
+		this.healthbar = HealthBarFactory.createTowerHealthBar(scene, x, y);
 
 		for (let index = 0; index < 10; index++) {
 			let bullet = new Bullet(scene, bulletGroup, this);

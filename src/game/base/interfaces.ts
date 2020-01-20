@@ -1,4 +1,4 @@
-import { HealthBar } from "./classes/HealthBar";
+import { HealthBar } from "./ui/HealthBar";
 import { WallBase, Exit } from "./types";
 
 export interface damageable {

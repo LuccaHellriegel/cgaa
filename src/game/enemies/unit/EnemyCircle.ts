@@ -1,4 +1,4 @@
-import { HealthBar } from "../../base/classes/HealthBar";
+import { HealthBar } from "../../base/ui/HealthBar";
 import { Circle } from "../../base/classes/Circle";
 import { PathContainer } from "../path/classes/PathContainer";
 import { damageable } from "../../base/interfaces";

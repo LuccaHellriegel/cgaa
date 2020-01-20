@@ -4,11 +4,12 @@ import { circleSizeNames } from "../../../base/globals/globalSizes";
 import { removeEle } from "../../../base/utils";
 import { BuildingInfo } from "../../../base/interfaces";
 import { BuildingFactory } from "./BuildingFactory";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
 export class Buildings {
 	private buildings: Building[] = [];
 
-	constructor(private spawnPositions: number[][], public color: string) {}
+	constructor(private scene: Gameplay, private spawnPositions: number[][], public color: string) {}
 
 	spawnBuildings(buildingFactory: BuildingFactory) {
 		for (let index = 0, length = this.spawnPositions.length; index < length; index++) {
@@ -25,6 +26,7 @@ export class Buildings {
 
 	remove(building: Building) {
 		removeEle(building, this.buildings);
+		if (this.areDestroyed()) this.scene.events.emit("destroyed-" + this.color);
 	}
 
 	areDestroyed() {
