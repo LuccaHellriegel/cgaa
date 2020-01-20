@@ -4,6 +4,9 @@ import { Building } from "../camp/building/Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
 export class EnemyState {
+	private spotted: any;
+	private curPosInPath = 0;
+
 	constructor(private circle: EnemyCircle) {}
 
 	execute() {
@@ -37,7 +40,7 @@ export class EnemyState {
 				}
 			} else {
 				this.turnTo(this.circle.barrier);
-				this.circle.spotted = this.circle.barrier;
+				this.spotted = this.circle.barrier;
 				this.circle.state = "guard";
 			}
 		}
@@ -64,17 +67,17 @@ export class EnemyState {
 	}
 
 	private spottedOutOfSight() {
-		let dist = Phaser.Math.Distance.Between(this.circle.x, this.circle.y, this.circle.spotted.x, this.circle.spotted.y);
+		let dist = Phaser.Math.Distance.Between(this.circle.x, this.circle.y, this.spotted.x, this.spotted.y);
 		return dist > 6 * gridPartHalfSize;
 	}
 
 	private guard() {
-		if (!this.circle.spotted || this.spottedOutOfSight() || !this.circle.spotted.scene) {
-			this.circle.spotted = undefined;
+		if (!this.spotted || this.spottedOutOfSight() || !this.spotted.scene) {
+			this.spotted = undefined;
 			this.circle.state = "idle";
 		} else {
-			this.turnTo(this.circle.spotted);
-			let inReach = this.moveTo(this.circle.spotted);
+			this.turnTo(this.spotted);
+			let inReach = this.moveTo(this.spotted);
 			if (inReach) this.circle.attack();
 		}
 	}
@@ -97,17 +100,17 @@ export class EnemyState {
 	}
 
 	private ambush() {
-		if (this.circle.pathContainer.path && this.circle.pathContainer.path[this.circle.curPosInPath]) {
-			let x = this.circle.pathContainer.path[this.circle.curPosInPath].x;
-			let y = this.circle.pathContainer.path[this.circle.curPosInPath].y;
+		if (this.circle.pathContainer.path && this.circle.pathContainer.path[this.curPosInPath]) {
+			let x = this.circle.pathContainer.path[this.curPosInPath].x;
+			let y = this.circle.pathContainer.path[this.curPosInPath].y;
 
 			this.turnTo({ x, y });
 			if (Math.abs(this.circle.x - x) < 2 && Math.abs(this.circle.y - y) < 2) {
-				this.circle.curPosInPath++;
+				this.curPosInPath++;
 			} else {
 				this.circle.scene.physics.moveTo(this.circle, x, y, this.circle.velo);
 			}
-		} else if (this.circle.pathContainer.path && this.circle.curPosInPath >= this.circle.pathContainer.path.length) {
+		} else if (this.circle.pathContainer.path && this.curPosInPath >= this.circle.pathContainer.path.length) {
 			this.circle.setVelocity(0, 0);
 		}
 	}

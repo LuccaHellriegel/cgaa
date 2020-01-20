@@ -8,10 +8,7 @@ import { EnemyState } from "./EnemyState";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	pathContainer: PathContainer;
-	curPosInPath = 0;
 	color: string;
-	spotted: any;
-	pursuing: any;
 	barrier: any;
 	private stateHandler: EnemyState;
 
