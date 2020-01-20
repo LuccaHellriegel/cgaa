@@ -13,12 +13,12 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 		) {
 			const buildingPosition = config.buildingInfos[index].spawnPositions[posIndex];
 			const positionsAround = getAllPositionsAroundBuilding(buildingPosition[0], buildingPosition[1]);
+
 			for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
 				const pos = positionsAround[posIndex];
 				const exit = findClosestRelativePosition(exits, pos[0], pos[1]);
 				let mainPath = config.scene.cgaa.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
 				let saveReference = new PathContainer(
-					config.scene,
 					pos[0],
 					pos[1],
 					exit.column,
