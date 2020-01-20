@@ -32,6 +32,7 @@ export class HealthBar {
 		this.posCorrectionX = posCorrectionX;
 		this.posCorrectionY = posCorrectionY;
 
+		this.move(x, y);
 		this.draw();
 		config.scene.add.existing(this.bar);
 	}

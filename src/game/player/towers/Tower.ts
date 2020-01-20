@@ -37,7 +37,6 @@ export class Tower extends Image implements damageable {
 			healthLength: 12,
 			value: 100
 		});
-		this.healthbar.move(x, y);
 
 		for (let index = 0; index < 10; index++) {
 			let bullet = new Bullet(scene, bulletGroup, this);

@@ -46,21 +46,87 @@ export class Gameplay extends Phaser.Scene {
 			camps: {}
 		};
 
-		this.cgaa.keyObjF = this.input.keyboard.addKey("F");
-		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
+		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [] }));
+	}
 
+	private initPhysics() {
+		this.cgaa.physicsGroups = enableCollision(this);
+	}
+
+	private initEnvironment() {
+		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: this.cgaa.physicsGroups.areas };
+		this.cgaa.areaConfigs = constructAreaConfigs(areaStaticConfig);
+		let { unifiedMap, middlePos } = createAreas(this.cgaa.areaConfigs);
+		this.cgaa.unifiedMap = unifiedMap;
+		this.cgaa.middlePos = middlePos;
+	}
+
+	private initEnemies() {
+		this.cgaa.rivalries = new Rivalries();
+		this.cgaa.rerouter = new Rerouter(this.events, this.cgaa.rivalries);
+
+		this.cgaa.campsObj = new Camps(
+			this,
+			this.cgaa.unifiedMap,
+			this.cgaa.areaConfigs,
+			this.cgaa.physicsGroups,
+			this.cgaa.enemies,
+			this.cgaa.rerouter
+		);
+
+		calculatePaths({
+			scene: this,
+			unifiedMap: this.cgaa.unifiedMap,
+			areaConfigs: this.cgaa.areaConfigs,
+			middlePos: this.cgaa.middlePos,
+			buildingInfos: this.cgaa.campsObj.getBuildingInfos()
+		});
+	}
+
+	private initPlayerUnitAndColleagues() {
+		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
+		this.cgaa.interactionElements.push(new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.player));
+
+		this.cgaa.player = Player.withChainWeapon(
+			this,
+			this.cgaa.physicsGroups.player,
+			this.cgaa.physicsGroups.playerWeapon
+		);
+		this.cameras.main.startFollow(this.cgaa.player);
+	}
+
+	private initKeyboard() {
+		this.cgaa.keyObjF = this.input.keyboard.addKey("F");
 		this.cgaa.keyObjE = this.input.keyboard.addKey("E");
-		let rivalries = new Rivalries();
-		this.cgaa.rerouter = new Rerouter(this.events, rivalries);
+		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
+	}
+
+	private initTowers() {
+		let towerSpawnObj = createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies);
+		this.cgaa.towerManager = new TowerManager(
+			this,
+			this.cgaa.physicsGroups.towers,
+			this.cgaa.physicsGroups.towerBulletGroup,
+			towerSpawnObj,
+			this.cgaa.ghostTower
+		);
+	}
+
+	private initPlayerInteraction() {
+		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
 
 		this.cgaa.interactionModus = new InteractionModus(
 			this,
 			this.cgaa.ghostTower,
 			this.cgaa.keyObjE,
-			new Cooperation(this, new Quests(this), this.cgaa.rerouter.rerouter, rivalries)
+			new Cooperation(this, new Quests(this), this.cgaa.rerouter, this.cgaa.rivalries)
 		);
 
-		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [] }));
+		this.cgaa.modi = new Modi(this.cgaa.keyObjF, this.cgaa.interactionModus, this.cgaa.towerManager);
+	}
+
+	private initMouse() {
+		new Mouse(this, this.cgaa.player, this.cgaa.ghostTower, this.cgaa.modi);
 	}
 
 	private startWaves() {
@@ -70,46 +136,26 @@ export class Gameplay extends Phaser.Scene {
 	create() {
 		this.initCGAA();
 
-		let physicsGroups = enableCollision(this);
+		this.initPhysics();
 
-		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: physicsGroups.areas };
-		let areaConfigs = constructAreaConfigs(areaStaticConfig);
-		let { unifiedMap, middlePos } = createAreas(areaConfigs);
+		this.initEnvironment();
 
-		let towerSpawnObj = createTowerSpawnObj(unifiedMap, areaConfigs, this.cgaa.enemies);
-		let towerManager = new TowerManager(
-			this,
-			physicsGroups.towers,
-			physicsGroups.towerBulletGroup,
-			towerSpawnObj,
-			this.cgaa.ghostTower
-		);
+		this.initEnemies();
 
-		this.cgaa.campsObj = new Camps(this, unifiedMap, areaConfigs, physicsGroups, this.cgaa.enemies, this.cgaa.rerouter);
+		this.initPlayerUnitAndColleagues();
 
-		calculatePaths({
-			scene: this,
-			unifiedMap,
-			areaConfigs,
-			middlePos,
-			buildingInfos: this.cgaa.campsObj.getBuildingInfos()
-		});
+		this.initKeyboard();
 
-		let pos = relativePositionToPoint(middlePos.column, middlePos.row);
-		new Square(this, pos.x, pos.y, physicsGroups.player);
-		let modi = new Modi(this.cgaa.keyObjF, this.cgaa.interactionModus, towerManager);
+		this.initTowers();
 
-		let player = Player.withChainWeapon(this, physicsGroups.player, physicsGroups.playerWeapon);
-		this.cameras.main.startFollow(player);
+		this.initPlayerInteraction();
 
-		new Mouse(this, player, this.cgaa.ghostTower, modi);
-
-		this.movement = new Movement(new WASD(this), player);
+		this.initMouse();
 
 		this.startWaves();
 	}
 
 	update() {
-		this.movement.update();
+		this.cgaa.movement.update();
 	}
 }

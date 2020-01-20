@@ -15,16 +15,8 @@ export class Square extends Image implements damageable {
 
 	constructor(scene: Gameplay, x, y, physicsGroup) {
 		super({ scene, x, y, texture: "square", physicsGroup });
-		this.setImmovable(true);
 
-		this.polygon = new RectPolygon(
-			x + scene.cameras.main.scrollX,
-			y + scene.cameras.main.scrollY,
-			2 * gridPartHalfSize,
-			2 * gridPartHalfSize
-		);
-
-		this.setSize(this.polygon.width, this.polygon.height);
+		this.initGraphics();
 
 		this.healthbar = new HealthBar(x, y, {
 			scene,
@@ -34,11 +26,25 @@ export class Square extends Image implements damageable {
 			healthLength: 12,
 			value: 100
 		});
-		this.healthbar.move(x, y);
 
+		this.initUnitStats();
+	}
+
+	private initGraphics() {
+		this.polygon = new RectPolygon(
+			this.x + this.scene.cameras.main.scrollX,
+			this.y + this.scene.cameras.main.scrollY,
+			2 * gridPartHalfSize,
+			2 * gridPartHalfSize
+		);
+
+		this.setSize(this.polygon.width, this.polygon.height);
+	}
+
+	private initUnitStats() {
+		this.setImmovable(true);
 		this.color = "blue";
 		extendWithNewId(this);
-		scene.cgaa.interactionElements.push(this);
 	}
 
 	damage(amount: number) {
