@@ -5,7 +5,7 @@ import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
 import { CampBuildings } from "../camp/building/CampBuildings";
-import { Rerouter } from "../../player/input/modi/interaction/Rerouter";
+import { Rerouter } from "../path/Rerouter";
 
 export class WavePopulator {
 	constructor(

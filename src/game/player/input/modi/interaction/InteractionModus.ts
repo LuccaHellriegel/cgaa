@@ -3,11 +3,11 @@ import { Tower } from "../../../towers/Tower";
 import { GhostTower } from "./GhostTower";
 import { Square } from "../../../unit/Square";
 import { InteractionCircle } from "../../../../enemies/unit/InteractionCircle";
-import { Cooperation } from "./Cooperation";
+import { Cooperation } from "../../../state/Cooperation";
 import { Point } from "../../../../base/types";
-import { Quests } from "./Quest";
-import { Rerouter } from "./Rerouter";
-import { Rivalries } from "./Rivalries";
+import { Quests } from "../../../state/Quest";
+import { Rerouter } from "../../../../enemies/path/Rerouter";
+import { Rivalries } from "../../../../enemies/camp/Rivalries";
 
 export class InteractionModus {
 	private isOn: Boolean = false;

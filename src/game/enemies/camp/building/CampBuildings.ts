@@ -10,7 +10,7 @@ import { buildingGroupComposition } from "../../wave/waveConfig";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { Enemies } from "../../unit/Enemies";
 import { BuildingInfo } from "../../../base/interfaces";
-import { Rerouter } from "../../../player/input/modi/interaction/Rerouter";
+import { Rerouter } from "../../path/Rerouter";
 
 export class CampBuildings {
 	buildings: Building[] = [];

@@ -1,7 +1,7 @@
-import { Gameplay } from "../../../../../scenes/Gameplay";
+import { Gameplay } from "../../../scenes/Gameplay";
 import { Quests } from "./Quest";
-import { Rerouter } from "./Rerouter";
-import { Rivalries } from "./Rivalries";
+import { Rerouter } from "../../enemies/path/Rerouter";
+import { Rivalries } from "../../enemies/camp/Rivalries";
 
 export class Cooperation {
 	constructor(

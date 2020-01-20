@@ -6,7 +6,7 @@ import { Enemies } from "../unit/Enemies";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
 import { CampBuildings } from "./building/CampBuildings";
-import { Rerouter } from "../../player/input/modi/interaction/Rerouter";
+import { Rerouter } from "../path/Rerouter";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;

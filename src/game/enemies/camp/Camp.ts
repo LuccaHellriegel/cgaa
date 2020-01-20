@@ -8,7 +8,7 @@ import { CampPopulator } from "./CampPopulator";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { exitToGlobalPoint } from "../../base/position";
 import { CampConfig } from "./Camps";
-import { Rerouter } from "../../player/input/modi/interaction/Rerouter";
+import { Rerouter } from "../path/Rerouter";
 
 export class Camp {
 	buildingSpawn: BuildingSpawn;

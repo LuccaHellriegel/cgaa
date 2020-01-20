@@ -1,4 +1,4 @@
-import { getRandomCampColorOrder } from "../../../../base/globals/global";
+import { getRandomCampColorOrder } from "../../base/globals/global";
 
 export class Rivalries {
 	private rivalries = {};

@@ -20,8 +20,8 @@ import { CampsState } from "../game/enemies/camp/CampsState";
 import { Mouse } from "../game/player/input/move/Mouse";
 import { Enemies } from "../game/enemies/unit/Enemies";
 import { Camps } from "../game/enemies/camp/Camps";
-import { Rerouter } from "../game/player/input/modi/interaction/Rerouter";
-import { Rivalries } from "../game/player/input/modi/interaction/Rivalries";
+import { Rerouter } from "../game/enemies/path/Rerouter";
+import { Rivalries } from "../game/enemies/camp/Rivalries";
 
 export class Gameplay extends Phaser.Scene {
 	movement: Movement;

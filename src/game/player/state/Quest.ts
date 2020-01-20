@@ -1,5 +1,5 @@
-import { Gameplay } from "../../../../../scenes/Gameplay";
-import { removeEle } from "../../../../base/utils";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { removeEle } from "../../base/utils";
 
 export class Quests {
 	private colorKilllist: any[] = [];
@@ -37,7 +37,6 @@ export class Quests {
 
 	questIsSolved(targetColor, eleColor, interactionElements) {
 		this.refreshKillQuest(targetColor, eleColor, interactionElements);
-		console.log(this.unitKilllist, targetColor);
 		return this.checkIfKillQuestSolved(targetColor);
 	}
 
