@@ -6,6 +6,7 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { extendWithNewId } from "../../base/id";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
+import { PoolHelper } from "../../base/pool/PoolHelper";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -16,33 +17,40 @@ export class Tower extends Image implements damageable {
 	canFire = true;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup, bulletGroup: Phaser.Physics.Arcade.Group) {
+	constructor(scene, x, y, physicsGroup, private bulletGroup: Phaser.Physics.Arcade.Group) {
 		super({ scene, x, y, texture: "tower", physicsGroup });
-		this.setImmovable(true);
 
-		this.polygon = new RectPolygon(
-			x + scene.cameras.main.scrollX,
-			y + scene.cameras.main.scrollY,
-			2 * gridPartHalfSize,
-			2 * gridPartHalfSize
-		);
+		this.initUnitStats();
 
-		this.setSize(this.polygon.width, this.polygon.height);
-
-		extendWithNewId(this);
 		this.healthbar = HealthBarFactory.createTowerHealthBar(scene, x, y);
 
-		for (let index = 0; index < 10; index++) {
-			let bullet = new Bullet(scene, bulletGroup, this);
-			this.bullets.push(bullet);
-		}
-
-		this.color = "blue";
+		this.initBullets();
 
 		//TODO: on spawn we need to find a way to shoot -> overlap is just evaluated if new units come
 		//TODO: can be spawned ontop of units - why?
 
 		scene.cgaa.interactionElements.push(this);
+	}
+
+	private initUnitStats() {
+		this.setImmovable(true);
+
+		this.polygon = new RectPolygon(
+			this.x + this.scene.cameras.main.scrollX,
+			this.y + this.scene.cameras.main.scrollY,
+			2 * gridPartHalfSize,
+			2 * gridPartHalfSize
+		);
+		this.color = "blue";
+		extendWithNewId(this);
+		this.setSize(this.polygon.width, this.polygon.height);
+	}
+
+	private initBullets() {
+		for (let index = 0; index < 10; index++) {
+			let bullet = new Bullet(this.scene, this.bulletGroup, this);
+			this.bullets.push(bullet);
+		}
 	}
 
 	damage(amount: number) {
@@ -75,17 +83,10 @@ export class Tower extends Image implements damageable {
 	}
 
 	poolDestroy() {
-		this.bullets.forEach(bullet => bullet.reset());
-		this.scene.events.emit("inactive-" + this.id, this.id);
-		this.disableBody(true, true);
-		this.healthbar.bar.setActive(false).setVisible(false);
-		this.healthbar.value = this.healthbar.defaultValue;
+		PoolHelper.destroyTower(this);
 	}
 
 	activate(x, y) {
-		this.enableBody(true, x, y, true, true);
-		this.healthbar.bar.setActive(true).setVisible(true);
-		this.healthbar.move(x, y);
-		this.bullets.forEach(bullet => bullet.reset());
+		PoolHelper.activateTower(this, x, y);
 	}
 }

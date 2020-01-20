@@ -3,7 +3,7 @@ import { Enemies } from "../unit/Enemies";
 import { numberOfBuildings, campGroupComposition } from "./campConfig";
 import { Buildings } from "./building/Buildings";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
-import { EnemyPool } from "../population/EnemyPool";
+import { EnemyPool } from "../../base/pool/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { exitToGlobalPoint } from "../../base/position";

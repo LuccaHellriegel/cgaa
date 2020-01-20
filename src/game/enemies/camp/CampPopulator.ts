@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemyPool } from "../population/EnemyPool";
+import { EnemyPool } from "../../base/pool/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { campMaxPopulation } from "./campConfig";
 import { Buildings } from "./building/Buildings";

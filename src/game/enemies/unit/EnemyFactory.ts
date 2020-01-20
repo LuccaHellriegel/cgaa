@@ -41,10 +41,6 @@ export class EnemyFactory {
 			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius, size);
 		}
 
-		let polygon = new CirclePolygon(x, y, radius);
-
-		let texture = color + size + "Circle";
-
 		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
 
 		let circleConfig = {
@@ -53,8 +49,8 @@ export class EnemyFactory {
 			x,
 			y,
 			weapon,
-			polygon,
-			texture,
+			polygon: new CirclePolygon(x, y, radius),
+			texture: color + size + "Circle",
 			healthbar,
 			radius,
 			physicsGroup
@@ -76,12 +72,6 @@ export class EnemyFactory {
 
 		let radius = radiusConfigs["Normal"];
 
-		let weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, size);
-
-		let polygon = new CirclePolygon(x, y, radius);
-
-		let texture = color + "InteractionCircle";
-
 		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
 
 		let circleConfig = {
@@ -89,16 +79,16 @@ export class EnemyFactory {
 			color,
 			x,
 			y,
-			weapon,
-			polygon,
-			texture,
+			weapon: new ChainWeapon(scene, x, y, weaponGroup, null, radius, size),
+			polygon: new CirclePolygon(x, y, radius),
+			texture: color + "InteractionCircle",
 			healthbar,
 			radius,
 			physicsGroup
 		};
 
 		let circle = new InteractionCircle(circleConfig);
-		weapon.owner = circle;
+		circleConfig.weapon.owner = circle;
 		scene.children.bringToTop(healthbar.bar);
 
 		enemies.addEnemy(circle);

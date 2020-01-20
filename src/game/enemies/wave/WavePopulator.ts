@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemyPool } from "../population/EnemyPool";
+import { EnemyPool } from "../../base/pool/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";

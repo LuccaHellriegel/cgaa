@@ -5,6 +5,7 @@ import { damageable } from "../../base/interfaces";
 import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "../camp/building/Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
+import { PoolHelper } from "../../base/pool/PoolHelper";
 
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
@@ -36,18 +37,11 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	poolDestroy() {
-		this.scene.events.emit("inactive-" + this.id, this.id);
-		this.disableBody(true, true);
-		this.setPosition(-1000, -1000);
-		this.weapon.disableBody(true, true);
-		this.healthbar.bar.setActive(false).setVisible(false);
-		this.healthbar.value = this.healthbar.defaultValue;
+		PoolHelper.destroyEnemyCircle(this);
 	}
 
 	poolActivate(x, y) {
-		this.enableBody(true, x, y, true, true);
-		this.weapon.enableBody(true, x, y, true, true);
-		this.healthbar.bar.setActive(true).setVisible(true);
+		PoolHelper.activateEnemyCircle(this, x, y);
 	}
 
 	preUpdate(time, delta) {

@@ -3,7 +3,7 @@ import { Building, BuildingSpawnConfig } from "./Building";
 import { Buildings } from "./Buildings";
 import { Enemies } from "../../unit/Enemies";
 import { WavePopulator } from "../../wave/WavePopulator";
-import { EnemyPool } from "../../population/EnemyPool";
+import { EnemyPool } from "../../../base/pool/EnemyPool";
 import { buildingGroupComposition } from "../../wave/waveConfig";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { realCoordinateToRelative } from "../../../base/position";
