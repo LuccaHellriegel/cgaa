@@ -6,6 +6,7 @@ import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
 import { Buildings } from "../camp/building/Buildings";
 import { Rerouter } from "../path/Rerouter";
+import { Paths } from "../path/Paths";
 
 export class WavePopulator {
 	constructor(
@@ -37,7 +38,7 @@ export class WavePopulator {
 
 				let id = this.rerouter.appendRerouting(enemy.color, constructXYID(spawnPosition[0], spawnPosition[1]));
 
-				enemy.pathContainer = this.scene.cgaa.pathDict[id];
+				enemy.pathContainer = (this.scene.cgaa.paths as Paths).getPathForID(id);
 				enemy.state = "ambush";
 				enemyCircles.push(enemy);
 			} else {

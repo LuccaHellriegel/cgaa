@@ -24,6 +24,7 @@ import { Rerouter } from "../game/enemies/path/Rerouter";
 import { Rivalries } from "../game/enemies/camp/Rivalries";
 import { Cooperation } from "../game/player/state/Cooperation";
 import { Quests } from "../game/player/state/Quest";
+import { Paths } from "../game/enemies/path/Paths";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -41,7 +42,7 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa = {
 			interactionElements: [],
 			enemies: new Enemies(),
-			pathDict: {},
+			paths: new Paths(),
 			camps: {}
 		};
 

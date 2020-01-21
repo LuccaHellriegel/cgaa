@@ -1,8 +1,8 @@
 import { Point } from "../../base/types";
 import { exitToGlobalPoint, realCoordinateToRelative } from "../../base/position";
-import { constructXYID } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
 import { PathCalcConfig } from "./pathBase";
+import { Paths } from "./Paths";
 
 export function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	const emptyPathContainer = { path: [] };
@@ -10,14 +10,17 @@ export function calculatePathsFromExit(config: PathCalcConfig, easyStar) {
 	let middleRow = config.middlePos.row;
 	config.areaConfigs.forEach(area => {
 		let pos: Point = exitToGlobalPoint(area);
-		config.scene.cgaa.pathDict[constructXYID(pos.x, pos.y)] = new PathContainer(
-			realCoordinateToRelative(pos.x),
-			realCoordinateToRelative(pos.y),
-			middleColumn,
-			middleRow,
-			easyStar,
-			config.unifiedMap,
-			emptyPathContainer
+		(config.scene.cgaa.paths as Paths).setPathForRealPos(
+			pos,
+			new PathContainer(
+				realCoordinateToRelative(pos.x),
+				realCoordinateToRelative(pos.y),
+				middleColumn,
+				middleRow,
+				easyStar,
+				config.unifiedMap,
+				emptyPathContainer
+			)
 		);
 	});
 }

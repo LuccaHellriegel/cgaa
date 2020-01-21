@@ -1,7 +1,7 @@
 import { RelativePosition } from "../../base/types";
-import { constructXYIDfromColumnRow } from "../../base/id";
 import { PathContainer } from "./classes/PathContainer";
 import { PathCalcConfig, getAllPositionsAroundBuilding, findClosestRelativePosition } from "./pathBase";
+import { Paths } from "./Paths";
 
 export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easyStar, exits: RelativePosition[]) {
 	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {
@@ -16,7 +16,7 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 			for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
 				const pos = positionsAround[posIndex];
 				const exit = findClosestRelativePosition(exits, pos[0], pos[1]);
-				let mainPath = config.scene.cgaa.pathDict[constructXYIDfromColumnRow(exit.column, exit.row)];
+				let mainPath = (config.scene.cgaa.paths as Paths).getPathForRelPos(exit);
 				let saveReference = new PathContainer(
 					pos[0],
 					pos[1],
@@ -26,7 +26,7 @@ export function calculateAllBuildingSpecificPaths(config: PathCalcConfig, easySt
 					config.unifiedMap,
 					mainPath
 				);
-				config.scene.cgaa.pathDict[constructXYIDfromColumnRow(pos[0], pos[1])] = saveReference;
+				(config.scene.cgaa.paths as Paths).setPathForRelPos({ column: pos[0], row: pos[1] }, saveReference);
 			}
 		}
 	}
