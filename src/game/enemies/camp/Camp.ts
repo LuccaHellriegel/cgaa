@@ -8,13 +8,13 @@ import { CampPopulator } from "./CampPopulator";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { exitToGlobalPoint } from "../../base/position";
 import { CampConfig } from "./Camps";
-import { Rerouter } from "../path/Rerouter";
 import { BuildingFactory } from "./building/BuildingFactory";
+import { Paths } from "../path/Paths";
 
 export class Camp {
 	campBuildings: Buildings;
 
-	constructor(private config: CampConfig, private enemies: Enemies, private rerouter: Rerouter) {
+	constructor(private config: CampConfig, private enemies: Enemies, private paths: Paths) {
 		this.spawnBuildings();
 		this.populateCamp();
 	}
@@ -36,7 +36,7 @@ export class Camp {
 					enemyPhysicGroup: this.config.enemyPhysicGroup,
 					weaponPhysicGroup: this.config.weaponPhysicGroup
 				},
-				this.rerouter
+				this.paths
 			)
 		);
 	}

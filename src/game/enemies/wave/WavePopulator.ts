@@ -1,11 +1,9 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemyPool } from "../../base/pool/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
-import { constructXYID } from "../../base/id";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
 import { Buildings } from "../camp/building/Buildings";
-import { Rerouter } from "../path/Rerouter";
 import { Paths } from "../path/Paths";
 
 export class WavePopulator {
@@ -15,7 +13,7 @@ export class WavePopulator {
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
 		private campBuildings: Buildings,
-		private rerouter: Rerouter
+		private paths: Paths
 	) {
 		this.setupInitEvents();
 	}
@@ -36,9 +34,10 @@ export class WavePopulator {
 
 				let enemy = this.enemyPool.pop();
 
-				let id = this.rerouter.appendRerouting(enemy.color, constructXYID(spawnPosition[0], spawnPosition[1]));
-
-				enemy.pathContainer = (this.scene.cgaa.paths as Paths).getPathForID(id);
+				enemy.pathContainer = this.paths.getReroutedPathForRealPos(
+					{ x: spawnPosition[0], y: spawnPosition[1] },
+					enemy.color
+				);
 				enemy.state = "ambush";
 				enemyCircles.push(enemy);
 			} else {

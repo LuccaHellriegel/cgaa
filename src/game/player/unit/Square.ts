@@ -8,6 +8,7 @@ import { removeEle } from "../../base/utils";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 
+//TODO: make this a buyable healing tower
 export class Square extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;

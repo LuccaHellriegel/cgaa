@@ -42,7 +42,6 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa = {
 			interactionElements: [],
 			enemies: new Enemies(),
-			paths: new Paths(),
 			camps: {}
 		};
 
@@ -64,6 +63,7 @@ export class Gameplay extends Phaser.Scene {
 	private initEnemies() {
 		this.cgaa.rivalries = new Rivalries();
 		this.cgaa.rerouter = new Rerouter(this.events, this.cgaa.rivalries);
+		this.cgaa.paths = new Paths(this.cgaa.rerouter);
 
 		this.cgaa.campsObj = new Camps(
 			this,
@@ -71,7 +71,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.areaConfigs,
 			this.cgaa.physicsGroups,
 			this.cgaa.enemies,
-			this.cgaa.rerouter
+			this.cgaa.paths
 		);
 
 		calculatePaths({

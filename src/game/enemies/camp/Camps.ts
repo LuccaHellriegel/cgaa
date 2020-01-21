@@ -6,7 +6,7 @@ import { Enemies } from "../unit/Enemies";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
 import { Buildings } from "./building/Buildings";
-import { Rerouter } from "../path/Rerouter";
+import { Paths } from "../path/Paths";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -26,11 +26,11 @@ export class Camps {
 		areaConfigs: AreaConfig[],
 		physicGroups: PhysicGroups,
 		enemies: Enemies,
-		rerouter: Rerouter
+		paths: Paths
 	) {
 		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			this.camps.push(new Camp(configs[index], enemies, rerouter));
+			this.camps.push(new Camp(configs[index], enemies, paths));
 		}
 	}
 	private constructCampConfigs(

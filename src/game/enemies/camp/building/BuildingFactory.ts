@@ -7,7 +7,7 @@ import { EnemyPool } from "../../../base/pool/EnemyPool";
 import { buildingGroupComposition } from "../../wave/waveConfig";
 import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { realCoordinateToRelative } from "../../../base/position";
-import { Rerouter } from "../../path/Rerouter";
+import { Paths } from "../../path/Paths";
 
 export class BuildingFactory {
 	constructor(
@@ -17,7 +17,7 @@ export class BuildingFactory {
 		private enemies: Enemies,
 		private campBuildings: Buildings,
 		private spawnConfig: BuildingSpawnConfig,
-		private rerouter: Rerouter
+		private paths: Paths
 	) {}
 
 	private createBuilding(x, y, circleSizeName) {
@@ -46,7 +46,7 @@ export class BuildingFactory {
 			),
 			createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
 			this.campBuildings,
-			this.rerouter
+			this.paths
 		);
 	}
 
