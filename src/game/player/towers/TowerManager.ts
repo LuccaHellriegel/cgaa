@@ -7,15 +7,16 @@ import { TowerSpawnObj } from "../../base/spawn/TowerSpawnObj";
 import { TowerPool } from "./TowerPool";
 
 export class TowerManager {
-	scene: Gameplay;
-	towerSpawnObj: TowerSpawnObj;
-	canBuild = false;
-	ghostTower: GhostTower;
-	towerPool: TowerPool;
+	private canBuild = false;
+	private towerPool: TowerPool;
 
-	constructor(scene: Gameplay, towerGroup, bulletGroup, towerSpawnObj: TowerSpawnObj, ghostTower: GhostTower) {
-		this.scene = scene;
-
+	constructor(
+		private scene: Gameplay,
+		towerGroup,
+		bulletGroup,
+		private towerSpawnObj: TowerSpawnObj,
+		private ghostTower: GhostTower
+	) {
 		scene.events.on("can-build", () => {
 			this.canBuild = true;
 		});
@@ -23,9 +24,6 @@ export class TowerManager {
 		scene.events.on("can-not-build", () => {
 			this.canBuild = false;
 		});
-		this.towerSpawnObj = towerSpawnObj;
-
-		this.ghostTower = ghostTower;
 
 		this.towerPool = new TowerPool({ scene, towerGroup, bulletGroup, numberOfTowers: 15 });
 	}
@@ -39,7 +37,6 @@ export class TowerManager {
 			this.playInvalidTowerPosAnim();
 			return;
 		}
-
 		let x = this.ghostTower.x;
 		let y = this.ghostTower.y;
 		if (!(x < 0 || y < 0)) {
@@ -49,8 +46,7 @@ export class TowerManager {
 
 			if (this.towerSpawnObj.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, towerCost);
-				let tower = this.towerPool.pop();
-				tower.activate(x, y);
+				this.towerPool.pop().activate(x, y);
 			} else {
 				this.playInvalidTowerPosAnim();
 			}

@@ -41,11 +41,11 @@ export class Gameplay extends Phaser.Scene {
 	private initCGAA() {
 		this.cgaa = {
 			interactionElements: [],
-			enemies: new Enemies(),
-			camps: {}
+			camps: campColors.reduce((prev, cur) => {
+				prev[cur] = { dontAttackList: [] };
+				return prev;
+			}, {})
 		};
-
-		campColors.forEach(color => (this.cgaa.camps[color] = { dontAttackList: [] }));
 	}
 
 	private initPhysics() {
@@ -61,6 +61,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initEnemies() {
+		this.cgaa.enemies = new Enemies();
 		this.cgaa.rivalries = new Rivalries();
 		this.cgaa.rerouter = new Rerouter(this.events, this.cgaa.rivalries);
 		this.cgaa.paths = new Paths(this.cgaa.rerouter);
@@ -102,19 +103,18 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initTowers() {
-		let towerSpawnObj = createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies);
+		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
+
 		this.cgaa.towerManager = new TowerManager(
 			this,
 			this.cgaa.physicsGroups.towers,
 			this.cgaa.physicsGroups.towerBulletGroup,
-			towerSpawnObj,
+			createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies),
 			this.cgaa.ghostTower
 		);
 	}
 
 	private initPlayerInteraction() {
-		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
-
 		this.cgaa.interactionModus = new InteractionModus(
 			this,
 			this.cgaa.ghostTower,
