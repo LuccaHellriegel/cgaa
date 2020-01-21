@@ -1,11 +1,11 @@
 import { RelativePosition } from "../../base/types";
 import { PathCalcConfig, getAllPositionsAroundBuilding, findClosestRelativePosition } from "./pathBase";
 import { Paths } from "./Paths";
-import { ContainerFactory } from "./classes/ContainerFactory";
+import { PathFactory } from "./classes/PathFactory";
 
 export function calculateAllBuildingSpecificPaths(
 	config: PathCalcConfig,
-	factory: ContainerFactory,
+	factory: PathFactory,
 	exits: RelativePosition[]
 ) {
 	for (let index = 0, length = config.buildingInfos.length; index < length; index++) {
@@ -21,8 +21,8 @@ export function calculateAllBuildingSpecificPaths(
 				const pos = positionsAround[posIndex];
 				const exit = findClosestRelativePosition(exits, pos[0], pos[1]);
 				let mainPath = (config.scene.cgaa.paths as Paths).getPathForRelPos(exit);
-				let saveReference = factory.createContainer(pos[0], pos[1], exit.column, exit.row, mainPath);
-				(config.scene.cgaa.paths as Paths).setPathForRelPos({ column: pos[0], row: pos[1] }, saveReference);
+				let path = factory.createContainer(pos[0], pos[1], exit.column, exit.row, mainPath.pathArr);
+				(config.scene.cgaa.paths as Paths).setPathForRelPos({ column: pos[0], row: pos[1] }, path);
 			}
 		}
 	}

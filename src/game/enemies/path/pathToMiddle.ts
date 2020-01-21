@@ -2,10 +2,9 @@ import { Point } from "../../base/types";
 import { exitToGlobalPoint, realCoordinateToRelative } from "../../base/position";
 import { PathCalcConfig } from "./pathBase";
 import { Paths } from "./Paths";
-import { ContainerFactory } from "./classes/ContainerFactory";
+import { PathFactory } from "./classes/PathFactory";
 
-export function calculatePathsFromExit(config: PathCalcConfig, factory: ContainerFactory) {
-	const emptyPathContainer = { path: [] };
+export function calculatePathsFromExit(config: PathCalcConfig, factory: PathFactory) {
 	let middleColumn = config.middlePos.column;
 	let middleRow = config.middlePos.row;
 	config.areaConfigs.forEach(area => {
@@ -17,7 +16,7 @@ export function calculatePathsFromExit(config: PathCalcConfig, factory: Containe
 				realCoordinateToRelative(pos.y),
 				middleColumn,
 				middleRow,
-				emptyPathContainer
+				[]
 			)
 		);
 	});

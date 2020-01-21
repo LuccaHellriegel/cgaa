@@ -5,10 +5,10 @@ import { exitToGlobalRelativePosition } from "../../base/position";
 import { calculatePathsFromExit } from "./pathToMiddle";
 import { calculateAllBuildingSpecificPaths } from "./pathFromExit";
 import { calculatePathToOtherExits } from "./pathToOtherExit";
-import { ContainerFactory } from "./classes/ContainerFactory";
+import { PathFactory } from "./classes/PathFactory";
 
 export function calculatePaths(config: PathCalcConfig) {
-	let factory = new ContainerFactory(config.unifiedMap, new EasyStar.js());
+	let factory = new PathFactory(config.unifiedMap, new EasyStar.js());
 	calculatePathsFromExit(config, factory);
 
 	let exitPositions: RelativePosition[] = [];

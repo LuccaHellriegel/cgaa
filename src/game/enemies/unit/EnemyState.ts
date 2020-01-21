@@ -2,10 +2,11 @@ import { EnemyCircle } from "./EnemyCircle";
 import { WallPart } from "../../area/wall/WallPart";
 import { Building } from "../camp/building/Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
+import { Point } from "../../base/types";
 
 export class EnemyState {
 	private spotted: any;
-	private curPosInPath = 0;
+	private nextPos: Point;
 
 	constructor(private circle: EnemyCircle) {}
 
@@ -35,9 +36,7 @@ export class EnemyState {
 		if (this.circle.barrier) {
 			this.moveBack();
 			if (this.circle.barrier instanceof WallPart || this.circle.barrier instanceof Building) {
-				if (this.circle.pathContainer) {
-					this.circle.state = "ambush";
-				}
+				this.circle.state = "ambush";
 			} else {
 				this.turnTo(this.circle.barrier);
 				this.spotted = this.circle.barrier;
@@ -59,7 +58,7 @@ export class EnemyState {
 
 	private idle() {
 		this.circle.setVelocity(0, 0);
-		if (this.circle.pathContainer) {
+		if (this.circle.path) {
 			this.circle.state = "ambush";
 		} else {
 			this.circle.state = "guard";
@@ -100,18 +99,21 @@ export class EnemyState {
 	}
 
 	private ambush() {
-		if (this.circle.pathContainer.path && this.circle.pathContainer.path[this.curPosInPath]) {
-			let x = this.circle.pathContainer.path[this.curPosInPath].x;
-			let y = this.circle.pathContainer.path[this.curPosInPath].y;
-
-			this.turnTo({ x, y });
-			if (Math.abs(this.circle.x - x) < 2 && Math.abs(this.circle.y - y) < 2) {
-				this.curPosInPath++;
+		if (this.circle.path) {
+			if (this.nextPos !== undefined) {
+				this.turnTo({ x: this.nextPos.x, y: this.nextPos.y });
+				if (!(Math.abs(this.circle.x - this.nextPos.x) < 2 && Math.abs(this.circle.y - this.nextPos.y) < 2)) {
+					this.circle.scene.physics.moveTo(this.circle, this.nextPos.x, this.nextPos.y, this.circle.velo);
+				} else {
+					this.nextPos = this.circle.path.getNextPoint();
+				}
 			} else {
-				this.circle.scene.physics.moveTo(this.circle, x, y, this.circle.velo);
+				this.nextPos = this.circle.path.getNextPoint();
+				if (this.nextPos === undefined) {
+					this.circle.setVelocity(0, 0);
+					this.circle.path = null;
+				}
 			}
-		} else if (this.circle.pathContainer.path && this.curPosInPath >= this.circle.pathContainer.path.length) {
-			this.circle.setVelocity(0, 0);
 		}
 	}
 }

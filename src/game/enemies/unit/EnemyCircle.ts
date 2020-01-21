@@ -1,13 +1,13 @@
 import { HealthBar } from "../../base/ui/HealthBar";
 import { Circle } from "../../base/classes/Circle";
-import { PathContainer } from "../path/classes/PathContainer";
 import { damageable } from "../../base/interfaces";
 import { PoolHelper } from "../../base/pool/PoolHelper";
 import { EnemyState } from "./EnemyState";
+import { Path } from "../path/classes/Path";
 
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
-	pathContainer: PathContainer;
+	path: Path;
 	color: string;
 	barrier: any;
 	private stateHandler: EnemyState;

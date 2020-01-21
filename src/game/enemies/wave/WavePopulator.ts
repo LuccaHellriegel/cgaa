@@ -34,10 +34,7 @@ export class WavePopulator {
 
 				let enemy = this.enemyPool.pop();
 
-				enemy.pathContainer = this.paths.getReroutedPathForRealPos(
-					{ x: spawnPosition[0], y: spawnPosition[1] },
-					enemy.color
-				);
+				enemy.path = this.paths.getReroutedPathForRealPos({ x: spawnPosition[0], y: spawnPosition[1] }, enemy.color);
 				enemy.state = "ambush";
 				enemyCircles.push(enemy);
 			} else {
