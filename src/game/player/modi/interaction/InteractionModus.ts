@@ -1,82 +1,28 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
-import { Tower } from "../../towers/Tower";
-import { GhostTower } from "./GhostTower";
-import { Square } from "../../unit/Square";
-import { InteractionCircle } from "../../../enemies/unit/InteractionCircle";
+import { GhostTower } from "../GhostTower";
 import { Cooperation } from "../../state/Cooperation";
-import { Point } from "../../../base/types";
+import { ElementCollection } from "./ElementCollection";
 
 export class InteractionModus {
-	private isOn: Boolean = false;
+	constructor(private cooperation: Cooperation, private interactionElements: ElementCollection) {}
 
-	constructor(private scene: Gameplay, private ghostTower: GhostTower, keyObjE, private cooperation: Cooperation) {
-		keyObjE.on("down", () => {
-			this.toggle();
-			this.lockGhostTower();
-		});
-	}
-
-	private findClosestPoint(arr: Point[], x, y): Point {
-		let obj;
-		let dist = Infinity;
-		for (const key in arr) {
-			let curObj = arr[key];
-			let curDist = Phaser.Math.Distance.Between(x, y, curObj.x, curObj.y);
-			if (curDist < dist) {
-				obj = curObj;
-				dist = curDist;
-			}
-		}
-		return obj;
-	}
-
-	private lockGhostTower() {
-		let ele = this.findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
+	lockOn(ghostTower: GhostTower) {
+		//TODO: if closest point too far -> dont lock on
+		let ele = this.interactionElements.findClosestElement(ghostTower.x, ghostTower.y);
 		if (ele !== null) {
-			this.ghostTower.setPosition(ele.x, ele.y);
-			this.ghostTower.toggleLock();
+			ghostTower.setPosition(ele.x, ele.y);
 		}
-	}
-
-	private toggle() {
-		this.isOn = !this.isOn;
 	}
 
 	notifyRemovalOfEle(ele) {
 		this.cooperation.updateCooperationState(ele);
 	}
 
-	private interactWithInteractionCircle(ele) {
-		let iEles = this.scene.cgaa.interactionElements;
-		this.cooperation.interactWithCircle(ele, iEles);
-	}
-
-	private interactWithTower(ele) {
-		this.scene.events.emit("sold-tower", ele);
-		this.ghostTower.toggleLock();
-	}
-
-	private interactWithSquare() {
-		this.scene.events.emit("life-gained", 20);
-	}
-
-	interactWithClosestEle() {
-		//TODO: if closest point too far -> dont lock on
-		let ele = this.findClosestPoint(this.scene.cgaa.interactionElements, this.ghostTower.x, this.ghostTower.y);
-		if (ele !== null) {
-			switch (ele.constructor) {
-				case InteractionCircle:
-					this.interactWithInteractionCircle(ele);
-					break;
-				case Tower:
-					this.interactWithTower(ele);
-					break;
-				case Square:
-					this.interactWithSquare();
-					break;
-				default:
-					break;
-			}
+	execute(ghostTower: GhostTower, lock: boolean) {
+		//TODO: execute anyways if close enough
+		if (lock) {
+			let ele = this.interactionElements.findClosestElement(ghostTower.x, ghostTower.y);
+			this.cooperation.interactWithCircle(ele, this.interactionElements);
+			ghostTower.toggleLock();
 		}
 	}
 }

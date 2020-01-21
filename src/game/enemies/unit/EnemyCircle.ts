@@ -10,7 +10,7 @@ export class EnemyCircle extends Circle implements damageable {
 	path: Path;
 	color: string;
 	barrier: any;
-	private stateHandler: EnemyState;
+	stateHandler: EnemyState;
 
 	constructor(config, public velo: number) {
 		super(config);

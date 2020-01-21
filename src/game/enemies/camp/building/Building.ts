@@ -28,12 +28,10 @@ export class Building extends Image implements damageable {
 		this.polygon = new RectPolygon(x, y, this.width, this.height);
 
 		extendWithNewId(this);
-		scene.cgaa.interactionElements.push(this);
 	}
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
 			this.campBuildings.remove(this);
 			this.destroy();

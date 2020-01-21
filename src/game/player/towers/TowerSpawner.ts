@@ -1,22 +1,15 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { towerCost } from "../../base/globals/globalConfig";
-import { GhostTower } from "../modi/interaction/GhostTower";
+import { GhostTower } from "../modi/GhostTower";
 import { spendSouls } from "../../base/events/player";
 import { snapXYToGrid } from "../../base/position";
 import { TowerSpawnObj } from "../../base/spawn/TowerSpawnObj";
 import { TowerPool } from "./TowerPool";
 
-export class TowerManager {
+export class TowerSpawner {
 	private canBuild = false;
-	private towerPool: TowerPool;
 
-	constructor(
-		private scene: Gameplay,
-		towerGroup,
-		bulletGroup,
-		private towerSpawnObj: TowerSpawnObj,
-		private ghostTower: GhostTower
-	) {
+	constructor(public scene: Gameplay, public towerPool: TowerPool, private towerSpawnObj: TowerSpawnObj) {
 		scene.events.on("can-build", () => {
 			this.canBuild = true;
 		});
@@ -24,21 +17,15 @@ export class TowerManager {
 		scene.events.on("can-not-build", () => {
 			this.canBuild = false;
 		});
-
-		this.towerPool = new TowerPool({ scene, towerGroup, bulletGroup, numberOfTowers: 15 });
 	}
 
-	private playInvalidTowerPosAnim() {
-		this.ghostTower.anims.play("invalid-tower-pos");
-	}
-
-	spawnNewTower() {
+	spawnNewTower(ghostTower: GhostTower) {
 		if (!this.canBuild) {
-			this.playInvalidTowerPosAnim();
+			ghostTower.anims.play("invalid-tower-pos");
 			return;
 		}
-		let x = this.ghostTower.x;
-		let y = this.ghostTower.y;
+		let x = ghostTower.x;
+		let y = ghostTower.y;
 		if (!(x < 0 || y < 0)) {
 			let snappedXY = snapXYToGrid(x, y);
 			x = snappedXY.newX;
@@ -48,10 +35,10 @@ export class TowerManager {
 				spendSouls(this.scene, towerCost);
 				this.towerPool.pop().activate(x, y);
 			} else {
-				this.playInvalidTowerPosAnim();
+				ghostTower.anims.play("invalid-tower-pos");
 			}
 		} else {
-			this.playInvalidTowerPosAnim();
+			ghostTower.anims.play("invalid-tower-pos");
 		}
 	}
 }

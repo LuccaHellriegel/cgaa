@@ -1,7 +1,7 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Modi } from "../modi/Modi";
 import { Player } from "../unit/Player";
-import { GhostTower } from "../modi/interaction/GhostTower";
+import { GhostTower } from "../modi/GhostTower";
 
 export class Mouse {
 	constructor(private scene: Gameplay, private player: Player, private ghostTower: GhostTower, private modi: Modi) {
@@ -31,6 +31,6 @@ export class Mouse {
 	}
 
 	private down() {
-		if (!this.modi.checkModi()) this.player.attack();
+		if (!this.modi.click()) this.player.attack();
 	}
 }

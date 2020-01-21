@@ -28,11 +28,6 @@ export class TowerPool {
 			});
 		}
 
-		params.scene.events.on("sold-tower", tower => {
-			tower.poolDestroy();
-			gainSouls(params.scene, towerCost);
-		});
-
 		this.params = params;
 	}
 
@@ -52,5 +47,9 @@ export class TowerPool {
 		let id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);
 		return this.towerDict[id];
+	}
+
+	getActiveTowers() {
+		return this.activeIDArr.map(id => this.towerDict[id]);
 	}
 }

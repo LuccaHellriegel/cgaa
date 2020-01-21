@@ -1,11 +1,11 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class GhostTower extends Phaser.Physics.Arcade.Sprite {
-	constructor(scene: Gameplay, x, y, keyObj) {
+	constructor(scene: Gameplay, x, y) {
 		super(scene, x, y, "ghostTower");
 		this.setupSceneInteraction();
 		this.setupAnims();
-		this.setupEvents(keyObj);
+		this.setupEvents();
 		this.setActive(false).setVisible(false);
 	}
 
@@ -14,10 +14,7 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 		this.scene.physics.add.staticGroup(this);
 	}
 
-	private setupEvents(keyObj) {
-		keyObj.on("down", () => {
-			this.toggle();
-		});
+	private setupEvents() {
 		this.scene.events.on("added-tower", () => {
 			this.scene.children.bringToTop(this);
 		});
@@ -40,9 +37,21 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 		);
 	}
 
+	interactionModusOn() {
+		this.clearTint();
+	}
+
+	towerModusOn() {
+		this.setTint(0x013220, 0x013220, 0x013220, 0x013220);
+	}
+
 	toggle() {
 		let bool = !this.visible;
 		this.setActive(bool).setVisible(bool);
+	}
+
+	lockOff() {
+		this.setActive(true);
 	}
 
 	toggleLock() {

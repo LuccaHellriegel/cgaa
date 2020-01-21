@@ -17,7 +17,6 @@ export class InteractionCircle extends Circle implements damageable {
 	damage(amount) {
 		super.damage(amount);
 		if (this.healthbar.decrease(amount)) {
-			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
 			this.destroy();
 		}

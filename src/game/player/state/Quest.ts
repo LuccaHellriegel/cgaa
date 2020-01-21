@@ -7,19 +7,19 @@ export class Quests {
 
 	constructor(private scene: Gameplay) {}
 
-	private addToKilllist(targetColor, interactionElements) {
+	private addToKilllist(targetColor, essentialElements) {
 		this.colorKilllist.push(targetColor);
 		this.scene.events.emit("added-to-killlist-" + targetColor);
 
-		for (const key in interactionElements) {
-			const element = interactionElements[key];
+		for (const key in essentialElements) {
+			const element = essentialElements[key];
 			if (element.color === targetColor) this.unitKilllist.push(element);
 		}
 	}
 
-	private refreshKillQuest(targetColor, eleColor, interactionElements) {
+	private refreshKillQuest(targetColor, eleColor, essentialElements) {
 		if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(eleColor)) {
-			this.addToKilllist(targetColor, interactionElements);
+			this.addToKilllist(targetColor, essentialElements);
 		}
 	}
 
@@ -35,8 +35,8 @@ export class Quests {
 		return !this.killListContains(targetColor) && this.colorKilllist.includes(targetColor);
 	}
 
-	questIsSolved(targetColor, eleColor, interactionElements) {
-		this.refreshKillQuest(targetColor, eleColor, interactionElements);
+	questIsSolved(targetColor, eleColor, essentialElements) {
+		this.refreshKillQuest(targetColor, eleColor, essentialElements);
 		return this.checkIfKillQuestSolved(targetColor);
 	}
 

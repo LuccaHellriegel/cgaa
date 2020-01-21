@@ -38,7 +38,7 @@ export function isInSight(weapon: Weapon, enemy) {
 			enemy.color
 		)
 	) {
-		(weapon.owner as EnemyCircle).spotted = enemy;
+		(weapon.owner as EnemyCircle).stateHandler.spotted = enemy;
 		weapon.owner.state = "guard";
 	}
 

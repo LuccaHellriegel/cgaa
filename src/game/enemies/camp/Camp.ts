@@ -10,13 +10,22 @@ import { CampConfig } from "./Camps";
 import { BuildingFactory } from "./building/BuildingFactory";
 import { Paths } from "../path/Paths";
 import { Exits } from "../path/Exits";
+import { InteractionCircle } from "../unit/InteractionCircle";
+import { Membership } from "../Membership";
 
 export class Camp {
 	campBuildings: Buildings;
+	interactionUnit: InteractionCircle;
 
-	constructor(private config: CampConfig, private enemies: Enemies, private paths: Paths) {
+	constructor(
+		private config: CampConfig,
+		private enemies: Enemies,
+		private paths: Paths,
+		private membership: Membership
+	) {
 		this.spawnBuildings();
 		this.populateCamp();
+		this.addMemberships();
 	}
 
 	private spawnBuildings() {
@@ -67,7 +76,11 @@ export class Camp {
 		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
 		enemyConfig.x = x;
 		enemyConfig.y = y;
-		let circle = EnemyFactory.createInteractionCircle(enemyConfig, enemies);
-		config.staticConfig.scene.cgaa.interactionElements.push(circle);
+		this.interactionUnit = EnemyFactory.createInteractionCircle(enemyConfig, enemies);
+	}
+
+	private addMemberships() {
+		this.membership.add(this.interactionUnit, "interaction", "essential");
+		this.membership.addAll([...this.campBuildings.buildings], "essential");
 	}
 }

@@ -5,7 +5,7 @@ import { Box } from "./Box";
 import { Point } from "../../../base/types";
 import { TutorialStepFactory } from "./TutorialStepFactory";
 
-export type Content = { text: string; position: Point };
+export type Content = { text: string; position: Point; tech: { listen; event } };
 
 export class Tutorial {
 	private reversedTutorialSteps: TutorialStep[] = [];

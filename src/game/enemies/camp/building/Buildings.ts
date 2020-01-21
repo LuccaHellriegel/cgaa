@@ -7,7 +7,7 @@ import { BuildingFactory } from "./BuildingFactory";
 import { Gameplay } from "../../../../scenes/Gameplay";
 
 export class Buildings {
-	private buildings: Building[] = [];
+	buildings: Building[] = [];
 
 	constructor(private scene: Gameplay, private spawnPositions: number[][], public color: string) {}
 

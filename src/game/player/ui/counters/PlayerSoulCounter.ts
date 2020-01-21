@@ -14,8 +14,9 @@ export class PlayerSoulCounter {
 		let increaseEvent = "souls-gained";
 		let decreaseEvent = "souls-spent";
 
-		this.value = 0;
-		this.startValue = 0;
+		this.value = 100;
+		this.startValue = 100;
+		sceneToListen.events.emit("can-build");
 
 		let graphics = sceneToUse.add.graphics({
 			fillStyle: {
@@ -23,7 +24,7 @@ export class PlayerSoulCounter {
 			}
 		});
 		playerSoulCountGraphic.draw(graphics, 0);
-		this.playerCounterText = sceneToUse.add.text(x - 17, y - 12, "0", {
+		this.playerCounterText = sceneToUse.add.text(x - 17, y - 12, this.startValue.toString(), {
 			font: "20px Verdana",
 			fill: "#ADFF2F"
 		});

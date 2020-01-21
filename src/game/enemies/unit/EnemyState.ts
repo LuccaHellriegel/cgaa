@@ -5,7 +5,7 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Point } from "../../base/types";
 
 export class EnemyState {
-	private spotted: any;
+	spotted: any;
 	private nextPos: Point;
 
 	constructor(private circle: EnemyCircle) {}

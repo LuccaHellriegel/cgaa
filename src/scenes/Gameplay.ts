@@ -1,17 +1,16 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/move/Movement";
-import { TowerManager } from "../game/player/towers/TowerManager";
+import { TowerSpawner } from "../game/player/towers/TowerSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { Square } from "../game/player/unit/Square";
-import { GhostTower } from "../game/player/modi/interaction/GhostTower";
+import { GhostTower } from "../game/player/modi/GhostTower";
 import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
-import { calculatePaths } from "../game/enemies/path/path";
 import { enableCollision } from "../game/collision/collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/move/WASD";
@@ -28,6 +27,10 @@ import { Paths } from "../game/enemies/path/Paths";
 import { PathFactory } from "../game/enemies/path/PathFactory";
 import EasyStar from "easystarjs";
 import { Exits } from "../game/enemies/path/Exits";
+import { TowerPool } from "../game/player/towers/TowerPool";
+import { TowerModus } from "../game/player/modi/tower/TowerModus";
+import { Membership } from "../game/enemies/Membership";
+import { ElementCollection } from "../game/player/modi/interaction/ElementCollection";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -43,12 +46,14 @@ export class Gameplay extends Phaser.Scene {
 
 	private initCGAA() {
 		this.cgaa = {
-			interactionElements: [],
-			camps: campColors.reduce((prev, cur) => {
-				prev[cur] = { dontAttackList: [] };
-				return prev;
-			}, {})
+			interactionCol: new ElementCollection("interaction"),
+			essentialCol: new ElementCollection("essential")
 		};
+		this.cgaa.membership = new Membership([this.cgaa.interactionCol, this.cgaa.interactionCol]);
+		this.cgaa.camps = campColors.reduce((prev, cur) => {
+			prev[cur] = { dontAttackList: [] };
+			return prev;
+		}, {});
 	}
 
 	private initPhysics() {
@@ -75,7 +80,8 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.areaConfigs,
 			this.cgaa.physicsGroups,
 			this.cgaa.enemies,
-			this.cgaa.paths
+			this.cgaa.paths,
+			this.cgaa.membership
 		);
 
 		new PathFactory(
@@ -89,7 +95,9 @@ export class Gameplay extends Phaser.Scene {
 
 	private initPlayerUnitAndColleagues() {
 		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
-		this.cgaa.interactionElements.push(new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.player));
+
+		//TODO: interaction
+		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.player);
 
 		this.cgaa.player = Player.withChainWeapon(
 			this,
@@ -100,32 +108,36 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initKeyboard() {
-		this.cgaa.keyObjF = this.input.keyboard.addKey("F");
-		this.cgaa.keyObjE = this.input.keyboard.addKey("E");
 		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
 	}
 
 	private initTowers() {
-		this.cgaa.ghostTower = new GhostTower(this, 0, 0, this.cgaa.keyObjF);
+		this.cgaa.ghostTower = new GhostTower(this, 0, 0);
 
-		this.cgaa.towerManager = new TowerManager(
+		this.cgaa.towerManager = new TowerSpawner(
 			this,
-			this.cgaa.physicsGroups.towers,
-			this.cgaa.physicsGroups.towerBulletGroup,
-			createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies),
-			this.cgaa.ghostTower
+			new TowerPool({
+				scene: this,
+				towerGroup: this.cgaa.physicsGroups.towers,
+				bulletGroup: this.cgaa.physicsGroups.towerBulletGroup,
+				numberOfTowers: 15
+			}),
+			createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
 	}
 
 	private initPlayerInteraction() {
 		this.cgaa.interactionModus = new InteractionModus(
-			this,
-			this.cgaa.ghostTower,
-			this.cgaa.keyObjE,
-			new Cooperation(this, new Quests(this), this.cgaa.rerouter, this.cgaa.rivalries)
+			new Cooperation(this, new Quests(this), this.cgaa.rerouter, this.cgaa.rivalries),
+			this.cgaa.interactionCol
 		);
 
-		this.cgaa.modi = new Modi(this.cgaa.keyObjF, this.cgaa.interactionModus, this.cgaa.towerManager);
+		this.cgaa.modi = new Modi(
+			this.input,
+			new TowerModus(this.cgaa.towerManager),
+			this.cgaa.interactionModus,
+			this.cgaa.ghostTower
+		);
 	}
 
 	private initMouse() {

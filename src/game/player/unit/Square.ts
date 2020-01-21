@@ -44,7 +44,6 @@ export class Square extends Image implements damageable {
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			removeEle(this, (this.scene as Gameplay).cgaa.interactionElements);
 			this.destroy();
 		}
 	}

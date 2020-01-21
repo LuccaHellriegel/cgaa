@@ -11,8 +11,8 @@ export class Cooperation {
 		private rivalries: Rivalries
 	) {}
 
-	interactWithCircle(ele, interactionElements) {
-		if (this.quests.questIsSolved(this.rivalries.getRival(ele.color), ele.color, interactionElements)) {
+	interactWithCircle(ele, essentialElements) {
+		if (this.quests.questIsSolved(this.rivalries.getRival(ele.color), ele.color, essentialElements)) {
 			this.rerouter.rerouteTroops(ele.color);
 		}
 	}
