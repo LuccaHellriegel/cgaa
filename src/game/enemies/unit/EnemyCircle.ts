@@ -3,7 +3,7 @@ import { Circle } from "../../base/classes/Circle";
 import { damageable } from "../../base/interfaces";
 import { PoolHelper } from "../../base/pool/PoolHelper";
 import { EnemyState } from "./EnemyState";
-import { Path } from "../path/classes/Path";
+import { Path } from "../path/Path";
 
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;

@@ -25,6 +25,9 @@ import { Rivalries } from "../game/enemies/camp/Rivalries";
 import { Cooperation } from "../game/player/state/Cooperation";
 import { Quests } from "../game/player/state/Quest";
 import { Paths } from "../game/enemies/path/Paths";
+import { PathFactory } from "../game/enemies/path/PathFactory";
+import EasyStar from "easystarjs";
+import { Exits } from "../game/enemies/path/Exits";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -75,13 +78,13 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.paths
 		);
 
-		calculatePaths({
-			scene: this,
-			unifiedMap: this.cgaa.unifiedMap,
-			areaConfigs: this.cgaa.areaConfigs,
-			middlePos: this.cgaa.middlePos,
-			buildingInfos: this.cgaa.campsObj.getBuildingInfos()
-		});
+		new PathFactory(
+			this.cgaa.unifiedMap,
+			new EasyStar.js(),
+			this.cgaa.paths,
+			new Exits(this.cgaa.areaConfigs),
+			this.cgaa.middlePos
+		).generatePaths(this.cgaa.campsObj.getBuildingInfos());
 	}
 
 	private initPlayerUnitAndColleagues() {

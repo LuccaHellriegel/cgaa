@@ -6,10 +6,10 @@ import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { EnemyPool } from "../../base/pool/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
 import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
-import { exitToGlobalPoint } from "../../base/position";
 import { CampConfig } from "./Camps";
 import { BuildingFactory } from "./building/BuildingFactory";
 import { Paths } from "../path/Paths";
+import { Exits } from "../path/Exits";
 
 export class Camp {
 	campBuildings: Buildings;
@@ -64,7 +64,7 @@ export class Camp {
 	}
 
 	private createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig, enemies: Enemies) {
-		let { x, y } = exitToGlobalPoint(config.areaConfig);
+		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
 		enemyConfig.x = x;
 		enemyConfig.y = y;
 		let circle = EnemyFactory.createInteractionCircle(enemyConfig, enemies);

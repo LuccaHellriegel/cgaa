@@ -1,7 +1,7 @@
 import { RelativePosition, Point } from "../../base/types";
 import { constructXYIDfromColumnRow, constructXYID } from "../../base/id";
 import { Rerouter } from "./Rerouter";
-import { Path } from "./classes/Path";
+import { Path } from "./Path";
 
 export class Paths {
 	private pathDict = {};
@@ -18,6 +18,11 @@ export class Paths {
 
 	setPathForID(id, path) {
 		this.pathDict[id] = path;
+	}
+
+	setReroutedPathForRelPos(relativePosition: RelativePosition, color, path) {
+		let id = constructXYIDfromColumnRow(relativePosition.column, relativePosition.row) + " " + color;
+		this.setPathForID(id, path);
 	}
 
 	getPathForRelPos(relPos: RelativePosition): Path {

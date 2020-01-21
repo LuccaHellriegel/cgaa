@@ -1,5 +1,5 @@
 import { gridPartHalfSize } from "./globals/globalSizes";
-import { Point, RelativePosition } from "./types";
+import { Point } from "./types";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / gridPartHalfSize) * gridPartHalfSize;
@@ -55,16 +55,4 @@ export function relativePositionToPoint(column, row): Point {
 
 export function realCoordinateToRelative(coordinate) {
 	return (snapCoordinateToGrid(coordinate) - gridPartHalfSize) / (2 * gridPartHalfSize);
-}
-
-export function exitToGlobalPoint(areaConfig): Point {
-	let x = relativeCoordinateToReal(areaConfig.exit.exitPosition.column) + areaConfig.topLeftX - gridPartHalfSize;
-	let y = relativeCoordinateToReal(areaConfig.exit.exitPosition.row) + areaConfig.topLeftY - gridPartHalfSize;
-	return { x, y };
-}
-
-export function exitToGlobalRelativePosition(areaConfig): RelativePosition {
-	let column = areaConfig.exit.exitPosition.column + realCoordinateToRelative(areaConfig.topLeftX);
-	let row = areaConfig.exit.exitPosition.row + realCoordinateToRelative(areaConfig.topLeftY);
-	return { column, row };
 }

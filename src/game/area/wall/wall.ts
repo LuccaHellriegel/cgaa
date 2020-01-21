@@ -3,7 +3,7 @@ import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
 import { ZeroOneMap, Point } from "../../base/types";
 import { WallSide } from "./WallSide";
 import { AreaConfig } from "../../base/interfaces";
-import { exitToGlobalPoint } from "../../base/position";
+import { Exits } from "../../enemies/path/Exits";
 
 function splitupAtExit(exitPosition, positionArr) {
 	let firstPositionArr: Point[] = [];
@@ -52,7 +52,7 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 		x = config.topLeftX;
 	}
 
-	let globalExitPosition = exitToGlobalPoint(config);
+	let globalExitPosition = Exits.exitToGlobalPoint(config);
 
 	let positionArrs = [topPartPositions, bottomPartPositions];
 	let splitupArrs;

@@ -1,6 +1,6 @@
-import { walkableSymbol, exitSymbol } from "../../../base/globals/globalSymbols";
-import { relativePositionToPoint } from "../../../base/position";
-import { Point } from "../../../base/types";
+import { walkableSymbol, exitSymbol } from "../../base/globals/globalSymbols";
+import { relativePositionToPoint } from "../../base/position";
+import { Point } from "../../base/types";
 
 export class Path {
 	pathArr: Point[];
@@ -10,15 +10,23 @@ export class Path {
 		private row,
 		private goalColumn,
 		private goalRow,
-		easyStar,
-		unifiedMap,
+		private easyStar,
+		private unifiedMap,
 		private pathArrToAdd
-	) {
-		easyStar.setGrid(unifiedMap);
-		easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
-		easyStar.findPath(column, row, goalColumn, goalRow, this.pathCallback.bind(this));
-		easyStar.enableSync();
-		easyStar.calculate();
+	) {}
+
+	calculate() {
+		this.easyStar.setGrid(this.unifiedMap);
+		this.easyStar.setAcceptableTiles([walkableSymbol, exitSymbol]);
+		this.easyStar.findPath(this.column, this.row, this.goalColumn, this.goalRow, this.pathCallback.bind(this));
+		this.easyStar.enableSync();
+		this.easyStar.calculate();
+	}
+
+	static createPathFromArr(arr) {
+		let path = new Path(null, null, null, null, null, null, null);
+		path.pathArr = arr;
+		return path;
 	}
 
 	private relativePathToRealPath(path) {
