@@ -1,6 +1,6 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
+import { Gameplay } from "../../../scenes/Gameplay";
 import { Modi } from "../modi/Modi";
-import { Player } from "../../unit/Player";
+import { Player } from "../unit/Player";
 import { GhostTower } from "../modi/interaction/GhostTower";
 
 export class Mouse {

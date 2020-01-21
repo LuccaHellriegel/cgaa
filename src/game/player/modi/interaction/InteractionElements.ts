@@ -1,4 +1,4 @@
-import { removeEle } from "../../../../base/utils";
+import { removeEle } from "../../../base/utils";
 
 export class InteractionElements {
 	private elements = [];

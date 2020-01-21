@@ -1,5 +1,5 @@
 import { InteractionModus } from "./interaction/InteractionModus";
-import { TowerManager } from "../../towers/TowerManager";
+import { TowerManager } from "../towers/TowerManager";
 
 export class Modi {
 	towerModus: boolean;

@@ -1,10 +1,10 @@
-import { Gameplay } from "../../../../../scenes/Gameplay";
-import { Tower } from "../../../towers/Tower";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { Tower } from "../../towers/Tower";
 import { GhostTower } from "./GhostTower";
-import { Square } from "../../../unit/Square";
-import { InteractionCircle } from "../../../../enemies/unit/InteractionCircle";
-import { Cooperation } from "../../../state/Cooperation";
-import { Point } from "../../../../base/types";
+import { Square } from "../../unit/Square";
+import { InteractionCircle } from "../../../enemies/unit/InteractionCircle";
+import { Cooperation } from "../../state/Cooperation";
+import { Point } from "../../../base/types";
 
 export class InteractionModus {
 	private isOn: Boolean = false;
