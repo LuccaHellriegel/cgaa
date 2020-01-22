@@ -3,7 +3,7 @@ import { executeOverAllCamps } from "../base/globals/global";
 import { PhysicGroups } from "./collisionBase";
 import { addWeaponCollision } from "./collisionWeapon";
 import { addUnitCollision, addEnvCollider } from "./collisionGeneral";
-import { addBulletCollision } from "./collisionBullet";
+import { BulletCollision } from "./BulletCollision";
 
 function createPhysicGroups(scene: Gameplay): PhysicGroups {
 	let player = scene.physics.add.group();
@@ -37,12 +37,18 @@ function createPhysicGroups(scene: Gameplay): PhysicGroups {
 	};
 }
 
+function getEnemyGroups(physicGroups: PhysicGroups) {
+	return [...Object.values(physicGroups.buildings), ...Object.values(physicGroups.enemies)];
+}
+
 export function enableCollision(scene: Gameplay) {
 	let physicGroups = createPhysicGroups(scene);
 	addWeaponCollision(physicGroups);
 	addUnitCollision(physicGroups);
 	addEnvCollider(physicGroups);
-	addBulletCollision(physicGroups);
+
+	new BulletCollision(scene, physicGroups.towerBulletGroup, getEnemyGroups(physicGroups));
+	//addBulletCollision(physicGroups);
 
 	return physicGroups;
 }
