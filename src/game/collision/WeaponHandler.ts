@@ -31,12 +31,14 @@ export class WeaponHandler {
 			damage = weapon.amount;
 		}
 
-		enemy.scene.events.emit("damage-" + enemy.unitType, damage);
-		if (weapon.owner.unitType === "player") {
-			gainSouls(scene, damage);
+		scene.events.emit("damage-" + enemy.unitType, damage);
+		enemy.damage(weapon.amount);
+
+		if (weapon.owner.unitType === "player" && enemy.healthbar.value <= 0) {
+			//TODO: gain dependent on size
+			gainSouls(scene, 100);
 		}
 
-		enemy.damage(weapon.amount);
 		enemy.spotted = weapon.owner;
 		enemy.state = "guard";
 	}

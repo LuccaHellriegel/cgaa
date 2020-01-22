@@ -7,6 +7,10 @@ import { towerCost } from "../../../base/globals/globalConfig";
 export class TowerModus {
 	constructor(private towerSpawner: TowerSpawner) {}
 
+	//TODO: place Squares
+	//TODO: Square Aura
+	//TODO: switch to Squares with Shift
+
 	lockOn(ghostTower: GhostTower) {
 		//TODO: if closest point too far -> dont lock on
 		let ele = ElementCollection.findClosestElement(
