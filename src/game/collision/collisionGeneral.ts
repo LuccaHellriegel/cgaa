@@ -1,9 +1,13 @@
 import { addCollider, PhysicGroups } from "./collisionBase";
 import { executeOverAllCamps } from "../base/globals/global";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
+import { WallSide } from "../area/wall/WallSide";
 
 function bounceCallback(unit: EnemyCircle, obj) {
-	if (unit.color !== "blue") {
+	if (obj instanceof WallSide) {
+		//TODO
+		unit.setVelocity(0, 0);
+	} else if (unit.color !== "blue") {
 		let dontAttackList = unit.scene.cgaa.camps[unit.color].dontAttackList;
 		if (dontAttackList && !dontAttackList.includes(obj.color)) {
 			unit.barrier = obj;
