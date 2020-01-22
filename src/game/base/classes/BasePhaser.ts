@@ -1,26 +1,18 @@
-import { extendWithNewId } from "../id";
+import { Annotator } from "./Annotator";
 
 export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
 	id: string;
 
 	constructor(config) {
 		super(config.scene, config.x, config.y, config.texture);
-		extendWithNewId(this);
-		config.scene.add.existing(this);
-		config.physicsGroup.add(this);
+		Annotator.annotateConfigBased(this, config, "id");
 	}
 }
 
-export abstract class SpriteWithAnimEvents extends Sprite {
+export abstract class SpriteWithAnimEvents extends Phaser.Physics.Arcade.Sprite {
 	constructor(config) {
-		super(config);
-		this.on(
-			"animationcomplete",
-			function(anim, frame) {
-				this.emit("animationcomplete_" + anim.key, anim, frame);
-			},
-			this
-		);
+		super(config.scene, config.x, config.y, config.texture);
+		Annotator.annotateConfigBased(this, config, "id", "animcomplete");
 	}
 }
 
@@ -29,7 +21,6 @@ export class Image extends Phaser.Physics.Arcade.Image {
 
 	constructor(config) {
 		super(config.scene, config.x, config.y, config.texture);
-		config.scene.add.existing(this);
-		config.physicsGroup.add(this);
+		Annotator.annotateConfigBased(this, config);
 	}
 }

@@ -15,7 +15,6 @@ export class TowerModus {
 			ghostTower.y
 		);
 		if (ele) {
-			console.log(ele);
 			ghostTower.setPosition(ele.x, ele.y);
 		}
 	}

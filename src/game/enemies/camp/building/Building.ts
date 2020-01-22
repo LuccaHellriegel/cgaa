@@ -3,10 +3,9 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 import { damageable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/ui/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { removeEle } from "../../../base/utils";
-import { extendWithNewId } from "../../../base/id";
 import { Buildings } from "./Buildings";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
+import { Annotator } from "../../../base/classes/Annotator";
 
 export interface BuildingSpawnConfig {
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -23,11 +22,9 @@ export class Building extends Image implements damageable {
 
 		this.healthbar = HealthBarFactory.createBuildingHealthBar(scene, x, y);
 
-		this.setImmovable(true);
-
 		this.polygon = new RectPolygon(x, y, this.width, this.height);
 
-		extendWithNewId(this);
+		Annotator.annotate(this, "id", "immovable");
 	}
 
 	damage(amount: number) {

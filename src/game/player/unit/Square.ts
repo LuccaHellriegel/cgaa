@@ -2,11 +2,10 @@ import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/ui/HealthBar";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { extendWithNewId } from "../../base/id";
 import { Image } from "../../base/classes/BasePhaser";
-import { removeEle } from "../../base/utils";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
+import { Annotator } from "../../base/classes/Annotator";
 
 //TODO: make this a buyable healing tower
 export class Square extends Image implements damageable {
@@ -37,9 +36,8 @@ export class Square extends Image implements damageable {
 	}
 
 	private initUnitStats() {
-		this.setImmovable(true);
+		Annotator.annotate(this, "id", "immovable");
 		this.color = "blue";
-		extendWithNewId(this);
 	}
 
 	damage(amount: number) {

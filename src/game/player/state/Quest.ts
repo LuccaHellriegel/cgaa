@@ -9,6 +9,7 @@ export class Quests {
 
 	private addToKilllist(targetColor, essentialElements) {
 		this.colorKilllist.push(targetColor);
+		//TODO: bug somewhere
 		this.scene.events.emit("added-to-killlist-" + targetColor);
 
 		for (const key in essentialElements) {

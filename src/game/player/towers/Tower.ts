@@ -4,9 +4,9 @@ import { damageable } from "../../base/interfaces";
 import { RectPolygon } from "../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
-import { extendWithNewId } from "../../base/id";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 import { PoolHelper } from "../../base/pool/PoolHelper";
+import { Annotator } from "../../base/classes/Annotator";
 
 export class Tower extends Image implements damageable {
 	healthbar: HealthBar;
@@ -31,7 +31,7 @@ export class Tower extends Image implements damageable {
 	}
 
 	private initUnitStats() {
-		this.setImmovable(true);
+		Annotator.annotate(this, "id", "immovable");
 
 		this.polygon = new RectPolygon(
 			this.x + this.scene.cameras.main.scrollX,
@@ -40,7 +40,6 @@ export class Tower extends Image implements damageable {
 			2 * gridPartHalfSize
 		);
 		this.color = "blue";
-		extendWithNewId(this);
 		this.setSize(this.polygon.width, this.polygon.height);
 	}
 
