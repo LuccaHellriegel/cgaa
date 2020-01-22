@@ -57,7 +57,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initPhysics() {
-		this.cgaa.physicsGroups = new Collision(this).physicsGroups;
+		this.cgaa.physicsGroups = new Collision(this).physicGroups;
 	}
 
 	private initEnvironment() {

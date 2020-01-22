@@ -7,7 +7,8 @@ export class Circle extends SpriteWithAnimEvents {
 	weapon: Weapon;
 	polygon: CirclePolygon;
 	unitType: string;
-	public scene: Gameplay;
+	id: string;
+	scene: Gameplay;
 
 	constructor(config) {
 		super(config);

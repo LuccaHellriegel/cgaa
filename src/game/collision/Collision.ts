@@ -16,18 +16,17 @@ interface PhysicGroups {
 }
 
 export class Collision {
-	physicsGroups: PhysicGroups;
+	physicGroups: PhysicGroups;
+
 	constructor(scene: Gameplay) {
-		let physicGroups = this.createPhysicGroups(scene);
+		this.createPhysicGroups(scene);
 
-		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr(physicGroups));
-		new BounceCollision(scene, this.getBounceCombinatorialArr(physicGroups));
-		new BulletCollision(scene, physicGroups.towerBulletGroup, this.getEnemyGroups(physicGroups));
-
-		this.physicsGroups = physicGroups;
+		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr());
+		new BounceCollision(scene, this.getBounceCombinatorialArr());
+		new BulletCollision(scene, this.physicGroups.towerBulletGroup, this.getEnemyGroups());
 	}
 
-	createPhysicGroups(scene: Gameplay): PhysicGroups {
+	private createPhysicGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
 
@@ -45,7 +44,7 @@ export class Collision {
 
 		let areas = scene.physics.add.staticGroup();
 
-		return {
+		this.physicGroups = {
 			player,
 			playerWeapon,
 			towers,
@@ -59,44 +58,52 @@ export class Collision {
 		};
 	}
 
-	getEnemyGroups(physicGroups: PhysicGroups) {
-		return [...Object.values(physicGroups.buildings), ...Object.values(physicGroups.enemies)];
+	private getEnemyGroups() {
+		return [...Object.values(this.physicGroups.buildings), ...Object.values(this.physicGroups.enemies)];
 	}
 
-	getSightAndWeaponCombinatorialArr(physicGroups: PhysicGroups) {
+	private getSightAndWeaponCombinatorialArr() {
 		let result = [];
-		result.push([[physicGroups.playerWeapon], this.getEnemyGroups(physicGroups)]);
-		result.push([[...Object.values(physicGroups.enemyWeapons)], [physicGroups.player, physicGroups.towers]]);
+		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
+		result.push([
+			[...Object.values(this.physicGroups.enemyWeapons)],
+			[this.physicGroups.player, this.physicGroups.towers]
+		]);
 		result.push(
-			...Object.keys(physicGroups.enemyWeapons).map(color => {
+			...Object.keys(this.physicGroups.enemyWeapons).map(color => {
 				return [
-					[physicGroups.enemyWeapons[color]],
-					Object.keys(physicGroups.enemyWeapons)
+					[this.physicGroups.enemyWeapons[color]],
+					Object.keys(this.physicGroups.enemyWeapons)
 						.filter(secondColor => secondColor !== color)
-						.map(secondColor => physicGroups.enemies[secondColor])
+						.map(secondColor => this.physicGroups.enemies[secondColor])
 				];
 			})
 		);
 		return result;
 	}
 
-	getBounceCombinatorialArr(physicGroups: PhysicGroups) {
+	private getBounceCombinatorialArr() {
 		let result = [];
 		result.push([
-			[physicGroups.player],
-			[...this.getEnemyGroups(physicGroups), physicGroups.towers, physicGroups.areas]
+			[this.physicGroups.player],
+			[...this.getEnemyGroups(), this.physicGroups.towers, this.physicGroups.areas]
 		]);
 		result.push([
-			[...Object.values(physicGroups.enemies)],
-			[physicGroups.player, physicGroups.towers, physicGroups.areas, ...Object.values(physicGroups.buildings)]
+			[...Object.values(this.physicGroups.enemies)],
+			[
+				this.physicGroups.player,
+				this.physicGroups.towers,
+				this.physicGroups.areas,
+				...Object.values(this.physicGroups.buildings)
+			]
 		]);
 		result.push(
-			...Object.keys(physicGroups.enemies).map(color => {
+			...Object.keys(this.physicGroups.enemies).map(color => {
 				return [
-					[physicGroups.enemies[color]],
-					Object.keys(physicGroups.enemies)
+					[this.physicGroups.enemies[color]],
+					Object.keys(this.physicGroups.enemies)
 						.filter(secondColor => secondColor !== color)
-						.map(secondColor => physicGroups.enemies[secondColor])
+						.map(secondColor => this.physicGroups.enemies[secondColor])
 				];
 			})
 		);

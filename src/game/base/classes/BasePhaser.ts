@@ -1,8 +1,6 @@
 import { Annotator } from "./Annotator";
 
 export abstract class Sprite extends Phaser.Physics.Arcade.Sprite {
-	id: string;
-
 	constructor(config) {
 		super(config.scene, config.x, config.y, config.texture);
 		Annotator.annotateConfigBased(this, config, "id");
