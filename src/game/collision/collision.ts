@@ -1,9 +1,19 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { executeOverAllCamps } from "../base/globals/global";
-import { PhysicGroups } from "./collisionBase";
-import { addUnitCollision, addEnvCollider } from "./collisionGeneral";
 import { BulletCollision } from "./BulletCollision";
 import { SightOverlap } from "./SightOverlap";
+import { BounceCollision } from "./BounceCollision";
+
+export interface PhysicGroups {
+	player: Phaser.Physics.Arcade.Group;
+	playerWeapon: Phaser.Physics.Arcade.Group;
+	towers: Phaser.Physics.Arcade.StaticGroup;
+	enemies: {};
+	enemyWeapons: {};
+	areas: Phaser.Physics.Arcade.StaticGroup;
+	towerBulletGroup: Phaser.Physics.Arcade.Group;
+	buildings: {};
+}
 
 function createPhysicGroups(scene: Gameplay): PhysicGroups {
 	let player = scene.physics.add.group();
@@ -58,13 +68,33 @@ function getSightAndWeaponCombinatorialArr(physicGroups: PhysicGroups) {
 	return result;
 }
 
+function getBounceCombinatorialArr(physicGroups: PhysicGroups) {
+	let result = [];
+	result.push([[physicGroups.player], [...getEnemyGroups(physicGroups), physicGroups.towers, physicGroups.areas]]);
+	result.push([
+		[...Object.values(physicGroups.enemies)],
+		[physicGroups.player, physicGroups.towers, physicGroups.areas, ...Object.values(physicGroups.buildings)]
+	]);
+	result.push(
+		...Object.keys(physicGroups.enemies).map(color => {
+			return [
+				[physicGroups.enemies[color]],
+				Object.keys(physicGroups.enemies)
+					.filter(secondColor => secondColor !== color)
+					.map(secondColor => physicGroups.enemies[secondColor])
+			];
+		})
+	);
+	return result;
+}
+
+//TODO: Square = Tower Group
+
 export function enableCollision(scene: Gameplay) {
 	let physicGroups = createPhysicGroups(scene);
 
 	new SightOverlap(scene, getSightAndWeaponCombinatorialArr(physicGroups));
-	addUnitCollision(physicGroups);
-	addEnvCollider(physicGroups);
-
+	new BounceCollision(scene, getBounceCombinatorialArr(physicGroups));
 	new BulletCollision(scene, physicGroups.towerBulletGroup, getEnemyGroups(physicGroups));
 
 	return physicGroups;
