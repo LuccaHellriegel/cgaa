@@ -11,7 +11,7 @@ import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { createTowerSpawnObj } from "../game/base/spawn/spawn";
-import { enableCollision } from "../game/collision/collision";
+import { Collision } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/move/WASD";
 import { WaveController } from "../game/enemies/wave/WaveController";
@@ -57,7 +57,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initPhysics() {
-		this.cgaa.physicsGroups = enableCollision(this);
+		this.cgaa.physicsGroups = new Collision(this).physicsGroups;
 	}
 
 	private initEnvironment() {
@@ -97,7 +97,7 @@ export class Gameplay extends Phaser.Scene {
 		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
 
 		//TODO: interaction
-		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.player);
+		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.towers);
 
 		this.cgaa.player = Player.withChainWeapon(
 			this,
