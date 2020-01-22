@@ -26,11 +26,11 @@ export class Paths {
 	}
 
 	getPathForRelPos(relPos: RelativePosition): Path {
-		return this.pathDict[constructXYIDfromColumnRow(relPos.column, relPos.row)];
+		return Path.createPathFromArr([...this.pathDict[constructXYIDfromColumnRow(relPos.column, relPos.row)].pathArr]);
 	}
 
 	getPathForID(id): Path {
-		return this.pathDict[id];
+		return Path.createPathFromArr([...this.pathDict[id].pathArr]);
 	}
 
 	getReroutedPathForRealPos(realPos: Point, color): Path {

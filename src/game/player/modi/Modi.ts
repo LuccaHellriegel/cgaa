@@ -93,8 +93,10 @@ export class Modi {
 	click() {
 		if (this.mode === "interaction") {
 			this.interactionModus.execute(this.ghostTower, this.lock);
+			this.lockOff();
 		} else if (this.mode === "tower") {
 			this.towerModus.execute(this.ghostTower, this.lock);
+			this.lockOff();
 		} else {
 			return false;
 		}
