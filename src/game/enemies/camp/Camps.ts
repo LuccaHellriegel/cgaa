@@ -7,7 +7,7 @@ import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
 import { Buildings } from "./building/Buildings";
 import { Paths } from "../path/Paths";
-import { Membership } from "../Membership";
+import { Membership } from "../../base/classes/Membership";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;

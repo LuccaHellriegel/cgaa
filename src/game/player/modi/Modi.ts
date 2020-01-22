@@ -5,6 +5,8 @@ import { GhostTower } from "./GhostTower";
 export class Modi {
 	private mode = "off";
 	private lock = false;
+	private modeMap = { interaction: {}, tower: {} };
+
 	public keyObjInteraction;
 	public keyObjTower;
 	public keyObjLock;
@@ -16,6 +18,10 @@ export class Modi {
 		private ghostTower: GhostTower
 	) {
 		this.setupKeys(input);
+
+		this.modeMap.interaction = ghostTower.interactionModusOn.bind(ghostTower);
+		this.modeMap.tower = ghostTower.towerModusOn.bind(ghostTower);
+
 		this.setupEvents();
 	}
 
@@ -26,45 +32,62 @@ export class Modi {
 	}
 
 	private setupEvents() {
-		this.keyObjInteraction.on("down", () => {
-			if (this.mode === "off") {
-				this.ghostTower.toggle();
-				this.ghostTower.interactionModusOn();
-				this.mode = "interaction";
-			} else if (this.mode === "interaction") {
-				this.ghostTower.toggle();
-				this.mode = "off";
-			} else {
-				this.ghostTower.interactionModusOn();
-				this.ghostTower.lockOff();
-				this.mode = "interaction";
-			}
-		});
+		this.keyObjInteraction.on("down", this.interactionKeyPress.bind(this));
+		this.keyObjTower.on("down", this.towerKeyPress.bind(this));
+		this.keyObjLock.on("down", this.lockKeyPress.bind(this));
+	}
 
-		this.keyObjTower.on("down", () => {
-			if (this.mode === "off") {
-				this.ghostTower.toggle();
-				this.ghostTower.towerModusOn();
-				this.mode = "tower";
-			} else if (this.mode === "tower") {
-				this.ghostTower.toggle();
-				this.mode = "off";
-			} else {
-				this.ghostTower.towerModusOn();
-				this.ghostTower.lockOff();
-				this.mode = "tower";
-			}
-		});
+	private interactionKeyPress() {
+		if (this.mode === "interaction") {
+			this.modeOff();
+		} else {
+			this.modeOn("interaction");
+		}
+	}
 
-		this.keyObjLock.on("down", () => {
-			if (this.mode === "tower") {
-				this.towerModus.lockOn(this.ghostTower);
+	private towerKeyPress() {
+		if (this.mode === "tower") {
+			this.modeOff();
+		} else {
+			this.modeOn("tower");
+		}
+	}
+
+	private modeOn(mode) {
+		this.mode = mode;
+		this.modeMap[mode]();
+		this.lockOff();
+	}
+
+	private modeOff() {
+		this.mode = "off";
+		this.lockOff();
+		this.ghostTower.turnOff();
+	}
+
+	private lockKeyPress() {
+		if (this.mode !== "off") {
+			if (this.lock) {
+				this.lockOff();
 			} else {
-				this.interactionModus.lockOn(this.ghostTower);
+				this.lockOn();
 			}
-			this.lock = !this.lock;
-			this.ghostTower.toggleLock();
-		});
+		}
+	}
+
+	private lockOff() {
+		this.lock = false;
+		this.ghostTower.lockOff();
+	}
+
+	private lockOn() {
+		if (this.mode === "tower") {
+			this.towerModus.lockOn(this.ghostTower);
+		} else if (this.mode === "interaction") {
+			this.interactionModus.lockOn(this.ghostTower);
+		}
+		this.ghostTower.lockOn();
+		this.lock = true;
 	}
 
 	click() {

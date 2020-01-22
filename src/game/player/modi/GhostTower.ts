@@ -39,23 +39,27 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 
 	interactionModusOn() {
 		this.clearTint();
+		this.turnOn();
 	}
 
 	towerModusOn() {
 		this.setTint(0x013220, 0x013220, 0x013220, 0x013220);
+		this.turnOn();
 	}
 
-	toggle() {
-		let bool = !this.visible;
-		this.setActive(bool).setVisible(bool);
+	turnOn() {
+		this.setActive(true).setVisible(true);
+	}
+
+	turnOff() {
+		this.setActive(false).setVisible(false);
 	}
 
 	lockOff() {
 		this.setActive(true);
 	}
 
-	toggleLock() {
-		let active = !this.active;
-		this.setActive(active);
+	lockOn() {
+		this.setActive(false);
 	}
 }

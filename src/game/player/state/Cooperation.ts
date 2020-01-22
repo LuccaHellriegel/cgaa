@@ -2,6 +2,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { Quests } from "./Quest";
 import { Rerouter } from "../../enemies/path/Rerouter";
 import { Rivalries } from "../../enemies/camp/Rivalries";
+import { ElementCollection } from "../../base/classes/ElementCollection";
 
 export class Cooperation {
 	constructor(
@@ -11,7 +12,7 @@ export class Cooperation {
 		private rivalries: Rivalries
 	) {}
 
-	interactWithCircle(ele, essentialElements) {
+	interactWithCircle(ele, essentialElements: ElementCollection) {
 		if (this.quests.questIsSolved(this.rivalries.getRival(ele.color), ele.color, essentialElements)) {
 			this.rerouter.rerouteTroops(ele.color);
 		}

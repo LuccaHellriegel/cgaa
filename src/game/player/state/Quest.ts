@@ -1,5 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { removeEle } from "../../base/utils";
+import { ElementCollection } from "../../base/classes/ElementCollection";
 
 export class Quests {
 	private colorKilllist: any[] = [];
@@ -7,15 +8,10 @@ export class Quests {
 
 	constructor(private scene: Gameplay) {}
 
-	private addToKilllist(targetColor, essentialElements) {
+	private addToKilllist(targetColor, essentialElements: ElementCollection) {
 		this.colorKilllist.push(targetColor);
-		//TODO: bug somewhere
 		this.scene.events.emit("added-to-killlist-" + targetColor);
-
-		for (const key in essentialElements) {
-			const element = essentialElements[key];
-			if (element.color === targetColor) this.unitKilllist.push(element);
-		}
+		this.unitKilllist.push(...essentialElements.getElementsWithColor(targetColor));
 	}
 
 	private refreshKillQuest(targetColor, eleColor, essentialElements) {
@@ -26,8 +22,7 @@ export class Quests {
 
 	private killListContains(color) {
 		for (let index = 0; index < this.unitKilllist.length; index++) {
-			const unit = this.unitKilllist[index];
-			if (unit.color === color) return true;
+			if (this.unitKilllist[index].color === color) return true;
 		}
 		return false;
 	}

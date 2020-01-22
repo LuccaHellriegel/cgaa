@@ -11,7 +11,7 @@ import { BuildingFactory } from "./building/BuildingFactory";
 import { Paths } from "../path/Paths";
 import { Exits } from "../path/Exits";
 import { InteractionCircle } from "../unit/InteractionCircle";
-import { Membership } from "../Membership";
+import { Membership } from "../../base/classes/Membership";
 
 export class Camp {
 	campBuildings: Buildings;

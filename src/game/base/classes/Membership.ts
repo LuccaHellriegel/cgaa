@@ -1,13 +1,11 @@
-import { ElementCollection } from "../player/modi/interaction/ElementCollection";
+import { ElementCollection } from "./ElementCollection";
 
 export class Membership {
 	constructor(private elementCollections: ElementCollection[]) {}
 
 	addAll(elements, ...types) {
-		types.forEach(type => {
-			this.elementCollections.forEach(col => {
-				elements.forEach(element => col.addElementIfType(element, type));
-			});
+		elements.forEach(element => {
+			this.add(element, ...types);
 		});
 	}
 

@@ -1,6 +1,6 @@
 import { GhostTower } from "../GhostTower";
 import { Cooperation } from "../../state/Cooperation";
-import { ElementCollection } from "./ElementCollection";
+import { ElementCollection } from "../../../base/classes/ElementCollection";
 
 export class InteractionModus {
 	constructor(private cooperation: Cooperation, private interactionElements: ElementCollection) {}
@@ -22,7 +22,6 @@ export class InteractionModus {
 		if (lock) {
 			let ele = this.interactionElements.findClosestElement(ghostTower.x, ghostTower.y);
 			this.cooperation.interactWithCircle(ele, this.interactionElements);
-			ghostTower.toggleLock();
 		}
 	}
 }

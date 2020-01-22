@@ -29,8 +29,8 @@ import EasyStar from "easystarjs";
 import { Exits } from "../game/enemies/path/Exits";
 import { TowerPool } from "../game/player/towers/TowerPool";
 import { TowerModus } from "../game/player/modi/tower/TowerModus";
-import { Membership } from "../game/enemies/Membership";
-import { ElementCollection } from "../game/player/modi/interaction/ElementCollection";
+import { ElementCollection } from "../game/base/classes/ElementCollection";
+import { Membership } from "../game/base/classes/Membership";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -49,7 +49,7 @@ export class Gameplay extends Phaser.Scene {
 			interactionCol: new ElementCollection("interaction"),
 			essentialCol: new ElementCollection("essential")
 		};
-		this.cgaa.membership = new Membership([this.cgaa.interactionCol, this.cgaa.interactionCol]);
+		this.cgaa.membership = new Membership([this.cgaa.interactionCol, this.cgaa.essentialCol]);
 		this.cgaa.camps = campColors.reduce((prev, cur) => {
 			prev[cur] = { dontAttackList: [] };
 			return prev;

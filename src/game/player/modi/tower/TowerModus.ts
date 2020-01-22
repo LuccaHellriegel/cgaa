@@ -1,6 +1,6 @@
 import { GhostTower } from "../GhostTower";
 import { TowerSpawner } from "../../towers/TowerSpawner";
-import { ElementCollection } from "../interaction/ElementCollection";
+import { ElementCollection } from "../../../base/classes/ElementCollection";
 import { gainSouls } from "../../../base/events/player";
 import { towerCost } from "../../../base/globals/globalConfig";
 
@@ -20,7 +20,6 @@ export class TowerModus {
 	}
 
 	execute(ghostTower: GhostTower, lock: boolean) {
-		//TODO: if lockOn fails we still set lock true
 		if (lock) {
 			let ele = ElementCollection.findClosestElement(
 				this.towerSpawner.towerPool.getActiveTowers(),
@@ -28,7 +27,6 @@ export class TowerModus {
 				ghostTower.y
 			);
 			this.interactWithTower(ele);
-			ghostTower.toggleLock();
 		} else {
 			this.towerSpawner.spawnNewTower(ghostTower);
 		}

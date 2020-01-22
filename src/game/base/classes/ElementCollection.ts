@@ -1,9 +1,21 @@
-import { removeEle } from "../../../base/utils";
+import { removeEle } from "../utils";
 
 export class ElementCollection {
 	private elements = [];
 
 	constructor(private type: string) {}
+
+	getElementsWithColor(color) {
+		return this.elements.reduce((prev, cur) => {
+			let hasScene = cur.scene;
+			if (hasScene) {
+				if (cur.color === color) prev.push(cur);
+			} else {
+				removeEle(cur, this.elements);
+			}
+			return prev;
+		}, []);
+	}
 
 	addElementIfType(element, type: string) {
 		if (type === this.type) this.elements.push(element);
