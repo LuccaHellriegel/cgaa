@@ -9,9 +9,9 @@ export class PoolHelper {
 		unit.healthbar.value = unit.healthbar.defaultValue;
 	}
 
-	static destroyTower(tower) {
-		tower.bullets.forEach(bullet => bullet.reset());
-		this.genericDestroy(tower);
+	static destroyShooter(shooter) {
+		shooter.bullets.forEach(bullet => bullet.reset());
+		this.genericDestroy(shooter);
 	}
 
 	static destroyEnemyCircle(circle) {
@@ -25,9 +25,9 @@ export class PoolHelper {
 		unit.healthbar.move(x, y);
 	}
 
-	static activateTower(tower, x, y) {
-		this.genericActivate(tower, x, y);
-		tower.bullets.forEach(bullet => bullet.reset());
+	static activateShooter(shooter, x, y) {
+		this.genericActivate(shooter, x, y);
+		shooter.bullets.forEach(bullet => bullet.reset());
 	}
 
 	static activateEnemyCircle(circle, x, y) {

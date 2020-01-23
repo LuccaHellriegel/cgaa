@@ -7,11 +7,11 @@ import { BounceCollision } from "./BounceCollision";
 interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
-	towers: Phaser.Physics.Arcade.StaticGroup;
+	shooter: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
-	towerBulletGroup: Phaser.Physics.Arcade.Group;
+	shooterBulletGroup: Phaser.Physics.Arcade.Group;
 	buildings: {};
 }
 
@@ -23,15 +23,15 @@ export class Collision {
 
 		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr());
 		new BounceCollision(scene, this.getBounceCombinatorialArr());
-		new BulletCollision(scene, this.physicGroups.towerBulletGroup, this.getEnemyGroups());
+		new BulletCollision(scene, this.physicGroups.shooterBulletGroup, this.getEnemyGroups());
 	}
 
 	private createPhysicGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
 
-		let towers = scene.physics.add.staticGroup();
-		let towerBulletGroup = scene.physics.add.group();
+		let shooter = scene.physics.add.staticGroup();
+		let shooterBulletGroup = scene.physics.add.group();
 
 		let enemies = {};
 		let enemyWeapons = {};
@@ -47,8 +47,8 @@ export class Collision {
 		this.physicGroups = {
 			player,
 			playerWeapon,
-			towers,
-			towerBulletGroup,
+			shooter,
+			shooterBulletGroup,
 
 			enemies,
 			enemyWeapons,
@@ -67,7 +67,7 @@ export class Collision {
 		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
 		result.push([
 			[...Object.values(this.physicGroups.enemyWeapons)],
-			[this.physicGroups.player, this.physicGroups.towers]
+			[this.physicGroups.player, this.physicGroups.shooter]
 		]);
 		result.push(
 			...Object.keys(this.physicGroups.enemyWeapons).map(color => {
@@ -86,13 +86,13 @@ export class Collision {
 		let result = [];
 		result.push([
 			[this.physicGroups.player],
-			[...this.getEnemyGroups(), this.physicGroups.towers, this.physicGroups.areas]
+			[...this.getEnemyGroups(), this.physicGroups.shooter, this.physicGroups.areas]
 		]);
 		result.push([
 			[...Object.values(this.physicGroups.enemies)],
 			[
 				this.physicGroups.player,
-				this.physicGroups.towers,
+				this.physicGroups.shooter,
 				this.physicGroups.areas,
 				...Object.values(this.physicGroups.buildings)
 			]

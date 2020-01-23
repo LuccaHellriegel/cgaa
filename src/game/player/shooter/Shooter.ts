@@ -8,7 +8,7 @@ import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 import { PoolHelper } from "../../base/pool/PoolHelper";
 import { Annotator } from "../../base/classes/Annotator";
 
-export class Tower extends Image implements damageable {
+export class Shooter extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
@@ -18,11 +18,11 @@ export class Tower extends Image implements damageable {
 	color: string;
 
 	constructor(scene, x, y, physicsGroup, private bulletGroup: Phaser.Physics.Arcade.Group) {
-		super({ scene, x, y, texture: "tower", physicsGroup });
+		super({ scene, x, y, texture: "shooter", physicsGroup });
 
 		this.initUnitStats();
 
-		this.healthbar = HealthBarFactory.createTowerHealthBar(scene, x, y);
+		this.healthbar = HealthBarFactory.createShooterHealthBar(scene, x, y);
 
 		this.initBullets();
 
@@ -80,10 +80,10 @@ export class Tower extends Image implements damageable {
 	}
 
 	poolDestroy() {
-		PoolHelper.destroyTower(this);
+		PoolHelper.destroyShooter(this);
 	}
 
 	activate(x, y) {
-		PoolHelper.activateTower(this, x, y);
+		PoolHelper.activateShooter(this, x, y);
 	}
 }

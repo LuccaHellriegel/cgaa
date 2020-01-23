@@ -1,4 +1,4 @@
-import { TowerSpawnObj } from "./TowerSpawnObj";
+import { ShooterSpawnObj } from "./ShooterSpawnObj";
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { constructXYIDfromColumnRow } from "../id";
 import { walkableSymbol } from "../globals/globalSymbols";
@@ -61,8 +61,8 @@ function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	return dict;
 }
 
-export function createTowerSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: Enemies): TowerSpawnObj {
-	return new TowerSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
+export function createShooterSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: Enemies): ShooterSpawnObj {
+	return new ShooterSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
 }
 
 export function createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemies: Enemies): EnemySpawnObj {

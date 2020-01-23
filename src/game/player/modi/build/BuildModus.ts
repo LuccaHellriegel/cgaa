@@ -1,11 +1,11 @@
 import { SelectorRect } from "../SelectorRect";
-import { TowerSpawner } from "../../towers/TowerSpawner";
+import { ShooterSpawner } from "../../shooter/ShooterSpawner";
 import { ElementCollection } from "../../../base/classes/ElementCollection";
 import { gainSouls } from "../../../base/events/player";
-import { towerCost } from "../../../base/globals/globalConfig";
+import { shooterCost } from "../../../base/globals/globalConfig";
 
 export class BuildModus {
-	constructor(private towerSpawner: TowerSpawner) {}
+	constructor(private shooterSpawner: ShooterSpawner) {}
 
 	//TODO: place Squares
 	//TODO: Square Aura
@@ -14,7 +14,7 @@ export class BuildModus {
 	lockOn(selectorRect: SelectorRect) {
 		//TODO: if closest point too far -> dont lock on
 		let ele = ElementCollection.findClosestElement(
-			this.towerSpawner.towerPool.getActiveTowers(),
+			this.shooterSpawner.shooterPool.getActiveShooters(),
 			selectorRect.x,
 			selectorRect.y
 		);
@@ -26,19 +26,19 @@ export class BuildModus {
 	execute(selectorRect: SelectorRect, lock: boolean) {
 		if (lock) {
 			let ele = ElementCollection.findClosestElement(
-				this.towerSpawner.towerPool.getActiveTowers(),
+				this.shooterSpawner.shooterPool.getActiveShooters(),
 				selectorRect.x,
 				selectorRect.y
 			);
-			this.interactWithTower(ele);
+			this.interactWithShooter(ele);
 		} else {
-			this.towerSpawner.spawnNewTower(selectorRect);
+			this.shooterSpawner.spawnNewShooter(selectorRect);
 		}
 	}
 
-	private interactWithTower(ele) {
+	private interactWithShooter(ele) {
 		ele.poolDestroy();
-		gainSouls(this.towerSpawner.scene, towerCost);
+		gainSouls(this.shooterSpawner.scene, shooterCost);
 	}
 
 	//TODO:

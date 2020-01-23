@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Bullet } from "../player/towers/Bullet";
+import { Bullet } from "../player/shooter/Bullet";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 import { gainSouls } from "../base/events/player";
 
@@ -11,7 +11,7 @@ export class BulletCollision {
 	}
 
 	private collision(bullet: Bullet, enemy: EnemyCircle) {
-		//TODO: somehow if tower is destroyed it creates a black hole
+		//TODO: somehow if shooter is destroyed it creates a black hole
 		enemy.damage(bullet.amount);
 
 		let damage = bullet.amount > enemy.healthbar.value ? enemy.healthbar.value : bullet.amount;

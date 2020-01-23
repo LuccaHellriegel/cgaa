@@ -1,4 +1,4 @@
-export const towerCost = 100;
+export const shooterCost = 100;
 
 export const areaSize = 12;
 

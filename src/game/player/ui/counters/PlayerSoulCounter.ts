@@ -1,7 +1,7 @@
 import { HUD } from "../../../../scenes/HUD";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { SymmetricCrossPolygon } from "../../../base/polygons/SymmetricCrossPolygon";
-import { towerCost } from "../../../base/globals/globalConfig";
+import { shooterCost } from "../../../base/globals/globalConfig";
 
 export class PlayerSoulCounter {
 	value: number;
@@ -43,7 +43,7 @@ export class PlayerSoulCounter {
 			function(amount) {
 				this.value += amount;
 				this.playerCounterText.setText(this.value.toString());
-				if (this.value >= towerCost) {
+				if (this.value >= shooterCost) {
 					sceneToListen.events.emit("can-build");
 				}
 			},
@@ -56,7 +56,7 @@ export class PlayerSoulCounter {
 					this.value = 0;
 				} else {
 					this.value -= amount;
-					if (this.value < towerCost) {
+					if (this.value < shooterCost) {
 						sceneToListen.events.emit("can-not-build");
 					}
 				}

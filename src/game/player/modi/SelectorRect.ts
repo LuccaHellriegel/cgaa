@@ -15,7 +15,7 @@ export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	private setupEvents() {
-		this.scene.events.on("added-tower", () => {
+		this.scene.events.on("added-shooter", () => {
 			this.scene.children.bringToTop(this);
 		});
 	}
@@ -29,7 +29,7 @@ export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 			this
 		);
 		this.on(
-			"animationcomplete_invalid-tower-pos",
+			"animationcomplete_invalid-shooter-pos",
 			function() {
 				this.anims.play("idle-" + this.texture.key);
 			},

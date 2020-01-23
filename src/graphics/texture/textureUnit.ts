@@ -14,7 +14,7 @@ function generatePlayerUnits(scene) {
 	new RectGenerator(
 		scene,
 		0x013220,
-		"tower",
+		"shooter",
 		gridPartHalfSize,
 		gridPartHalfSize,
 		2 * gridPartHalfSize,

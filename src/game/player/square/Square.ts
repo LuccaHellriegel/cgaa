@@ -7,7 +7,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 import { Annotator } from "../../base/classes/Annotator";
 
-//TODO: make this a buyable healing tower
+//TODO: make this a buyable healing shooter
 export class Square extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;

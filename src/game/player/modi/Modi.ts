@@ -5,10 +5,10 @@ import { SelectorRect } from "./SelectorRect";
 export class Modi {
 	private mode = "off";
 	private lock = false;
-	private modeMap = { interaction: {}, tower: {} };
+	private modeMap = { interaction: {}, shooter: {} };
 
 	public keyObjInteraction;
-	public keyObjTower;
+	public keyObjShooter;
 	public keyObjLock;
 
 	constructor(
@@ -20,20 +20,20 @@ export class Modi {
 		this.setupKeys(input);
 
 		this.modeMap.interaction = selectorRect.interactionModusOn.bind(selectorRect);
-		this.modeMap.tower = selectorRect.buildModusOn.bind(selectorRect);
+		this.modeMap.shooter = selectorRect.buildModusOn.bind(selectorRect);
 
 		this.setupEvents();
 	}
 
 	private setupKeys(input) {
-		this.keyObjTower = input.keyboard.addKey("F");
+		this.keyObjShooter = input.keyboard.addKey("F");
 		this.keyObjInteraction = input.keyboard.addKey("E");
 		this.keyObjLock = input.keyboard.addKey("R");
 	}
 
 	private setupEvents() {
 		this.keyObjInteraction.on("down", this.interactionKeyPress.bind(this));
-		this.keyObjTower.on("down", this.towerKeyPress.bind(this));
+		this.keyObjShooter.on("down", this.shooterKeyPress.bind(this));
 		this.keyObjLock.on("down", this.lockKeyPress.bind(this));
 	}
 
@@ -45,11 +45,11 @@ export class Modi {
 		}
 	}
 
-	private towerKeyPress() {
-		if (this.mode === "tower") {
+	private shooterKeyPress() {
+		if (this.mode === "shooter") {
 			this.modeOff();
 		} else {
-			this.modeOn("tower");
+			this.modeOn("shooter");
 		}
 	}
 
@@ -81,7 +81,7 @@ export class Modi {
 	}
 
 	private lockOn() {
-		if (this.mode === "tower") {
+		if (this.mode === "shooter") {
 			this.buildModus.lockOn(this.selectorRect);
 		} else if (this.mode === "interaction") {
 			this.interactionModus.lockOn(this.selectorRect);
@@ -94,7 +94,7 @@ export class Modi {
 		if (this.mode === "interaction") {
 			this.interactionModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
-		} else if (this.mode === "tower") {
+		} else if (this.mode === "shooter") {
 			this.buildModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
 		} else {

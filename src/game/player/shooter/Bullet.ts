@@ -1,9 +1,9 @@
 import { Sprite } from "../../base/classes/BasePhaser";
 import { normalCircleRadius } from "../../base/globals/globalSizes";
-import { Tower } from "./Tower";
+import { Shooter } from "./Shooter";
 
 export class Bullet extends Sprite {
-	owner: Tower;
+	owner: Shooter;
 	goalX: number;
 	goalY: number;
 	amount: number;

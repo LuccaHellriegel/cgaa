@@ -9,7 +9,7 @@ export class TutorialStepFactory {
 
 	constructor(sceneToListen: Gameplay, point: Point, private display: displayable) {
 		let pointerdown = { event: "pointerdown", listen: sceneToListen.input };
-		let towerKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjTower };
+		let shooterKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjShooter };
 		let interactKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjInteraction };
 		let lockKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjLock };
 
@@ -19,11 +19,11 @@ export class TutorialStepFactory {
 				position: point,
 				tech: pointerdown
 			},
-			{ text: "Open Tower Mode with F\n", position: point, tech: towerKeyDown },
-			{ text: "Build Tower with Left-click\n", position: point, tech: pointerdown },
-			{ text: "Lock onto Tower with R\n", position: point, tech: lockKeyDown },
-			{ text: "Sell Tower with Left-click\n", position: point, tech: pointerdown },
-			{ text: "Close Tower Mode with F\n", position: point, tech: towerKeyDown },
+			{ text: "Open Shooter Mode with F\n", position: point, tech: shooterKeyDown },
+			{ text: "Build Shooter with Left-click\n", position: point, tech: pointerdown },
+			{ text: "Lock onto Shooter with R\n", position: point, tech: lockKeyDown },
+			{ text: "Sell Shooter with Left-click\n", position: point, tech: pointerdown },
+			{ text: "Close Shooter Mode with F\n", position: point, tech: shooterKeyDown },
 			{ text: "Open Interaction Mode with E\n", position: point, tech: interactKeyDown },
 			{ text: "Go to InteractionCircle \nat entrance of Camp,\n Lock on with R\n", position: point, tech: lockKeyDown },
 			{

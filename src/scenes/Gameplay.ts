@@ -1,7 +1,7 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/move/Movement";
-import { TowerSpawner } from "../game/player/towers/TowerSpawner";
+import { ShooterSpawner } from "../game/player/shooter/ShooterSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { Square } from "../game/player/square/Square";
@@ -10,7 +10,7 @@ import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
-import { createTowerSpawnObj } from "../game/base/spawn/spawn";
+import { createShooterSpawnObj } from "../game/base/spawn/spawn";
 import { Collision } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/move/WASD";
@@ -27,7 +27,7 @@ import { Paths } from "../game/enemies/path/Paths";
 import { PathFactory } from "../game/enemies/path/PathFactory";
 import EasyStar from "easystarjs";
 import { Exits } from "../game/enemies/path/Exits";
-import { TowerPool } from "../game/player/towers/TowerPool";
+import { ShooterPool } from "../game/player/shooter/ShooterPool";
 import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
@@ -97,7 +97,7 @@ export class Gameplay extends Phaser.Scene {
 		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
 
 		//TODO: interaction
-		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.towers);
+		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.shooter);
 
 		this.cgaa.player = Player.withChainWeapon(
 			this,
@@ -111,18 +111,18 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
 	}
 
-	private initTowers() {
+	private initShooters() {
 		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
 
-		this.cgaa.towerManager = new TowerSpawner(
+		this.cgaa.shooterManager = new ShooterSpawner(
 			this,
-			new TowerPool({
+			new ShooterPool({
 				scene: this,
-				towerGroup: this.cgaa.physicsGroups.towers,
-				bulletGroup: this.cgaa.physicsGroups.towerBulletGroup,
-				numberOfTowers: 15
+				shooterGroup: this.cgaa.physicsGroups.shooter,
+				bulletGroup: this.cgaa.physicsGroups.shooterBulletGroup,
+				numberOfShooters: 15
 			}),
-			createTowerSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
+			createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
 	}
 
@@ -134,7 +134,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.modi = new Modi(
 			this.input,
-			new BuildModus(this.cgaa.towerManager),
+			new BuildModus(this.cgaa.shooterManager),
 			this.cgaa.interactionModus,
 			this.cgaa.selectorRect
 		);
@@ -161,7 +161,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.initKeyboard();
 
-		this.initTowers();
+		this.initShooters();
 
 		this.initPlayerInteraction();
 

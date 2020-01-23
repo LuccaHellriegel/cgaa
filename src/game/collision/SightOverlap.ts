@@ -1,7 +1,7 @@
 import { Weapon } from "../weapons/Weapon";
 import { InteractionCircle } from "../enemies/unit/InteractionCircle";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
-import { Tower } from "../player/towers/Tower";
+import { Shooter } from "../player/shooter/Shooter";
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
 
@@ -44,7 +44,7 @@ export class SightOverlap {
 			!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes(
 				"blue"
 			);
-		if (enemy instanceof Tower && isNotInCooperationWithPlayer) {
+		if (enemy instanceof Shooter && isNotInCooperationWithPlayer) {
 			enemy.fire(weapon.owner);
 		}
 		if (WeaponHandler.shouldTryDamage(weapon, enemy)) {
