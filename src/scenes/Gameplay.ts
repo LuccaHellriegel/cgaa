@@ -4,7 +4,7 @@ import { Movement } from "../game/player/move/Movement";
 import { TowerSpawner } from "../game/player/towers/TowerSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
-import { Square } from "../game/player/unit/Square";
+import { Square } from "../game/player/square/Square";
 import { GhostTower } from "../game/player/modi/GhostTower";
 import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
@@ -28,7 +28,7 @@ import { PathFactory } from "../game/enemies/path/PathFactory";
 import EasyStar from "easystarjs";
 import { Exits } from "../game/enemies/path/Exits";
 import { TowerPool } from "../game/player/towers/TowerPool";
-import { TowerModus } from "../game/player/modi/tower/TowerModus";
+import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
 
@@ -134,7 +134,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.modi = new Modi(
 			this.input,
-			new TowerModus(this.cgaa.towerManager),
+			new BuildModus(this.cgaa.towerManager),
 			this.cgaa.interactionModus,
 			this.cgaa.ghostTower
 		);

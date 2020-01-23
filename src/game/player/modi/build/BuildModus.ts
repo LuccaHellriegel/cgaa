@@ -4,7 +4,7 @@ import { ElementCollection } from "../../../base/classes/ElementCollection";
 import { gainSouls } from "../../../base/events/player";
 import { towerCost } from "../../../base/globals/globalConfig";
 
-export class TowerModus {
+export class BuildModus {
 	constructor(private towerSpawner: TowerSpawner) {}
 
 	//TODO: place Squares

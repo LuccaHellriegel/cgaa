@@ -1,5 +1,5 @@
 import { InteractionModus } from "./interaction/InteractionModus";
-import { TowerModus } from "./tower/TowerModus";
+import { BuildModus } from "./build/BuildModus";
 import { GhostTower } from "./GhostTower";
 
 export class Modi {
@@ -13,14 +13,14 @@ export class Modi {
 
 	constructor(
 		input,
-		private towerModus: TowerModus,
+		private buildModus: BuildModus,
 		private interactionModus: InteractionModus,
 		private ghostTower: GhostTower
 	) {
 		this.setupKeys(input);
 
 		this.modeMap.interaction = ghostTower.interactionModusOn.bind(ghostTower);
-		this.modeMap.tower = ghostTower.towerModusOn.bind(ghostTower);
+		this.modeMap.tower = ghostTower.buildModusOn.bind(ghostTower);
 
 		this.setupEvents();
 	}
@@ -82,7 +82,7 @@ export class Modi {
 
 	private lockOn() {
 		if (this.mode === "tower") {
-			this.towerModus.lockOn(this.ghostTower);
+			this.buildModus.lockOn(this.ghostTower);
 		} else if (this.mode === "interaction") {
 			this.interactionModus.lockOn(this.ghostTower);
 		}
@@ -95,7 +95,7 @@ export class Modi {
 			this.interactionModus.execute(this.ghostTower, this.lock);
 			this.lockOff();
 		} else if (this.mode === "tower") {
-			this.towerModus.execute(this.ghostTower, this.lock);
+			this.buildModus.execute(this.ghostTower, this.lock);
 			this.lockOff();
 		} else {
 			return false;

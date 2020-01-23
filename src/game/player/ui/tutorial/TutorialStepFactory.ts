@@ -14,7 +14,11 @@ export class TutorialStepFactory {
 		let lockKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjLock };
 
 		this.content = [
-			{ text: "Move (WASD), \nthen Attack (Left-click)\n", position: point, tech: pointerdown },
+			{
+				text: "WARNING: Player has imba damage for testing purposes. Move (WASD), \nthen Attack (Left-click)\n",
+				position: point,
+				tech: pointerdown
+			},
 			{ text: "Open Tower Mode with F\n", position: point, tech: towerKeyDown },
 			{ text: "Build Tower with Left-click\n", position: point, tech: pointerdown },
 			{ text: "Lock onto Tower with R\n", position: point, tech: lockKeyDown },
@@ -27,7 +31,12 @@ export class TutorialStepFactory {
 				position: point,
 				tech: pointerdown
 			},
-			{ text: "Close Interaction Mode with E\nHave fun!", position: point, tech: interactKeyDown }
+			{
+				text:
+					"Close Interaction Mode with E\nHave fun! After fullfilling the quest try interacting again with the Circle ;)",
+				position: point,
+				tech: interactKeyDown
+			}
 		];
 		//TODO: cancel option
 	}

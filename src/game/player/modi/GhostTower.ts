@@ -42,7 +42,7 @@ export class GhostTower extends Phaser.Physics.Arcade.Sprite {
 		this.turnOn();
 	}
 
-	towerModusOn() {
+	buildModusOn() {
 		this.setTint(0x013220, 0x013220, 0x013220, 0x013220);
 		this.turnOn();
 	}
