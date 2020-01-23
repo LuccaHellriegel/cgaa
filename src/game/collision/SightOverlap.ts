@@ -1,7 +1,7 @@
 import { Weapon } from "../weapons/Weapon";
 import { InteractionCircle } from "../enemies/unit/InteractionCircle";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
-import { Shooter } from "../player/shooter/Shooter";
+import { Shooter } from "../player/unit/shooter/Shooter";
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
 

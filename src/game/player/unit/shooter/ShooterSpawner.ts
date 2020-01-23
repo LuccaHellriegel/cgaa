@@ -1,9 +1,9 @@
-import { Gameplay } from "../../../scenes/Gameplay";
-import { shooterCost } from "../../base/globals/globalConfig";
-import { SelectorRect } from "../modi/SelectorRect";
-import { spendSouls } from "../../base/events/player";
-import { snapXYToGrid } from "../../base/position";
-import { ShooterSpawnObj } from "../../base/spawn/ShooterSpawnObj";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { shooterCost } from "../../../base/globals/globalConfig";
+import { SelectorRect } from "../../modi/SelectorRect";
+import { spendSouls } from "../../../base/events/player";
+import { snapXYToGrid } from "../../../base/position";
+import { ShooterSpawnObj } from "../../../base/spawn/ShooterSpawnObj";
 import { ShooterPool } from "./ShooterPool";
 
 export class ShooterSpawner {

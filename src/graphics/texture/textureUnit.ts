@@ -1,6 +1,6 @@
 import { CircleGenerator } from "./generator/unit/CircleGenerator";
 import { normalCircleRadius, circleSizes, gridPartHalfSize } from "../../game/base/globals/globalSizes";
-import { SquareGenerator } from "./generator/unit/SquareGenerator";
+import { HealerGenerator } from "./generator/unit/HealerGenerator";
 import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../../game/base/globals/global";
 import { campHexColors } from "../../game/base/globals/globalColors";
 import { InteractionCircleGenerator } from "./generator/unit/InteractionCircleGenerator";
@@ -10,7 +10,7 @@ import { SelectorRectGenerator } from "./generator/SelectorRectGenerator";
 
 function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
-	new SquareGenerator(scene);
+	new HealerGenerator(scene);
 	new RectGenerator(
 		scene,
 		0x013220,

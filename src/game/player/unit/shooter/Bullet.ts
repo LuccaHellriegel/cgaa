@@ -1,5 +1,5 @@
-import { Sprite } from "../../base/classes/BasePhaser";
-import { normalCircleRadius } from "../../base/globals/globalSizes";
+import { Sprite } from "../../../base/classes/BasePhaser";
+import { normalCircleRadius } from "../../../base/globals/globalSizes";
 import { Shooter } from "./Shooter";
 
 export class Bullet extends Sprite {

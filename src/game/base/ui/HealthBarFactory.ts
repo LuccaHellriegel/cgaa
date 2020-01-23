@@ -39,7 +39,7 @@ export class HealthBarFactory {
 		});
 	}
 
-	static createSquareHealthBar(scene: Gameplay, x, y) {
+	static createHealerHealthBar(scene: Gameplay, x, y) {
 		return new HealthBar(x, y, {
 			scene,
 			posCorrectionX: -26,

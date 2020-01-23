@@ -1,12 +1,12 @@
-import { Image } from "../../base/classes/BasePhaser";
-import { HealthBar } from "../../base/ui/HealthBar";
-import { damageable } from "../../base/interfaces";
-import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
+import { Image } from "../../../base/classes/BasePhaser";
+import { HealthBar } from "../../../base/ui/HealthBar";
+import { damageable } from "../../../base/interfaces";
+import { RectPolygon } from "../../../base/polygons/RectPolygon";
+import { gridPartHalfSize } from "../../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
-import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
-import { PoolHelper } from "../../base/pool/PoolHelper";
-import { Annotator } from "../../base/classes/Annotator";
+import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
+import { PoolHelper } from "../../../base/pool/PoolHelper";
+import { Annotator } from "../../../base/classes/Annotator";
 
 export class Shooter extends Image implements damageable {
 	healthbar: HealthBar;

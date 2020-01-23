@@ -1,10 +1,10 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/move/Movement";
-import { ShooterSpawner } from "../game/player/shooter/ShooterSpawner";
+import { ShooterSpawner } from "../game/player/unit/shooter/ShooterSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
-import { Square } from "../game/player/square/Square";
+import { Healer } from "../game/player/unit/healer/Healer";
 import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
@@ -27,7 +27,7 @@ import { Paths } from "../game/enemies/path/Paths";
 import { PathFactory } from "../game/enemies/path/PathFactory";
 import EasyStar from "easystarjs";
 import { Exits } from "../game/enemies/path/Exits";
-import { ShooterPool } from "../game/player/shooter/ShooterPool";
+import { ShooterPool } from "../game/player/unit/shooter/ShooterPool";
 import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
@@ -97,7 +97,7 @@ export class Gameplay extends Phaser.Scene {
 		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
 
 		//TODO: interaction
-		new Square(this, pos.x, pos.y, this.cgaa.physicsGroups.shooter);
+		new Healer(this, pos.x, pos.y, this.cgaa.physicsGroups.shooter);
 
 		this.cgaa.player = Player.withChainWeapon(
 			this,

@@ -1,8 +1,6 @@
-import { Gameplay } from "../../../scenes/Gameplay";
+import { Gameplay } from "../../../../scenes/Gameplay";
 import { Shooter } from "./Shooter";
-import { gainSouls } from "../../base/events/player";
-import { shooterCost } from "../../base/globals/globalConfig";
-import { removeEle } from "../../base/utils";
+import { removeEle } from "../../../base/utils";
 
 interface ShooterPoolParams {
 	scene: Gameplay;

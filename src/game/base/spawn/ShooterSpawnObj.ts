@@ -1,5 +1,5 @@
 import { EnemySpawnObj } from "./EnemySpawnObj";
-import { Shooter } from "../../player/shooter/Shooter";
+import { Shooter } from "../../player/unit/shooter/Shooter";
 import { constructXYID } from "../id";
 import { walkableSymbol, shooterSymbol } from "../globals/globalSymbols";
 import { Enemies } from "../../enemies/unit/Enemies";

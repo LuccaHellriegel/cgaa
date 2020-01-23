@@ -1,25 +1,25 @@
-import { damageable } from "../../base/interfaces";
-import { HealthBar } from "../../base/ui/HealthBar";
-import { RectPolygon } from "../../base/polygons/RectPolygon";
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { Image } from "../../base/classes/BasePhaser";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
-import { Annotator } from "../../base/classes/Annotator";
+import { damageable } from "../../../base/interfaces";
+import { HealthBar } from "../../../base/ui/HealthBar";
+import { RectPolygon } from "../../../base/polygons/RectPolygon";
+import { gridPartHalfSize } from "../../../base/globals/globalSizes";
+import { Image } from "../../../base/classes/BasePhaser";
+import { Gameplay } from "../../../../scenes/Gameplay";
+import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
+import { Annotator } from "../../../base/classes/Annotator";
 
 //TODO: make this a buyable healing shooter
-export class Square extends Image implements damageable {
+export class Healer extends Image implements damageable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
 	color: string;
 
 	constructor(scene: Gameplay, x, y, physicsGroup) {
-		super({ scene, x, y, texture: "square", physicsGroup });
+		super({ scene, x, y, texture: "healer", physicsGroup });
 
 		this.initGraphics();
 
-		this.healthbar = HealthBarFactory.createSquareHealthBar(scene, x, y);
+		this.healthbar = HealthBarFactory.createHealerHealthBar(scene, x, y);
 
 		this.initUnitStats();
 	}

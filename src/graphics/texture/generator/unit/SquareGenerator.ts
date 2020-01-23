@@ -3,7 +3,7 @@ import { Generator } from "../Generator";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { gridPartHalfSize } from "../../../../game/base/globals/globalSizes";
 
-export class SquareGenerator extends Generator {
+export class HealerGenerator extends Generator {
 	rect: RectPolygon;
 	innerRect: RectPolygon;
 	textureName: any;
@@ -12,7 +12,7 @@ export class SquareGenerator extends Generator {
 
 	constructor(scene: Gameplay) {
 		let hexColor = 0xa9a9a9;
-		let textureName = "square";
+		let textureName = "healer";
 		let centerX = gridPartHalfSize;
 		let centerY = gridPartHalfSize;
 		let width = 2 * gridPartHalfSize;

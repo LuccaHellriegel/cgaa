@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Bullet } from "../player/shooter/Bullet";
+import { Bullet } from "../player/unit/shooter/Bullet";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 import { gainSouls } from "../base/events/player";
 
