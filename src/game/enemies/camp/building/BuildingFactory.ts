@@ -5,9 +5,9 @@ import { Enemies } from "../../unit/Enemies";
 import { WavePopulator } from "../../wave/WavePopulator";
 import { EnemyPool } from "../../../base/pool/EnemyPool";
 import { buildingGroupComposition } from "../../wave/waveConfig";
-import { createBuildingEnemySpawnObj } from "../../../base/spawn/spawn";
 import { realCoordinateToRelative } from "../../../base/position";
 import { Paths } from "../../path/Paths";
+import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
 
 export class BuildingFactory {
 	constructor(
@@ -44,7 +44,7 @@ export class BuildingFactory {
 				},
 				this.enemies
 			),
-			createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
+			EnemySpawnObj.createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
 			this.campBuildings,
 			this.paths
 		);

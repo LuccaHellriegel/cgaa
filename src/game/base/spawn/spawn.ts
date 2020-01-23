@@ -1,13 +1,10 @@
-import { ShooterSpawnObj } from "./ShooterSpawnObj";
-import { EnemySpawnObj } from "./EnemySpawnObj";
 import { constructXYIDfromColumnRow } from "../id";
 import { walkableSymbol } from "../globals/globalSymbols";
 import { realCoordinateToRelative } from "../position";
 import { ZeroOneMap } from "../types";
 import { AreaConfig } from "../interfaces";
-import { Enemies } from "../../enemies/unit/Enemies";
 
-function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
+export function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) {
 	let dict = {};
 	let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
 	let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
@@ -41,7 +38,7 @@ function isInArea(column, row, areaConfig: AreaConfig) {
 	);
 }
 
-function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
+export function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	let dict = {};
 
 	for (let row = 0; row < map.length; row++) {
@@ -61,15 +58,7 @@ function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
 	return dict;
 }
 
-export function createShooterSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: Enemies): ShooterSpawnObj {
-	return new ShooterSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
-}
-
-export function createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemies: Enemies): EnemySpawnObj {
-	return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemies);
-}
-
-function createBuildingSpawnableDict(column, row) {
+export function createBuildingSpawnableDict(column, row) {
 	let dict = {};
 	let rows = [row - 1, row + 1];
 	for (let index = 0, length = rows.length; index < length; index++) {
@@ -83,8 +72,4 @@ function createBuildingSpawnableDict(column, row) {
 	dict[constructXYIDfromColumnRow(column - 2, row)] = walkableSymbol;
 
 	return dict;
-}
-
-export function createBuildingEnemySpawnObj(column, row, enemies: Enemies): EnemySpawnObj {
-	return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemies);
 }

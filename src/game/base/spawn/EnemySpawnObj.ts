@@ -2,6 +2,9 @@ import { cloneDeep } from "lodash";
 import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
 import { Enemies } from "../../enemies/unit/Enemies";
+import { ZeroOneMap } from "../types";
+import { AreaConfig } from "../interfaces";
+import { mapToAreaSpawnableDict, createBuildingSpawnableDict } from "./spawn";
 
 export class EnemySpawnObj {
 	public relativeObj;
@@ -41,5 +44,13 @@ export class EnemySpawnObj {
 		if (tries === 100) return false;
 		let arr = key.split(" ");
 		return [parseInt(arr[0]), parseInt(arr[1])];
+	}
+
+	static createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemies: Enemies): EnemySpawnObj {
+		return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemies);
+	}
+
+	static createBuildingEnemySpawnObj(column, row, enemies: Enemies): EnemySpawnObj {
+		return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemies);
 	}
 }

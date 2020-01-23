@@ -5,13 +5,13 @@ import { Buildings } from "./building/Buildings";
 import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { EnemyPool } from "../../base/pool/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
-import { createAreaEnemySpawnObj } from "../../base/spawn/spawn";
 import { CampConfig } from "./Camps";
 import { BuildingFactory } from "./building/BuildingFactory";
 import { Paths } from "../path/Paths";
 import { Exits } from "../path/Exits";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
+import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 
 export class Camp {
 	campBuildings: Buildings;
@@ -66,7 +66,7 @@ export class Camp {
 		new CampPopulator(
 			this.config.staticConfig.scene,
 			enemyPool,
-			createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
+			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
 			this.campBuildings
 		);
 		this.createInteractionUnit(this.config, enemyConfig, this.enemies);

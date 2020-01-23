@@ -10,7 +10,6 @@ import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
-import { createShooterSpawnObj } from "../game/base/spawn/spawn";
 import { Collision } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/move/WASD";
@@ -31,6 +30,7 @@ import { ShooterPool } from "../game/player/unit/shooter/ShooterPool";
 import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
+import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -122,7 +122,7 @@ export class Gameplay extends Phaser.Scene {
 				bulletGroup: this.cgaa.physicsGroups.shooterBulletGroup,
 				numberOfShooters: 15
 			}),
-			createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
+			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
 	}
 
