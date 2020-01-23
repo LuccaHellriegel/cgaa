@@ -1,15 +1,15 @@
-import { GhostTower } from "../GhostTower";
+import { SelectorRect } from "../SelectorRect";
 import { Cooperation } from "../../state/Cooperation";
 import { ElementCollection } from "../../../base/classes/ElementCollection";
 
 export class InteractionModus {
 	constructor(private cooperation: Cooperation, private interactionElements: ElementCollection) {}
 
-	lockOn(ghostTower: GhostTower) {
+	lockOn(selectorRect: SelectorRect) {
 		//TODO: if closest point too far -> dont lock on
-		let ele = this.interactionElements.findClosestElement(ghostTower.x, ghostTower.y);
+		let ele = this.interactionElements.findClosestElement(selectorRect.x, selectorRect.y);
 		if (ele !== null) {
-			ghostTower.setPosition(ele.x, ele.y);
+			selectorRect.setPosition(ele.x, ele.y);
 		}
 	}
 
@@ -17,10 +17,10 @@ export class InteractionModus {
 		this.cooperation.updateCooperationState(ele);
 	}
 
-	execute(ghostTower: GhostTower, lock: boolean) {
+	execute(selectorRect: SelectorRect, lock: boolean) {
 		//TODO: execute anyways if close enough
 		if (lock) {
-			let ele = this.interactionElements.findClosestElement(ghostTower.x, ghostTower.y);
+			let ele = this.interactionElements.findClosestElement(selectorRect.x, selectorRect.y);
 			this.cooperation.interactWithCircle(ele, this.interactionElements);
 		}
 	}

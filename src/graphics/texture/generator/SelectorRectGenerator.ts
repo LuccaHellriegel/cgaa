@@ -3,13 +3,13 @@ import { RectPolygon } from "../../../game/base/polygons/RectPolygon";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { gridPartHalfSize } from "../../../game/base/globals/globalSizes";
 
-export class GhostTowerGenerator extends Generator {
+export class SelectorRectGenerator extends Generator {
 	title: string;
 	lineWidth: number;
 
 	constructor(scene: Gameplay) {
 		super(0xffffff, scene);
-		this.title = "ghostTower";
+		this.title = "selectorRect";
 		this.lineWidth = 6;
 		this.generate();
 	}

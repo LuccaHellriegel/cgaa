@@ -1,10 +1,10 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Modi } from "../modi/Modi";
 import { Player } from "../unit/Player";
-import { GhostTower } from "../modi/GhostTower";
+import { SelectorRect } from "../modi/SelectorRect";
 
 export class Mouse {
-	constructor(private scene: Gameplay, private player: Player, private ghostTower: GhostTower, private modi: Modi) {
+	constructor(private scene: Gameplay, private player: Player, private selectorRect: SelectorRect, private modi: Modi) {
 		this.setupEvents();
 	}
 
@@ -25,8 +25,8 @@ export class Mouse {
 
 		this.rotatePlayerTowardsMouse(x, y);
 
-		if (this.ghostTower.active) {
-			this.ghostTower.setPosition(x, y);
+		if (this.selectorRect.active) {
+			this.selectorRect.setPosition(x, y);
 		}
 	}
 

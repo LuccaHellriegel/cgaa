@@ -6,7 +6,7 @@ import { campHexColors } from "../../game/base/globals/globalColors";
 import { InteractionCircleGenerator } from "./generator/unit/InteractionCircleGenerator";
 import { BuildingGenerator } from "./generator/unit/BuildingGenerator";
 import { RectGenerator } from "./generator/RectGenerator";
-import { GhostTowerGenerator } from "./generator/GhostTowerGenerator";
+import { SelectorRectGenerator } from "./generator/SelectorRectGenerator";
 
 function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
@@ -20,7 +20,7 @@ function generatePlayerUnits(scene) {
 		2 * gridPartHalfSize,
 		2 * gridPartHalfSize
 	);
-	new GhostTowerGenerator(scene);
+	new SelectorRectGenerator(scene);
 }
 
 function generateEnemyUnits(scene) {

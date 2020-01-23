@@ -1,6 +1,6 @@
 import { InteractionModus } from "./interaction/InteractionModus";
 import { BuildModus } from "./build/BuildModus";
-import { GhostTower } from "./GhostTower";
+import { SelectorRect } from "./SelectorRect";
 
 export class Modi {
 	private mode = "off";
@@ -15,12 +15,12 @@ export class Modi {
 		input,
 		private buildModus: BuildModus,
 		private interactionModus: InteractionModus,
-		private ghostTower: GhostTower
+		private selectorRect: SelectorRect
 	) {
 		this.setupKeys(input);
 
-		this.modeMap.interaction = ghostTower.interactionModusOn.bind(ghostTower);
-		this.modeMap.tower = ghostTower.buildModusOn.bind(ghostTower);
+		this.modeMap.interaction = selectorRect.interactionModusOn.bind(selectorRect);
+		this.modeMap.tower = selectorRect.buildModusOn.bind(selectorRect);
 
 		this.setupEvents();
 	}
@@ -62,7 +62,7 @@ export class Modi {
 	private modeOff() {
 		this.mode = "off";
 		this.lockOff();
-		this.ghostTower.turnOff();
+		this.selectorRect.turnOff();
 	}
 
 	private lockKeyPress() {
@@ -77,25 +77,25 @@ export class Modi {
 
 	private lockOff() {
 		this.lock = false;
-		this.ghostTower.lockOff();
+		this.selectorRect.lockOff();
 	}
 
 	private lockOn() {
 		if (this.mode === "tower") {
-			this.buildModus.lockOn(this.ghostTower);
+			this.buildModus.lockOn(this.selectorRect);
 		} else if (this.mode === "interaction") {
-			this.interactionModus.lockOn(this.ghostTower);
+			this.interactionModus.lockOn(this.selectorRect);
 		}
-		this.ghostTower.lockOn();
+		this.selectorRect.lockOn();
 		this.lock = true;
 	}
 
 	click() {
 		if (this.mode === "interaction") {
-			this.interactionModus.execute(this.ghostTower, this.lock);
+			this.interactionModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
 		} else if (this.mode === "tower") {
-			this.buildModus.execute(this.ghostTower, this.lock);
+			this.buildModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
 		} else {
 			return false;

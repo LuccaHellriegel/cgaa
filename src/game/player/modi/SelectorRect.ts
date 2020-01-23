@@ -1,8 +1,8 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 
-export class GhostTower extends Phaser.Physics.Arcade.Sprite {
+export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Gameplay, x, y) {
-		super(scene, x, y, "ghostTower");
+		super(scene, x, y, "selectorRect");
 		this.setupSceneInteraction();
 		this.setupAnims();
 		this.setupEvents();

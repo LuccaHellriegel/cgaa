@@ -5,7 +5,7 @@ import { TowerSpawner } from "../game/player/towers/TowerSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { Square } from "../game/player/square/Square";
-import { GhostTower } from "../game/player/modi/GhostTower";
+import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
 import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
@@ -112,7 +112,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initTowers() {
-		this.cgaa.ghostTower = new GhostTower(this, 0, 0);
+		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
 
 		this.cgaa.towerManager = new TowerSpawner(
 			this,
@@ -136,12 +136,12 @@ export class Gameplay extends Phaser.Scene {
 			this.input,
 			new BuildModus(this.cgaa.towerManager),
 			this.cgaa.interactionModus,
-			this.cgaa.ghostTower
+			this.cgaa.selectorRect
 		);
 	}
 
 	private initMouse() {
-		new Mouse(this, this.cgaa.player, this.cgaa.ghostTower, this.cgaa.modi);
+		new Mouse(this, this.cgaa.player, this.cgaa.selectorRect, this.cgaa.modi);
 	}
 
 	private startWaves() {
