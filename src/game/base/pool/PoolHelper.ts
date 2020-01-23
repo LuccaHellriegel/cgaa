@@ -9,29 +9,19 @@ export class PoolHelper {
 		unit.healthbar.value = unit.healthbar.defaultValue;
 	}
 
-	static destroyShooter(shooter) {
-		shooter.bullets.forEach(bullet => bullet.reset());
-		this.genericDestroy(shooter);
-	}
-
-	static destroyEnemyCircle(circle) {
-		this.genericDestroy(circle);
-		circle.weapon.disableBody(true, true);
-	}
-
 	private static genericActivate(unit, x, y) {
 		unit.enableBody(true, x, y, true, true);
 		unit.healthbar.bar.setActive(true).setVisible(true);
 		unit.healthbar.move(x, y);
 	}
 
-	static activateShooter(shooter, x, y) {
-		this.genericActivate(shooter, x, y);
-		shooter.bullets.forEach(bullet => bullet.reset());
-	}
-
 	static activateEnemyCircle(circle, x, y) {
 		this.genericActivate(circle, x, y);
 		circle.weapon.enableBody(true, x, y, true, true);
+	}
+
+	static destroyEnemyCircle(circle) {
+		this.genericDestroy(circle);
+		circle.weapon.disableBody(true, true);
 	}
 }

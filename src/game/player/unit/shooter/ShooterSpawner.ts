@@ -33,7 +33,7 @@ export class ShooterSpawner {
 
 			if (this.shooterSpawnObj.evaluateRealPos(x, y)) {
 				spendSouls(this.scene, shooterCost);
-				this.shooterPool.pop().activate(x, y);
+				this.shooterPool.pop().poolActivate(x, y);
 			} else {
 				selectorRect.anims.play("invalid-shooter-pos");
 			}

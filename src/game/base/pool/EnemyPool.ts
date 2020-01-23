@@ -6,6 +6,7 @@ import { Enemies } from "../../enemies/unit/Enemies";
 
 type GroupComposition = { weaponType: string; size: string }[];
 
+//TODO: refactor to Pool
 export class EnemyPool {
 	activeIDArr: string[] = [];
 	private inactiveIDArr: string[] = [];

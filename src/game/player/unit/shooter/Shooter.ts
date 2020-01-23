@@ -1,14 +1,15 @@
 import { Image } from "../../../base/classes/BasePhaser";
 import { HealthBar } from "../../../base/ui/HealthBar";
-import { damageable } from "../../../base/interfaces";
+import { damageable, poolable } from "../../../base/interfaces";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
 import { PoolHelper } from "../../../base/pool/PoolHelper";
 import { Annotator } from "../../../base/classes/Annotator";
+import { ShooterPool } from "./ShooterPool";
 
-export class Shooter extends Image implements damageable {
+export class Shooter extends Image implements damageable, poolable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
@@ -52,7 +53,7 @@ export class Shooter extends Image implements damageable {
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			this.poolDestroy();
+			ShooterPool.poolDestroy(this);
 		}
 	}
 
@@ -77,13 +78,5 @@ export class Shooter extends Image implements damageable {
 
 	syncPolygon() {
 		this.polygon.setPosition(this.x, this.y);
-	}
-
-	poolDestroy() {
-		PoolHelper.destroyShooter(this);
-	}
-
-	activate(x, y) {
-		PoolHelper.activateShooter(this, x, y);
 	}
 }

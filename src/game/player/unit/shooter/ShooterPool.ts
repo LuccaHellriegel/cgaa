@@ -1,53 +1,24 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
 import { Shooter } from "./Shooter";
-import { removeEle } from "../../../base/utils";
+import { Pool } from "../../../base/pool/Pool";
+import { poolable } from "../../../base/interfaces";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
-interface ShooterPoolParams {
-	scene: Gameplay;
-	numberOfShooters: number;
-	shooterGroup: Phaser.Physics.Arcade.StaticGroup;
-	bulletGroup: Phaser.Physics.Arcade.Group;
-}
-
-export class ShooterPool {
-	shooterDict = {};
-	activeIDArr: string[] = [];
-	inactiveIDArr: string[] = [];
-	params: ShooterPoolParams;
-
-	constructor(params: ShooterPoolParams) {
-		this.initPool(params);
-
-		let keys = Object.keys(this.shooterDict);
-		for (const key in keys) {
-			params.scene.events.on("inactive-" + key, id => {
-				removeEle(id, this.activeIDArr);
-				this.inactiveIDArr.push(id);
-			});
-		}
-
-		this.params = params;
+export class ShooterPool extends Pool {
+	constructor(
+		scene: Gameplay,
+		numberOfUnits: number,
+		unitGroup: Phaser.Physics.Arcade.StaticGroup,
+		private bulletGroup: Phaser.Physics.Arcade.Group
+	) {
+		super(scene, numberOfUnits, unitGroup);
 	}
 
-	private initPool(params: ShooterPoolParams) {
-		for (let index = 0; index < params.numberOfShooters; index++) {
-			let shooter = new Shooter(params.scene, -1000, -1000, params.shooterGroup, params.bulletGroup);
-			shooter.poolDestroy();
-			this.shooterDict[shooter.id] = shooter;
-			this.inactiveIDArr.push(shooter.id);
-		}
+	protected createNewUnit(): poolable {
+		return new Shooter(this.scene, -1000, -1000, this.unitGroup, this.bulletGroup);
 	}
 
-	pop(): Shooter {
-		if (this.inactiveIDArr.length === 0) {
-			this.initPool(this.params);
-		}
-		let id = this.inactiveIDArr.pop();
-		this.activeIDArr.push(id);
-		return this.shooterDict[id];
-	}
-
-	getActiveShooters() {
-		return this.activeIDArr.map(id => this.shooterDict[id]);
+	static poolDestroy(shooter) {
+		super.poolDestroy(shooter);
+		shooter.bullets.forEach(bullet => bullet.reset());
 	}
 }

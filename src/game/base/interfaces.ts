@@ -9,6 +9,10 @@ export interface damageable {
 	id: string;
 }
 
+export interface poolable {
+	id: string;
+}
+
 export interface listenable {
 	once(event: any, callback: Function);
 	on(event: any, callback: Function);

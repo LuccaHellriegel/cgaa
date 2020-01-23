@@ -1,4 +1,4 @@
-import { damageable } from "../../../base/interfaces";
+import { damageable, poolable } from "../../../base/interfaces";
 import { HealthBar } from "../../../base/ui/HealthBar";
 import { RectPolygon } from "../../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../../base/globals/globalSizes";
@@ -6,9 +6,10 @@ import { Image } from "../../../base/classes/BasePhaser";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
 import { Annotator } from "../../../base/classes/Annotator";
+import { Point } from "../../../base/types";
 
 //TODO: make this a buyable healing shooter
-export class Healer extends Image implements damageable {
+export class Healer extends Image implements damageable, poolable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
@@ -40,12 +41,6 @@ export class Healer extends Image implements damageable {
 		this.color = "blue";
 	}
 
-	damage(amount: number) {
-		if (this.healthbar.decrease(amount)) {
-			this.destroy();
-		}
-	}
-
 	syncPolygon() {
 		this.polygon.setPosition(this.x, this.y);
 	}
@@ -53,5 +48,18 @@ export class Healer extends Image implements damageable {
 	destroy() {
 		this.healthbar.destroy();
 		super.destroy();
+	}
+
+	damage(amount: number) {
+		if (this.healthbar.decrease(amount)) {
+			this.destroy();
+		}
+	}
+
+	poolDestroy() {
+		throw new Error("Method not implemented.");
+	}
+	poolActivate(position: Point) {
+		throw new Error("Method not implemented.");
 	}
 }
