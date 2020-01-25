@@ -5,9 +5,9 @@ import { RectPolygon } from "../../../base/polygons/RectPolygon";
 import { gridPartHalfSize } from "../../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
-import { PoolHelper } from "../../../base/pool/PoolHelper";
 import { Annotator } from "../../../base/classes/Annotator";
 import { ShooterPool } from "./ShooterPool";
+import { Gameplay } from "../../../../scenes/Gameplay";
 
 export class Shooter extends Image implements damageable, poolable {
 	healthbar: HealthBar;
@@ -18,7 +18,13 @@ export class Shooter extends Image implements damageable, poolable {
 	canFire = true;
 	color: string;
 
-	constructor(scene, x, y, physicsGroup, private bulletGroup: Phaser.Physics.Arcade.Group) {
+	constructor(
+		scene: Gameplay,
+		x,
+		y,
+		physicsGroup: Phaser.Physics.Arcade.StaticGroup,
+		private bulletGroup: Phaser.Physics.Arcade.Group
+	) {
 		super({ scene, x, y, texture: "shooter", physicsGroup });
 
 		this.initUnitStats();

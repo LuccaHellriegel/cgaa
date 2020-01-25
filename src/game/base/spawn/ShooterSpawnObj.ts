@@ -7,8 +7,9 @@ import { ZeroOneMap } from "../types";
 import { AreaConfig } from "../interfaces";
 import { mapToNotAreaSpawnableDict } from "./spawn";
 
+//TODO: this is actually just a NotAreaSpawnObj
 export class ShooterSpawnObj extends EnemySpawnObj {
-	constructor(baseObj, enemies: Enemies) {
+	private constructor(baseObj, enemies: Enemies) {
 		super(baseObj, enemies);
 	}
 

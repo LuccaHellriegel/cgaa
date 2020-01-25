@@ -11,7 +11,9 @@ export abstract class Pool {
 		protected scene: Gameplay,
 		private numberOfUnits: number,
 		protected unitGroup: Phaser.Physics.Arcade.StaticGroup
-	) {
+	) {}
+
+	init() {
 		this.initPool();
 		this.listenForInactiveUnits();
 	}
@@ -45,7 +47,7 @@ export abstract class Pool {
 		unit.healthbar.value = unit.healthbar.defaultValue;
 	}
 
-	static poolActivate(unit, x, y) {
+	poolActivate(unit, x, y) {
 		unit.enableBody(true, x, y, true, true);
 		unit.healthbar.bar.setActive(true).setVisible(true);
 		unit.healthbar.move(x, y);

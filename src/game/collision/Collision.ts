@@ -4,7 +4,7 @@ import { BulletCollision } from "./BulletCollision";
 import { SightOverlap } from "./SightOverlap";
 import { BounceCollision } from "./BounceCollision";
 
-interface PhysicGroups {
+export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
 	shooter: Phaser.Physics.Arcade.StaticGroup;

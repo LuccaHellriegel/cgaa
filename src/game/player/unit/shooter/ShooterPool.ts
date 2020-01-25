@@ -21,4 +21,10 @@ export class ShooterPool extends Pool {
 		super.poolDestroy(shooter);
 		shooter.bullets.forEach(bullet => bullet.reset());
 	}
+
+	poolActivate(shooter, x, y) {
+		super.poolActivate(shooter, x, y);
+		//TODO: why do I need this?
+		shooter.bullets.forEach(bullet => bullet.reset());
+	}
 }

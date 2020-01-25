@@ -6,7 +6,7 @@ import { Image } from "../../../base/classes/BasePhaser";
 import { Gameplay } from "../../../../scenes/Gameplay";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
 import { Annotator } from "../../../base/classes/Annotator";
-import { Point } from "../../../base/types";
+import { HealerPool } from "./HealerPool";
 
 //TODO: make this a buyable healing shooter
 export class Healer extends Image implements damageable, poolable {
@@ -52,14 +52,7 @@ export class Healer extends Image implements damageable, poolable {
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			this.destroy();
+			HealerPool.poolDestroy(this);
 		}
-	}
-
-	poolDestroy() {
-		throw new Error("Method not implemented.");
-	}
-	poolActivate(position: Point) {
-		throw new Error("Method not implemented.");
 	}
 }

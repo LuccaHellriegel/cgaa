@@ -1,7 +1,6 @@
 import { createAnims } from "../graphics/animation/animation";
 import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/move/Movement";
-import { ShooterSpawner } from "../game/player/unit/shooter/ShooterSpawner";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { Healer } from "../game/player/unit/healer/Healer";
@@ -31,6 +30,8 @@ import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
 import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
+import { Spawner } from "../game/base/pool/Spawner";
+import { HealerPool } from "../game/player/unit/healer/HealerPool";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -114,16 +115,25 @@ export class Gameplay extends Phaser.Scene {
 	private initShooters() {
 		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
 
-		this.cgaa.shooterManager = new ShooterSpawner(
+		const shooterPool = new ShooterPool(
 			this,
-			new ShooterPool({
-				scene: this,
-				shooterGroup: this.cgaa.physicsGroups.shooter,
-				bulletGroup: this.cgaa.physicsGroups.shooterBulletGroup,
-				numberOfShooters: 15
-			}),
+			15,
+			this.cgaa.physicsGroups.shooter,
+			this.cgaa.physicsGroups.shooterBulletGroup
+		);
+		shooterPool.init();
+
+		this.cgaa.shooterSpawner = Spawner.createShooterSpawner(
+			this,
+			shooterPool,
 			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
+
+		// this.cgaa.shooterSpawner = Spawner.createHealerSpawner(
+		// 	this,
+		// 	new HealerPool(this, 15, this.cgaa.physicsGroups.shooter),
+		// 	ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
+		// );
 	}
 
 	private initPlayerInteraction() {
@@ -134,7 +144,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.modi = new Modi(
 			this.input,
-			new BuildModus(this.cgaa.shooterManager),
+			new BuildModus(this.cgaa.shooterSpawner),
 			this.cgaa.interactionModus,
 			this.cgaa.selectorRect
 		);

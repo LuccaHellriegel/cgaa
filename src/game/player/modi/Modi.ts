@@ -5,10 +5,10 @@ import { SelectorRect } from "./SelectorRect";
 export class Modi {
 	private mode = "off";
 	private lock = false;
-	private modeMap = { interaction: {}, shooter: {} };
+	private modeMap = { interaction: {}, build: {} };
 
 	public keyObjInteraction;
-	public keyObjShooter;
+	public keyObjBuild;
 	public keyObjLock;
 
 	constructor(
@@ -20,20 +20,20 @@ export class Modi {
 		this.setupKeys(input);
 
 		this.modeMap.interaction = selectorRect.interactionModusOn.bind(selectorRect);
-		this.modeMap.shooter = selectorRect.buildModusOn.bind(selectorRect);
+		this.modeMap.build = selectorRect.buildModusOn.bind(selectorRect);
 
 		this.setupEvents();
 	}
 
 	private setupKeys(input) {
-		this.keyObjShooter = input.keyboard.addKey("F");
+		this.keyObjBuild = input.keyboard.addKey("F");
 		this.keyObjInteraction = input.keyboard.addKey("E");
 		this.keyObjLock = input.keyboard.addKey("R");
 	}
 
 	private setupEvents() {
 		this.keyObjInteraction.on("down", this.interactionKeyPress.bind(this));
-		this.keyObjShooter.on("down", this.shooterKeyPress.bind(this));
+		this.keyObjBuild.on("down", this.buildKeyPress.bind(this));
 		this.keyObjLock.on("down", this.lockKeyPress.bind(this));
 	}
 
@@ -45,21 +45,21 @@ export class Modi {
 		}
 	}
 
-	private shooterKeyPress() {
-		if (this.mode === "shooter") {
+	private buildKeyPress() {
+		if (this.mode === "build") {
 			this.modeOff();
 		} else {
-			this.modeOn("shooter");
+			this.modeOn("build");
 		}
 	}
 
-	private modeOn(mode) {
+	modeOn(mode) {
 		this.mode = mode;
 		this.modeMap[mode]();
 		this.lockOff();
 	}
 
-	private modeOff() {
+	modeOff() {
 		this.mode = "off";
 		this.lockOff();
 		this.selectorRect.turnOff();
@@ -75,13 +75,13 @@ export class Modi {
 		}
 	}
 
-	private lockOff() {
+	lockOff() {
 		this.lock = false;
 		this.selectorRect.lockOff();
 	}
 
 	private lockOn() {
-		if (this.mode === "shooter") {
+		if (this.mode === "build") {
 			this.buildModus.lockOn(this.selectorRect);
 		} else if (this.mode === "interaction") {
 			this.interactionModus.lockOn(this.selectorRect);
@@ -94,7 +94,7 @@ export class Modi {
 		if (this.mode === "interaction") {
 			this.interactionModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
-		} else if (this.mode === "shooter") {
+		} else if (this.mode === "build") {
 			this.buildModus.execute(this.selectorRect, this.lock);
 			this.lockOff();
 		} else {

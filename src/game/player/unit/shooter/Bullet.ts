@@ -12,7 +12,6 @@ export class Bullet extends Sprite {
 		super({ scene, x: owner.x, y: owner.y, texture: "bullet", physicsGroup: bulletGroup });
 		this.setCircle(normalCircleRadius / 4);
 		this.owner = owner;
-		this.reset();
 		this.amount = 20;
 	}
 
