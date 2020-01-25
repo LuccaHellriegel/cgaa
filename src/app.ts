@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
 
-let gameConfig = {
+export const gameConfig = {
 	type: Phaser.WEBGL,
 	width: 1280,
 	height: 720,
@@ -15,10 +15,7 @@ let gameConfig = {
 	scale: {
 		autoCenter: Phaser.Scale.CENTER_BOTH
 	},
-	scene: {}
+	scene: [Gameplay, HUD]
 };
 
-let gameConfigWithScene = gameConfig;
-gameConfigWithScene.scene = [Gameplay, HUD];
-
-new Phaser.Game(gameConfigWithScene);
+new Phaser.Game(gameConfig);

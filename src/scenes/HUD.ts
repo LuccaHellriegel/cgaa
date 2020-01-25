@@ -6,6 +6,7 @@ import { campHexColors } from "../game/base/globals/globalColors";
 import { Gameplay } from "./Gameplay";
 import { Tutorial } from "../game/player/ui/tutorial/Tutorial";
 import { Buildings } from "../game/enemies/camp/building/Buildings";
+import { gameConfig } from "../app";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -17,25 +18,14 @@ export class HUD extends Phaser.Scene {
 		super({ key: "HUD", active: true });
 	}
 
-	private restartGameplay() {
-		//TODO
-		this.ourGame.cgaa.campsObj.getBuildings().forEach(buildings => ((buildings as Buildings).buildings = []));
-		this.ourGame.scene.restart();
-	}
-
-	private resetHUD() {
-		this.campStates.forEach(campState => campState.reset());
-		this.playerHealthBar.reset();
-		this.playerSoulCounter.reset();
-	}
-
 	private setupEventListeners() {
 		this.ourGame.events.on(
 			"damage-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
-					this.restartGameplay();
-					this.resetHUD();
+					(this as HUD).sys.game.destroy(true);
+
+					const game = new Phaser.Game(gameConfig);
 				}
 			},
 			this
