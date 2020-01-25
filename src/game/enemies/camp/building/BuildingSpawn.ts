@@ -2,7 +2,6 @@ import { ZeroOneMap } from "../../../base/types";
 import { walkableSymbol, buildingSymbol } from "../../../base/globals/globalSymbols";
 import { AreaConfig } from "../../../base/interfaces";
 import { realCoordinateToRelative } from "../../../base/position";
-import { cloneDeep } from "lodash";
 
 export class BuildingSpawn {
 	randomPositions: number[][] = [];
@@ -117,7 +116,7 @@ export class BuildingSpawn {
 
 	private getRandomSpawnPositions(baseObj): number[][] {
 		let keys = Object.keys(baseObj);
-		let copyObj = cloneDeep(baseObj);
+		let copyObj = { ...baseObj };
 		let foundPos = 0;
 		let curPositions: number[][] = [];
 		let curPosition;
@@ -130,7 +129,7 @@ export class BuildingSpawn {
 				this.updateObj(arr[0], arr[1], copyObj);
 				foundPos++;
 			} else {
-				copyObj = cloneDeep(baseObj);
+				copyObj = { ...baseObj };
 				foundPos = 0;
 				curPositions = [];
 			}

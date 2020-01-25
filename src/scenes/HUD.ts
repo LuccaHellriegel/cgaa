@@ -5,7 +5,7 @@ import { CampState } from "../game/player/ui/state/CampState";
 import { campHexColors } from "../game/base/globals/globalColors";
 import { Gameplay } from "./Gameplay";
 import { Tutorial } from "../game/player/ui/tutorial/Tutorial";
-import { gameConfig } from "../app";
+import { createGameConfig } from "../app";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -24,8 +24,12 @@ export class HUD extends Phaser.Scene {
 				if (this.playerHealthBar.decrease(amount)) {
 					//TODO: preload scene for smoother transition
 					(this as HUD).sys.game.destroy(true);
+					document.getElementById("game").remove();
+					const canvas = document.createElement("canvas");
+					canvas.id = "game";
+					document.body.appendChild(canvas);
 
-					const game = new Phaser.Game(gameConfig);
+					new Phaser.Game(createGameConfig());
 				}
 			},
 			this

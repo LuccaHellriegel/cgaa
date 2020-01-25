@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash";
 import { constructXYID } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
 import { Enemies } from "../../enemies/unit/Enemies";
@@ -19,7 +18,7 @@ export class EnemySpawnObj {
 	}
 
 	private updateRelativeObj() {
-		this.relativeObj = cloneDeep(this.baseObj);
+		this.relativeObj = { ...this.baseObj };
 		this.updateRelativeObjWithMovingUnits();
 	}
 

@@ -1,5 +1,4 @@
 import { campColors } from "./globalColors";
-import { cloneDeep } from "lodash";
 import { circleSizeNames } from "./globalSizes";
 
 export function executeOverAllCamps(func) {
@@ -17,7 +16,7 @@ export function executeOverAllCampsAndSizes(func) {
 }
 
 export function getRandomCampColorOrder() {
-	let colors = cloneDeep(campColors);
+	let colors = [...campColors];
 	for (let i = colors.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * i);
 		const temp = colors[i];
