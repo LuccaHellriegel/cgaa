@@ -32,6 +32,7 @@ import { Membership } from "../game/base/classes/Membership";
 import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
+import { Inputs } from "../game/player/input/Inputs";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -142,8 +143,10 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.interactionCol
 		);
 
+		this.cgaa.inputs = new Inputs(this);
+
 		this.cgaa.modi = new Modi(
-			this.input,
+			this.cgaa.inputs,
 			new BuildModus(this.cgaa.shooterSpawner),
 			this.cgaa.interactionModus,
 			this.cgaa.selectorRect

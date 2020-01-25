@@ -61,7 +61,7 @@ export class HUD extends Phaser.Scene {
 		});
 		this.campStates = campStates;
 
-		new Tutorial(this, this.ourGame, x, y + 300);
+		new Tutorial(this, this.ourGame.cgaa.inputs, x, y + 300);
 		//initTutorial(this, this.ourGame, x, y + 300);
 	}
 }

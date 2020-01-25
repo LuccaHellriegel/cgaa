@@ -1,40 +1,29 @@
 import { InteractionModus } from "./interaction/InteractionModus";
 import { BuildModus } from "./build/BuildModus";
 import { SelectorRect } from "./SelectorRect";
+import { Inputs } from "../input/Inputs";
 
 export class Modi {
 	private mode = "off";
 	private lock = false;
 	private modeMap = { interaction: {}, build: {} };
 
-	public keyObjInteraction;
-	public keyObjBuild;
-	public keyObjLock;
-
 	constructor(
-		input,
+		inputs: Inputs,
 		private buildModus: BuildModus,
 		private interactionModus: InteractionModus,
 		private selectorRect: SelectorRect
 	) {
-		this.setupKeys(input);
-
 		this.modeMap.interaction = selectorRect.interactionModusOn.bind(selectorRect);
 		this.modeMap.build = selectorRect.buildModusOn.bind(selectorRect);
 
-		this.setupEvents();
+		this.setupEvents(inputs);
 	}
 
-	private setupKeys(input) {
-		this.keyObjBuild = input.keyboard.addKey("F");
-		this.keyObjInteraction = input.keyboard.addKey("E");
-		this.keyObjLock = input.keyboard.addKey("R");
-	}
-
-	private setupEvents() {
-		this.keyObjInteraction.on("down", this.interactionKeyPress.bind(this));
-		this.keyObjBuild.on("down", this.buildKeyPress.bind(this));
-		this.keyObjLock.on("down", this.lockKeyPress.bind(this));
+	private setupEvents(inputs: Inputs) {
+		inputs.eKey.on("down", this.interactionKeyPress.bind(this));
+		inputs.fKey.on("down", this.buildKeyPress.bind(this));
+		inputs.rKey.on("down", this.lockKeyPress.bind(this));
 	}
 
 	private interactionKeyPress() {

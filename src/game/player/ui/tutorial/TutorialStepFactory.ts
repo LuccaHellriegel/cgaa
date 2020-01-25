@@ -1,17 +1,17 @@
-import { Gameplay } from "../../../../scenes/Gameplay";
 import { displayable, TutorialStep } from "./TutorialStep";
 import { Content, Tutorial } from "./Tutorial";
 import { Waiter } from "./Waiter";
 import { Point } from "../../../base/types";
+import { Inputs } from "../../input/Inputs";
 
 export class TutorialStepFactory {
 	private content: Content[];
 
-	constructor(sceneToListen: Gameplay, point: Point, private display: displayable) {
-		let pointerdown = { event: "pointerdown", listen: sceneToListen.input };
-		let shooterKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjBuild };
-		let interactKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjInteraction };
-		let lockKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjLock };
+	constructor(inputs: Inputs, point: Point, private display: displayable) {
+		let pointerdown = { event: "pointerdown", listen: inputs.sceneInput };
+		let shooterKeyDown = { event: "down", listen: inputs.fKey };
+		let interactKeyDown = { event: "down", listen: inputs.eKey };
+		let lockKeyDown = { event: "down", listen: inputs.rKey };
 
 		this.content = [
 			{
