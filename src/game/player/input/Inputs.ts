@@ -5,11 +5,13 @@ export class Inputs {
 	readonly fKey: Phaser.Input.Keyboard.Key;
 	readonly eKey: Phaser.Input.Keyboard.Key;
 	readonly rKey: Phaser.Input.Keyboard.Key;
+	readonly qKey: Phaser.Input.Keyboard.Key;
 
 	constructor(scene: Gameplay) {
 		this.sceneInput = scene.input;
 		this.fKey = scene.input.keyboard.addKey("F");
 		this.eKey = scene.input.keyboard.addKey("E");
 		this.rKey = scene.input.keyboard.addKey("R");
+		this.qKey = scene.input.keyboard.addKey("Q");
 	}
 }

@@ -2,10 +2,10 @@ import { InteractionModus } from "./interaction/InteractionModus";
 import { BuildModus } from "./build/BuildModus";
 import { SelectorRect } from "./SelectorRect";
 import { Inputs } from "../input/Inputs";
+import { ModiState } from "./ModiState";
 
 export class Modi {
-	private mode = "off";
-	private lock = false;
+	private state = new ModiState();
 	private modeMap = { interaction: {}, build: {} };
 
 	constructor(
@@ -24,10 +24,11 @@ export class Modi {
 		inputs.eKey.on("down", this.interactionKeyPress.bind(this));
 		inputs.fKey.on("down", this.buildKeyPress.bind(this));
 		inputs.rKey.on("down", this.lockKeyPress.bind(this));
+		inputs.qKey.on("down", this.buildShift.bind(this));
 	}
 
 	private interactionKeyPress() {
-		if (this.mode === "interaction") {
+		if (this.state.mode === "interaction") {
 			this.modeOff();
 		} else {
 			this.modeOn("interaction");
@@ -35,28 +36,32 @@ export class Modi {
 	}
 
 	private buildKeyPress() {
-		if (this.mode === "build") {
+		if (this.state.mode === "build") {
 			this.modeOff();
 		} else {
 			this.modeOn("build");
 		}
 	}
 
+	private buildShift() {
+		if (this.state.mode === "build") this.selectorRect.buildShift();
+	}
+
 	modeOn(mode) {
-		this.mode = mode;
+		this.state.mode = mode;
 		this.modeMap[mode]();
 		this.lockOff();
 	}
 
 	modeOff() {
-		this.mode = "off";
+		this.state.mode = "off";
 		this.lockOff();
 		this.selectorRect.turnOff();
 	}
 
 	private lockKeyPress() {
-		if (this.mode !== "off") {
-			if (this.lock) {
+		if (this.state.mode !== "off") {
+			if (this.state.lock) {
 				this.lockOff();
 			} else {
 				this.lockOn();
@@ -65,26 +70,26 @@ export class Modi {
 	}
 
 	lockOff() {
-		this.lock = false;
+		this.state.lock = false;
 		this.selectorRect.lockOff();
 	}
 
 	private lockOn() {
-		if (this.mode === "build") {
+		if (this.state.mode === "build") {
 			this.buildModus.lockOn(this.selectorRect);
-		} else if (this.mode === "interaction") {
+		} else if (this.state.mode === "interaction") {
 			this.interactionModus.lockOn(this.selectorRect);
 		}
 		this.selectorRect.lockOn();
-		this.lock = true;
+		this.state.lock = true;
 	}
 
 	click() {
-		if (this.mode === "interaction") {
-			this.interactionModus.execute(this.selectorRect, this.lock);
+		if (this.state.mode === "interaction") {
+			this.interactionModus.execute(this.selectorRect, this.state.lock);
 			this.lockOff();
-		} else if (this.mode === "build") {
-			this.buildModus.execute(this.selectorRect, this.lock);
+		} else if (this.state.mode === "build") {
+			this.buildModus.execute(this.selectorRect, this.state.lock);
 			this.lockOff();
 		} else {
 			return false;
