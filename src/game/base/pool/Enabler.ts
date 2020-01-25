@@ -8,7 +8,7 @@ export interface enableable {
 export class Enabler {
 	constructor(private scene: Gameplay, private enableEvent, private disableEvent) {}
 
-	listen(obj: enableable) {
+	listenWith(obj: enableable) {
 		this.scene.events.on(this.enableEvent, obj.enable.bind(obj));
 		this.scene.events.on(this.disableEvent, obj.disable.bind(obj));
 	}

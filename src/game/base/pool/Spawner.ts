@@ -19,7 +19,7 @@ export class Spawner implements enableable {
 		enabler: Enabler,
 		private cost: number
 	) {
-		enabler.listen(this);
+		enabler.listenWith(this);
 	}
 
 	enable() {

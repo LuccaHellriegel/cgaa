@@ -8,7 +8,6 @@ import { Pool } from "../../../base/pool/Pool";
 export class BuildModus {
 	constructor(private spawner: Spawner) {}
 
-	//TODO: place Healers
 	//TODO: Healer Aura
 	//TODO: switch to Healers with Shift
 

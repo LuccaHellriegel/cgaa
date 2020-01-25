@@ -5,7 +5,6 @@ import { CampState } from "../game/player/ui/state/CampState";
 import { campHexColors } from "../game/base/globals/globalColors";
 import { Gameplay } from "./Gameplay";
 import { Tutorial } from "../game/player/ui/tutorial/Tutorial";
-import { Buildings } from "../game/enemies/camp/building/Buildings";
 import { gameConfig } from "../app";
 
 export class HUD extends Phaser.Scene {
@@ -23,6 +22,7 @@ export class HUD extends Phaser.Scene {
 			"damage-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
+					//TODO: preload scene for smoother transition
 					(this as HUD).sys.game.destroy(true);
 
 					const game = new Phaser.Game(gameConfig);
