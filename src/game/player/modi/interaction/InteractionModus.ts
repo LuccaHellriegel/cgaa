@@ -1,6 +1,7 @@
 import { SelectorRect } from "../SelectorRect";
 import { Cooperation } from "../../state/Cooperation";
 import { ElementCollection } from "../../../base/classes/ElementCollection";
+import { ModiState } from "../ModiState";
 
 export class InteractionModus {
 	constructor(private cooperation: Cooperation, private interactionElements: ElementCollection) {}
@@ -17,9 +18,9 @@ export class InteractionModus {
 		this.cooperation.updateCooperationState(ele);
 	}
 
-	execute(selectorRect: SelectorRect, lock: boolean) {
+	execute(selectorRect: SelectorRect, modiState: ModiState) {
 		//TODO: execute anyways if close enough
-		if (lock) {
+		if (modiState.lock) {
 			let ele = this.interactionElements.findClosestElement(selectorRect.x, selectorRect.y);
 			this.cooperation.interactWithCircle(ele, this.interactionElements);
 		}

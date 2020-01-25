@@ -96,11 +96,6 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initPlayerUnitAndColleagues() {
-		let pos = relativePositionToPoint(this.cgaa.middlePos.column, this.cgaa.middlePos.row);
-
-		//TODO: interaction
-		new Healer(this, pos.x, pos.y, this.cgaa.physicsGroups.shooter);
-
 		this.cgaa.player = Player.withChainWeapon(
 			this,
 			this.cgaa.physicsGroups.player,
@@ -130,11 +125,11 @@ export class Gameplay extends Phaser.Scene {
 			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
 
-		// this.cgaa.shooterSpawner = Spawner.createHealerSpawner(
-		// 	this,
-		// 	new HealerPool(this, 15, this.cgaa.physicsGroups.shooter),
-		// 	ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
-		// );
+		this.cgaa.healerSpawner = Spawner.createHealerSpawner(
+			this,
+			new HealerPool(this, 15, this.cgaa.physicsGroups.shooter),
+			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
+		);
 	}
 
 	private initPlayerInteraction() {
@@ -147,7 +142,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.modi = new Modi(
 			this.cgaa.inputs,
-			new BuildModus(this.cgaa.shooterSpawner),
+			new BuildModus([this.cgaa.shooterSpawner, this.cgaa.healerSpawner]),
 			this.cgaa.interactionModus,
 			this.cgaa.selectorRect
 		);

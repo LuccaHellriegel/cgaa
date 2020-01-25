@@ -44,7 +44,10 @@ export class Modi {
 	}
 
 	private buildShift() {
-		if (this.state.mode === "build") this.selectorRect.buildShift();
+		if (this.state.mode === "build") {
+			this.selectorRect.buildShift();
+			this.state.build = !this.state.build;
+		}
 	}
 
 	modeOn(mode) {
@@ -86,10 +89,10 @@ export class Modi {
 
 	click() {
 		if (this.state.mode === "interaction") {
-			this.interactionModus.execute(this.selectorRect, this.state.lock);
+			this.interactionModus.execute(this.selectorRect, this.state);
 			this.lockOff();
 		} else if (this.state.mode === "build") {
-			this.buildModus.execute(this.selectorRect, this.state.lock);
+			this.buildModus.execute(this.selectorRect, this.state);
 			this.lockOff();
 		} else {
 			return false;
