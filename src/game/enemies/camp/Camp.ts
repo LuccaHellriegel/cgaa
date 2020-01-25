@@ -14,7 +14,7 @@ import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 
 export class Camp {
-	campBuildings: Buildings;
+	buildings: Buildings;
 	interactionUnit: InteractionCircle;
 
 	constructor(
@@ -29,18 +29,18 @@ export class Camp {
 	}
 
 	private spawnBuildings() {
-		this.campBuildings = new Buildings(
+		this.buildings = new Buildings(
 			this.config.staticConfig.scene,
 			new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
 			this.config.color
 		);
-		this.campBuildings.spawnBuildings(
+		this.buildings.spawnBuildings(
 			new BuildingFactory(
 				this.config.staticConfig.scene,
 				this.config.staticConfig.physicsGroup,
 				this.config.color,
 				this.enemies,
-				this.campBuildings,
+				this.buildings,
 				{
 					enemyPhysicGroup: this.config.enemyPhysicGroup,
 					weaponPhysicGroup: this.config.weaponPhysicGroup
@@ -67,7 +67,7 @@ export class Camp {
 			this.config.staticConfig.scene,
 			enemyPool,
 			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
-			this.campBuildings
+			this.buildings
 		);
 		this.createInteractionUnit(this.config, enemyConfig, this.enemies);
 	}
@@ -81,6 +81,6 @@ export class Camp {
 
 	private addMemberships() {
 		this.membership.add(this.interactionUnit, "interaction", "essential");
-		this.membership.addAll([...this.campBuildings.buildings], "essential");
+		this.membership.addAll([...this.buildings.buildings], "essential");
 	}
 }

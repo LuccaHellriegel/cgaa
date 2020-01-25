@@ -12,7 +12,7 @@ export class WavePopulator {
 		private color: string,
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
-		private campBuildings: Buildings,
+		private buildings: Buildings,
 		private paths: Paths
 	) {
 		this.setupInitEvents();
@@ -46,13 +46,13 @@ export class WavePopulator {
 	}
 
 	private startWave() {
-		if (this.campBuildings.areDestroyed()) {
+		if (this.buildings.areDestroyed()) {
 			this.enemyPool.destroy();
 			return;
 		}
 
 		let { enemyCircles, spawnPositions } = this.prepareWave();
-		new Wave(enemyCircles, spawnPositions, this.campBuildings, this.scene.time);
+		new Wave(enemyCircles, spawnPositions, this.buildings, this.scene.time);
 		this.scene.events.once("start-wave-" + this.color, () => {
 			this.startWave();
 		});

@@ -15,13 +15,13 @@ export class BuildingFactory {
 		private physicsGroup: Phaser.Physics.Arcade.StaticGroup,
 		private color: string,
 		private enemies: Enemies,
-		private campBuildings: Buildings,
+		private buildings: Buildings,
 		private spawnConfig: BuildingSpawnConfig,
 		private paths: Paths
 	) {}
 
 	private createBuilding(x, y, circleSizeName) {
-		return new Building(this.scene, x, y, this.physicsGroup, circleSizeName, this.color, this.campBuildings);
+		return new Building(this.scene, x, y, this.physicsGroup, circleSizeName, this.color, this.buildings);
 	}
 
 	private setupWave(x, y) {
@@ -45,7 +45,7 @@ export class BuildingFactory {
 				this.enemies
 			),
 			EnemySpawnObj.createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
-			this.campBuildings,
+			this.buildings,
 			this.paths
 		);
 	}

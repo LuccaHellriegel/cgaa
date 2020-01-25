@@ -17,7 +17,7 @@ export class Building extends Image implements damageable {
 	polygon: any;
 	public healthbar: HealthBar;
 
-	constructor(scene: Gameplay, x, y, physicsGroup, spawnUnit, color: string, private campBuildings: Buildings) {
+	constructor(scene: Gameplay, x, y, physicsGroup, spawnUnit, color: string, private buildings: Buildings) {
 		super({ scene, x, y, texture: color + spawnUnit + "Building", physicsGroup });
 
 		this.healthbar = HealthBarFactory.createBuildingHealthBar(scene, x, y);
@@ -30,7 +30,7 @@ export class Building extends Image implements damageable {
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
 			(this.scene as Gameplay).cgaa.interactionModus.notifyRemovalOfEle(this);
-			this.campBuildings.remove(this);
+			this.buildings.remove(this);
 			this.destroy();
 		}
 	}

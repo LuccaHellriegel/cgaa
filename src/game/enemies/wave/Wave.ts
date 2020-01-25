@@ -2,12 +2,7 @@ import { EnemyCircle } from "../unit/EnemyCircle";
 import { Buildings } from "../camp/building/Buildings";
 
 export class Wave {
-	constructor(
-		private enemyCircles: EnemyCircle[],
-		private spawnPositions,
-		private campBuildings: Buildings,
-		private time
-	) {
+	constructor(private enemyCircles: EnemyCircle[], private spawnPositions, private buildings: Buildings, private time) {
 		this.spawnEnemy();
 	}
 
@@ -19,7 +14,7 @@ export class Wave {
 		if (this.enemyCircles.length === 0) return;
 
 		//TODO: not if all but if THIS building is destroyed
-		if (this.campBuildings.areDestroyed()) {
+		if (this.buildings.areDestroyed()) {
 			this.destroy();
 			return;
 		}

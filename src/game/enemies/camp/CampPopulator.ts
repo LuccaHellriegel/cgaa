@@ -9,13 +9,13 @@ export class CampPopulator {
 		private scene: Gameplay,
 		private enemyPool: EnemyPool,
 		private enemySpawnObj: EnemySpawnObj,
-		private campBuildings: Buildings
+		private buildings: Buildings
 	) {
 		this.startWave();
 	}
 
 	private startWave() {
-		if (this.campBuildings.areDestroyed()) {
+		if (this.buildings.areDestroyed()) {
 			this.enemyPool.destroy();
 			return;
 		}
@@ -39,7 +39,7 @@ export class CampPopulator {
 		if (spawnPosition) {
 			let enemy = this.enemyPool.pop();
 
-			if (this.campBuildings.areDestroyed()) {
+			if (this.buildings.areDestroyed()) {
 				enemy.destroy();
 				return;
 			}

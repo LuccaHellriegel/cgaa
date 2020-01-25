@@ -1,13 +1,13 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { ZeroOneMap, StaticConfig } from "../../base/types";
 import { AreaConfig, BuildingInfo } from "../../base/interfaces";
-import { PhysicGroups } from "../../collision/collisionBase";
 import { Enemies } from "../unit/Enemies";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
 import { Buildings } from "./building/Buildings";
 import { Paths } from "../path/Paths";
 import { Membership } from "../../base/classes/Membership";
+import { PhysicGroups } from "../../collision/Collision";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -60,10 +60,10 @@ export class Camps {
 	}
 
 	getBuildings(): Buildings[] {
-		return this.camps.map(camp => camp.campBuildings);
+		return this.camps.map(camp => camp.buildings);
 	}
 
 	getBuildingInfos(): BuildingInfo[] {
-		return this.camps.map(camp => camp.campBuildings.getBuildingInfo());
+		return this.camps.map(camp => camp.buildings.getBuildingInfo());
 	}
 }
