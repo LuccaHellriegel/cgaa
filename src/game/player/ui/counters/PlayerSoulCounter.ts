@@ -8,15 +8,13 @@ export class PlayerSoulCounter {
 	startValue: number;
 	playerCounterText: Phaser.GameObjects.Text;
 
-	constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y) {
+	constructor(sceneToUse: HUD, private sceneToListen: Gameplay, x, y) {
 		let playerSoulCountGraphic = new SymmetricCrossPolygon(x, y, 50, 25);
 
 		let increaseEvent = "souls-gained";
 		let decreaseEvent = "souls-spent";
 
-		this.value = 100;
 		this.startValue = 100;
-		sceneToListen.events.emit("can-build");
 
 		let graphics = sceneToUse.add.graphics({
 			fillStyle: {
@@ -29,12 +27,15 @@ export class PlayerSoulCounter {
 			fill: "#ADFF2F"
 		});
 
+		this.reset();
+
 		this.setupEventListeners(sceneToListen, increaseEvent, decreaseEvent);
 	}
 
 	reset() {
 		this.value = this.startValue;
 		this.playerCounterText.setText(this.value.toString());
+		this.sceneToListen.events.emit("can-build");
 	}
 
 	setupEventListeners(sceneToListen: Gameplay, increaseEvent, decreaseEvent) {
@@ -56,10 +57,12 @@ export class PlayerSoulCounter {
 					this.value = 0;
 				} else {
 					this.value -= amount;
-					if (this.value < shooterCost) {
-						sceneToListen.events.emit("can-not-build");
-					}
 				}
+
+				if (this.value < shooterCost) {
+					sceneToListen.events.emit("can-not-build");
+				}
+
 				this.playerCounterText.setText(this.value.toString());
 			},
 			this
