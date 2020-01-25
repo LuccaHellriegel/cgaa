@@ -23,7 +23,6 @@ export class HealthBar {
 		let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } = config;
 
 		this.defaultValue = value;
-		this.value = value;
 
 		this.healthWidth = healthWidth;
 		this.healthLength = healthLength;
@@ -33,8 +32,13 @@ export class HealthBar {
 		this.posCorrectionY = posCorrectionY;
 
 		this.move(x, y);
-		this.draw();
+		this.reset();
 		config.scene.add.existing(this.bar);
+	}
+
+	reset() {
+		this.value = this.defaultValue;
+		this.draw();
 	}
 
 	decrease(amount) {

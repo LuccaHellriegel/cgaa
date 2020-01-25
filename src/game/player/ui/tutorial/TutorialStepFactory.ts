@@ -9,13 +9,13 @@ export class TutorialStepFactory {
 
 	constructor(sceneToListen: Gameplay, point: Point, private display: displayable) {
 		let pointerdown = { event: "pointerdown", listen: sceneToListen.input };
-		let shooterKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjShooter };
+		let shooterKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjBuild };
 		let interactKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjInteraction };
 		let lockKeyDown = { event: "down", listen: sceneToListen.cgaa.modi.keyObjLock };
 
 		this.content = [
 			{
-				text: "WARNING: Player has imba damage for testing purposes. Move (WASD), \nthen Attack (Left-click)\n",
+				text: "Move (WASD), \nthen Attack (Left-click)\n",
 				position: point,
 				tech: pointerdown
 			},
