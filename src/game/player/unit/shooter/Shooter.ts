@@ -1,22 +1,12 @@
-import { Image } from "../../../base/classes/BasePhaser";
-import { HealthBar } from "../../../base/ui/HealthBar";
-import { damageable, poolable } from "../../../base/interfaces";
-import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { gridPartHalfSize } from "../../../base/globals/globalSizes";
 import { Bullet } from "./Bullet";
-import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
-import { Annotator } from "../../../base/classes/Annotator";
 import { ShooterPool } from "./ShooterPool";
 import { Gameplay } from "../../../../scenes/Gameplay";
+import { Tower } from "../Tower";
 
-export class Shooter extends Image implements damageable, poolable {
-	healthbar: HealthBar;
-	id: string;
-	polygon: RectPolygon;
+export class Shooter extends Tower {
 	bullets: Bullet[] = [];
 	bulletPool: Bullet[] = [];
 	canFire = true;
-	color: string;
 
 	constructor(
 		scene: Gameplay,
@@ -25,29 +15,11 @@ export class Shooter extends Image implements damageable, poolable {
 		physicsGroup: Phaser.Physics.Arcade.StaticGroup,
 		private bulletGroup: Phaser.Physics.Arcade.Group
 	) {
-		super({ scene, x, y, texture: "shooter", physicsGroup });
-
-		this.initUnitStats();
-
-		this.healthbar = HealthBarFactory.createShooterHealthBar(scene, x, y);
-
+		super(scene, x, y, "shooter", physicsGroup);
 		this.initBullets();
 
 		//TODO: on spawn we need to find a way to shoot -> overlap is just evaluated if new units come
 		//TODO: can be spawned ontop of units - why?
-	}
-
-	private initUnitStats() {
-		Annotator.annotate(this, "id", "immovable");
-
-		this.polygon = new RectPolygon(
-			this.x + this.scene.cameras.main.scrollX,
-			this.y + this.scene.cameras.main.scrollY,
-			2 * gridPartHalfSize,
-			2 * gridPartHalfSize
-		);
-		this.color = "blue";
-		this.setSize(this.polygon.width, this.polygon.height);
 	}
 
 	private initBullets() {
@@ -80,9 +52,5 @@ export class Shooter extends Image implements damageable, poolable {
 					repeat: 0
 				});
 		}
-	}
-
-	syncPolygon() {
-		this.polygon.setPosition(this.x, this.y);
 	}
 }
