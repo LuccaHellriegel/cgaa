@@ -15,7 +15,7 @@ export class BuildModus {
 	//TODO: lock onto healer
 	lockOn(selectorRect: SelectorRect) {
 		//TODO: if closest point too far -> dont lock on
-		let ele = ElementCollection.findClosestElement(
+		let [ele] = ElementCollection.findClosestElement(
 			this.spawners[0].pool.getActiveUnits(),
 			selectorRect.x,
 			selectorRect.y
@@ -27,12 +27,12 @@ export class BuildModus {
 
 	execute(selectorRect: SelectorRect, modiState: ModiState) {
 		if (modiState.lock) {
-			let ele = ElementCollection.findClosestElement(
+			let [ele] = ElementCollection.findClosestElement(
 				this.spawners[0].pool.getActiveUnits(),
 				selectorRect.x,
 				selectorRect.y
 			);
-			this.interactWithShooter(ele);
+			this.interactWithTower(ele);
 		} else {
 			//TODO: replace build with enum
 			if (!modiState.build) {
@@ -44,13 +44,8 @@ export class BuildModus {
 	}
 
 	//TODO: needs to be dependant on type
-	private interactWithShooter(ele) {
+	private interactWithTower(ele) {
 		Pool.poolDestroy(ele);
 		gainSouls(this.spawners[0].scene, shooterCost);
-	}
-
-	//TODO:
-	private interactWithHealer() {
-		this.scene.events.emit("life-gained", 20);
 	}
 }

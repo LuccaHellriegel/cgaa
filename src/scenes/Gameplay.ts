@@ -3,10 +3,8 @@ import { generateTextures } from "../graphics/texture/texture";
 import { Movement } from "../game/player/input/move/Movement";
 import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
-import { Healer } from "../game/player/unit/healer/Healer";
 import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
-import { relativePositionToPoint } from "../game/base/position";
 import { createAreas, constructAreaConfigs } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { Collision } from "../game/collision/Collision";
@@ -127,7 +125,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.healerSpawner = Spawner.createHealerSpawner(
 			this,
-			new HealerPool(this, 15, this.cgaa.physicsGroups.shooter),
+			new HealerPool(this, 15, this.cgaa.physicsGroups.shooter, this.cgaa.physicsGroups.healer),
 			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
 	}

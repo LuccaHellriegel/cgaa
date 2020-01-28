@@ -26,9 +26,11 @@ export class ElementCollection {
 	}
 
 	findClosestElement(x, y) {
-		let ele = ElementCollection.findClosestElement(this.elements, x, y);
+		let [ele, dist] = ElementCollection.findClosestElement(this.elements, x, y);
+
+		//If scene undefined, then ele has been destroyed
 		if (ele.scene) {
-			return ele;
+			return [ele, dist];
 		} else {
 			this.removeElementIfType(ele, this.type);
 			return this.findClosestElement(x, y);
@@ -46,6 +48,6 @@ export class ElementCollection {
 				dist = curDist;
 			}
 		}
-		return obj;
+		return [obj, dist];
 	}
 }

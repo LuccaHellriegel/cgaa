@@ -1,53 +1,28 @@
-import { damageable, poolable } from "../../../base/interfaces";
-import { HealthBar } from "../../../base/ui/HealthBar";
-import { RectPolygon } from "../../../base/polygons/RectPolygon";
-import { gridPartHalfSize } from "../../../base/globals/globalSizes";
-import { Image } from "../../../base/classes/BasePhaser";
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
-import { Annotator } from "../../../base/classes/Annotator";
 import { HealerPool } from "./HealerPool";
+import { Aura } from "./Aura";
+import { Tower } from "../Tower";
 
 //TODO: make this a buyable healing shooter
-export class Healer extends Image implements damageable, poolable {
-	healthbar: HealthBar;
-	id: string;
-	polygon: RectPolygon;
-	color: string;
+export class Healer extends Tower {
+	private aura: Aura;
 
-	constructor(scene: Gameplay, x, y, physicsGroup) {
-		super({ scene, x, y, texture: "healer", physicsGroup });
-
-		this.initGraphics();
-
-		this.healthbar = HealthBarFactory.createHealerHealthBar(scene, x, y);
-
-		this.initUnitStats();
+	constructor(scene: Gameplay, x, y, physicsGroup, private healingGroup) {
+		//TODO: modify texture so its obvious we can only heal down and right
+		//TODO: maybe just heal downward? Or maybe better: only right, because of the layout
+		super(scene, x, y, "healer", physicsGroup);
+		this.initHealing();
 	}
 
-	private initGraphics() {
-		this.polygon = new RectPolygon(
-			this.x + this.scene.cameras.main.scrollX,
-			this.y + this.scene.cameras.main.scrollY,
-			2 * gridPartHalfSize,
-			2 * gridPartHalfSize
-		);
-
-		this.setSize(this.polygon.width, this.polygon.height);
-	}
-
-	private initUnitStats() {
-		Annotator.annotate(this, "id", "immovable");
-		this.color = "blue";
-	}
-
-	syncPolygon() {
-		this.polygon.setPosition(this.x, this.y);
-	}
-
-	destroy() {
-		this.healthbar.destroy();
-		super.destroy();
+	private initHealing() {
+		const config = {
+			scene: this.scene,
+			x: this.x,
+			y: this.y,
+			texture: "healer",
+			physicsGroup: this.healingGroup
+		};
+		this.aura = new Aura(config);
 	}
 
 	damage(amount: number) {

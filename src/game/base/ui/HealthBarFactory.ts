@@ -28,7 +28,7 @@ export class HealthBarFactory {
 		return new HealthBar(x, y, healthBarConfig);
 	}
 
-	static createShooterHealthBar(scene: Gameplay, x, y) {
+	static createTowerHealthBar(scene: Gameplay, x, y) {
 		return new HealthBar(x, y, {
 			scene,
 			posCorrectionX: -26,

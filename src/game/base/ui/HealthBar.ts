@@ -50,6 +50,14 @@ export class HealthBar {
 		return this.value === 0;
 	}
 
+	increase(amount) {
+		this.value += amount;
+		if (this.value > this.defaultValue) {
+			this.value = this.defaultValue;
+		}
+		this.draw();
+	}
+
 	drawBackground() {
 		this.bar.fillStyle(0x000000);
 		this.bar.fillRect(this.x, this.y, this.healthWidth + 4, this.healthLength + 4);

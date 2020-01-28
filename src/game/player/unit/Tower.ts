@@ -47,4 +47,8 @@ export abstract class Tower extends Image implements damageable, poolable, heala
 	needsHealing() {
 		return this.healthbar.value !== this.healthbar.defaultValue;
 	}
+
+	heal(amount: number) {
+		this.healthbar.increase(amount);
+	}
 }

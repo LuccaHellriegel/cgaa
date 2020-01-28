@@ -36,6 +36,7 @@ export class WeaponHandler {
 
 		if (weapon.owner.unitType === "player" && enemy.healthbar.value <= 0) {
 			//TODO: gain dependent on size
+			//TODO: does not reach this? -> Race condition with damage and poolActivate
 			gainSouls(scene, 100);
 		}
 

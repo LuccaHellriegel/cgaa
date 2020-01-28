@@ -10,6 +10,7 @@ export class BulletCollision {
 		});
 	}
 
+	//TODO: Bullet give souls for damage not for kill
 	private collision(bullet: Bullet, enemy: EnemyCircle) {
 		enemy.damage(bullet.amount);
 

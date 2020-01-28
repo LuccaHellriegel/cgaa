@@ -3,11 +3,13 @@ import { executeOverAllCamps } from "../base/globals/global";
 import { BulletCollision } from "./BulletCollision";
 import { SightOverlap } from "./SightOverlap";
 import { BounceCollision } from "./BounceCollision";
+import { HealerAura } from "./HealerAura";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
 	shooter: Phaser.Physics.Arcade.StaticGroup;
+	healer: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
@@ -24,14 +26,19 @@ export class Collision {
 		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr());
 		new BounceCollision(scene, this.getBounceCombinatorialArr());
 		new BulletCollision(scene, this.physicGroups.shooterBulletGroup, this.getEnemyGroups());
+
+		new HealerAura(scene, this.physicGroups.healer, this.physicGroups.shooter, this.physicGroups.player);
 	}
 
 	private createPhysicGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
 
+		//TODO: shooter should be tower, as it is used in Healer too
 		let shooter = scene.physics.add.staticGroup();
 		let shooterBulletGroup = scene.physics.add.group();
+
+		let healer = scene.physics.add.staticGroup();
 
 		let enemies = {};
 		let enemyWeapons = {};
@@ -49,6 +56,7 @@ export class Collision {
 			playerWeapon,
 			shooter,
 			shooterBulletGroup,
+			healer,
 
 			enemies,
 			enemyWeapons,

@@ -22,8 +22,8 @@ export class HUD extends Phaser.Scene {
 			"damage-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
-					//TODO: preload scene for smoother transition
 					(this as HUD).sys.game.destroy(true);
+
 					document.getElementById("game").remove();
 					const canvas = document.createElement("canvas");
 					canvas.id = "game";
