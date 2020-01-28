@@ -29,7 +29,6 @@ export class HealerAura {
 			const notAlreadyBeenHealedInTheLastSeconds =
 				first.hasHealed[second.id] && curTimeInSec - first.hasHealed[second.id] > 5;
 			//TODO: does not work -> every overlap gives health
-			console.log(second.needsHealing(), second.id, JSON.stringify(first.hasHealed[second.id]));
 
 			return second.needsHealing() && notAlreadyBeenHealedInTheLastSeconds;
 		}
@@ -38,6 +37,5 @@ export class HealerAura {
 	private heal(first, second: healable) {
 		second.heal(5);
 		first.hasHealed[second.id] = Math.floor(Date.now() / 1000);
-		console.log(second.id, JSON.stringify(first.hasHealed[second.id]));
 	}
 }

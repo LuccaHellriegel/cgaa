@@ -20,7 +20,7 @@ export abstract class Pool {
 
 	private listenForInactiveUnits() {
 		let keys = Object.keys(this.unitDict);
-		for (const key in keys) {
+		for (const key of keys) {
 			this.scene.events.on("inactive-" + key, id => {
 				removeEle(id, this.activeIDArr);
 				this.inactiveIDArr.push(id);
