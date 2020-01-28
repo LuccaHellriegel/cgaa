@@ -33,10 +33,11 @@ export function calculateUnifiedAreasMap(maps: ZeroOneMap[]) {
 		emptyMap.push(emptyRow);
 	}
 
+	//TODO: somehow make more transparent that this is linked to the layout var
 	const filledLayout = [
-		[maps[0], emptyMap, maps[1]],
-		[emptyMap, emptyMap, emptyMap],
-		[maps[2], emptyMap, maps[3]]
+		[emptyMap, maps[0], emptyMap, maps[1], emptyMap],
+		[emptyMap, emptyMap, emptyMap, emptyMap, emptyMap],
+		[emptyMap, maps[2], emptyMap, maps[3], emptyMap]
 	];
 
 	for (let layoutRow = 0; layoutRow < layout.length; layoutRow++) {

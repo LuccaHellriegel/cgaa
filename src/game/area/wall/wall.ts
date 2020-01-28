@@ -53,7 +53,6 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 	}
 
 	let globalExitPosition = Exits.exitToGlobalPoint(config);
-
 	let positionArrs = [topPartPositions, bottomPartPositions];
 	let splitupArrs;
 	if (config.exit.wallSide === "left") {

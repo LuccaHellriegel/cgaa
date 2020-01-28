@@ -4,7 +4,8 @@ import { WallPart } from "./WallPart";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
 function constructBorderwallConfig(staticConfig: StaticConfig) {
-	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 3 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
+	//TODO: extract numbers to global config
+	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 5 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
 	let topLeftX = -gridPartHalfSize;
 	let topLeftY = -gridPartHalfSize;
 

@@ -22,6 +22,7 @@ export function constructAreaConfigs(staticConfig: StaticConfig): AreaConfig[] {
 			if (layout[layoutRow][layoutColumn] === "area") {
 				let topLeftX = relativeCoordinateToReal(startX + layoutColumn * wallBase.sizeOfXAxis);
 				let topLeftY = relativeCoordinateToReal(startY + layoutRow * wallBase.sizeOfYAxis);
+				//TODO: fix exit logic, new layout breaks this
 				let wallSide = layoutColumn === 0 ? "right" : "left";
 				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
 				let row = exitRow;

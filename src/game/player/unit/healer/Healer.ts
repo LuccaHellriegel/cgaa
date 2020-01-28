@@ -3,7 +3,6 @@ import { HealerPool } from "./HealerPool";
 import { Aura } from "./Aura";
 import { Tower } from "../Tower";
 
-//TODO: make this a buyable healing shooter
 export class Healer extends Tower {
 	private aura: Aura;
 
