@@ -1,9 +1,9 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemyPool } from "../../base/pool/EnemyPool";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { BoosPool } from "./BossPool";
 
 export class BossCampPopulator {
-	constructor(private scene: Gameplay, private enemyPool: EnemyPool, private enemySpawnObj: EnemySpawnObj) {
+	constructor(private scene: Gameplay, private enemyPool: BoosPool, private enemySpawnObj: EnemySpawnObj) {
 		this.startWave();
 	}
 

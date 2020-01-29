@@ -2,14 +2,13 @@ import { Enemies } from "../unit/Enemies";
 import { Paths } from "../path/Paths";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 import { CampConfig } from "../camp/Camps";
-import { EnemyConfig } from "../unit/EnemyFactory";
-import { EnemyPool } from "../../base/pool/EnemyPool";
+import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
 import { bigCircleWithChain } from "../camp/campConfig";
 import { BossCampPopulator } from "./BossCampPopulator";
 import { BossBarrier } from "./BossBarrier";
-import { relativeCoordinateToReal } from "../../base/position";
 import { Exits } from "../path/Exits";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
+import { BoosPool } from "./BossPool";
 
 export class BossCamp {
 	constructor(
@@ -27,7 +26,8 @@ export class BossCamp {
 		let enemyConfig: EnemyConfig = {
 			scene: this.config.staticConfig.scene,
 			color: this.config.color,
-			size: "Big",
+			//TODO: fix color then I can fix this
+			size: "",
 			x: 100,
 			y: 100,
 			weaponType: "chain",
@@ -37,7 +37,7 @@ export class BossCamp {
 
 		let bossCampGroupComposition = [bigCircleWithChain, bigCircleWithChain, bigCircleWithChain, bigCircleWithChain];
 
-		let enemyPool = new EnemyPool(
+		let enemyPool = new BoosPool(
 			this.config.staticConfig.scene,
 			4,
 			bossCampGroupComposition,
@@ -51,6 +51,13 @@ export class BossCamp {
 			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies)
 		);
 
+		enemyConfig.x =
+			(2 * gridPartHalfSize * this.config.areaConfig.wallBase.sizeOfXAxis) / 2 + this.config.areaConfig.topLeftX;
+
+		enemyConfig.y =
+			(2 * gridPartHalfSize * this.config.areaConfig.wallBase.sizeOfXAxis) / 2 + this.config.areaConfig.topLeftY;
+		EnemyFactory.createKing(enemyConfig, this.enemies);
+
 		//TODO: exits are in relation to area not map, this is not obvious enough
 
 		let { x, y } = Exits.exitToGlobalPoint(this.config.areaConfig);
@@ -58,30 +65,30 @@ export class BossCamp {
 		//TODO: maybe just use Tower texture? Might be confusing
 		//TODO: big popup that you now can access this area, maybe counter until they start to attack too?
 
-		new BossBarrier(
-			this.config.staticConfig.scene,
-			x - 2 * gridPartHalfSize,
-			y + 2 * gridPartHalfSize,
-			this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-			"Big",
-			"orange"
-		);
-		new BossBarrier(
-			this.config.staticConfig.scene,
-			x - 2 * gridPartHalfSize,
-			y + 4 * gridPartHalfSize,
-			this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-			"Big",
-			"orange"
-		);
-		new BossBarrier(
-			this.config.staticConfig.scene,
-			x - 2 * gridPartHalfSize,
-			y,
-			this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-			"Big",
-			"orange"
-		);
+		// new BossBarrier(
+		// 	this.config.staticConfig.scene,
+		// 	x - 2 * gridPartHalfSize,
+		// 	y + 2 * gridPartHalfSize,
+		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
+		// 	"Big",
+		// 	"orange"
+		// );
+		// new BossBarrier(
+		// 	this.config.staticConfig.scene,
+		// 	x - 2 * gridPartHalfSize,
+		// 	y + 4 * gridPartHalfSize,
+		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
+		// 	"Big",
+		// 	"orange"
+		// );
+		// new BossBarrier(
+		// 	this.config.staticConfig.scene,
+		// 	x - 2 * gridPartHalfSize,
+		// 	y,
+		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
+		// 	"Big",
+		// 	"orange"
+		// );
 	}
 
 	//TODO:

@@ -7,6 +7,8 @@ import { InteractionCircleGenerator } from "./generator/unit/InteractionCircleGe
 import { BuildingGenerator } from "./generator/unit/BuildingGenerator";
 import { RectGenerator } from "./generator/RectGenerator";
 import { SelectorRectGenerator } from "./generator/SelectorRectGenerator";
+import { BossGenerator } from "./generator/unit/BossGenerator";
+import { KingGenerator } from "./generator/unit/KingGenerator";
 
 function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", normalCircleRadius);
@@ -38,6 +40,12 @@ function generateEnemyUnits(scene) {
 		let title = color + sizeName + "Building";
 		new BuildingGenerator(scene, title, campHexColors[colorIndex], sizeName);
 	});
+
+	let title = "bossCircle";
+	new BossGenerator(scene, title);
+
+	title = "kingCircle";
+	new KingGenerator(scene, title);
 }
 
 export function generateUnits(scene) {

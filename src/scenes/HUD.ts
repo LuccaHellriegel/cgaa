@@ -18,6 +18,7 @@ export class HUD extends Phaser.Scene {
 	}
 
 	private setupEventListeners() {
+		//TODO: dont forget to comment in
 		// this.ourGame.events.on(
 		// 	"damage-player",
 		// 	function(amount) {
@@ -34,6 +35,22 @@ export class HUD extends Phaser.Scene {
 		// 	},
 		// 	this
 		// );
+
+		//TODO: make a Celebration scene
+		this.ourGame.events.on(
+			"win",
+			function() {
+				(this as HUD).sys.game.destroy(true);
+
+				document.getElementById("game").remove();
+				const canvas = document.createElement("canvas");
+				canvas.id = "game";
+				document.body.appendChild(canvas);
+
+				new Phaser.Game(createGameConfig());
+			},
+			this
+		);
 		this.ourGame.events.on("life-gained", amount => {
 			this.playerHealthBar.increase(amount);
 		});
@@ -66,6 +83,5 @@ export class HUD extends Phaser.Scene {
 		this.campStates = campStates;
 
 		new Tutorial(this, this.ourGame.cgaa.inputs, x, y + 300);
-		//initTutorial(this, this.ourGame, x, y + 300);
 	}
 }

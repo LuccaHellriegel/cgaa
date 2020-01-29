@@ -49,6 +49,10 @@ export class Collision {
 			buildings[color] = scene.physics.add.staticGroup();
 		});
 
+		//TODO: color -> camp so "boss" makes sense
+		enemies["boss"] = scene.physics.add.group();
+		enemyWeapons["boss"] = scene.physics.add.group();
+
 		let areas = scene.physics.add.staticGroup();
 
 		this.physicGroups = {
@@ -94,7 +98,7 @@ export class Collision {
 		let result = [];
 		result.push([
 			[this.physicGroups.player],
-			[...this.getEnemyGroups(), this.physicGroups.shooter, this.physicGroups.areas]
+			[...this.getEnemyGroups(), this.physicGroups.shooter] //TODO: enable again this.physicGroups.areas]
 		]);
 		result.push([
 			[...Object.values(this.physicGroups.enemies)],

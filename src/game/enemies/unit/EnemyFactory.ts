@@ -7,6 +7,7 @@ import { normalCircleRadius, smallCircleRadius, bigCircleRadius } from "../../ba
 import { InteractionCircle } from "./InteractionCircle";
 import { Enemies } from "./Enemies";
 import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
+import { King } from "../boss/King";
 
 const radiusConfigs = { Small: smallCircleRadius, Normal: normalCircleRadius, Big: bigCircleRadius };
 
@@ -29,6 +30,77 @@ export interface EnemyConfig {
 
 export class EnemyFactory {
 	private constructor() {}
+
+	static createKing(enemyConfig: EnemyConfig, enemies: Enemies) {
+		let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;
+		size = "Big";
+		let radius = radiusConfigs[size];
+		let weapon;
+		if (weaponType === "chain") {
+			weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, size);
+		} else {
+			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius, size);
+		}
+
+		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
+
+		let circleConfig = {
+			scene,
+			color,
+			x,
+			y,
+			weapon,
+			polygon: new CirclePolygon(x, y, radius),
+			texture: "kingCircle",
+			healthbar,
+			radius,
+			physicsGroup
+		};
+
+		let circle = new King(circleConfig, veloConfigs[size]);
+		weapon.owner = circle;
+		scene.children.bringToTop(healthbar.bar);
+		enemies.addEnemy(circle);
+
+		return circle;
+	}
+
+	//TODO: remove duplication
+	static createBoss(enemyConfig: EnemyConfig, enemies: Enemies) {
+		let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;
+		size = "Big";
+		let radius = radiusConfigs[size];
+
+		let weapon;
+		if (weaponType === "chain") {
+			weapon = new ChainWeapon(scene, x, y, weaponGroup, null, radius, size);
+		} else {
+			weapon = new RandWeapon(scene, x, y, weaponGroup, null, radius, size);
+		}
+
+		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(scene, x, y, size);
+
+		let circleConfig = {
+			scene,
+			color,
+			x,
+			y,
+			weapon,
+			polygon: new CirclePolygon(x, y, radius),
+			texture: "bossCircle",
+			healthbar,
+			radius,
+			physicsGroup
+		};
+
+		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
+		weapon.owner = circle;
+		scene.children.bringToTop(healthbar.bar);
+
+		enemies.addEnemy(circle);
+
+		return circle;
+	}
 
 	static createEnemy(enemyConfig: EnemyConfig, enemies: Enemies) {
 		let { scene, color, size, x, y, weaponType, physicsGroup, weaponGroup } = enemyConfig;

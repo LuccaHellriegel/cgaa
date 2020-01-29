@@ -56,6 +56,8 @@ export class Gameplay extends Phaser.Scene {
 			prev[cur] = { dontAttackList: [] };
 			return prev;
 		}, {});
+		//TODO: this is just so that collision works
+		this.cgaa.camps["boss"] = { dontAttackList: [] };
 	}
 
 	private initPhysics() {
@@ -110,12 +112,14 @@ export class Gameplay extends Phaser.Scene {
 		//TODO: deactive units as long as not all Camps are destroyed / occupied
 		//TODO: if Camps are all occupied, destroy their guard units to free up physics computation
 		let bossCampConfig: CampConfig = {
-			color: "orange",
+			//TODO: this is not a color
+			color: "boss",
 			map: this.cgaa.unifiedMap,
 			areaConfig: this.cgaa.bossAreaConfig,
 			staticConfig: { scene: this, physicsGroup: null },
-			enemyPhysicGroup: this.cgaa.physicsGroups.enemies["orange"],
-			weaponPhysicGroup: this.cgaa.physicsGroups.enemyWeapons["orange"]
+			//TODO: physicGroups for boss
+			enemyPhysicGroup: this.cgaa.physicsGroups.enemies["boss"],
+			weaponPhysicGroup: this.cgaa.physicsGroups.enemyWeapons["boss"]
 		};
 
 		new BossCamp(bossCampConfig, this.cgaa.enemies, this.cgaa.paths);

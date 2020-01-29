@@ -16,4 +16,12 @@ export function createCircleAnims(anims) {
 		createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
 		createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
 	});
+
+	let title = "bossCircle";
+	createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
+	createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
+
+	title = "kingCircle";
+	createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
+	createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
 }

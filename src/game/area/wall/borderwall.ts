@@ -38,6 +38,7 @@ function createBorderWall(config): RelativePosition {
 		x = config.topLeftX;
 	}
 
+	//Border Wall has no physics because we use WorldBounds for collision
 	let size = calculateBorderWallSize(config);
 	config.wallBase.staticConfig.scene.physics.world.setBounds(
 		0,

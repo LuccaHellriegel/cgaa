@@ -4,6 +4,7 @@ import { EnemyCircle } from "../enemies/unit/EnemyCircle";
 import { Shooter } from "../player/unit/shooter/Shooter";
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
+import { King } from "../enemies/boss/King";
 
 export class SightOverlap {
 	constructor(private scene: Gameplay, combinatorialArr) {
@@ -28,8 +29,11 @@ export class SightOverlap {
 		let isNotInteractionCircle = !(weapon.owner instanceof InteractionCircle);
 		let isNotSameCamp = (weapon.owner as EnemyCircle).color !== enemy.color;
 		let isNotAlreadyGuard = weapon.owner.state !== "guard";
+
+		//TODO: fix instanceof
+		//TODO: King should always move back to his start-position
 		let isNotInCooperation =
-			weapon.owner instanceof EnemyCircle &&
+			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) &&
 			!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes(
 				enemy.color
 			);
