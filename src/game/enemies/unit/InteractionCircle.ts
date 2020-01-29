@@ -2,6 +2,8 @@ import { Circle } from "../../base/classes/Circle";
 import { damageable } from "../../base/interfaces";
 import { HealthBar } from "../../base/ui/HealthBar";
 import { Gameplay } from "../../../scenes/Gameplay";
+import { Annotator } from "../../base/classes/Annotator";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
@@ -11,6 +13,8 @@ export class InteractionCircle extends Circle implements damageable {
 		super(config);
 		this.healthbar = config.healthbar;
 		this.color = config.color;
+		Annotator.annotate(this, "immovable");
+		this.setSize(2 * gridPartHalfSize, 2 * gridPartHalfSize);
 	}
 
 	damage(amount) {

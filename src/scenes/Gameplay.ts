@@ -31,7 +31,6 @@ import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
-import { BossCampPopulator } from "../game/enemies/boss/BossCampPopulator";
 import { BossCamp } from "../game/enemies/boss/BossCamp";
 
 export class Gameplay extends Phaser.Scene {
