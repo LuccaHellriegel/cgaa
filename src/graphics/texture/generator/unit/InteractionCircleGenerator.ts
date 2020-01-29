@@ -20,16 +20,16 @@ export class InteractionCircleGenerator extends Generator {
 	}
 
 	drawCircleIdleFrame() {
-		this.graphics.fillStyle(0x323232);
-		this.graphics.fillCircle(this.radius, this.radius, this.radius);
 		this.graphics.fillStyle(this.hexColor);
+		this.graphics.fillCircle(this.radius, this.radius, this.radius);
+		this.graphics.fillStyle(0x323232);
 		this.graphics.fillCircle(this.radius, this.radius, 2.5 * (this.radius / 3));
 	}
 
 	drawCircleDamageFrame() {
-		this.graphics.fillStyle(0x323232);
-		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius);
 		this.graphics.fillStyle(this.hexColor);
+		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius);
+		this.graphics.fillStyle(0x323232);
 		this.graphics.fillCircle(3 * this.radius, this.radius, 2.5 * (this.radius / 3));
 		this.graphics.fillStyle(0xf08080);
 		this.graphics.fillCircle(3 * this.radius, this.radius, 2 * (this.radius / 3));
