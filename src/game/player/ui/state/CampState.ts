@@ -38,14 +38,14 @@ export class CampState {
 
 		this.redCircle = new CirclePolygon(x, y, halfSize + circleCorrection + 4);
 
-		this.sideArrow = new ArrowHeadPolygon(x + 2 * halfSize + 10, y, 1.5 * halfSize, 2 * halfSize);
-		this.sideArrow.rotate(Phaser.Math.DegToRad(90));
+		this.sideArrow = new ArrowHeadPolygon(x - 2 * halfSize - 10, y, 1.5 * halfSize, 2 * halfSize);
+		this.sideArrow.rotate(Phaser.Math.DegToRad(-90));
 
-		this.sideCross = new SymmetricCrossPolygon(x + 2 * halfSize + 10, y, 2 * halfSize, 0.4 * halfSize);
+		this.sideCross = new SymmetricCrossPolygon(x - 2 * halfSize - 10, y, 2 * halfSize, 0.4 * halfSize);
 		this.sideCross.rotate(Phaser.Math.DegToRad(45));
 
-		this.targetBackground = new RectPolygon(x + 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
-		this.targetForeground = new CirclePolygon(x + 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
+		this.targetBackground = new RectPolygon(x - 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
+		this.targetForeground = new CirclePolygon(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 		this.reset();
 	}
 

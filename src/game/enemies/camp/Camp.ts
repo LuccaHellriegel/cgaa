@@ -82,6 +82,7 @@ export class Camp {
 
 	private addMemberships() {
 		//TODO: essential sounds weird, essential = if this is destroyed, the camp is destroyed
+		//TODO: bug, even if interactionUnit lives, if buildings are destroyed, camp is destroyed
 		this.membership.add(this.interactionUnit, "interaction", "essential");
 		this.membership.addAll([...this.buildings.buildings], "essential");
 	}

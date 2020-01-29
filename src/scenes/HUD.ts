@@ -76,12 +76,12 @@ export class HUD extends Phaser.Scene {
 		let y;
 
 		executeOverAllCamps((color, index) => {
-			x = 0 + halfSize + 5;
+			x = 1280 - halfSize - 5;
 			y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
 			campStates.push(new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, campHexColors[index]));
 		});
 		this.campStates = campStates;
 
-		new Tutorial(this, this.ourGame.cgaa.inputs, x, y + 300);
+		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 	}
 }
