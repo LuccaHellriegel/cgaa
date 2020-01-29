@@ -82,6 +82,8 @@ export class HUD extends Phaser.Scene {
 		});
 		this.campStates = campStates;
 
+		//TODO: Interaction / Shooter / Healer menu (Q/E or scroll switch)
+
 		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 	}
 }

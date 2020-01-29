@@ -101,7 +101,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.paths,
 			new Exits(this.cgaa.areaConfigs),
 			this.cgaa.middlePos
-		).generatePaths(this.cgaa.campsObj.getBuildingInfos());
+		).generatePaths(this.cgaa.campsObj.getBuildingInfos(), this.cgaa.playerAreaConfig, this.cgaa.bossAreaConfig);
 	}
 
 	private initBoss() {

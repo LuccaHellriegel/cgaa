@@ -25,6 +25,11 @@ export class Paths {
 		this.setPathForID(id, path);
 	}
 
+	setPathToBoss(relativePosition: RelativePosition, path) {
+		let id = constructXYIDfromColumnRow(relativePosition.column, relativePosition.row) + " boss";
+		this.setPathForID(id, path);
+	}
+
 	getPathForRelPos(relPos: RelativePosition): Path {
 		return Path.createPathFromArr([...this.pathDict[constructXYIDfromColumnRow(relPos.column, relPos.row)].pathArr]);
 	}

@@ -45,4 +45,69 @@ export class PathConstructor {
 			});
 		});
 	}
+
+	//TODO: they are dependant on the buidlingToExit having been executed
+	private constructPathsFromBuildingToMiddleToPlayerCamp(buildingPosition: RelativePosition) {
+		//TODO: might not be optimal to just replace the previous path to middle, as this is confusing
+		const positionsAround = getAllPositionsAroundBuilding(buildingPosition.column, buildingPosition.row);
+		for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
+			const pos = positionsAround[posIndex];
+			let posToMiddle: Path = this.paths.getPathForRelPos({
+				column: pos[0],
+				row: pos[1]
+			});
+			let middleToPlayerArr = this.paths
+				.getPathForID("MiddleToPlayer")
+				.pathArr.slice()
+				.reverse();
+			let posToPlayer = middleToPlayerArr.concat(posToMiddle.pathArr);
+			this.paths.setPathForRelPos(
+				{
+					column: pos[0],
+					row: pos[1]
+				},
+				Path.createPathFromArr(posToPlayer)
+			);
+		}
+	}
+
+	constructPathsFromBuildingsToMiddleToPlayerCamp(buildingInfos: BuildingInfo[]) {
+		buildingInfos.forEach(info => {
+			info.spawnPositions.forEach(pos => {
+				this.constructPathsFromBuildingToMiddleToPlayerCamp({ column: pos[0], row: pos[1] });
+			});
+		});
+	}
+
+	//TODO: test this path
+	private constructPathsFromBuildingToMiddleToBossCamp(buildingPosition: RelativePosition) {
+		const positionsAround = getAllPositionsAroundBuilding(buildingPosition.column, buildingPosition.row);
+		for (let posIndex = 0, length = positionsAround.length; posIndex < length; posIndex++) {
+			const pos = positionsAround[posIndex];
+			let posToMiddle: Path = this.paths.getPathForRelPos({
+				column: pos[0],
+				row: pos[1]
+			});
+			let middleToBossArr = this.paths
+				.getPathForID("MiddleToBoss")
+				.pathArr.slice()
+				.reverse();
+			let posToBoss = middleToBossArr.concat(posToMiddle.pathArr);
+			this.paths.setPathToBoss(
+				{
+					column: pos[0],
+					row: pos[1]
+				},
+				Path.createPathFromArr(posToBoss)
+			);
+		}
+	}
+
+	constructPathsFromBuildingsToMiddleToBossCamp(buildingInfos: BuildingInfo[]) {
+		buildingInfos.forEach(info => {
+			info.spawnPositions.forEach(pos => {
+				this.constructPathsFromBuildingToMiddleToBossCamp({ column: pos[0], row: pos[1] });
+			});
+		});
+	}
 }
