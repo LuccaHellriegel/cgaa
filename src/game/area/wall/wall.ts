@@ -5,15 +5,15 @@ import { WallSide } from "./WallSide";
 import { AreaConfig } from "../../base/interfaces";
 import { Exits } from "../../enemies/path/Exits";
 
-function splitupAtExit(exitPosition, positionArr) {
+function splitupAtExit(exitPosition, positionArr, coordinate) {
 	let firstPositionArr: Point[] = [];
 	let secondPositionArr: Point[] = [];
 
 	let exitWidth = 0;
 	positionArr.forEach(position => {
-		if (exitPosition.y > position.y) {
+		if (exitPosition[coordinate] > position[coordinate]) {
 			firstPositionArr.push(position);
-		} else if (exitPosition.y < position.y && exitWidth === 3) {
+		} else if (exitPosition[coordinate] < position[coordinate] && exitWidth === 3) {
 			secondPositionArr.push(position);
 		} else {
 			exitWidth++;
@@ -23,6 +23,8 @@ function splitupAtExit(exitPosition, positionArr) {
 }
 
 export function createWalls(config: AreaConfig, map: ZeroOneMap) {
+	//TODO: sneakly updates the map
+
 	let x = config.topLeftX;
 	let y = config.topLeftY;
 
@@ -34,10 +36,13 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 	for (let row = 0; row < config.wallBase.sizeOfYAxis; row++) {
 		for (let column = 0; column < config.wallBase.sizeOfXAxis; column++) {
 			let isExit = map[row][column] === exitSymbol;
+
+			//TODO: is hardcoded, but should not be a problem
 			let isLeftWall = column === 0;
 			let isRightWall = column === config.wallBase.sizeOfXAxis - 1;
 			let isTopWall = row === 0;
 			let isBottomWall = row === config.wallBase.sizeOfYAxis - 1;
+
 			let isWall = isLeftWall || isRightWall || isTopWall || isBottomWall;
 			if (isLeftWall) leftPartPositions.push({ x, y });
 			if (isRightWall) rightPartPositions.push({ x, y });
@@ -53,14 +58,26 @@ export function createWalls(config: AreaConfig, map: ZeroOneMap) {
 	}
 
 	let globalExitPosition = Exits.exitToGlobalPoint(config);
-	let positionArrs = [topPartPositions, bottomPartPositions];
 	let splitupArrs;
-	if (config.exit.wallSide === "left") {
-		positionArrs.push(rightPartPositions);
-		splitupArrs = splitupAtExit(globalExitPosition, leftPartPositions);
+	let positionArrs;
+	if (config.exit.wallSide === "right" || config.exit.wallSide === "left") {
+		positionArrs = [topPartPositions, bottomPartPositions];
+		if (config.exit.wallSide === "left") {
+			positionArrs.push(rightPartPositions);
+			splitupArrs = splitupAtExit(globalExitPosition, leftPartPositions, "y");
+		} else {
+			positionArrs.push(leftPartPositions);
+			splitupArrs = splitupAtExit(globalExitPosition, rightPartPositions, "y");
+		}
 	} else {
-		positionArrs.push(leftPartPositions);
-		splitupArrs = splitupAtExit(globalExitPosition, rightPartPositions);
+		positionArrs = [rightPartPositions, leftPartPositions];
+		if (config.exit.wallSide === "up") {
+			positionArrs.push(bottomPartPositions);
+			splitupArrs = splitupAtExit(globalExitPosition, topPartPositions, "x");
+		} else {
+			positionArrs.push(topPartPositions);
+			splitupArrs = splitupAtExit(globalExitPosition, bottomPartPositions, "x");
+		}
 	}
 
 	positionArrs.push(splitupArrs[0], splitupArrs[1]);

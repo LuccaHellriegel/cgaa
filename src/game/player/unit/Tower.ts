@@ -8,6 +8,7 @@ import { HealthBarFactory } from "../../base/ui/HealthBarFactory";
 import { Annotator } from "../../base/classes/Annotator";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
+//TODO: maybe allow Towers in Enemy camp again if they are expensive enough?
 export abstract class Tower extends Image implements damageable, poolable, healable {
 	healthbar: HealthBar;
 	id: string;

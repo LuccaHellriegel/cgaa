@@ -26,10 +26,11 @@ export function calculateUnifiedAreasMap(maps: ZeroOneMap[]) {
 	const emptyMap = createEmptyMap({ sizeOfXAxis: areaSize, sizeOfYAxis: areaSize });
 
 	//TODO: somehow make more transparent that this is linked to the layout var
+	//TODO: order in maps is hardcoded and often wrong if I try to change this
 	const filledLayout = [
-		[emptyMap, maps[0], emptyMap, maps[1], emptyMap],
-		[emptyMap, emptyMap, emptyMap, emptyMap, emptyMap],
-		[emptyMap, maps[2], emptyMap, maps[3], emptyMap]
+		[emptyMap, maps[0], maps[1], emptyMap],
+		[maps[2], emptyMap, emptyMap, maps[3]],
+		[emptyMap, maps[4], maps[5], emptyMap]
 	];
 
 	for (let layoutRow = 0; layoutRow < layout.length; layoutRow++) {

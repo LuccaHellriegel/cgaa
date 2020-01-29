@@ -8,7 +8,6 @@ import { exitSymbol } from "../base/globals/globalSymbols";
 import { AreaConfig } from "../base/interfaces";
 
 const exitWidth = 3;
-const exitRow = 6;
 
 export function constructAreaConfigs(staticConfig: StaticConfig): [AreaConfig[], AreaConfig, AreaConfig] {
 	let areaConfigs: AreaConfig[] = [];
@@ -24,14 +23,15 @@ export function constructAreaConfigs(staticConfig: StaticConfig): [AreaConfig[],
 	for (let layoutRow = 0; layoutRow < layout.length; layoutRow++) {
 		for (let layoutColumn = 0; layoutColumn < layout[0].length; layoutColumn++) {
 			//TODO: duplication
+
 			if (layout[layoutRow][layoutColumn] === "area") {
 				let topLeftX = relativeCoordinateToReal(startX + layoutColumn * wallBase.sizeOfXAxis);
 				let topLeftY = relativeCoordinateToReal(startY + layoutRow * wallBase.sizeOfYAxis);
 
 				//TODO: is hardcoded
-				let wallSide = layoutColumn === 1 ? "right" : "left";
-				let column = layoutColumn === 1 ? wallBase.sizeOfXAxis - 1 : 0;
-				let row = exitRow;
+				let wallSide = layoutRow === 0 ? "down" : "up";
+				let column = 6;
+				let row = layoutRow === 0 ? areaSize - 1 : 0;
 				let exit = { exitPosition: { column, row }, exitWidth, wallSide };
 
 				areaConfigs.push({
@@ -47,7 +47,8 @@ export function constructAreaConfigs(staticConfig: StaticConfig): [AreaConfig[],
 
 				let wallSide = layoutColumn === 0 ? "right" : "left";
 				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
-				let row = exitRow;
+				let row = 6 - 1;
+				console.log(row);
 				let exit = { exitPosition: { column, row }, exitWidth, wallSide };
 
 				playerAreaConfig = {
@@ -66,7 +67,7 @@ export function constructAreaConfigs(staticConfig: StaticConfig): [AreaConfig[],
 
 				let wallSide = layoutColumn === 0 ? "right" : "left";
 				let column = layoutColumn === 0 ? wallBase.sizeOfXAxis - 1 : 0;
-				let row = exitRow;
+				let row = 6 - 1;
 				let exit = { exitPosition: { column, row }, exitWidth, wallSide };
 
 				bossAreaConfig = {
@@ -85,8 +86,14 @@ export function constructAreaConfigs(staticConfig: StaticConfig): [AreaConfig[],
 }
 
 function addAreaExitsToMap(map, config: AreaConfig) {
-	for (let index = 0; index < config.exit.exitWidth; index++) {
-		map[config.exit.exitPosition.row + index][config.exit.exitPosition.column] = exitSymbol;
+	if (config.exit.wallSide === "up" || config.exit.wallSide === "down") {
+		for (let index = 0; index < config.exit.exitWidth; index++) {
+			map[config.exit.exitPosition.row][config.exit.exitPosition.column + index] = exitSymbol;
+		}
+	} else {
+		for (let index = 0; index < config.exit.exitWidth; index++) {
+			map[config.exit.exitPosition.row + index][config.exit.exitPosition.column] = exitSymbol;
+		}
 	}
 }
 

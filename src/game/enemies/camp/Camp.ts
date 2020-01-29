@@ -13,6 +13,7 @@ import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 
+//TODO: abstract general camp
 export class Camp {
 	buildings: Buildings;
 	interactionUnit: InteractionCircle;
@@ -80,6 +81,7 @@ export class Camp {
 	}
 
 	private addMemberships() {
+		//TODO: essential sounds weird, essential = if this is destroyed, the camp is destroyed
 		this.membership.add(this.interactionUnit, "interaction", "essential");
 		this.membership.addAll([...this.buildings.buildings], "essential");
 	}

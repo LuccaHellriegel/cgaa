@@ -18,22 +18,22 @@ export class HUD extends Phaser.Scene {
 	}
 
 	private setupEventListeners() {
-		this.ourGame.events.on(
-			"damage-player",
-			function(amount) {
-				if (this.playerHealthBar.decrease(amount)) {
-					(this as HUD).sys.game.destroy(true);
+		// this.ourGame.events.on(
+		// 	"damage-player",
+		// 	function(amount) {
+		// 		if (this.playerHealthBar.decrease(amount)) {
+		// 			(this as HUD).sys.game.destroy(true);
 
-					document.getElementById("game").remove();
-					const canvas = document.createElement("canvas");
-					canvas.id = "game";
-					document.body.appendChild(canvas);
+		// 			document.getElementById("game").remove();
+		// 			const canvas = document.createElement("canvas");
+		// 			canvas.id = "game";
+		// 			document.body.appendChild(canvas);
 
-					new Phaser.Game(createGameConfig());
-				}
-			},
-			this
-		);
+		// 			new Phaser.Game(createGameConfig());
+		// 		}
+		// 	},
+		// 	this
+		// );
 		this.ourGame.events.on("life-gained", amount => {
 			this.playerHealthBar.increase(amount);
 		});

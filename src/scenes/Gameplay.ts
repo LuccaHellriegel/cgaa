@@ -14,7 +14,7 @@ import { WaveController } from "../game/enemies/wave/WaveController";
 import { CampsState } from "../game/enemies/camp/CampsState";
 import { Mouse } from "../game/player/input/move/Mouse";
 import { Enemies } from "../game/enemies/unit/Enemies";
-import { Camps } from "../game/enemies/camp/Camps";
+import { Camps, CampConfig } from "../game/enemies/camp/Camps";
 import { Rerouter } from "../game/enemies/path/Rerouter";
 import { Rivalries } from "../game/enemies/camp/Rivalries";
 import { Cooperation } from "../game/player/state/Cooperation";
@@ -31,6 +31,8 @@ import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
+import { BossCampPopulator } from "../game/enemies/boss/BossCampPopulator";
+import { BossCamp } from "../game/enemies/boss/BossCamp";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -91,7 +93,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.membership
 		);
 
-		//TODO: path to player and boss areas
+		//TODO: path to player and boss areas, mark boss paths
 		new PathFactory(
 			this.cgaa.unifiedMap,
 			new EasyStar.js(),
@@ -99,6 +101,24 @@ export class Gameplay extends Phaser.Scene {
 			new Exits(this.cgaa.areaConfigs),
 			this.cgaa.middlePos
 		).generatePaths(this.cgaa.campsObj.getBuildingInfos());
+	}
+
+	private initBoss() {
+		//TODO: boss color textures
+		//TODO: fix conifg -> does not need staticConfig just scene
+		//TODO: either physicGroups or physicsGroups
+		//TODO: deactive units as long as not all Camps are destroyed / occupied
+		//TODO: if Camps are all occupied, destroy their guard units to free up physics computation
+		let bossCampConfig: CampConfig = {
+			color: "orange",
+			map: this.cgaa.unifiedMap,
+			areaConfig: this.cgaa.bossAreaConfig,
+			staticConfig: { scene: this, physicsGroup: null },
+			enemyPhysicGroup: this.cgaa.physicsGroups.enemies["orange"],
+			weaponPhysicGroup: this.cgaa.physicsGroups.enemyWeapons["orange"]
+		};
+
+		new BossCamp(bossCampConfig, this.cgaa.enemies, this.cgaa.paths);
 	}
 
 	private initPlayerUnitAndColleagues() {
@@ -171,6 +191,8 @@ export class Gameplay extends Phaser.Scene {
 		this.initEnvironment();
 
 		this.initEnemies();
+
+		this.initBoss();
 
 		this.initPlayerUnitAndColleagues();
 
