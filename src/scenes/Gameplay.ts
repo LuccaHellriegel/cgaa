@@ -5,7 +5,7 @@ import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
-import { createAreas, constructAreaConfigs } from "../game/area/area";
+import { createAreas, constructAreaConfigs, removeNonEnemyAreas } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
 import { Collision } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
@@ -62,10 +62,17 @@ export class Gameplay extends Phaser.Scene {
 
 	private initEnvironment() {
 		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: this.cgaa.physicsGroups.areas };
-		this.cgaa.areaConfigs = constructAreaConfigs(areaStaticConfig);
+		//TODO: use other configs
+		let [areaConfigs, playerAreaConfig, bossAreaConfig] = constructAreaConfigs(areaStaticConfig);
+		this.cgaa.areaConfigs = areaConfigs;
+		this.cgaa.playerAreaConfig = playerAreaConfig;
+		this.cgaa.bossAreaConfig = bossAreaConfig;
+
 		let { unifiedMap, middlePos } = createAreas(this.cgaa.areaConfigs);
 		this.cgaa.unifiedMap = unifiedMap;
 		this.cgaa.middlePos = middlePos;
+
+		this.cgaa.areaConfigs = removeNonEnemyAreas(areaConfigs, playerAreaConfig, bossAreaConfig);
 	}
 
 	private initEnemies() {
@@ -84,6 +91,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.membership
 		);
 
+		//TODO: path to player and boss areas
 		new PathFactory(
 			this.cgaa.unifiedMap,
 			new EasyStar.js(),
@@ -106,7 +114,7 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
 	}
 
-	private initShooters() {
+	private initTowers() {
 		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
 
 		const shooterPool = new ShooterPool(
@@ -128,6 +136,7 @@ export class Gameplay extends Phaser.Scene {
 			new HealerPool(this, 15, this.cgaa.physicsGroups.shooter, this.cgaa.physicsGroups.healer),
 			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
 		);
+		//TODO: init healerpool?
 	}
 
 	private initPlayerInteraction() {
@@ -167,7 +176,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.initKeyboard();
 
-		this.initShooters();
+		this.initTowers();
 
 		this.initPlayerInteraction();
 

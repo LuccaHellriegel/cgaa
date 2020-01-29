@@ -23,15 +23,7 @@ export function calculateUnifiedAreasMap(maps: ZeroOneMap[]) {
 	let numberOfRows = maps[0].length;
 
 	//assumes areasize x areasize maps
-	const emptyRow = [];
-	for (let index = 0; index < areaSize; index++) {
-		emptyRow.push(0);
-	}
-
-	const emptyMap = [];
-	for (let index = 0; index < areaSize; index++) {
-		emptyMap.push(emptyRow);
-	}
+	const emptyMap = createEmptyMap({ sizeOfXAxis: areaSize, sizeOfYAxis: areaSize });
 
 	//TODO: somehow make more transparent that this is linked to the layout var
 	const filledLayout = [
