@@ -98,6 +98,7 @@ export class EnemyState {
 		return inReach;
 	}
 
+	//TODO: there is a bug, if they are attacked, then they go back to the middle position
 	private ambush() {
 		if (this.circle.path) {
 			if (this.nextPos !== undefined) {

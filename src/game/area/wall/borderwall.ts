@@ -8,7 +8,6 @@ function constructBorderwallConfig(staticConfig: StaticConfig) {
 	let wallBase: WallBase = { staticConfig, sizeOfXAxis: 2 + 5 * areaSize, sizeOfYAxis: 2 + 3 * areaSize };
 	let topLeftX = -gridPartHalfSize;
 	let topLeftY = -gridPartHalfSize;
-
 	return { wallBase, topLeftX, topLeftY };
 }
 
@@ -47,7 +46,11 @@ function createBorderWall(config): RelativePosition {
 		size.height - 4 * gridPartHalfSize
 	);
 
-	return { column: config.wallBase.sizeOfXAxis / 2, row: config.wallBase.sizeOfYAxis / 2 };
+	//TODO find out why this middlePos is so wrong (clarify math)
+	return {
+		column: Math.floor((config.wallBase.sizeOfXAxis - 16) / 2),
+		row: Math.floor((config.wallBase.sizeOfYAxis - 4) / 2)
+	};
 }
 
 export function mainBorderwall(staticConfig: StaticConfig): RelativePosition {

@@ -11,19 +11,16 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { BoosPool } from "./BossPool";
 
 export class BossCamp {
+	private enemyConfig: EnemyConfig;
 	constructor(
 		private config: CampConfig,
 		private enemies: Enemies,
 		//TODO: use paths
 		public paths: Paths
 	) {
-		this.populateCamp();
-	}
+		this.createBarriers();
 
-	//TODO: make a conditional to be able to to get into this camp -> use building that listens to event
-
-	private populateCamp() {
-		let enemyConfig: EnemyConfig = {
+		this.enemyConfig = {
 			scene: this.config.staticConfig.scene,
 			color: this.config.color,
 			//TODO: fix color then I can fix this
@@ -35,62 +32,49 @@ export class BossCamp {
 			weaponGroup: this.config.weaponPhysicGroup
 		};
 
-		let bossCampGroupComposition = [bigCircleWithChain, bigCircleWithChain, bigCircleWithChain, bigCircleWithChain];
+		this.populateCamp();
+	}
 
-		let enemyPool = new BoosPool(
-			this.config.staticConfig.scene,
-			4,
-			bossCampGroupComposition,
-			enemyConfig,
-			this.enemies
-		);
+	private populateCamp() {
+		let bossCampGroupComposition = [bigCircleWithChain, bigCircleWithChain, bigCircleWithChain, bigCircleWithChain];
 
 		new BossCampPopulator(
 			this.config.staticConfig.scene,
-			enemyPool,
+			new BoosPool(this.config.staticConfig.scene, 4, bossCampGroupComposition, this.enemyConfig, this.enemies),
 			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies)
 		);
 
-		enemyConfig.x =
+		this.createKing();
+	}
+
+	private createKing() {
+		this.enemyConfig.x =
 			(2 * gridPartHalfSize * this.config.areaConfig.wallBase.sizeOfXAxis) / 2 + this.config.areaConfig.topLeftX;
 
-		enemyConfig.y =
+		this.enemyConfig.y =
 			(2 * gridPartHalfSize * this.config.areaConfig.wallBase.sizeOfXAxis) / 2 + this.config.areaConfig.topLeftY;
-		EnemyFactory.createKing(enemyConfig, this.enemies);
+		EnemyFactory.createKing(this.enemyConfig, this.enemies);
+	}
 
+	private createBarriers() {
 		//TODO: exits are in relation to area not map, this is not obvious enough
 
 		let { x, y } = Exits.exitToGlobalPoint(this.config.areaConfig);
 
-		//TODO: maybe just use Tower texture? Might be confusing
 		//TODO: big popup that you now can access this area, maybe counter until they start to attack too?
 
-		// new BossBarrier(
-		// 	this.config.staticConfig.scene,
-		// 	x - 2 * gridPartHalfSize,
-		// 	y + 2 * gridPartHalfSize,
-		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-		// 	"Big",
-		// 	"orange"
-		// );
-		// new BossBarrier(
-		// 	this.config.staticConfig.scene,
-		// 	x - 2 * gridPartHalfSize,
-		// 	y + 4 * gridPartHalfSize,
-		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-		// 	"Big",
-		// 	"orange"
-		// );
-		// new BossBarrier(
-		// 	this.config.staticConfig.scene,
-		// 	x - 2 * gridPartHalfSize,
-		// 	y,
-		// 	this.config.areaConfig.wallBase.staticConfig.physicsGroup,
-		// 	"Big",
-		// 	"orange"
-		// );
+		new BossBarrier(
+			this.config.staticConfig.scene,
+			x,
+			y + 2 * gridPartHalfSize,
+			this.config.areaConfig.wallBase.staticConfig.physicsGroup
+		);
+		new BossBarrier(
+			this.config.staticConfig.scene,
+			x,
+			y + 4 * gridPartHalfSize,
+			this.config.areaConfig.wallBase.staticConfig.physicsGroup
+		);
+		new BossBarrier(this.config.staticConfig.scene, x, y, this.config.areaConfig.wallBase.staticConfig.physicsGroup);
 	}
-
-	//TODO:
-	createKingUnit() {}
 }
