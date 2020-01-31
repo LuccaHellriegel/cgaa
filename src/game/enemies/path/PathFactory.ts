@@ -5,8 +5,7 @@ import { Exits } from "./Exits";
 import { getAllPositionsAroundBuilding } from "./pathBase";
 import { BuildingInfo, AreaConfig } from "../../base/interfaces";
 import { PathConstructor } from "./PathConstructor";
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { realCoordinateToRelative } from "../../base/position";
+import { realCoordinateToRelative, areaToRealMiddlePoint } from "../../base/position";
 
 export class PathFactory {
 	private pathConstructor: PathConstructor;
@@ -56,13 +55,11 @@ export class PathFactory {
 	}
 
 	private calculatePathsFromMiddleToMiddleOfArea(areaConfig: AreaConfig, id) {
-		//TODO: extract area to middle function
-		let middleOfPlayerAreaX = (2 * gridPartHalfSize * areaConfig.wallBase.sizeOfXAxis) / 2 + areaConfig.topLeftX;
-		let middleOfPlayerAreaY = (2 * gridPartHalfSize * areaConfig.wallBase.sizeOfXAxis) / 2 + areaConfig.topLeftY;
+		let realMiddle = areaToRealMiddlePoint(areaConfig);
 		this.paths.setPathForID(
 			id,
 			this.calculatePath(
-				{ column: realCoordinateToRelative(middleOfPlayerAreaX), row: realCoordinateToRelative(middleOfPlayerAreaY) },
+				{ column: realCoordinateToRelative(realMiddle.x), row: realCoordinateToRelative(realMiddle.y) },
 				this.middlePos,
 				[]
 			)

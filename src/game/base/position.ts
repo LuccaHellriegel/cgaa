@@ -1,5 +1,6 @@
 import { gridPartHalfSize } from "./globals/globalSizes";
 import { Point } from "./types";
+import { AreaConfig } from "./interfaces";
 
 export function snapCoordinateToGrid(coordinate) {
 	let ceil = Math.ceil(coordinate / gridPartHalfSize) * gridPartHalfSize;
@@ -55,4 +56,11 @@ export function relativePositionToPoint(column, row): Point {
 
 export function realCoordinateToRelative(coordinate) {
 	return (snapCoordinateToGrid(coordinate) - gridPartHalfSize) / (2 * gridPartHalfSize);
+}
+
+export function areaToRealMiddlePoint(areaConfig: AreaConfig): Point {
+	return {
+		x: (2 * gridPartHalfSize * areaConfig.wallBase.sizeOfXAxis) / 2 + areaConfig.topLeftX,
+		y: (2 * gridPartHalfSize * areaConfig.wallBase.sizeOfXAxis) / 2 + areaConfig.topLeftY
+	};
 }
