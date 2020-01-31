@@ -36,6 +36,7 @@ export class Player extends Circle {
 		return super.setVelocityY(velo);
 	}
 
+	//TODO: Player should spawn in PlayerAreaCamp
 	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup) {
 		let weapon = new ChainWeapon(
 			scene,

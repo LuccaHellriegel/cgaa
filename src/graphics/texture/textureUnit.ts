@@ -1,5 +1,10 @@
 import { CircleGenerator } from "./generator/unit/CircleGenerator";
-import { normalCircleRadius, circleSizes, gridPartHalfSize } from "../../game/base/globals/globalSizes";
+import {
+	normalCircleRadius,
+	circleSizes,
+	gridPartHalfSize,
+	bigCircleRadius
+} from "../../game/base/globals/globalSizes";
 import { HealerGenerator } from "./generator/unit/HealerGenerator";
 import { executeOverAllCampsAndSizes, executeOverAllCamps } from "../../game/base/globals/global";
 import { campHexColors } from "../../game/base/globals/globalColors";
@@ -30,6 +35,9 @@ function generateEnemyUnits(scene) {
 		let title = color + sizeName + "Circle";
 		new CircleGenerator(campHexColors[colorIndex], scene, title, circleSizes[sizeNameIndex]);
 	});
+
+	//PlayerFriends
+	new CircleGenerator(0x6495ed, scene, "blueBigCircle", bigCircleRadius);
 
 	executeOverAllCamps((color, index) => {
 		let title = color + "InteractionCircle";

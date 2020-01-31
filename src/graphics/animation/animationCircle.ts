@@ -1,27 +1,23 @@
 import { createNonRepeatingAnim } from "./animationBase";
 import { executeOverAllCamps, executeOverAllCampsAndSizes } from "../../game/base/globals/global";
 
+function baseIdleDamageAnim(anims, title) {
+	createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
+	createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
+}
+
 export function createCircleAnims(anims) {
-	createNonRepeatingAnim(anims, "idle-blueCircle", "blueCircle", 1, 1, 10);
-	createNonRepeatingAnim(anims, "damage-blueCircle", "blueCircle", 1, 2, 10);
+	["blueCircle", "blueBigCircle", "bossCircle", "kingCircle"].forEach(title => {
+		baseIdleDamageAnim(anims, title);
+	});
 
 	executeOverAllCamps((color, colorIndex) => {
 		let title = color + "InteractionCircle";
-		createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
-		createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
+		baseIdleDamageAnim(anims, title);
 	});
 
 	executeOverAllCampsAndSizes((color, colorIndex, sizeName, sizeNameIndex) => {
 		let title = color + sizeName + "Circle";
-		createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
-		createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
+		baseIdleDamageAnim(anims, title);
 	});
-
-	let title = "bossCircle";
-	createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
-	createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
-
-	title = "kingCircle";
-	createNonRepeatingAnim(anims, "idle-" + title, title, 1, 1, 10);
-	createNonRepeatingAnim(anims, "damage-" + title, title, 1, 2, 10);
 }
