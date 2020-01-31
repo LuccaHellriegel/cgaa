@@ -5,7 +5,10 @@ import { walkableSymbol, shooterSymbol } from "../globals/globalSymbols";
 import { Enemies } from "../../enemies/unit/Enemies";
 import { ZeroOneMap } from "../types";
 import { AreaConfig } from "../interfaces";
-import { mapToNotAreaSpawnableDict } from "./spawn";
+import { mapToSpawnableDict } from "./spawn";
+
+//TODO: randomize starting camp
+//TODO: fix CampState UI so that it also shows the first Camps attack
 
 //TODO: this is actually just a NotAreaSpawnObj
 export class ShooterSpawnObj extends EnemySpawnObj {
@@ -20,6 +23,6 @@ export class ShooterSpawnObj extends EnemySpawnObj {
 	}
 
 	static createShooterSpawnObj(map: ZeroOneMap, areaConfigs: AreaConfig[], enemies: Enemies): ShooterSpawnObj {
-		return new ShooterSpawnObj(mapToNotAreaSpawnableDict(map, areaConfigs), enemies);
+		return new ShooterSpawnObj(mapToSpawnableDict(map), enemies);
 	}
 }

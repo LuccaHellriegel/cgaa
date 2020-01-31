@@ -25,34 +25,13 @@ export function mapToAreaSpawnableDict(map: ZeroOneMap, areaConfig: AreaConfig) 
 	return dict;
 }
 
-function isInArea(column, row, areaConfig: AreaConfig) {
-	let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
-	let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
-	let relativeAreaTopLeftY = realCoordinateToRelative(areaConfig.topLeftY);
-	let relativeAreaHeight = areaConfig.wallBase.sizeOfYAxis;
-	return (
-		column < relativeAreaTopLeftX + relativeAreaWidth &&
-		column >= relativeAreaTopLeftX &&
-		row < relativeAreaTopLeftY + relativeAreaHeight &&
-		row >= relativeAreaTopLeftY
-	);
-}
-
-export function mapToNotAreaSpawnableDict(map: ZeroOneMap, areaConfigs: AreaConfig[]) {
+export function mapToSpawnableDict(map: ZeroOneMap) {
 	let dict = {};
 
 	for (let row = 0; row < map.length; row++) {
 		for (let column = 0; column < map[0].length; column++) {
 			let isWalkable = map[row][column] === walkableSymbol;
-			let inArea = false;
-			for (let index = 0; index < areaConfigs.length; index++) {
-				const areaConfig = areaConfigs[index];
-				if (isInArea(column, row, areaConfig)) {
-					inArea = true;
-					break;
-				}
-			}
-			if (!inArea && isWalkable) dict[constructXYIDfromColumnRow(column, row)] = walkableSymbol;
+			if (isWalkable) dict[constructXYIDfromColumnRow(column, row)] = walkableSymbol;
 		}
 	}
 	return dict;
