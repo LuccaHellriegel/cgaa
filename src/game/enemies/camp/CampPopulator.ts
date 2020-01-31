@@ -14,6 +14,10 @@ export class CampPopulator {
 		this.startWave();
 	}
 
+	start() {
+		this.startWave();
+	}
+
 	private startWave() {
 		if (this.buildings.areDestroyed()) {
 			this.enemyPool.destroy();

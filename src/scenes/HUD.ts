@@ -36,6 +36,8 @@ export class HUD extends Phaser.Scene {
 		// 	this
 		// );
 
+		//TODO: make interaction for opening boss camp -> so you can prepare for Boss Waves
+		//TODO: make a Game Over screen
 		//TODO: make a Celebration scene
 		this.ourGame.events.on(
 			"win",

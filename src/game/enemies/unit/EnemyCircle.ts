@@ -46,4 +46,13 @@ export class EnemyCircle extends Circle implements damageable {
 		this.healthbar.move(this.x, this.y);
 		this.stateHandler.execute();
 	}
+
+	//TODO: not "EnemyCircle" anymore, maybe Circle with State and Health?
+	needsHealing() {
+		return this.healthbar.value !== this.healthbar.defaultValue;
+	}
+
+	heal(amount: number) {
+		this.healthbar.increase(amount);
+	}
 }

@@ -17,6 +17,7 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 export class Camp {
 	buildings: Buildings;
 	interactionUnit: InteractionCircle;
+	private enemyConfig: EnemyConfig;
 
 	constructor(
 		private config: CampConfig,
@@ -24,6 +25,17 @@ export class Camp {
 		private paths: Paths,
 		private membership: Membership
 	) {
+		this.enemyConfig = {
+			scene: this.config.staticConfig.scene,
+			color: this.config.color,
+			size: "Big",
+			x: 100,
+			y: 100,
+			weaponType: "rand",
+			physicsGroup: this.config.enemyPhysicGroup,
+			weaponGroup: this.config.weaponPhysicGroup
+		};
+
 		this.spawnBuildings();
 		this.populateCamp();
 		this.addMemberships();
@@ -52,32 +64,27 @@ export class Camp {
 	}
 
 	private populateCamp() {
-		let enemyConfig: EnemyConfig = {
-			scene: this.config.staticConfig.scene,
-			color: this.config.color,
-			size: "Big",
-			x: 100,
-			y: 100,
-			weaponType: "rand",
-			physicsGroup: this.config.enemyPhysicGroup,
-			weaponGroup: this.config.weaponPhysicGroup
-		};
-
-		let enemyPool = new EnemyPool(this.config.staticConfig.scene, 4, campGroupComposition, enemyConfig, this.enemies);
+		let enemyPool = new EnemyPool(
+			this.config.staticConfig.scene,
+			4,
+			campGroupComposition,
+			this.enemyConfig,
+			this.enemies
+		);
 		new CampPopulator(
 			this.config.staticConfig.scene,
 			enemyPool,
 			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
 			this.buildings
 		);
-		this.createInteractionUnit(this.config, enemyConfig, this.enemies);
+		this.createInteractionUnit(this.config, this.enemies);
 	}
 
-	private createInteractionUnit(config: CampConfig, enemyConfig: EnemyConfig, enemies: Enemies) {
+	private createInteractionUnit(config: CampConfig, enemies: Enemies) {
 		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
-		enemyConfig.x = x;
-		enemyConfig.y = y;
-		this.interactionUnit = EnemyFactory.createInteractionCircle(enemyConfig, enemies);
+		this.enemyConfig.x = x;
+		this.enemyConfig.y = y;
+		this.interactionUnit = EnemyFactory.createInteractionCircle(this.enemyConfig, enemies);
 	}
 
 	private addMemberships() {

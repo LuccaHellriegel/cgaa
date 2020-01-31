@@ -7,6 +7,10 @@ export class BossCampPopulator {
 		this.startWave();
 	}
 
+	start() {
+		this.startWave();
+	}
+
 	private startWave() {
 		//TODO: if king destroyed stop (or maybe not necessary because its Game End)
 

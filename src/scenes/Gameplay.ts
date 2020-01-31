@@ -31,7 +31,9 @@ import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
-import { BossCamp } from "../game/enemies/boss/BossCamp";
+import { BossCamp } from "../game/enemies/Camp";
+import { PlayerFriends } from "../game/player/unit/PlayerFriends";
+import { areaToRealMiddlePoint } from "../game/base/position";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -57,6 +59,7 @@ export class Gameplay extends Phaser.Scene {
 		}, {});
 		//TODO: this is just so that collision works
 		this.cgaa.camps["boss"] = { dontAttackList: [] };
+		this.cgaa.camps["blue"] = { dontAttackList: [] };
 	}
 
 	private initPhysics() {
@@ -130,6 +133,15 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.physicsGroups.player,
 			this.cgaa.physicsGroups.playerWeapon
 		);
+
+		new PlayerFriends(
+			this,
+			this.cgaa.physicsGroups.player,
+			this.cgaa.physicsGroups.playerWeapon,
+			this.cgaa.enemies,
+			areaToRealMiddlePoint(this.cgaa.playerAreaConfig)
+		);
+
 		this.cameras.main.startFollow(this.cgaa.player);
 	}
 
