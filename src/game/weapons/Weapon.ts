@@ -23,7 +23,6 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		public ownerSize: number
 	) {
 		super({ scene, x, y, texture, physicsGroup: weaponGroup });
-		this.setCollideWorldBounds(false);
 		this.alreadyAttacked = [];
 		this.attacking = false;
 		this.setupAnimEvents();

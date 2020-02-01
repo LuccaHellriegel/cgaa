@@ -17,7 +17,6 @@ export class Circle extends SpriteWithAnimEvents {
 		this.setCircle(config.radius);
 		this.setupAnimEvents();
 		this.weapon = config.weapon;
-		this.setCollideWorldBounds(true);
 	}
 
 	attack() {
