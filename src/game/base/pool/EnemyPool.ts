@@ -11,7 +11,7 @@ export interface CirclePhysics {
 	weaponGroup: Phaser.Physics.Arcade.Group;
 }
 
-//TODO: refactor to Pool
+//TODO: refactor to Pool -> Pool is not Group based, maybe leave two classes?
 export abstract class GroupPool {
 	activeIDArr: string[] = [];
 	private inactiveIDArr: string[] = [];

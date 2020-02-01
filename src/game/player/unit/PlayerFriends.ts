@@ -1,4 +1,3 @@
-import { FactoryConfigPairs, Instantiator } from "../../enemies/Camp";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemyFactory } from "../../enemies/unit/EnemyFactory";
 import { Enemies } from "../../enemies/unit/Enemies";
@@ -7,6 +6,24 @@ import { gridPartHalfSize } from "../../base/globals/globalSizes";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
+
+interface FactoryConfigPairs {
+	factoryFunc;
+	configs: any[];
+}
+
+class Instantiator {
+	constructor(private pair: FactoryConfigPairs) {}
+	instantiate() {
+		return Instantiator.instantiate(this.pair);
+	}
+
+	static instantiate(pair: FactoryConfigPairs) {
+		return pair.configs.map(config => {
+			return pair.factoryFunc(config);
+		});
+	}
+}
 export class PlayerFriends extends Instantiator {
 	constructor(scene: Gameplay, physicsGroup, weaponGroup, enemies: Enemies, realMiddlePos: Point) {
 		let baseConfig = {

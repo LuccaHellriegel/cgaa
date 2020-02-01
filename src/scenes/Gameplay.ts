@@ -31,7 +31,7 @@ import { TowerSpawnObj } from "../game/base/spawn/TowerSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
-import { BossCamp } from "../game/enemies/Camp";
+import { BossCamp } from "../game/enemies/boss/BossCamp";
 import { PlayerFriends } from "../game/player/unit/PlayerFriends";
 import { areaToRealMiddlePoint } from "../game/base/position";
 import { GameMap } from "../game/base/GameMap";
