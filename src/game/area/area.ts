@@ -1,11 +1,11 @@
 import { StaticConfig, ZeroOneMap, WallBase } from "../base/types";
 import { createWalls } from "./wall/wall";
 import { calculateUnifiedAreasMap, createEmptyMap } from "./map";
-import { mainBorderwall } from "./wall/borderwall";
 import { areaSize, layout } from "../base/globals/globalConfig";
 import { relativeCoordinateToReal } from "../base/position";
 import { exitSymbol } from "../base/globals/globalSymbols";
 import { AreaConfig } from "../base/interfaces";
+import { gridPartHalfSize } from "../base/globals/globalSizes";
 
 const exitWidth = 3;
 
@@ -110,7 +110,29 @@ export function createAreas(configs: AreaConfig[]) {
 		maps.push(createArea(config));
 	});
 
-	let middlePos = mainBorderwall(configs[0].wallBase.staticConfig);
+	//TODO: extract numbers to global config
+	let wallBase: WallBase = {
+		staticConfig: configs[0].wallBase.staticConfig,
+		sizeOfXAxis: 2 + 5 * areaSize,
+		sizeOfYAxis: 2 + 3 * areaSize
+	};
+
+	let size = {
+		width: wallBase.sizeOfXAxis * 2 * gridPartHalfSize,
+		height: wallBase.sizeOfYAxis * 2 * gridPartHalfSize
+	};
+	configs[0].wallBase.staticConfig.scene.physics.world.setBounds(
+		0,
+		0,
+		size.width - 4 * gridPartHalfSize,
+		size.height - 4 * gridPartHalfSize
+	);
+
+	//TODO find out why this middlePos is so wrong (clarify math)
+	let middlePos = {
+		column: Math.floor((wallBase.sizeOfXAxis - 16) / 2),
+		row: Math.floor((wallBase.sizeOfYAxis - 4) / 2)
+	};
 	return { unifiedMap: calculateUnifiedAreasMap(maps), middlePos };
 }
 
