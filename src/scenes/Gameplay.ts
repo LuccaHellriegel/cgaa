@@ -27,13 +27,14 @@ import { ShooterPool } from "../game/player/unit/shooter/ShooterPool";
 import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
-import { ShooterSpawnObj } from "../game/base/spawn/ShooterSpawnObj";
+import { TowerSpawnObj } from "../game/base/spawn/TowerSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
 import { BossCamp } from "../game/enemies/Camp";
 import { PlayerFriends } from "../game/player/unit/PlayerFriends";
 import { areaToRealMiddlePoint } from "../game/base/position";
+import { GameMap } from "../game/base/GameMap";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -160,16 +161,15 @@ export class Gameplay extends Phaser.Scene {
 		);
 		shooterPool.init();
 
-		this.cgaa.shooterSpawner = Spawner.createShooterSpawner(
-			this,
-			shooterPool,
-			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
-		);
+		let gameMap = new GameMap(this.cgaa.unifiedMap);
+		let towerSpawnObj = new TowerSpawnObj(gameMap.toSpawnableDict(), this.cgaa.enemies);
+
+		this.cgaa.shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
 
 		this.cgaa.healerSpawner = Spawner.createHealerSpawner(
 			this,
 			new HealerPool(this, 15, this.cgaa.physicsGroups.shooter, this.cgaa.physicsGroups.healer),
-			ShooterSpawnObj.createShooterSpawnObj(this.cgaa.unifiedMap, this.cgaa.areaConfigs, this.cgaa.enemies)
+			towerSpawnObj
 		);
 		//TODO: init healerpool?
 	}

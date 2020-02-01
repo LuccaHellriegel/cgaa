@@ -39,6 +39,7 @@ function createBorderWall(config): RelativePosition {
 
 	//Border Wall has no physics because we use WorldBounds for collision
 	let size = calculateBorderWallSize(config);
+	//TODO: remove borderwall and collision with it completly, this still needs to be set
 	config.wallBase.staticConfig.scene.physics.world.setBounds(
 		0,
 		0,

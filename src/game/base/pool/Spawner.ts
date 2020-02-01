@@ -6,7 +6,7 @@ import { spendSouls } from "../events/player";
 import { ShooterPool } from "../../player/unit/shooter/ShooterPool";
 import { Pool } from "./Pool";
 import { shooterCost } from "../globals/globalConfig";
-import { ShooterSpawnObj } from "../spawn/ShooterSpawnObj";
+import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { HealerPool } from "../../player/unit/healer/HealerPool";
 
 export class Spawner implements enableable {
@@ -54,24 +54,18 @@ export class Spawner implements enableable {
 		}
 	}
 
-	static createShooterSpawner(scene: Gameplay, shooterPool: ShooterPool, shooterSpawnObj: ShooterSpawnObj) {
+	static createShooterSpawner(scene: Gameplay, shooterPool: ShooterPool, towerSpawnObj: TowerSpawnObj) {
 		return new Spawner(
 			scene,
 			shooterPool,
-			shooterSpawnObj,
+			towerSpawnObj,
 			new Enabler(scene, "can-build", "can-not-build"),
 			shooterCost
 		);
 	}
 
 	//TODO: cost
-	static createHealerSpawner(scene: Gameplay, healerPool: HealerPool, shooterSpawnObj: ShooterSpawnObj) {
-		return new Spawner(
-			scene,
-			healerPool,
-			shooterSpawnObj,
-			new Enabler(scene, "can-build", "can-not-build"),
-			shooterCost
-		);
+	static createHealerSpawner(scene: Gameplay, healerPool: HealerPool, towerSpawnObj: TowerSpawnObj) {
+		return new Spawner(scene, healerPool, towerSpawnObj, new Enabler(scene, "can-build", "can-not-build"), shooterCost);
 	}
 }
