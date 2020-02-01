@@ -32,17 +32,10 @@ export class BuildingFactory {
 				this.scene,
 				1,
 				buildingGroupComposition,
-				{
-					scene: this.scene,
-					color: this.color,
-					size: "Big",
-					x: 100,
-					y: 100,
-					weaponType: "rand",
-					physicsGroup: this.spawnConfig.enemyPhysicGroup,
-					weaponGroup: this.spawnConfig.weaponPhysicGroup
-				},
-				this.enemies
+				this.enemies,
+				this.color,
+				this.spawnConfig.enemyPhysicGroup,
+				this.spawnConfig.weaponPhysicGroup
 			),
 			EnemySpawnObj.createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
 			this.buildings,

@@ -225,17 +225,15 @@ class EnemyCamp extends Camp {
 		//TODO: use buildings from Instantiator -> make param
 		let buildings = new Buildings(config.staticConfig.scene, spawnPositions, config.color);
 
-		let enemyConfig = {
-			scene: config.staticConfig.scene,
-			color: config.color,
-			size: "Big",
-			x: 100,
-			y: 100,
-			weaponType: "rand",
-			physicsGroup: config.enemyPhysicGroup,
-			weaponGroup: config.weaponPhysicGroup
-		};
-		let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemyConfig, enemies);
+		let enemyPool = new EnemyPool(
+			config.staticConfig.scene,
+			4,
+			campGroupComposition,
+			enemies,
+			config.color,
+			config.enemyPhysicGroup,
+			config.weaponPhysicGroup
+		);
 		let populator = new CampPopulator(
 			config.staticConfig.scene,
 			enemyPool,

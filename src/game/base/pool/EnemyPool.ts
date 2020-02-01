@@ -6,19 +6,37 @@ import { Enemies } from "../../enemies/unit/Enemies";
 
 type GroupComposition = { weaponType: string; size: string }[];
 
+interface CirclePhysics {
+	physicsGroup: Phaser.Physics.Arcade.Group;
+	weaponGroup: Phaser.Physics.Arcade.Group;
+}
+
 //TODO: refactor to Pool
 export class EnemyPool {
 	activeIDArr: string[] = [];
 	private inactiveIDArr: string[] = [];
 	private isNeeded = true;
+	private enemyConfig: EnemyConfig;
 
 	constructor(
 		private scene: Gameplay,
 		private numberOfGroups: number,
 		private groupComposition: GroupComposition,
-		private enemyConfig: EnemyConfig,
-		private enemies: Enemies
+		private enemies: Enemies,
+		color,
+		enemyPhysicGroup,
+		weaponPhysicGroup
 	) {
+		this.enemyConfig = {
+			scene: scene,
+			color: color,
+			size: "Big",
+			x: 100,
+			y: 100,
+			weaponType: "rand",
+			physicsGroup: enemyPhysicGroup,
+			weaponGroup: weaponPhysicGroup
+		};
 		this.initPool();
 		this.setupEvents();
 	}

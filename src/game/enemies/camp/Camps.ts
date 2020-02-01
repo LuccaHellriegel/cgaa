@@ -33,7 +33,7 @@ export class Camps {
 	) {
 		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			// this.camps.push(new EnemyCamp(configs[index], enemies, paths, membership));
+			//TODO: this.camps.push(new EnemyCamp(configs[index], enemies, paths, membership));
 			this.camps.push(new Camp(configs[index], enemies, paths, membership));
 		}
 	}
