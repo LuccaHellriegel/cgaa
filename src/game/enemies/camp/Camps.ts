@@ -24,7 +24,7 @@ export class Camps {
 	private activeCamps = [];
 
 	constructor(
-		scene: Gameplay,
+		private scene: Gameplay,
 		map: ZeroOneMap,
 		areaConfigs: AreaConfig[],
 		physicGroups: PhysicGroups,
@@ -36,6 +36,7 @@ export class Camps {
 		for (let index = 0, length = configs.length; index < length; index++) {
 			this.camps.push(new Camp(configs[index], enemies, paths, membership));
 		}
+		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}
 	private constructCampConfigs(
 		scene: Gameplay,
@@ -82,7 +83,7 @@ export class Camps {
 		}
 
 		if (!this.anyHostileCampsLeft()) {
-			this.camps[0].buildings.scene.events.emit("camps-conquered");
+			this.scene.events.emit("camps-conquered");
 		}
 	}
 
@@ -99,7 +100,8 @@ export class Camps {
 		this.updateActiveCamps();
 
 		if (this.activeCamps.length === 0) {
-			this.camps[0].buildings.scene.events.emit("camps-conquered");
+			//TODO: waiting for next CampState tick is too long
+			this.scene.events.emit("camps-conquered");
 			return false;
 		}
 

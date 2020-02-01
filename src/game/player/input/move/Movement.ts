@@ -1,6 +1,8 @@
 import { Player } from "../../unit/Player";
 import { WASD } from "./WASD";
 
+const playerVelocity = 500;
+
 export class Movement {
 	constructor(private wasd: WASD, private player: Player) {}
 
@@ -8,19 +10,19 @@ export class Movement {
 		let { left, right, up, down } = this.wasd.getState();
 
 		if (left) {
-			this.player.setVelocityX(-180);
+			this.player.setVelocityX(-playerVelocity);
 		}
 
 		if (right) {
-			this.player.setVelocityX(180);
+			this.player.setVelocityX(playerVelocity);
 		}
 
 		if (up) {
-			this.player.setVelocityY(-180);
+			this.player.setVelocityY(-playerVelocity);
 		}
 
 		if (down) {
-			this.player.setVelocityY(180);
+			this.player.setVelocityY(playerVelocity);
 		}
 
 		let noButtonDown = !left && !right && !up && !down;

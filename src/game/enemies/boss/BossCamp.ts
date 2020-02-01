@@ -44,7 +44,10 @@ export class BossCamp {
 					y: point.y
 				};
 			})
-			.forEach(config => new BossBarrier(config.scene, config.x, config.y, config.physicsGroup));
+			.forEach(
+				barrierConfig =>
+					new BossBarrier(barrierConfig.scene, barrierConfig.x, barrierConfig.y, barrierConfig.physicsGroup)
+			);
 
 		let kingConfig = {
 			size: "",
