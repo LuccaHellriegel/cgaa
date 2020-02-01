@@ -9,7 +9,7 @@ import { Gameplay } from "../../../../scenes/Gameplay";
 export class Buildings {
 	buildings: Building[] = [];
 
-	constructor(private scene: Gameplay, private spawnPositions: number[][], public color: string) {}
+	constructor(public scene: Gameplay, private spawnPositions: number[][], public color: string) {}
 
 	spawnBuildings(buildingFactory: BuildingFactory) {
 		for (let index = 0, length = this.spawnPositions.length; index < length; index++) {

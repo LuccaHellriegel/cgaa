@@ -18,6 +18,8 @@ export class Camp {
 	buildings: Buildings;
 	interactionUnit: InteractionCircle;
 	private factory: EnemyFactory;
+	hostile = true;
+	id: string;
 
 	constructor(
 		private config: CampConfig,
@@ -25,6 +27,8 @@ export class Camp {
 		private paths: Paths,
 		private membership: Membership
 	) {
+		this.id = this.config.color;
+
 		this.factory = new EnemyFactory(
 			this.config.staticConfig.scene,
 			this.config.color,
@@ -83,5 +87,13 @@ export class Camp {
 		//TODO: bug, even if interactionUnit lives, if buildings are destroyed, camp is destroyed
 		this.membership.add(this.interactionUnit, "interaction", "essential");
 		this.membership.addAll([...this.buildings.buildings], "essential");
+	}
+
+	isDestroyed() {
+		return this.buildings.areDestroyed();
+	}
+
+	isHostile() {
+		return this.hostile;
 	}
 }

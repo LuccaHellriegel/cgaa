@@ -8,7 +8,7 @@ import { Buildings } from "./building/Buildings";
 import { Paths } from "../path/Paths";
 import { Membership } from "../../base/classes/Membership";
 import { PhysicGroups } from "../../collision/Collision";
-//import { EnemyCamp } from "../Camp";
+import { removeEle } from "../../base/utils";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -21,6 +21,7 @@ export interface CampConfig {
 
 export class Camps {
 	private camps: Camp[] = [];
+	private activeCamps = [];
 
 	constructor(
 		scene: Gameplay,
@@ -33,7 +34,6 @@ export class Camps {
 	) {
 		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			//TODO: this.camps.push(new EnemyCamp(configs[index], enemies, paths, membership));
 			this.camps.push(new Camp(configs[index], enemies, paths, membership));
 		}
 	}
@@ -67,5 +67,49 @@ export class Camps {
 
 	getBuildingInfos(): BuildingInfo[] {
 		return this.camps.map(camp => camp.buildings.getBuildingInfo());
+	}
+
+	anyHostileCampsLeft() {
+		return this.camps.reduce((prev, cur) => prev || cur.isHostile(), false);
+	}
+
+	setNonHostile(campID) {
+		for (const camp of this.camps) {
+			if (camp.id === campID) {
+				camp.hostile = false;
+				break;
+			}
+		}
+
+		if (!this.anyHostileCampsLeft()) {
+			this.camps[0].buildings.scene.events.emit("camps-conquered");
+		}
+	}
+
+	private updateActiveCamps() {
+		for (let index = 0; index < this.activeCamps.length; index++) {
+			if (this.camps[index].buildings.areDestroyed()) {
+				removeEle(this.camps[index], this.camps);
+				removeEle(this.activeCamps[index], this.activeCamps);
+			}
+		}
+	}
+
+	getNextActiveCampColor() {
+		this.updateActiveCamps();
+
+		if (this.activeCamps.length === 0) {
+			this.camps[0].buildings.scene.events.emit("camps-conquered");
+			return false;
+		}
+
+		let nextColor = this.activeCamps.pop();
+		this.activeCamps.unshift(nextColor);
+
+		//TODO: make different implementation, state mutation is dangerous here
+		let nextBuildings = this.camps.pop();
+		this.camps.unshift(nextBuildings);
+
+		return nextColor;
 	}
 }

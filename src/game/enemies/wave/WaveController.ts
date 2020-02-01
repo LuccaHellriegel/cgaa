@@ -1,17 +1,17 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { CampsState } from "../camp/CampsState";
+import { Camps } from "../camp/Camps";
 
 export class WaveController {
 	private activeCampColor: string = "";
 
-	constructor(private scene: Gameplay, private campsState: CampsState) {
+	constructor(private scene: Gameplay, private camps: Camps) {
 		this.spawnWave();
 	}
 
 	private spawnWave() {
 		this.scene.events.emit("end-wave-" + this.activeCampColor);
 
-		this.activeCampColor = this.campsState.getNextActiveCampColor();
+		this.activeCampColor = this.camps.getNextActiveCampColor();
 		if (this.activeCampColor) {
 			this.scene.events.emit("start-wave-" + this.activeCampColor);
 

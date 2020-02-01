@@ -11,7 +11,6 @@ import { Collision } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/input/move/WASD";
 import { WaveController } from "../game/enemies/wave/WaveController";
-import { CampsState } from "../game/enemies/camp/CampsState";
 import { Mouse } from "../game/player/input/move/Mouse";
 import { Enemies } from "../game/enemies/unit/Enemies";
 import { Camps, CampConfig } from "../game/enemies/camp/Camps";
@@ -109,7 +108,6 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initBoss() {
-		//TODO: boss color textures
 		//TODO: fix conifg -> does not need staticConfig just scene
 		//TODO: either physicGroups or physicsGroups
 		//TODO: deactive units as long as not all Camps are destroyed / occupied
@@ -125,7 +123,8 @@ export class Gameplay extends Phaser.Scene {
 			weaponPhysicGroup: this.cgaa.physicsGroups.enemyWeapons["boss"]
 		};
 
-		new BossCamp(bossCampConfig, this.cgaa.enemies, this.cgaa.paths);
+		//TODO: boss path usage -> player camp
+		new BossCamp(bossCampConfig, this.cgaa.enemies);
 	}
 
 	private initPlayerUnitAndColleagues() {
@@ -195,7 +194,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private startWaves() {
-		new WaveController(this, new CampsState(this.cgaa.campsObj.getBuildings()));
+		new WaveController(this, this.cgaa.campsObj);
 	}
 
 	create() {
