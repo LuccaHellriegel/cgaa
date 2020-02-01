@@ -6,7 +6,7 @@ import { EnemyFactory } from "./unit/EnemyFactory";
 import { BossBarrier } from "./boss/BossBarrier";
 import { bigCircleWithChain, numberOfBuildings, campGroupComposition } from "./camp/campConfig";
 import { BossCampPopulator } from "./boss/BossCampPopulator";
-import { BoosPool } from "./boss/BossPool";
+import { BossPool } from "./boss/BossPool";
 import { EnemySpawnObj } from "../base/spawn/EnemySpawnObj";
 import { Point } from "../base/types";
 import { Exits } from "./path/Exits";
@@ -137,18 +137,6 @@ export class BossCamp extends Camp {
 
 		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
 
-		let bossConfig = {
-			scene: config.staticConfig.scene,
-			color: config.color,
-			//TODO: fix color then I can fix this
-			size: "",
-			x: 100,
-			y: 100,
-			weaponType: "chain",
-			physicsGroup: config.enemyPhysicGroup,
-			weaponGroup: config.weaponPhysicGroup
-		};
-
 		super(
 			new BarrierInstantiator(config, [
 				{ x, y },
@@ -158,7 +146,18 @@ export class BossCamp extends Camp {
 			[
 				new BossCampPopulator(
 					config.staticConfig.scene,
-					new BoosPool(config.staticConfig.scene, 4, bossCampGroupComposition, bossConfig, enemies),
+					new BossPool(
+						config.staticConfig.scene,
+						4,
+						bossCampGroupComposition,
+						enemies,
+						new EnemyFactory(
+							config.staticConfig.scene,
+							config.color,
+							{ physicsGroup: config.enemyPhysicGroup, weaponGroup: config.weaponPhysicGroup },
+							enemies
+						)
+					),
 					EnemySpawnObj.createAreaEnemySpawnObj(config.map, config.areaConfig, enemies)
 				)
 			],
@@ -225,15 +224,16 @@ class EnemyCamp extends Camp {
 		//TODO: use buildings from Instantiator -> make param
 		let buildings = new Buildings(config.staticConfig.scene, spawnPositions, config.color);
 
-		let enemyPool = new EnemyPool(
+		let factory = new EnemyFactory(
 			config.staticConfig.scene,
-			4,
-			campGroupComposition,
-			enemies,
 			config.color,
-			config.enemyPhysicGroup,
-			config.weaponPhysicGroup
+			{
+				physicsGroup: config.enemyPhysicGroup,
+				weaponGroup: config.weaponPhysicGroup
+			},
+			enemies
 		);
+		let enemyPool = new EnemyPool(config.staticConfig.scene, 4, campGroupComposition, enemies, factory);
 		let populator = new CampPopulator(
 			config.staticConfig.scene,
 			enemyPool,

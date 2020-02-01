@@ -2,7 +2,7 @@ import { BuildingSpawn } from "./building/BuildingSpawn";
 import { Enemies } from "../unit/Enemies";
 import { numberOfBuildings, campGroupComposition } from "./campConfig";
 import { Buildings } from "./building/Buildings";
-import { EnemyConfig, EnemyFactory } from "../unit/EnemyFactory";
+import { EnemyFactory } from "../unit/EnemyFactory";
 import { EnemyPool } from "../../base/pool/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
 import { CampConfig } from "./Camps";
@@ -17,6 +17,7 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 export class Camp {
 	buildings: Buildings;
 	interactionUnit: InteractionCircle;
+	private factory: EnemyFactory;
 
 	constructor(
 		private config: CampConfig,
@@ -24,6 +25,16 @@ export class Camp {
 		private paths: Paths,
 		private membership: Membership
 	) {
+		this.factory = new EnemyFactory(
+			this.config.staticConfig.scene,
+			this.config.color,
+			{
+				physicsGroup: this.config.enemyPhysicGroup,
+				weaponGroup: this.config.weaponPhysicGroup
+			},
+			this.enemies
+		);
+
 		this.spawnBuildings();
 		this.populateCamp();
 		this.addMemberships();
@@ -52,39 +63,19 @@ export class Camp {
 	}
 
 	private populateCamp() {
-		let enemyPool = new EnemyPool(
-			this.config.staticConfig.scene,
-			4,
-			campGroupComposition,
-			this.enemies,
-			this.config.color,
-			this.config.enemyPhysicGroup,
-			this.config.weaponPhysicGroup
-		);
+		let enemyPool = new EnemyPool(this.config.staticConfig.scene, 4, campGroupComposition, this.enemies, this.factory);
 		new CampPopulator(
 			this.config.staticConfig.scene,
 			enemyPool,
 			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
 			this.buildings
 		);
-		this.createInteractionUnit(this.config, this.enemies);
+		this.createInteractionUnit(this.config);
 	}
 
-	private createInteractionUnit(config: CampConfig, enemies: Enemies) {
-		let enemyConfig = {
-			scene: this.config.staticConfig.scene,
-			color: this.config.color,
-			size: "Big",
-			x: 100,
-			y: 100,
-			weaponType: "rand",
-			physicsGroup: this.config.enemyPhysicGroup,
-			weaponGroup: this.config.weaponPhysicGroup
-		};
-		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
-		enemyConfig.x = x;
-		enemyConfig.y = y;
-		this.interactionUnit = EnemyFactory.createInteractionCircle(enemyConfig, enemies);
+	private createInteractionUnit(config: CampConfig) {
+		let circleConfig = { ...Exits.exitToGlobalPoint(config.areaConfig), size: "Big", weaponType: "rand" };
+		this.interactionUnit = this.factory.createInteractionCircle(circleConfig);
 	}
 
 	private addMemberships() {
