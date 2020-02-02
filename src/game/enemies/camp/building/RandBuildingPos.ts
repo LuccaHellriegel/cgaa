@@ -1,7 +1,6 @@
 import { buildingSymbol, walkableSymbol } from "../../../base/globals/globalSymbols";
 import { ZeroOneMap } from "../../../base/types";
 import { Area } from "../../../env/area/Area";
-import { realCoordinateToRelative } from "../../../base/position";
 
 export class RandBuildingPos {
 	positions: number[][] = [];
@@ -96,19 +95,11 @@ export class RandBuildingPos {
 
 	private mapToAreaBuildingSpawnableDict(area: Area) {
 		let dict = {};
-		let relativeAreaTopLeftX = realCoordinateToRelative(area.topLeft.x);
-		let relativeAreaWidth = area.dims.sizeOfXAxis;
-		let relativeAreaTopLeftY = realCoordinateToRelative(area.topLeft.y);
-		let relativeAreaHeight = area.dims.sizeOfYAxis;
 
 		for (let row = 0; row < this.map.length; row++) {
 			for (let column = 0; column < this.map[0].length; column++) {
 				let isWalkable = this.map[row][column] === walkableSymbol;
-				let isInArea =
-					column < relativeAreaTopLeftX + relativeAreaWidth &&
-					column >= relativeAreaTopLeftX &&
-					row < relativeAreaTopLeftY + relativeAreaHeight &&
-					row >= relativeAreaTopLeftY;
+				let isInArea = area.isInside({ row, column });
 				let suitableForBuilding = isWalkable && isInArea && this.hasSpaceForBuilding(column, row);
 				if (suitableForBuilding) dict[column + " " + row] = walkableSymbol;
 			}

@@ -30,7 +30,13 @@ export class BossCamp {
 		factory.createKing(kingConfig);
 
 		config.area.exit.relPositions
-			.map(relPos => relativePositionToPoint(relPos.row, relPos.column))
+			.map(relPos => relativePositionToPoint(relPos.column, relPos.row))
+			.map(point => {
+				return {
+					x: point.x + config.area.topLeft.x - gridPartHalfSize,
+					y: point.y + config.area.topLeft.y - gridPartHalfSize
+				};
+			})
 			.map(point => {
 				return {
 					scene: config.staticConfig.scene,

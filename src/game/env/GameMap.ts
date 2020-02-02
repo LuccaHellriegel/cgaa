@@ -1,7 +1,8 @@
 import { ZeroOneMap } from "../base/types";
 import { walkableSymbol, buildingSymbol } from "../base/globals/globalSymbols";
 import { constructXYIDfromColumnRow } from "../base/id";
-import { EmptyArea, Area } from "./area/Area";
+import { Area } from "./area/Area";
+import { EmptyArea } from "./area/EmptyArea";
 import { RandBuildingPos } from "../enemies/camp/building/RandBuildingPos";
 
 export class GameMap {

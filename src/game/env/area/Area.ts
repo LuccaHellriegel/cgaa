@@ -1,29 +1,14 @@
-import { ZeroOneMap, StaticConfig, Point, RelativePosition } from "../../base/types";
+import { StaticConfig, Point, RelativePosition } from "../../base/types";
 import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { WallSide } from "../wall/WallSide";
 import { Exit } from "./Exit";
 import { realCoordinateToRelative } from "../../base/position";
+import { EmptyArea } from "./EmptyArea";
 
 export interface AreaDimensions {
 	sizeOfXAxis: number;
 	sizeOfYAxis: number;
-}
-
-export class EmptyArea {
-	areaMap: ZeroOneMap = [];
-	constructor(protected dims: AreaDimensions) {
-		this.createEmptyMap();
-	}
-
-	private createEmptyMap() {
-		for (let row = 0; row < this.dims.sizeOfYAxis; row++) {
-			this.areaMap[row] = [];
-			for (let column = 0; column < this.dims.sizeOfXAxis; column++) {
-				this.areaMap[row].push(0);
-			}
-		}
-	}
 }
 
 export class Area extends EmptyArea {
