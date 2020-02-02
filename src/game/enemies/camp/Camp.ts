@@ -38,7 +38,10 @@ export class Camp {
 	}
 
 	private spawnBuildings() {
-		let buildingPositions = new RandBuildingPos(gameMap.toAreaBuildingSpawnableDict(area), numberOfBuildings).positions;
+		let buildingPositions = new RandBuildingPos(
+			this.gameMap.toAreaBuildingSpawnableDict(this.config.area),
+			numberOfBuildings
+		).positions;
 
 		this.buildings = new Buildings(this.config.staticConfig.scene, buildingPositions, this.config.color);
 		this.buildings.spawnBuildings(

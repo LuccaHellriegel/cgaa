@@ -5,7 +5,7 @@ import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
-import { createAreas, constructAreas, removeNonEnemyAreas } from "../game/area/areaFunc";
+import { Areas } from "../game/area/Areas";
 import { StaticConfig } from "../game/base/types";
 import { Collision, PhysicGroups } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
@@ -74,11 +74,8 @@ export class Gameplay extends Phaser.Scene {
 	private initEnvironment() {
 		let areaStaticConfig: StaticConfig = { scene: this, physicsGroup: this.cgaa.physicsGroups.areas };
 		//TODO: use other configs
-		let [areas, playerArea, bossArea] = constructAreas(areaStaticConfig);
-		this.cgaa.areas = areas;
-		this.cgaa.playerArea = playerArea;
-		this.cgaa.bossArea = bossArea;
-		this.cgaa.gameMap = createAreas(this.cgaa.areas);
+		this.cgaa.areas = new Areas(areaStaticConfig);
+		this.cgaa.gameMap = this.cgaa.areas.createGameMap();
 
 		let sizeOfXAxis = 2 + 5 * areaSize;
 		let sizeOfYAxis = 2 + 3 * areaSize;
@@ -90,8 +87,6 @@ export class Gameplay extends Phaser.Scene {
 			column: Math.floor((sizeOfXAxis - 16) / 2),
 			row: Math.floor((sizeOfYAxis - 4) / 2)
 		};
-
-		this.cgaa.areas = removeNonEnemyAreas(areas, playerArea, bossArea);
 	}
 
 	private initFactories() {
@@ -136,7 +131,7 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.campsObj = new Camps(
 			this,
-			this.cgaa.areas,
+			this.cgaa.areas.areas,
 			this.cgaa.physicsGroups,
 			this.cgaa.enemies,
 			this.cgaa.paths,
@@ -150,9 +145,9 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.gameMap.map,
 			new EasyStar.js(),
 			this.cgaa.paths,
-			new Exits(this.cgaa.areas),
+			new Exits(this.cgaa.areas.areas),
 			this.cgaa.middlePos
-		).generatePaths(this.cgaa.campsObj.getBuildingInfos(), this.cgaa.playerArea, this.cgaa.bossArea);
+		).generatePaths(this.cgaa.campsObj.getBuildingInfos(), this.cgaa.areas.playerArea, this.cgaa.areas.bossArea);
 	}
 
 	private initBoss() {
@@ -163,7 +158,7 @@ export class Gameplay extends Phaser.Scene {
 		let bossCampConfig: CampConfig = {
 			//TODO: this is not a color
 			color: "boss",
-			area: this.cgaa.bossArea,
+			area: this.cgaa.areas.bossArea,
 			//Boss camp has no buildings, just static barriers
 			staticConfig: { scene: this, physicsGroup: null }
 		};
@@ -173,7 +168,7 @@ export class Gameplay extends Phaser.Scene {
 			bossCampConfig,
 			this.cgaa.enemies,
 			this.cgaa.factories["boss"],
-			new EnemySpawnObj((this.cgaa.gameMap as GameMap).toAreaSpawnableDict(this.cgaa.bossArea), this.cgaa.enemies)
+			new EnemySpawnObj((this.cgaa.gameMap as GameMap).toAreaSpawnableDict(this.cgaa.areas.bossArea), this.cgaa.enemies)
 		);
 	}
 
@@ -189,7 +184,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.physicsGroups.player,
 			this.cgaa.physicsGroups.playerWeapon,
 			this.cgaa.enemies,
-			areaToRealMiddlePoint(this.cgaa.playerArea)
+			areaToRealMiddlePoint(this.cgaa.areas.playerArea)
 		);
 
 		this.cameras.main.startFollow(this.cgaa.player);
