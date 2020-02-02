@@ -150,8 +150,6 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initBoss() {
-		console.log(this.cgaa.gameMap.map);
-
 		//TODO: fix conifg -> does not need staticConfig just scene
 		//TODO: either physicGroups or physicsGroups
 		//TODO: deactive units as long as not all Camps are destroyed / occupied

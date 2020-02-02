@@ -1,4 +1,4 @@
-import { GroupPool } from "../../base/pool/EnemyPool";
+import { GroupPool } from "../../base/pool/GroupPool";
 
 export class BossPool extends GroupPool {
 	protected createUnit(config) {

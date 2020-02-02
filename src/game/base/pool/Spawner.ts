@@ -5,7 +5,7 @@ import { snapXYToGrid } from "../position";
 import { spendSouls } from "../events/player";
 import { ShooterPool } from "../../player/unit/shooter/ShooterPool";
 import { Pool } from "./Pool";
-import { shooterCost } from "../globals/globalConfig";
+import { shooterCost, healerCost } from "../globals/globalConfig";
 import { TowerSpawnObj } from "../spawnObj/TowerSpawnObj";
 import { HealerPool } from "../../player/unit/healer/HealerPool";
 
@@ -32,7 +32,6 @@ export class Spawner implements enableable {
 
 	spawn(selectorRect: SelectorRect) {
 		if (!this.canSpawn) {
-			//TODO: make anim general
 			selectorRect.anims.play("invalid-shooter-pos");
 			return;
 		}
@@ -64,8 +63,7 @@ export class Spawner implements enableable {
 		);
 	}
 
-	//TODO: cost
 	static createHealerSpawner(scene: Gameplay, healerPool: HealerPool, towerSpawnObj: TowerSpawnObj) {
-		return new Spawner(scene, healerPool, towerSpawnObj, new Enabler(scene, "can-build", "can-not-build"), shooterCost);
+		return new Spawner(scene, healerPool, towerSpawnObj, new Enabler(scene, "can-build", "can-not-build"), healerCost);
 	}
 }

@@ -2,7 +2,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { StaticConfig } from "../../base/types";
 import { BuildingInfo } from "../../base/interfaces";
 import { Enemies } from "../unit/Enemies";
-import { getRandomCampColorOrder } from "../../base/globals/global";
+import { getRandomCampColorOrder, getRandomOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
 import { Buildings } from "./building/Buildings";
 import { Paths } from "../path/Paths";
@@ -11,7 +11,7 @@ import { PhysicGroups } from "../../collision/Collision";
 import { removeEle } from "../../base/utils";
 import { GameMap } from "../../env/GameMap";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
-import { Area } from "../../area/Area";
+import { Area } from "../../env/area/Area";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -47,6 +47,8 @@ export class Camps {
 				)
 			);
 		}
+		this.camps = getRandomOrder(this.camps);
+		//Active camps relies on order of camps
 		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}
 	private constructCampConfigs(scene: Gameplay, areas: Area[], physicGroups: PhysicGroups): CampConfig[] {
