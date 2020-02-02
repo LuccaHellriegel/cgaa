@@ -10,10 +10,10 @@ import { Membership } from "../../base/classes/Membership";
 import { PhysicGroups } from "../../collision/Collision";
 import { removeEle } from "../../base/utils";
 import { GameMap } from "../../base/GameMap";
+import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
-	map: ZeroOneMap;
 	areaConfig: AreaConfig;
 	color: string;
 	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
@@ -26,7 +26,6 @@ export class Camps {
 
 	constructor(
 		private scene: Gameplay,
-		map: ZeroOneMap,
 		areaConfigs: AreaConfig[],
 		physicGroups: PhysicGroups,
 		enemies: Enemies,
@@ -35,18 +34,23 @@ export class Camps {
 		factories,
 		gameMap: GameMap
 	) {
-		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
+		let configs = this.constructCampConfigs(scene, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			this.camps.push(new Camp(configs[index], enemies, paths, membership, factories[configs[index].color], gameMap));
+			this.camps.push(
+				new Camp(
+					configs[index],
+					enemies,
+					paths,
+					membership,
+					factories[configs[index].color],
+					gameMap,
+					new EnemySpawnObj(gameMap.toAreaSpawnableDict(configs[index].areaConfig), enemies)
+				)
+			);
 		}
 		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}
-	private constructCampConfigs(
-		scene: Gameplay,
-		map: ZeroOneMap,
-		areaConfigs: AreaConfig[],
-		physicGroups: PhysicGroups
-	): CampConfig[] {
+	private constructCampConfigs(scene: Gameplay, areaConfigs: AreaConfig[], physicGroups: PhysicGroups): CampConfig[] {
 		let campConfigs: CampConfig[] = [];
 		let colors = getRandomCampColorOrder();
 		for (let index = 0, length = colors.length; index < length; index++) {
@@ -54,7 +58,6 @@ export class Camps {
 			let areaConfig = areaConfigs[index];
 			let campConfig: CampConfig = {
 				color,
-				map,
 				areaConfig,
 				staticConfig: { scene, physicsGroup: physicGroups.buildings[color] },
 				enemyPhysicGroup: physicGroups.enemies[color],

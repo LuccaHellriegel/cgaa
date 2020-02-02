@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { BossPool } from "./BossPool";
 
 export class BossCampPopulator {

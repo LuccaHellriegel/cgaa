@@ -7,7 +7,7 @@ import { EnemyPool } from "../../../base/pool/EnemyPool";
 import { buildingGroupComposition } from "../../wave/waveConfig";
 import { realCoordinateToRelative } from "../../../base/position";
 import { Paths } from "../../path/Paths";
-import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../../base/spawnObj/EnemySpawnObj";
 import { CircleFactory } from "../../unit/CircleFactory";
 
 export class BuildingFactory {

@@ -1,9 +1,6 @@
-import { constructXYID } from "../id";
+import { constructXYID, constructXYIDfromColumnRow } from "../id";
 import { enemySmybol, walkableSymbol } from "../globals/globalSymbols";
 import { Enemies } from "../../enemies/unit/Enemies";
-import { ZeroOneMap } from "../types";
-import { AreaConfig } from "../interfaces";
-import { mapToAreaSpawnableDict, createBuildingSpawnableDict } from "./spawn";
 
 export class EnemySpawnObj {
 	public relativeObj;
@@ -45,11 +42,24 @@ export class EnemySpawnObj {
 		return [parseInt(arr[0]), parseInt(arr[1])];
 	}
 
-	static createAreaEnemySpawnObj(map: ZeroOneMap, areaConfig: AreaConfig, enemies: Enemies): EnemySpawnObj {
-		return new EnemySpawnObj(mapToAreaSpawnableDict(map, areaConfig), enemies);
+	static createBuildingSpawnableDict(column, row) {
+		let dict = {};
+		let rows = [row - 1, row + 1];
+		for (let index = 0, length = rows.length; index < length; index++) {
+			dict[constructXYIDfromColumnRow(column, rows[index])] = walkableSymbol;
+			dict[constructXYIDfromColumnRow(column + 1, rows[index])] = walkableSymbol;
+			dict[constructXYIDfromColumnRow(column + 2, rows[index])] = walkableSymbol;
+			dict[constructXYIDfromColumnRow(column - 1, rows[index])] = walkableSymbol;
+			dict[constructXYIDfromColumnRow(column - 2, rows[index])] = walkableSymbol;
+		}
+		dict[constructXYIDfromColumnRow(column + 2, row)] = walkableSymbol;
+		dict[constructXYIDfromColumnRow(column - 2, row)] = walkableSymbol;
+
+		return dict;
 	}
 
+	//Assumes that all pos around building are fair game
 	static createBuildingEnemySpawnObj(column, row, enemies: Enemies): EnemySpawnObj {
-		return new EnemySpawnObj(createBuildingSpawnableDict(column, row), enemies);
+		return new EnemySpawnObj(this.createBuildingSpawnableDict(column, row), enemies);
 	}
 }

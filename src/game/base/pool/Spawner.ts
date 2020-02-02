@@ -6,7 +6,7 @@ import { spendSouls } from "../events/player";
 import { ShooterPool } from "../../player/unit/shooter/ShooterPool";
 import { Pool } from "./Pool";
 import { shooterCost } from "../globals/globalConfig";
-import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
+import { TowerSpawnObj } from "../spawnObj/TowerSpawnObj";
 import { HealerPool } from "../../player/unit/healer/HealerPool";
 
 export class Spawner implements enableable {

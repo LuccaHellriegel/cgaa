@@ -6,19 +6,19 @@ import { BossBarrier } from "./BossBarrier";
 import { bigCircleWithChain } from "../camp/campConfig";
 import { BossCampPopulator } from "./BossCampPopulator";
 import { BossPool } from "./BossPool";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { Exits } from "../path/Exits";
 
 export class BossCamp {
 	protected infra: any[];
 	protected specialUnits: any[];
 
-	constructor(config: CampConfig, enemies: Enemies, factory: CircleFactory) {
+	constructor(config: CampConfig, enemies: Enemies, factory: CircleFactory, enemySpawnObj: EnemySpawnObj) {
 		let bossCampGroupComposition = [bigCircleWithChain, bigCircleWithChain, bigCircleWithChain, bigCircleWithChain];
 		new BossCampPopulator(
 			config.staticConfig.scene,
 			new BossPool(config.staticConfig.scene, 4, bossCampGroupComposition, enemies, factory),
-			EnemySpawnObj.createAreaEnemySpawnObj(config.map, config.areaConfig, enemies)
+			enemySpawnObj
 		).start();
 
 		let kingConfig = {

@@ -26,7 +26,7 @@ import { ShooterPool } from "../game/player/unit/shooter/ShooterPool";
 import { BuildModus } from "../game/player/modi/build/BuildModus";
 import { ElementCollection } from "../game/base/classes/ElementCollection";
 import { Membership } from "../game/base/classes/Membership";
-import { TowerSpawnObj } from "../game/base/spawn/TowerSpawnObj";
+import { TowerSpawnObj } from "../game/base/spawnObj/TowerSpawnObj";
 import { Spawner } from "../game/base/pool/Spawner";
 import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
@@ -35,6 +35,7 @@ import { PlayerFriends } from "../game/player/unit/PlayerFriends";
 import { areaToRealMiddlePoint } from "../game/base/position";
 import { GameMap } from "../game/base/GameMap";
 import { CircleFactory } from "../game/enemies/unit/CircleFactory";
+import { EnemySpawnObj } from "../game/base/spawnObj/EnemySpawnObj";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -127,7 +128,6 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaa.campsObj = new Camps(
 			this,
-			this.cgaa.unifiedMap,
 			this.cgaa.areaConfigs,
 			this.cgaa.physicsGroups,
 			this.cgaa.enemies,
@@ -155,7 +155,6 @@ export class Gameplay extends Phaser.Scene {
 		let bossCampConfig: CampConfig = {
 			//TODO: this is not a color
 			color: "boss",
-			map: this.cgaa.unifiedMap,
 			areaConfig: this.cgaa.bossAreaConfig,
 			staticConfig: { scene: this, physicsGroup: null },
 			//TODO: physicGroups for boss
@@ -164,7 +163,12 @@ export class Gameplay extends Phaser.Scene {
 		};
 
 		//TODO: boss path usage -> player camp
-		new BossCamp(bossCampConfig, this.cgaa.enemies, this.cgaa.factories["boss"]);
+		new BossCamp(
+			bossCampConfig,
+			this.cgaa.enemies,
+			this.cgaa.factories["boss"],
+			new EnemySpawnObj((this.cgaa.gameMap as GameMap).toAreaSpawnableDict(this.cgaa.bossAreaConfig), this.cgaa.enemies)
+		);
 	}
 
 	private initPlayerUnitAndColleagues() {

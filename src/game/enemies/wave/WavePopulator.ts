@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { EnemyPool } from "../../base/pool/EnemyPool";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { Wave } from "./Wave";
 import { waveSize } from "./waveConfig";
 import { Buildings } from "../camp/building/Buildings";

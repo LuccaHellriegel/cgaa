@@ -1,4 +1,3 @@
-import { BuildingSpawn } from "./building/BuildingSpawn";
 import { Enemies } from "../unit/Enemies";
 import { numberOfBuildings, campGroupComposition } from "./campConfig";
 import { Buildings } from "./building/Buildings";
@@ -11,7 +10,7 @@ import { Paths } from "../path/Paths";
 import { Exits } from "../path/Exits";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
-import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { RandBuildingPos } from "./building/RandBuildingPos";
 import { GameMap } from "../../base/GameMap";
 
@@ -28,7 +27,8 @@ export class Camp {
 		private paths: Paths,
 		private membership: Membership,
 		private factory: CircleFactory,
-		private gameMap: GameMap
+		private gameMap: GameMap,
+		private enemySpawnObj: EnemySpawnObj
 	) {
 		this.id = this.config.color;
 
@@ -40,11 +40,7 @@ export class Camp {
 	private spawnBuildings() {
 		let buildingPositions = new RandBuildingPos(this.gameMap, this.config.areaConfig, numberOfBuildings).positions;
 
-		this.buildings = new Buildings(
-			this.config.staticConfig.scene,
-			buildingPositions, //new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
-			this.config.color
-		);
+		this.buildings = new Buildings(this.config.staticConfig.scene, buildingPositions, this.config.color);
 		this.buildings.spawnBuildings(
 			new BuildingFactory(
 				this.config.staticConfig.scene,
@@ -62,12 +58,7 @@ export class Camp {
 
 	private populateCamp() {
 		let enemyPool = new EnemyPool(this.config.staticConfig.scene, 4, campGroupComposition, this.enemies, this.factory);
-		new CampPopulator(
-			this.config.staticConfig.scene,
-			enemyPool,
-			EnemySpawnObj.createAreaEnemySpawnObj(this.config.map, this.config.areaConfig, this.enemies),
-			this.buildings
-		);
+		new CampPopulator(this.config.staticConfig.scene, enemyPool, this.enemySpawnObj, this.buildings);
 		this.createInteractionUnit(this.config);
 	}
 
