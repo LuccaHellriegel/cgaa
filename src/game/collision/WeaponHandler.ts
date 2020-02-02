@@ -22,24 +22,23 @@ export class WeaponHandler {
 	}
 
 	static doDamage(scene: Phaser.Scene, weapon, enemy) {
+		//Need this, otherwise all animation frames do damage
 		weapon.alreadyAttacked.push(enemy.id);
 
-		let damage;
-		if (enemy.unitType !== "player") {
-			damage = weapon.amount > enemy.healthbar.value ? enemy.healthbar.value : weapon.amount;
-		} else {
-			damage = weapon.amount;
+		let damage = weapon.amount;
+		let enemyKilled = enemy.unitType !== "player" ? damage >= enemy.healthbar.value : false;
+		if (enemyKilled) {
+			damage = enemy.healthbar.value;
+			if (weapon.owner.unitType === "player") {
+				gainSouls(scene, 100);
+			}
 		}
 
+		//TODO: why emit this? For player damage?
 		scene.events.emit("damage-" + enemy.unitType, damage);
-		enemy.damage(weapon.amount);
+		enemy.damage(damage);
 
-		if (weapon.owner.unitType === "player" && enemy.healthbar.value <= 0) {
-			//TODO: gain dependent on size
-			//TODO: does not reach this? -> Race condition with damage and poolActivate
-			gainSouls(scene, 100);
-		}
-
+		//TODO: which spotted is correct? (see BulletCollision)
 		enemy.spotted = weapon.owner;
 		enemy.state = "guard";
 	}

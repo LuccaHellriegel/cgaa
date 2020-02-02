@@ -10,12 +10,15 @@ export class BulletCollision {
 		});
 	}
 
-	//TODO: Bullet give souls for damage not for kill
 	private collision(bullet: Bullet, enemy: EnemyCircle) {
-		enemy.damage(bullet.amount);
+		let damage = bullet.amount;
+		let enemyKilled = enemy.unitType !== "player" ? damage >= enemy.healthbar.value : false;
+		if (enemyKilled) {
+			damage = enemy.healthbar.value;
+			gainSouls(this.scene, 100);
+		}
+		enemy.damage(damage);
 
-		let damage = bullet.amount > enemy.healthbar.value ? enemy.healthbar.value : bullet.amount;
-		gainSouls(this.scene, damage);
 		//TODO:
 		if (enemy.state !== "ambush" && enemy.stateHandler) {
 			enemy.stateHandler.spotted = bullet.owner;
