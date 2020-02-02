@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { EnemyFactory } from "../../enemies/unit/EnemyFactory";
+import { CircleFactory } from "../../enemies/unit/CircleFactory";
 import { Enemies } from "../../enemies/unit/Enemies";
 import { Point } from "../../base/types";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
@@ -66,7 +66,7 @@ export class PlayerFriends extends Instantiator {
 			configs: friendConfigs,
 			factoryFunc: config => {
 				//TODO: remove need for enemies here
-				return EnemyFactory.createEnemy(config, enemies);
+				return CircleFactory.createEnemy(config, enemies);
 			}
 		};
 		super(friendPairs);

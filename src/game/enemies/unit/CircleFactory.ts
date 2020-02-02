@@ -36,7 +36,7 @@ export interface CircleConfig {
 	weaponType: WeaponTypes;
 }
 
-export class EnemyFactory {
+export class CircleFactory {
 	private baseConfig = {};
 
 	constructor(

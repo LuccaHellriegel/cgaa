@@ -1,4 +1,4 @@
-import { EnemyFactory, EnemySize, WeaponTypes, CircleConfig } from "../../enemies/unit/EnemyFactory";
+import { CircleFactory, EnemySize, WeaponTypes, CircleConfig } from "../../enemies/unit/CircleFactory";
 import { EnemyCircle } from "../../enemies/unit/EnemyCircle";
 import { removeEle } from "../utils";
 import { Gameplay } from "../../../scenes/Gameplay";
@@ -22,7 +22,7 @@ export abstract class GroupPool {
 		private numberOfGroups: number,
 		private groupComposition: GroupComposition,
 		private enemies: Enemies,
-		protected factory: EnemyFactory
+		protected factory: CircleFactory
 	) {
 		this.initPool();
 		this.setupEvents();

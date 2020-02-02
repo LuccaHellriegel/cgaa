@@ -1,7 +1,7 @@
 import { CampConfig } from "../camp/Camps";
 import { Enemies } from "../unit/Enemies";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { EnemyFactory } from "../unit/EnemyFactory";
+import { CircleFactory } from "../unit/CircleFactory";
 import { BossBarrier } from "./BossBarrier";
 import { bigCircleWithChain } from "../camp/campConfig";
 import { BossCampPopulator } from "./BossCampPopulator";
@@ -13,24 +13,23 @@ export class BossCamp {
 	protected infra: any[];
 	protected specialUnits: any[];
 
-	constructor(config: CampConfig, enemies: Enemies) {
+	constructor(config: CampConfig, enemies: Enemies, factory: CircleFactory) {
 		let bossCampGroupComposition = [bigCircleWithChain, bigCircleWithChain, bigCircleWithChain, bigCircleWithChain];
-
-		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
-
-		let factory = new EnemyFactory(
-			config.staticConfig.scene,
-			config.color,
-			{ physicsGroup: config.enemyPhysicGroup, weaponGroup: config.weaponPhysicGroup },
-			enemies
-		);
-
 		new BossCampPopulator(
 			config.staticConfig.scene,
 			new BossPool(config.staticConfig.scene, 4, bossCampGroupComposition, enemies, factory),
 			EnemySpawnObj.createAreaEnemySpawnObj(config.map, config.areaConfig, enemies)
 		).start();
 
+		let kingConfig = {
+			size: "",
+			x: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftX,
+			y: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftY,
+			weaponType: "chain"
+		};
+		factory.createKing(kingConfig);
+
+		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
 		[
 			{ x, y },
 			{ x, y: y + 2 * gridPartHalfSize },
@@ -48,13 +47,5 @@ export class BossCamp {
 				barrierConfig =>
 					new BossBarrier(barrierConfig.scene, barrierConfig.x, barrierConfig.y, barrierConfig.physicsGroup)
 			);
-
-		let kingConfig = {
-			size: "",
-			x: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftX,
-			y: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftY,
-			weaponType: "chain"
-		};
-		factory.createKing(kingConfig);
 	}
 }

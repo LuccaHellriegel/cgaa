@@ -8,7 +8,7 @@ import { buildingGroupComposition } from "../../wave/waveConfig";
 import { realCoordinateToRelative } from "../../../base/position";
 import { Paths } from "../../path/Paths";
 import { EnemySpawnObj } from "../../../base/spawn/EnemySpawnObj";
-import { EnemyFactory } from "../../unit/EnemyFactory";
+import { CircleFactory } from "../../unit/CircleFactory";
 
 export class BuildingFactory {
 	constructor(
@@ -18,7 +18,8 @@ export class BuildingFactory {
 		private enemies: Enemies,
 		private buildings: Buildings,
 		private spawnConfig: BuildingSpawnConfig,
-		private paths: Paths
+		private paths: Paths,
+		private factory: CircleFactory
 	) {}
 
 	private createBuilding(x, y, circleSizeName) {
@@ -26,20 +27,10 @@ export class BuildingFactory {
 	}
 
 	private setupWave(x, y) {
-		let factory = new EnemyFactory(
-			this.scene,
-			this.color,
-			{
-				physicsGroup: this.spawnConfig.enemyPhysicGroup,
-				weaponGroup: this.spawnConfig.weaponPhysicGroup
-			},
-			this.enemies
-		);
-
 		new WavePopulator(
 			this.scene,
 			this.color,
-			new EnemyPool(this.scene, 1, buildingGroupComposition, this.enemies, factory),
+			new EnemyPool(this.scene, 1, buildingGroupComposition, this.enemies, this.factory),
 			EnemySpawnObj.createBuildingEnemySpawnObj(realCoordinateToRelative(x), realCoordinateToRelative(y), this.enemies),
 			this.buildings,
 			this.paths

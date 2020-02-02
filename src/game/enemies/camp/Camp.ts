@@ -2,7 +2,7 @@ import { BuildingSpawn } from "./building/BuildingSpawn";
 import { Enemies } from "../unit/Enemies";
 import { numberOfBuildings, campGroupComposition } from "./campConfig";
 import { Buildings } from "./building/Buildings";
-import { EnemyFactory } from "../unit/EnemyFactory";
+import { CircleFactory } from "../unit/CircleFactory";
 import { EnemyPool } from "../../base/pool/EnemyPool";
 import { CampPopulator } from "./CampPopulator";
 import { CampConfig } from "./Camps";
@@ -17,7 +17,6 @@ import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
 export class Camp {
 	buildings: Buildings;
 	interactionUnit: InteractionCircle;
-	private factory: EnemyFactory;
 	hostile = true;
 	id: string;
 
@@ -25,19 +24,10 @@ export class Camp {
 		private config: CampConfig,
 		private enemies: Enemies,
 		private paths: Paths,
-		private membership: Membership
+		private membership: Membership,
+		private factory: CircleFactory
 	) {
 		this.id = this.config.color;
-
-		this.factory = new EnemyFactory(
-			this.config.staticConfig.scene,
-			this.config.color,
-			{
-				physicsGroup: this.config.enemyPhysicGroup,
-				weaponGroup: this.config.weaponPhysicGroup
-			},
-			this.enemies
-		);
 
 		this.spawnBuildings();
 		this.populateCamp();
@@ -61,7 +51,8 @@ export class Camp {
 					enemyPhysicGroup: this.config.enemyPhysicGroup,
 					weaponPhysicGroup: this.config.weaponPhysicGroup
 				},
-				this.paths
+				this.paths,
+				this.factory
 			)
 		);
 	}

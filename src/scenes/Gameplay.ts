@@ -7,7 +7,7 @@ import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
 import { createAreas, constructAreaConfigs, removeNonEnemyAreas } from "../game/area/area";
 import { StaticConfig } from "../game/base/types";
-import { Collision } from "../game/collision/Collision";
+import { Collision, PhysicGroups } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
 import { WASD } from "../game/player/input/move/WASD";
 import { WaveController } from "../game/enemies/wave/WaveController";
@@ -34,6 +34,7 @@ import { BossCamp } from "../game/enemies/boss/BossCamp";
 import { PlayerFriends } from "../game/player/unit/PlayerFriends";
 import { areaToRealMiddlePoint } from "../game/base/position";
 import { GameMap } from "../game/base/GameMap";
+import { CircleFactory } from "../game/enemies/unit/CircleFactory";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa;
@@ -63,6 +64,7 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	private initPhysics() {
+		//TODO: return CirclePhysics
 		this.cgaa.physicsGroups = new Collision(this).physicGroups;
 	}
 
@@ -81,8 +83,42 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.areaConfigs = removeNonEnemyAreas(areaConfigs, playerAreaConfig, bossAreaConfig);
 	}
 
-	private initEnemies() {
+	private initFactories() {
 		this.cgaa.enemies = new Enemies();
+
+		this.cgaa.factories = campColors.reduce((prev, cur) => {
+			prev[cur] = new CircleFactory(
+				this,
+				cur,
+				{
+					physicsGroup: (this.cgaa.physicsGroups as PhysicGroups).enemies[cur],
+					weaponGroup: (this.cgaa.physicsGroups as PhysicGroups).enemyWeapons[cur]
+				},
+				this.cgaa.enemies
+			);
+			return prev;
+		}, {});
+		this.cgaa.factories["boss"] = new CircleFactory(
+			this,
+			"boss",
+			{
+				physicsGroup: (this.cgaa.physicsGroups as PhysicGroups).enemies["boss"],
+				weaponGroup: (this.cgaa.physicsGroups as PhysicGroups).enemyWeapons["boss"]
+			},
+			this.cgaa.enemies
+		);
+		this.cgaa.factories["blue"] = new CircleFactory(
+			this,
+			"blue",
+			{
+				physicsGroup: (this.cgaa.physicsGroups as PhysicGroups).player,
+				weaponGroup: (this.cgaa.physicsGroups as PhysicGroups).playerWeapon
+			},
+			this.cgaa.enemies
+		);
+	}
+
+	private initEnemies() {
 		this.cgaa.rivalries = new Rivalries();
 		this.cgaa.rerouter = new Rerouter(this.events, this.cgaa.rivalries);
 		this.cgaa.paths = new Paths(this.cgaa.rerouter);
@@ -94,7 +130,8 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.physicsGroups,
 			this.cgaa.enemies,
 			this.cgaa.paths,
-			this.cgaa.membership
+			this.cgaa.membership,
+			this.cgaa.factories
 		);
 
 		//TODO: path to player and boss areas, mark boss paths
@@ -124,7 +161,7 @@ export class Gameplay extends Phaser.Scene {
 		};
 
 		//TODO: boss path usage -> player camp
-		new BossCamp(bossCampConfig, this.cgaa.enemies);
+		new BossCamp(bossCampConfig, this.cgaa.enemies, this.cgaa.factories["boss"]);
 	}
 
 	private initPlayerUnitAndColleagues() {
@@ -203,6 +240,8 @@ export class Gameplay extends Phaser.Scene {
 		this.initPhysics();
 
 		this.initEnvironment();
+
+		this.initFactories();
 
 		this.initEnemies();
 

@@ -30,11 +30,12 @@ export class Camps {
 		physicGroups: PhysicGroups,
 		enemies: Enemies,
 		paths: Paths,
-		membership: Membership
+		membership: Membership,
+		factories
 	) {
 		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			this.camps.push(new Camp(configs[index], enemies, paths, membership));
+			this.camps.push(new Camp(configs[index], enemies, paths, membership, factories[configs[index].color]));
 		}
 		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}
