@@ -11,7 +11,6 @@ import { Exits } from "../path/Exits";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
-import { RandBuildingPos } from "./building/RandBuildingPos";
 import { GameMap } from "../../env/GameMap";
 
 //TODO: abstract general camp
@@ -38,11 +37,7 @@ export class Camp {
 	}
 
 	private spawnBuildings() {
-		let buildingPositions = new RandBuildingPos(
-			this.gameMap.toAreaBuildingSpawnableDict(this.config.area),
-			numberOfBuildings
-		).positions;
-
+		let buildingPositions = this.gameMap.createRandBuildingPos(this.config.area, numberOfBuildings);
 		this.buildings = new Buildings(this.config.staticConfig.scene, buildingPositions, this.config.color);
 		this.buildings.spawnBuildings(
 			new BuildingFactory(
@@ -55,8 +50,6 @@ export class Camp {
 				this.factory
 			)
 		);
-
-		this.gameMap.updateWithBuildings(buildingPositions);
 	}
 
 	private populateCamp() {

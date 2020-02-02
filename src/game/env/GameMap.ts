@@ -1,8 +1,8 @@
 import { ZeroOneMap } from "../base/types";
-import { realCoordinateToRelative } from "../base/position";
 import { walkableSymbol, buildingSymbol } from "../base/globals/globalSymbols";
 import { constructXYIDfromColumnRow } from "../base/id";
 import { EmptyArea, Area } from "./area/Area";
+import { RandBuildingPos } from "../enemies/camp/building/RandBuildingPos";
 
 export class GameMap {
 	private spawnableDict = {};
@@ -29,19 +29,10 @@ export class GameMap {
 
 	toAreaSpawnableDict(area: Area) {
 		let dict = {};
-		let relativeAreaTopLeftX = realCoordinateToRelative(area.topLeft.x);
-		let relativeAreaWidth = area.dims.sizeOfXAxis;
-		let relativeAreaTopLeftY = realCoordinateToRelative(area.topLeft.y);
-		let relativeAreaHeight = area.dims.sizeOfYAxis;
-
 		for (let row = 0; row < this.map.length; row++) {
 			for (let column = 0; column < this.map[0].length; column++) {
 				let isWalkable = this.map[row][column] === walkableSymbol;
-				let isInArea =
-					column < relativeAreaTopLeftX + relativeAreaWidth &&
-					column >= relativeAreaTopLeftX &&
-					row < relativeAreaTopLeftY + relativeAreaHeight &&
-					row >= relativeAreaTopLeftY;
+				let isInArea = area.isInside({ row, column });
 				if (isInArea && isWalkable) dict[constructXYIDfromColumnRow(column, row)] = walkableSymbol;
 			}
 		}
@@ -58,54 +49,7 @@ export class GameMap {
 		return this.spawnableDict;
 	}
 
-	private getAllPositionsAroundBuildingInclusive(column, row) {
-		let positions: number[][] = [];
-		let rows = [row - 1, row, row + 1];
-		for (let index = 0, length = rows.length; index < length; index++) {
-			positions.push([column - 2, rows[index]]);
-			positions.push([column - 1, rows[index]]);
-			positions.push([column, rows[index]]);
-			positions.push([column + 1, rows[index]]);
-			positions.push([column + 2, rows[index]]);
-		}
-
-		return positions;
-	}
-
-	private hasSpaceForBuilding(column, row) {
-		let positionArr = this.getAllPositionsAroundBuildingInclusive(column, row);
-		for (let index = 0, positionLength = positionArr.length; index < positionLength; index++) {
-			let column = positionArr[index][0];
-			let row = positionArr[index][1];
-
-			if (!(this.map[row][column] === walkableSymbol)) return false;
-		}
-		return true;
-	}
-
-	toAreaBuildingSpawnableDict(area: Area) {
-		let dict = {};
-		let relativeAreaTopLeftX = realCoordinateToRelative(area.topLeft.x);
-		let relativeAreaWidth = area.dims.sizeOfXAxis;
-		let relativeAreaTopLeftY = realCoordinateToRelative(area.topLeft.y);
-		let relativeAreaHeight = area.dims.sizeOfYAxis;
-
-		for (let row = 0; row < this.map.length; row++) {
-			for (let column = 0; column < this.map[0].length; column++) {
-				let isWalkable = this.map[row][column] === walkableSymbol;
-				let isInArea =
-					column < relativeAreaTopLeftX + relativeAreaWidth &&
-					column >= relativeAreaTopLeftX &&
-					row < relativeAreaTopLeftY + relativeAreaHeight &&
-					row >= relativeAreaTopLeftY;
-				let suitableForBuilding = isWalkable && isInArea && this.hasSpaceForBuilding(column, row);
-				if (suitableForBuilding) dict[column + " " + row] = walkableSymbol;
-			}
-		}
-		return dict;
-	}
-
-	updateWithBuildings(buildingPositions) {
+	private updateWithBuildings(buildingPositions) {
 		for (let index = 0, length = buildingPositions.length; index < length; index++) {
 			let pos = buildingPositions[index];
 			let column = pos[0];
@@ -114,5 +58,11 @@ export class GameMap {
 			this.map[row][column - 1] = buildingSymbol;
 			this.map[row][column + 1] = buildingSymbol;
 		}
+	}
+
+	createRandBuildingPos(area: Area, numberOfPositions) {
+		let randPos = new RandBuildingPos(this.map, area, numberOfPositions);
+		this.updateWithBuildings(randPos.positions);
+		return randPos.positions;
 	}
 }

@@ -1,8 +1,9 @@
-import { ZeroOneMap, StaticConfig, Point } from "../../base/types";
+import { ZeroOneMap, StaticConfig, Point, RelativePosition } from "../../base/types";
 import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { WallSide } from "../wall/WallSide";
 import { Exit } from "./Exit";
+import { realCoordinateToRelative } from "../../base/position";
 
 export interface AreaDimensions {
 	sizeOfXAxis: number;
@@ -26,6 +27,11 @@ export class EmptyArea {
 }
 
 export class Area extends EmptyArea {
+	relativeAreaTopLeftX: number;
+	relativeAreaWidth: number;
+	relativeAreaTopLeftY: number;
+	relativeAreaHeight: number;
+
 	constructor(
 		public staticConfig: StaticConfig,
 		public topLeft: Point,
@@ -35,6 +41,11 @@ export class Area extends EmptyArea {
 		super(dims);
 		this.addAreaExitsToMap();
 		this.createWalls();
+
+		this.relativeAreaTopLeftX = realCoordinateToRelative(topLeft.x);
+		this.relativeAreaWidth = dims.sizeOfXAxis;
+		this.relativeAreaTopLeftY = realCoordinateToRelative(topLeft.y);
+		this.relativeAreaHeight = dims.sizeOfYAxis;
 	}
 
 	private addAreaExitsToMap() {
@@ -114,5 +125,14 @@ export class Area extends EmptyArea {
 			x: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.x,
 			y: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.y
 		};
+	}
+
+	isInside(relPos: RelativePosition) {
+		return (
+			relPos.column < this.relativeAreaTopLeftX + this.relativeAreaWidth &&
+			relPos.column >= this.relativeAreaTopLeftX &&
+			relPos.row < this.relativeAreaTopLeftY + this.relativeAreaHeight &&
+			relPos.row >= this.relativeAreaTopLeftY
+		);
 	}
 }

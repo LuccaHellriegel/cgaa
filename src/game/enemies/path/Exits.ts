@@ -2,7 +2,7 @@ import { RelativePosition, Point } from "../../base/types";
 import { realCoordinateToRelative, relativeCoordinateToReal } from "../../base/position";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { findClosestRelativePosition } from "./pathBase";
-import { Area } from "../../area/Area";
+import { Area } from "../../env/area/Area";
 
 export class Exits {
 	exitsAsRelativePositions: RelativePosition[];
