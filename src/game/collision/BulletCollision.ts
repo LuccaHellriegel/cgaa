@@ -12,7 +12,7 @@ export class BulletCollision {
 
 	private collision(bullet: Bullet, enemy: EnemyCircle) {
 		let damage = bullet.amount;
-		let enemyKilled = enemy.unitType !== "player" ? damage >= enemy.healthbar.value : false;
+		let enemyKilled = damage >= enemy.healthbar.value;
 		if (enemyKilled) {
 			damage = enemy.healthbar.value;
 			gainSouls(this.scene, 100);

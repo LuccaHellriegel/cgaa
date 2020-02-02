@@ -26,10 +26,11 @@ export class WeaponHandler {
 		weapon.alreadyAttacked.push(enemy.id);
 
 		let damage = weapon.amount;
-		let enemyKilled = enemy.unitType !== "player" ? damage >= enemy.healthbar.value : false;
+		let enemyKilled = damage >= enemy.healthbar.value;
 		if (enemyKilled) {
 			damage = enemy.healthbar.value;
-			if (weapon.owner.unitType === "player") {
+			//Gain souls if player kill or player friend kill
+			if (weapon.owner.unitType === "player" || (weapon.owner.color === "blue") {
 				gainSouls(scene, 100);
 			}
 		}
