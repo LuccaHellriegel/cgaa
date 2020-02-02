@@ -236,7 +236,7 @@ export class Gameplay extends Phaser.Scene {
 		new Mouse(this, this.cgaa.player, this.cgaa.selectorRect, this.cgaa.modi);
 	}
 
-	private startWaves() {
+	startWaves() {
 		new WaveController(this, this.cgaa.campsObj);
 	}
 
@@ -262,8 +262,6 @@ export class Gameplay extends Phaser.Scene {
 		this.initPlayerInteraction();
 
 		this.initMouse();
-
-		this.startWaves();
 	}
 
 	update() {
