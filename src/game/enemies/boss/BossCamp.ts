@@ -7,7 +7,7 @@ import { bigCircleWithChain } from "../camp/campConfig";
 import { BossCampPopulator } from "./BossCampPopulator";
 import { BossPool } from "./BossPool";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
-import { Exits } from "../path/Exits";
+import { relativePositionToPoint } from "../../base/position";
 
 export class BossCamp {
 	protected infra: any[];
@@ -23,22 +23,18 @@ export class BossCamp {
 
 		let kingConfig = {
 			size: "",
-			x: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftX,
-			y: (2 * gridPartHalfSize * config.areaConfig.wallBase.sizeOfXAxis) / 2 + config.areaConfig.topLeftY,
+			x: (2 * gridPartHalfSize * config.area.dims.sizeOfXAxis) / 2 + config.area.topLeft.x,
+			y: (2 * gridPartHalfSize * config.area.dims.sizeOfXAxis) / 2 + config.area.topLeft.y,
 			weaponType: "chain"
 		};
 		factory.createKing(kingConfig);
 
-		let { x, y } = Exits.exitToGlobalPoint(config.areaConfig);
-		[
-			{ x, y },
-			{ x, y: y + 2 * gridPartHalfSize },
-			{ x, y: y + 4 * gridPartHalfSize }
-		]
+		config.area.exit.relPositions
+			.map(relPos => relativePositionToPoint(relPos.row, relPos.column))
 			.map(point => {
 				return {
 					scene: config.staticConfig.scene,
-					physicsGroup: config.areaConfig.wallBase.staticConfig.physicsGroup,
+					physicsGroup: config.area.staticConfig.physicsGroup,
 					x: point.x,
 					y: point.y
 				};

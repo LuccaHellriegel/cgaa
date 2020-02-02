@@ -9,5 +9,3 @@ export type RelativePosition = { column: number; row: number };
 export type Point = { x: number; y: number };
 
 export type ZeroOneMap = number[][];
-
-export type WallBase = { staticConfig: StaticConfig; sizeOfXAxis: number; sizeOfYAxis: number };

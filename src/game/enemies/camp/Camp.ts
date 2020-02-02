@@ -12,7 +12,7 @@ import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { RandBuildingPos } from "./building/RandBuildingPos";
-import { GameMap } from "../../base/GameMap";
+import { GameMap } from "../../area/GameMap";
 
 //TODO: abstract general camp
 export class Camp {
@@ -38,7 +38,7 @@ export class Camp {
 	}
 
 	private spawnBuildings() {
-		let buildingPositions = new RandBuildingPos(this.gameMap, this.config.areaConfig, numberOfBuildings).positions;
+		let buildingPositions = new RandBuildingPos(gameMap.toAreaBuildingSpawnableDict(area), numberOfBuildings).positions;
 
 		this.buildings = new Buildings(this.config.staticConfig.scene, buildingPositions, this.config.color);
 		this.buildings.spawnBuildings(
@@ -63,7 +63,7 @@ export class Camp {
 	}
 
 	private createInteractionUnit(config: CampConfig) {
-		let circleConfig = { ...Exits.exitToGlobalPoint(config.areaConfig), size: "Big", weaponType: "rand" };
+		let circleConfig = { ...Exits.exitToGlobalPoint(config.area), size: "Big", weaponType: "rand" };
 		this.interactionUnit = this.factory.createInteractionCircle(circleConfig);
 	}
 

@@ -1,27 +1,33 @@
-import { AreaConfig } from "../../base/interfaces";
 import { RelativePosition, Point } from "../../base/types";
 import { realCoordinateToRelative, relativeCoordinateToReal } from "../../base/position";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { findClosestRelativePosition } from "./pathBase";
+import { Area } from "../../area/Area";
 
 export class Exits {
 	exitsAsRelativePositions: RelativePosition[];
 	exitsAsRealPoints: Point[];
 
-	constructor(areaConfigs: AreaConfig[]) {
-		this.exitsAsRelativePositions = areaConfigs.map(config => this.exitToGlobalRelativePosition(config));
-		this.exitsAsRealPoints = areaConfigs.map(config => Exits.exitToGlobalPoint(config));
+	constructor(areas: Area[]) {
+		this.exitsAsRelativePositions = areas.map(area => this.exitToGlobalRelativePosition(area));
+		this.exitsAsRealPoints = areas.map(area => Exits.exitToGlobalPoint(area));
 	}
 
-	private exitToGlobalRelativePosition(areaConfig): RelativePosition {
-		let column = areaConfig.exit.exitPosition.column + realCoordinateToRelative(areaConfig.topLeftX);
-		let row = areaConfig.exit.exitPosition.row + realCoordinateToRelative(areaConfig.topLeftY);
+	private exitToGlobalRelativePosition(area: Area): RelativePosition {
+		let column = area.exit.relPositions[0].column + realCoordinateToRelative(area.topLeft.x);
+		let row = area.exit.relPositions[0].row + realCoordinateToRelative(area.topLeft.y);
 		return { column, row };
 	}
 
-	static exitToGlobalPoint(areaConfig): Point {
-		let x = relativeCoordinateToReal(areaConfig.exit.exitPosition.column) + areaConfig.topLeftX - gridPartHalfSize;
-		let y = relativeCoordinateToReal(areaConfig.exit.exitPosition.row) + areaConfig.topLeftY - gridPartHalfSize;
+	static exitToGlobalPoint(area: Area): Point {
+		let x = relativeCoordinateToReal(area.exit.relPositions[0].column) + area.topLeft.x - gridPartHalfSize;
+		let y = relativeCoordinateToReal(area.exit.relPositions[0].row) + area.topLeft.y - gridPartHalfSize;
+		return { x, y };
+	}
+
+	static exitRelPointToGlobalPoint(relPoint: RelativePosition, topLeft: Point): Point {
+		let x = relativeCoordinateToReal(relPoint.column) + topLeft.x - gridPartHalfSize;
+		let y = relativeCoordinateToReal(relPoint.row) + topLeft.y - gridPartHalfSize;
 		return { x, y };
 	}
 

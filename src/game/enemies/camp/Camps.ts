@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { ZeroOneMap, StaticConfig } from "../../base/types";
-import { AreaConfig, BuildingInfo } from "../../base/interfaces";
+import { StaticConfig } from "../../base/types";
+import { BuildingInfo } from "../../base/interfaces";
 import { Enemies } from "../unit/Enemies";
 import { getRandomCampColorOrder } from "../../base/globals/global";
 import { Camp } from "./Camp";
@@ -9,15 +9,14 @@ import { Paths } from "../path/Paths";
 import { Membership } from "../../base/classes/Membership";
 import { PhysicGroups } from "../../collision/Collision";
 import { removeEle } from "../../base/utils";
-import { GameMap } from "../../base/GameMap";
+import { GameMap } from "../../area/GameMap";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
+import { Area } from "../../area/Area";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
-	areaConfig: AreaConfig;
+	area: Area;
 	color: string;
-	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
-	weaponPhysicGroup: Phaser.Physics.Arcade.Group;
 }
 
 export class Camps {
@@ -26,7 +25,7 @@ export class Camps {
 
 	constructor(
 		private scene: Gameplay,
-		areaConfigs: AreaConfig[],
+		areas: Area[],
 		physicGroups: PhysicGroups,
 		enemies: Enemies,
 		paths: Paths,
@@ -34,7 +33,7 @@ export class Camps {
 		factories,
 		gameMap: GameMap
 	) {
-		let configs = this.constructCampConfigs(scene, areaConfigs, physicGroups);
+		let configs = this.constructCampConfigs(scene, areas, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
 			this.camps.push(
 				new Camp(
@@ -44,24 +43,22 @@ export class Camps {
 					membership,
 					factories[configs[index].color],
 					gameMap,
-					new EnemySpawnObj(gameMap.toAreaSpawnableDict(configs[index].areaConfig), enemies)
+					new EnemySpawnObj(gameMap.toAreaSpawnableDict(configs[index].area), enemies)
 				)
 			);
 		}
 		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}
-	private constructCampConfigs(scene: Gameplay, areaConfigs: AreaConfig[], physicGroups: PhysicGroups): CampConfig[] {
+	private constructCampConfigs(scene: Gameplay, areas: Area[], physicGroups: PhysicGroups): CampConfig[] {
 		let campConfigs: CampConfig[] = [];
 		let colors = getRandomCampColorOrder();
 		for (let index = 0, length = colors.length; index < length; index++) {
 			let color = colors[index];
-			let areaConfig = areaConfigs[index];
+			let area = areas[index];
 			let campConfig: CampConfig = {
 				color,
-				areaConfig,
-				staticConfig: { scene, physicsGroup: physicGroups.buildings[color] },
-				enemyPhysicGroup: physicGroups.enemies[color],
-				weaponPhysicGroup: physicGroups.enemyWeapons[color]
+				area,
+				staticConfig: { scene, physicsGroup: physicGroups.buildings[color] }
 			};
 			campConfigs.push(campConfig);
 		}

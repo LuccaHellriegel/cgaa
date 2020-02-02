@@ -1,11 +1,12 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { ZeroOneMap, RelativePosition } from "../../base/types";
-import { AreaConfig, BuildingInfo } from "../../base/interfaces";
+import { BuildingInfo } from "../../base/interfaces";
+import { Area } from "../../area/Area";
 
 export interface PathCalcConfig {
 	scene: Gameplay;
 	unifiedMap: ZeroOneMap;
-	areaConfigs: AreaConfig[];
+	areas: Area[];
 	middlePos: RelativePosition;
 	buildingInfos: BuildingInfo[];
 }

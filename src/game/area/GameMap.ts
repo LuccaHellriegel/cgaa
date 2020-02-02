@@ -1,26 +1,38 @@
-import { ZeroOneMap } from "./types";
-import { AreaConfig } from "./interfaces";
-import { realCoordinateToRelative } from "./position";
-import { walkableSymbol, buildingSymbol } from "./globals/globalSymbols";
-import { constructXYIDfromColumnRow } from "./id";
+import { ZeroOneMap } from "../base/types";
+import { realCoordinateToRelative } from "../base/position";
+import { walkableSymbol, buildingSymbol } from "../base/globals/globalSymbols";
+import { constructXYIDfromColumnRow } from "../base/id";
+import { EmptyArea, Area } from "./Area";
 
 export class GameMap {
 	private spawnableDict = {};
-	constructor(private map: ZeroOneMap) {
-		for (let row = 0; row < this.map.length; row++) {
-			for (let column = 0; column < this.map[0].length; column++) {
-				let isWalkable = this.map[row][column] === walkableSymbol;
-				if (isWalkable) this.spawnableDict[constructXYIDfromColumnRow(column, row)] = walkableSymbol;
+	map: ZeroOneMap = [];
+	constructor(areas: EmptyArea[][]) {
+		this.calculateUnifiedAreasMap(areas);
+	}
+
+	private calculateUnifiedAreasMap(areas: EmptyArea[][]) {
+		//assummption that all areas have the same number of rows, and that the input arr is symmetric
+		let numberOfRows = areas[0][0].areaMap.length;
+
+		for (let layoutRow = 0; layoutRow < areas.length; layoutRow++) {
+			for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+				let cumulativeRow = [];
+
+				for (let layoutColumn = 0; layoutColumn < areas[0].length; layoutColumn++) {
+					cumulativeRow = cumulativeRow.concat(areas[layoutRow][layoutColumn].areaMap[rowIndex]);
+				}
+				this.map.push(cumulativeRow);
 			}
 		}
 	}
 
-	toAreaSpawnableDict(areaConfig: AreaConfig) {
+	toAreaSpawnableDict(area: Area) {
 		let dict = {};
-		let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
-		let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
-		let relativeAreaTopLeftY = realCoordinateToRelative(areaConfig.topLeftY);
-		let relativeAreaHeight = areaConfig.wallBase.sizeOfYAxis;
+		let relativeAreaTopLeftX = realCoordinateToRelative(area.topLeft.x);
+		let relativeAreaWidth = area.dims.sizeOfXAxis;
+		let relativeAreaTopLeftY = realCoordinateToRelative(area.topLeft.y);
+		let relativeAreaHeight = area.dims.sizeOfYAxis;
 
 		for (let row = 0; row < this.map.length; row++) {
 			for (let column = 0; column < this.map[0].length; column++) {
@@ -37,6 +49,12 @@ export class GameMap {
 	}
 
 	toSpawnableDict() {
+		for (let row = 0; row < this.map.length; row++) {
+			for (let column = 0; column < this.map[0].length; column++) {
+				let isWalkable = this.map[row][column] === walkableSymbol;
+				if (isWalkable) this.spawnableDict[constructXYIDfromColumnRow(column, row)] = walkableSymbol;
+			}
+		}
 		return this.spawnableDict;
 	}
 
@@ -65,12 +83,12 @@ export class GameMap {
 		return true;
 	}
 
-	toAreaBuildingSpawnableDict(areaConfig: AreaConfig) {
+	toAreaBuildingSpawnableDict(area: Area) {
 		let dict = {};
-		let relativeAreaTopLeftX = realCoordinateToRelative(areaConfig.topLeftX);
-		let relativeAreaWidth = areaConfig.wallBase.sizeOfXAxis;
-		let relativeAreaTopLeftY = realCoordinateToRelative(areaConfig.topLeftY);
-		let relativeAreaHeight = areaConfig.wallBase.sizeOfYAxis;
+		let relativeAreaTopLeftX = realCoordinateToRelative(area.topLeft.x);
+		let relativeAreaWidth = area.dims.sizeOfXAxis;
+		let relativeAreaTopLeftY = realCoordinateToRelative(area.topLeft.y);
+		let relativeAreaHeight = area.dims.sizeOfYAxis;
 
 		for (let row = 0; row < this.map.length; row++) {
 			for (let column = 0; column < this.map[0].length; column++) {

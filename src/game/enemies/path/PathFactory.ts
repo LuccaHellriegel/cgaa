@@ -3,9 +3,10 @@ import { Path } from "./Path";
 import { Paths } from "./Paths";
 import { Exits } from "./Exits";
 import { getAllPositionsAroundBuilding } from "./pathBase";
-import { BuildingInfo, AreaConfig } from "../../base/interfaces";
+import { BuildingInfo } from "../../base/interfaces";
 import { PathConstructor } from "./PathConstructor";
 import { realCoordinateToRelative, areaToRealMiddlePoint } from "../../base/position";
+import { Area } from "../../area/Area";
 
 export class PathFactory {
 	private pathConstructor: PathConstructor;
@@ -54,8 +55,8 @@ export class PathFactory {
 		});
 	}
 
-	private calculatePathsFromMiddleToMiddleOfArea(areaConfig: AreaConfig, id) {
-		let realMiddle = areaToRealMiddlePoint(areaConfig);
+	private calculatePathsFromMiddleToMiddleOfArea(area: Area, id) {
+		let realMiddle = areaToRealMiddlePoint(area);
 		this.paths.setPathForID(
 			id,
 			this.calculatePath(
@@ -66,9 +67,9 @@ export class PathFactory {
 		);
 	}
 
-	generatePaths(buildingInfos: BuildingInfo[], playerConfig: AreaConfig, bossConfig: AreaConfig) {
-		this.calculatePathsFromMiddleToMiddleOfArea(playerConfig, "MiddleToPlayer");
-		this.calculatePathsFromMiddleToMiddleOfArea(bossConfig, "MiddleToBoss");
+	generatePaths(buildingInfos: BuildingInfo[], playerArea: Area, bossArea: Area) {
+		this.calculatePathsFromMiddleToMiddleOfArea(playerArea, "MiddleToPlayer");
+		this.calculatePathsFromMiddleToMiddleOfArea(bossArea, "MiddleToBoss");
 
 		this.calculatePathsFromBuildingsToMiddle(buildingInfos);
 		this.pathConstructor.constructPathsFromBuildingsToOtherExit(buildingInfos);

@@ -1,11 +1,9 @@
-import { GameMap } from "../../../base/GameMap";
-import { AreaConfig } from "../../../base/interfaces";
 import { buildingSymbol, walkableSymbol } from "../../../base/globals/globalSymbols";
 
 export class RandBuildingPos {
 	positions: number[][] = [];
-	constructor(gameMap: GameMap, areaConfig: AreaConfig, numberOfPositions) {
-		let baseObj = gameMap.toAreaBuildingSpawnableDict(areaConfig);
+	constructor(spawnableDict, numberOfPositions) {
+		let baseObj = spawnableDict;
 		let keys = Object.keys(baseObj);
 		let copyObj = { ...baseObj };
 		let foundPos = 0;
