@@ -7,11 +7,6 @@ import { Buildings } from "./Buildings";
 import { HealthBarFactory } from "../../../base/ui/HealthBarFactory";
 import { Annotator } from "../../../base/classes/Annotator";
 
-export interface BuildingSpawnConfig {
-	enemyPhysicGroup: Phaser.Physics.Arcade.Group;
-	weaponPhysicGroup: Phaser.Physics.Arcade.Group;
-}
-
 export class Building extends Image implements damageable {
 	id: string;
 	polygon: any;

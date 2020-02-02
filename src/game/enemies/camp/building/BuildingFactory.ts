@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { Building, BuildingSpawnConfig } from "./Building";
+import { Building } from "./Building";
 import { Buildings } from "./Buildings";
 import { Enemies } from "../../unit/Enemies";
 import { WavePopulator } from "../../wave/WavePopulator";
@@ -17,7 +17,6 @@ export class BuildingFactory {
 		private color: string,
 		private enemies: Enemies,
 		private buildings: Buildings,
-		private spawnConfig: BuildingSpawnConfig,
 		private paths: Paths,
 		private factory: CircleFactory
 	) {}
@@ -38,6 +37,7 @@ export class BuildingFactory {
 	}
 
 	setupBuilding(x, y, circleSizeName) {
+		//TODO: this is the mother of all sideeffects?
 		this.setupWave(x, y);
 		return this.createBuilding(x, y, circleSizeName);
 	}

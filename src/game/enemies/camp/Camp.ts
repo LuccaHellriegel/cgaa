@@ -12,6 +12,8 @@ import { Exits } from "../path/Exits";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawn/EnemySpawnObj";
+import { RandBuildingPos } from "./building/RandBuildingPos";
+import { GameMap } from "../../base/GameMap";
 
 //TODO: abstract general camp
 export class Camp {
@@ -25,7 +27,8 @@ export class Camp {
 		private enemies: Enemies,
 		private paths: Paths,
 		private membership: Membership,
-		private factory: CircleFactory
+		private factory: CircleFactory,
+		private gameMap: GameMap
 	) {
 		this.id = this.config.color;
 
@@ -35,9 +38,11 @@ export class Camp {
 	}
 
 	private spawnBuildings() {
+		let buildingPositions = new RandBuildingPos(this.gameMap, this.config.areaConfig, numberOfBuildings).positions;
+
 		this.buildings = new Buildings(
 			this.config.staticConfig.scene,
-			new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
+			buildingPositions, //new BuildingSpawn(this.config.map, this.config.areaConfig, numberOfBuildings).getRandomBuildingSpawnPositions(),
 			this.config.color
 		);
 		this.buildings.spawnBuildings(
@@ -47,14 +52,12 @@ export class Camp {
 				this.config.color,
 				this.enemies,
 				this.buildings,
-				{
-					enemyPhysicGroup: this.config.enemyPhysicGroup,
-					weaponPhysicGroup: this.config.weaponPhysicGroup
-				},
 				this.paths,
 				this.factory
 			)
 		);
+
+		this.gameMap.updateWithBuildings(buildingPositions);
 	}
 
 	private populateCamp() {

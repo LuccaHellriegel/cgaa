@@ -9,6 +9,7 @@ import { Paths } from "../path/Paths";
 import { Membership } from "../../base/classes/Membership";
 import { PhysicGroups } from "../../collision/Collision";
 import { removeEle } from "../../base/utils";
+import { GameMap } from "../../base/GameMap";
 
 export interface CampConfig {
 	staticConfig: StaticConfig;
@@ -31,11 +32,12 @@ export class Camps {
 		enemies: Enemies,
 		paths: Paths,
 		membership: Membership,
-		factories
+		factories,
+		gameMap: GameMap
 	) {
 		let configs = this.constructCampConfigs(scene, map, areaConfigs, physicGroups);
 		for (let index = 0, length = configs.length; index < length; index++) {
-			this.camps.push(new Camp(configs[index], enemies, paths, membership, factories[configs[index].color]));
+			this.camps.push(new Camp(configs[index], enemies, paths, membership, factories[configs[index].color], gameMap));
 		}
 		this.camps.forEach(camp => this.activeCamps.push(camp.buildings.color));
 	}

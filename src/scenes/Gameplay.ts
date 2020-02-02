@@ -78,6 +78,8 @@ export class Gameplay extends Phaser.Scene {
 
 		let { unifiedMap, middlePos } = createAreas(this.cgaa.areaConfigs);
 		this.cgaa.unifiedMap = unifiedMap;
+		this.cgaa.gameMap = new GameMap(this.cgaa.unifiedMap);
+
 		this.cgaa.middlePos = middlePos;
 
 		this.cgaa.areaConfigs = removeNonEnemyAreas(areaConfigs, playerAreaConfig, bossAreaConfig);
@@ -131,7 +133,8 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.enemies,
 			this.cgaa.paths,
 			this.cgaa.membership,
-			this.cgaa.factories
+			this.cgaa.factories,
+			this.cgaa.gameMap
 		);
 
 		//TODO: path to player and boss areas, mark boss paths
@@ -197,8 +200,7 @@ export class Gameplay extends Phaser.Scene {
 		);
 		shooterPool.init();
 
-		let gameMap = new GameMap(this.cgaa.unifiedMap);
-		let towerSpawnObj = new TowerSpawnObj(gameMap.toSpawnableDict(), this.cgaa.enemies);
+		let towerSpawnObj = new TowerSpawnObj(this.cgaa.gameMap.toSpawnableDict(), this.cgaa.enemies);
 
 		this.cgaa.shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
 
