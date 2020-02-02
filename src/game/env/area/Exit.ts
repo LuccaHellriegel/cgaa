@@ -1,4 +1,4 @@
-import { RelativePosition } from "../base/types";
+import { RelativePosition } from "../../base/types";
 
 export class Exit {
 	relPositions: RelativePosition[] = [];

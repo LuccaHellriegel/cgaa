@@ -9,7 +9,7 @@ import { Paths } from "../path/Paths";
 import { Membership } from "../../base/classes/Membership";
 import { PhysicGroups } from "../../collision/Collision";
 import { removeEle } from "../../base/utils";
-import { GameMap } from "../../area/GameMap";
+import { GameMap } from "../../env/GameMap";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { Area } from "../../area/Area";
 

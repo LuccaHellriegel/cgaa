@@ -1,5 +1,5 @@
 import { EnemyCircle } from "./EnemyCircle";
-import { WallPart } from "../../area/wall/WallPart";
+import { WallPart } from "../../env/wall/WallPart";
 import { Building } from "../camp/building/Building";
 import { gridPartHalfSize } from "../../base/globals/globalSizes";
 import { Point } from "../../base/types";

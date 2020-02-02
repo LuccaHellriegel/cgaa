@@ -5,8 +5,8 @@ import { Exits } from "./Exits";
 import { getAllPositionsAroundBuilding } from "./pathBase";
 import { BuildingInfo } from "../../base/interfaces";
 import { PathConstructor } from "./PathConstructor";
-import { realCoordinateToRelative, areaToRealMiddlePoint } from "../../base/position";
-import { Area } from "../../area/Area";
+import { realCoordinateToRelative } from "../../base/position";
+import { Area } from "../../env/area/Area";
 
 export class PathFactory {
 	private pathConstructor: PathConstructor;
@@ -56,7 +56,7 @@ export class PathFactory {
 	}
 
 	private calculatePathsFromMiddleToMiddleOfArea(area: Area, id) {
-		let realMiddle = areaToRealMiddlePoint(area);
+		let realMiddle = area.getMiddlePoint();
 		this.paths.setPathForID(
 			id,
 			this.calculatePath(

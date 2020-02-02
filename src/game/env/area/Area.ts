@@ -1,7 +1,7 @@
-import { StaticConfig, ZeroOneMap, Point } from "../base/types";
-import { exitSymbol, wallSymbol } from "../base/globals/globalSymbols";
-import { gridPartHalfSize } from "../base/globals/globalSizes";
-import { WallSide } from "./wall/WallSide";
+import { ZeroOneMap, StaticConfig, Point } from "../../base/types";
+import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
+import { gridPartHalfSize } from "../../base/globals/globalSizes";
+import { WallSide } from "../wall/WallSide";
 import { Exit } from "./Exit";
 
 export interface AreaDimensions {
@@ -107,5 +107,12 @@ export class Area extends EmptyArea {
 		this.splitupAtExit(positions).forEach(positions => {
 			new WallSide(this.staticConfig.scene, this.staticConfig.physicsGroup, positions);
 		});
+	}
+
+	getMiddlePoint() {
+		return {
+			x: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.x,
+			y: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.y
+		};
 	}
 }

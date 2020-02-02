@@ -5,7 +5,7 @@ import { Player } from "../game/player/unit/Player";
 import { InteractionModus } from "../game/player/modi/interaction/InteractionModus";
 import { SelectorRect } from "../game/player/modi/SelectorRect";
 import { Modi } from "../game/player/modi/Modi";
-import { Areas } from "../game/area/Areas";
+import { Areas } from "../game/env/area/Areas";
 import { StaticConfig } from "../game/base/types";
 import { Collision, PhysicGroups } from "../game/collision/Collision";
 import { campColors } from "../game/base/globals/globalColors";
@@ -32,8 +32,7 @@ import { HealerPool } from "../game/player/unit/healer/HealerPool";
 import { Inputs } from "../game/player/input/Inputs";
 import { BossCamp } from "../game/enemies/boss/BossCamp";
 import { PlayerFriends } from "../game/player/unit/PlayerFriends";
-import { areaToRealMiddlePoint } from "../game/base/position";
-import { GameMap } from "../game/area/GameMap";
+import { GameMap } from "../game/env/GameMap";
 import { CircleFactory } from "../game/enemies/unit/CircleFactory";
 import { EnemySpawnObj } from "../game/base/spawnObj/EnemySpawnObj";
 import { areaSize } from "../game/base/globals/globalConfig";
@@ -184,7 +183,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.physicsGroups.player,
 			this.cgaa.physicsGroups.playerWeapon,
 			this.cgaa.enemies,
-			areaToRealMiddlePoint(this.cgaa.areas.playerArea)
+			this.cgaa.areas.playerArea.getMiddlePoint()
 		);
 
 		this.cameras.main.startFollow(this.cgaa.player);

@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnemyCircle } from "../enemies/unit/EnemyCircle";
-import { WallSide } from "../area/wall/WallSide";
+import { WallSide } from "../env/wall/WallSide";
 
 //TODO: find bug, that executes too many collisions, I think it executes a loop at some point
 export class BounceCollision {

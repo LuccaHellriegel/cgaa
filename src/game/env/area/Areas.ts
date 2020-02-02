@@ -1,8 +1,8 @@
-import { StaticConfig } from "../base/types";
-import { areaSize } from "../base/globals/globalConfig";
-import { relativeCoordinateToReal } from "../base/position";
+import { StaticConfig } from "../../base/types";
+import { areaSize } from "../../base/globals/globalConfig";
+import { relativeCoordinateToReal } from "../../base/position";
 import { Area, EmptyArea, AreaDimensions } from "./Area";
-import { GameMap } from "./GameMap";
+import { GameMap } from "../GameMap";
 import { Exit } from "./Exit";
 
 export class Areas {

@@ -2,7 +2,7 @@ import { ZeroOneMap } from "../base/types";
 import { realCoordinateToRelative } from "../base/position";
 import { walkableSymbol, buildingSymbol } from "../base/globals/globalSymbols";
 import { constructXYIDfromColumnRow } from "../base/id";
-import { EmptyArea, Area } from "./Area";
+import { EmptyArea, Area } from "./area/Area";
 
 export class GameMap {
 	private spawnableDict = {};

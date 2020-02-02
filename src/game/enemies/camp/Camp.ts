@@ -12,7 +12,7 @@ import { InteractionCircle } from "../unit/InteractionCircle";
 import { Membership } from "../../base/classes/Membership";
 import { EnemySpawnObj } from "../../base/spawnObj/EnemySpawnObj";
 import { RandBuildingPos } from "./building/RandBuildingPos";
-import { GameMap } from "../../area/GameMap";
+import { GameMap } from "../../env/GameMap";
 
 //TODO: abstract general camp
 export class Camp {
