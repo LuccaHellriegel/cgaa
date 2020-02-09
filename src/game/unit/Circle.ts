@@ -10,10 +10,11 @@ export class Circle extends SpriteWithAnimEvents {
 	unitType: string;
 	id: string;
 	scene: Gameplay;
-	camp: CampID;
+	campID: CampID;
 
 	constructor(config) {
 		super(config);
+		this.campID = config.color;
 		this.polygon = config.polygon;
 		this.unitType = "circle";
 		this.setCircle(config.radius);

@@ -14,10 +14,6 @@ export class InteractionModus {
 		}
 	}
 
-	notifyRemovalOfEle(ele) {
-		this.cooperation.updateCooperationState(ele);
-	}
-
 	execute(selectorRect: SelectorRect, modiState: ModiState) {
 		//TODO: execute anyways if close enough
 		if (modiState.lock) {

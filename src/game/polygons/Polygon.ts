@@ -1,4 +1,4 @@
-import { Point } from "../types";
+import { Point } from "../base/types";
 
 export let shapeWord = {
 	line: "line",

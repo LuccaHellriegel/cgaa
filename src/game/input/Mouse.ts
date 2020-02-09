@@ -1,5 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Player } from "../unit/Player";
+import { SelectorRect } from "../modi/SelectorRect";
+import { Modi } from "../modi/Modi";
 
 export class Mouse {
 	constructor(private scene: Gameplay, private player: Player, private selectorRect: SelectorRect, private modi: Modi) {

@@ -7,12 +7,10 @@ import { EventSetup } from "../setup/EventSetup";
 
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
-	color: string;
 
 	constructor(config) {
 		super(config);
 		this.healthbar = config.healthbar;
-		this.color = config.color;
 		Annotator.annotate(this, "immovable");
 		this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
 	}
@@ -25,7 +23,7 @@ export class InteractionCircle extends Circle implements damageable {
 	}
 
 	destroy() {
-		EventSetup.destroyInteractionCircle(this.scene, this.camp);
+		EventSetup.destroyInteractionCircle(this.scene, this.campID);
 		super.destroy();
 		this.healthbar.bar.destroy();
 		this.weapon.destroy();

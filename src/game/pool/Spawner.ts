@@ -30,6 +30,7 @@ export class Spawner implements enableable {
 		this.canSpawn = false;
 	}
 
+	//TODO: duplication in Grid
 	private snapCoordinateToGrid(coordinate) {
 		let ceil = Math.ceil(coordinate / EnvSetup.halfGridPartSize) * EnvSetup.halfGridPartSize;
 		let floor = Math.floor(coordinate / EnvSetup.halfGridPartSize) * EnvSetup.halfGridPartSize;
@@ -77,14 +78,17 @@ export class Spawner implements enableable {
 			selectorRect.anims.play("invalid-shooter-pos");
 			return;
 		}
+		console.log(selectorRect);
 		let x = selectorRect.x;
 		let y = selectorRect.y;
+		console.log(x, y);
+
 		if (!(x < 0 || y < 0)) {
 			let snappedXY = this.snapXYToGrid(x, y);
 			x = snappedXY.newX;
 			y = snappedXY.newY;
-
-			if (this.spawnObj.evaluateRealPos(x, y)) {
+			console.log(x, y);
+			if (this.spawnObj.evaluatePoint({ x, y })) {
 				EventSetup.spendSouls(this.scene, this.cost);
 				this.pool.poolActivate(this.pool.pop(), x, y);
 			} else {

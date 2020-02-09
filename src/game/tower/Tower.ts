@@ -8,6 +8,7 @@ import { HealthBarFactory } from "../ui/HealthBarFactory";
 import { Annotator } from "../base/Annotator";
 import { EnvSetup } from "../setup/EnvSetup";
 import { healable } from "../collision/HealerAura";
+import { CampID } from "../setup/CampSetup";
 
 //TODO: maybe allow Towers in Enemy camp again if they are expensive enough?
 //TODO: make Tower that Spawns Units that walk to boss (? walking to dynamic positions might be to complicated)
@@ -15,7 +16,7 @@ export abstract class Tower extends Image implements damageable, poolable, heala
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
-	color: string;
+	campID: CampID;
 
 	constructor(scene: Gameplay, x, y, texture, physicsGroup: Phaser.Physics.Arcade.StaticGroup) {
 		super({ scene, x, y, texture, physicsGroup });
@@ -32,7 +33,7 @@ export abstract class Tower extends Image implements damageable, poolable, heala
 			EnvSetup.gridPartSize,
 			EnvSetup.gridPartSize
 		);
-		this.color = "blue";
+		this.campID = "blue";
 		this.setSize(this.polygon.width, this.polygon.height);
 	}
 

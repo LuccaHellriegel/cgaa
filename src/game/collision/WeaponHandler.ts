@@ -31,7 +31,7 @@ export class WeaponHandler {
 		if (enemyKilled) {
 			damage = enemy.healthbar.value;
 			//Gain souls if player kill or player friend kill
-			if (weapon.owner.unitType === "player" || weapon.owner.color === "blue") {
+			if (weapon.owner.unitType === "player" || weapon.owner.campID === "blue") {
 				EventSetup.gainSouls(scene, 100);
 			}
 		}

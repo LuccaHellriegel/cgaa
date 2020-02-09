@@ -29,12 +29,12 @@ export class BounceCollision {
 			unit.setVelocity(0, 0);
 			let lastPos = unit.stateHandler.lastPositions[0];
 			unit.setPosition(lastPos.x, lastPos.y);
-			unit.state = "idle";
+			unit.state = "guard";
 			//TODO: this really might be the source of the lag? Sometimes at least
-			console.log("WallSide collision", unit.camp);
-		} else if (unit.color !== "blue") {
-			let cooperationSet = this.cooperation.dict[unit.color] as Set<CampID>;
-			if (!cooperationSet.has(obj.color)) {
+			console.log("WallSide collision", unit.campID);
+		} else if (unit.campID !== "blue") {
+			let cooperationSet = this.cooperation.dict[unit.campID] as Set<CampID>;
+			if (!cooperationSet.has(obj.campID)) {
 				unit.barrier = obj;
 				unit.state = "obstacle";
 			}

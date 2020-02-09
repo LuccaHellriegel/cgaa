@@ -13,11 +13,13 @@ export class EnemySpawnObj {
 
 	private updateRelativeDictWithMovingUnits() {
 		this.enemies.getAllEnemyPositions().forEach(pos => {
+			console.log(this.relativeDict);
 			if (this.relativeDict.get(pos) !== undefined) this.relativeDict.set(pos, EnvSetup.enemySymbol);
 		});
 	}
 
 	private updateRelativeDict() {
+		console.log(this.dict);
 		this.relativeDict = RealDict.fromDict(this.dict.dict);
 		this.updateRelativeDictWithMovingUnits();
 	}
@@ -26,10 +28,6 @@ export class EnemySpawnObj {
 		this.updateRelativeDict();
 		return this.relativeDict.get(point) === EnvSetup.walkableSymbol;
 	}
-	// evaluateRealPos(x, y) {
-	// 	this.updateRelativeDict();
-	// 	return this.relativeDict[x + " " + y] === EnvSetup.walkableSymbol;
-	// }
 
 	getRandomSpawnPosition(): number[] | boolean {
 		this.updateRelativeDict();

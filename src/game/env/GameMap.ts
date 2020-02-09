@@ -3,6 +3,7 @@ import { Areas } from "./area/Areas";
 import { RelPos } from "../base/RelPos";
 import { Camps } from "../camp/Camps";
 import { EnvSetup } from "../setup/EnvSetup";
+import { RealDict } from "../base/Dict";
 
 export class GameMap {
 	map: RelativeMap = [];
@@ -36,14 +37,17 @@ export class GameMap {
 		});
 	}
 
-	getSpawnableDict() {
-		let dict = {};
+	getSpawnableDict(): RealDict {
+		let arr = [];
 		for (let row = 0; row < this.map.length; row++) {
 			for (let column = 0; column < this.map[0].length; column++) {
 				let isWalkable = this.map[row][column] === EnvSetup.walkableSymbol;
-				if (isWalkable) dict[column + " " + row] = EnvSetup.walkableSymbol;
+				if (isWalkable) {
+					let pos = new RelPos(row, column);
+					arr.push([pos.toPoint(), EnvSetup.walkableSymbol]);
+				}
 			}
 		}
-		return dict;
+		return new RealDict(arr);
 	}
 }

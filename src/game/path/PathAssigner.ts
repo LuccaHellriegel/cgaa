@@ -9,7 +9,7 @@ export class PathAssigner {
 	constructor(private paths: Paths, private router: CampRouting) {}
 
 	assign(unit: EnemyCircle, relPos: RelPos): Path {
-		let otherCampID = this.router.getRouting(unit.color);
+		let otherCampID = this.router.getRouting(unit.campID);
 		return this.paths.getPathToCamp(relPos, otherCampID as CampID);
 	}
 }

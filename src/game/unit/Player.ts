@@ -2,6 +2,7 @@ import { Circle } from "./Circle";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { UnitSetup } from "../setup/UnitSetup";
 import { ChainWeapon } from "../weapon/ChainWeapon";
+import { CampSetup } from "../setup/CampSetup";
 
 const playerStartX = 1400;
 const playerStartY = 1200;
@@ -22,7 +23,7 @@ export class Player extends Circle {
 			weapon,
 			radius: UnitSetup.normalCircleRadius
 		});
-		this.color = "blue";
+		this.campID = CampSetup.playerCampID;
 		this.unitType = "player";
 	}
 

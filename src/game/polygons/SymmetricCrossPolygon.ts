@@ -1,5 +1,5 @@
 import { Polygon } from "./Polygon";
-import { Point } from "../types";
+import { Point } from "../base/types";
 
 export class SymmetricCrossPolygon extends Polygon {
 	constructor(x, y, rectWidth, rectHeight) {

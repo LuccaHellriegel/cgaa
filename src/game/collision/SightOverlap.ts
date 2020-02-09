@@ -29,21 +29,21 @@ export class SightOverlap {
 		let isNotPlayer = weapon.owner.unitType !== "player";
 		let isNotInAmbush = weapon.owner.state !== "ambush";
 		let isNotInteractionCircle = !(weapon.owner instanceof InteractionCircle);
-		let isNotSameCamp = (weapon.owner as EnemyCircle).color !== enemy.color;
+		let isNotSameCamp = (weapon.owner as EnemyCircle).campID !== enemy.campID;
 		let isNotAlreadyGuard = weapon.owner.state !== "guard";
 
 		//TODO: fix instanceof
 		//TODO: King should always move back to his start-position
-		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).color] as Set<CampID>;
+		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).campID] as Set<CampID>;
 		let isNotInCooperation =
-			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) && !cooperationSet.has(enemy.color);
+			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) && !cooperationSet.has(enemy.campID);
 		return (
 			isNotPlayer && isNotInAmbush && isNotInteractionCircle && isNotSameCamp && isNotAlreadyGuard && isNotInCooperation
 		);
 	}
 
 	private isInSight(weapon: Weapon, enemy) {
-		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).color] as Set<CampID>;
+		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).campID] as Set<CampID>;
 		let isNotInCooperationWithPlayer =
 			weapon.owner instanceof EnemyCircle && !cooperationSet.has(CampSetup.playerCampID);
 		if (enemy instanceof Shooter && isNotInCooperationWithPlayer) {

@@ -3,41 +3,43 @@ import { ElementCollection } from "../base/ElementCollection";
 import { Util } from "../base/Util";
 
 export class Quests {
-	private colorKilllist: any[] = [];
+	private campIDKilllist: any[] = [];
 	private unitKilllist: any[] = [];
 
 	constructor(private scene: Gameplay) {}
 
-	private addToKilllist(targetColor, essentialElements: ElementCollection) {
-		this.colorKilllist.push(targetColor);
-		this.scene.events.emit("added-to-killlist-" + targetColor);
-		this.unitKilllist.push(...essentialElements.getElementsWithColor(targetColor));
+	private addToKilllist(targetCampID, essentialElements: ElementCollection) {
+		this.campIDKilllist.push(targetCampID);
+		this.scene.events.emit("added-to-killlist-" + targetCampID);
+		console.log(essentialElements);
+		this.unitKilllist.push(...essentialElements.getElementsWithCampID(targetCampID));
 	}
 
-	private refreshKillQuest(targetColor, eleColor, essentialElements) {
-		if (!this.colorKilllist.includes(targetColor) && !this.colorKilllist.includes(eleColor)) {
-			this.addToKilllist(targetColor, essentialElements);
+	private refreshKillQuest(targetCampID, eleCampID, essentialElements) {
+		if (!this.campIDKilllist.includes(targetCampID) && !this.campIDKilllist.includes(eleCampID)) {
+			this.addToKilllist(targetCampID, essentialElements);
 		}
+		console.log(essentialElements, this.campIDKilllist, this.unitKilllist);
 	}
 
-	private killListContains(color) {
+	private killListContains(campID) {
 		for (let index = 0; index < this.unitKilllist.length; index++) {
-			if (this.unitKilllist[index].color === color) return true;
+			if (this.unitKilllist[index].campID === campID) return true;
 		}
 		return false;
 	}
 
-	private checkIfKillQuestSolved(targetColor) {
-		return !this.killListContains(targetColor) && this.colorKilllist.includes(targetColor);
+	private checkIfKillQuestSolved(targetCampID) {
+		return !this.killListContains(targetCampID) && this.campIDKilllist.includes(targetCampID);
 	}
 
-	questIsSolved(targetColor, eleColor, essentialElements) {
-		this.refreshKillQuest(targetColor, eleColor, essentialElements);
-		return this.checkIfKillQuestSolved(targetColor);
+	questIsSolved(targetCampID, eleCampID, essentialElements) {
+		this.refreshKillQuest(targetCampID, eleCampID, essentialElements);
+		return this.checkIfKillQuestSolved(targetCampID);
 	}
 
 	killSolvedQuest(ele) {
 		if (this.unitKilllist.includes(ele)) Util.removeEle(ele, this.unitKilllist);
-		return this.checkIfKillQuestSolved(ele.color);
+		return this.checkIfKillQuestSolved(ele.campID);
 	}
 }

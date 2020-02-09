@@ -4,5 +4,5 @@ export class TowerSetup {
 	static shooterCost = 100;
 	static healerCost = 200;
 
-	static towerGroupSize = 15:
+	static towerGroupSize = 15;
 }

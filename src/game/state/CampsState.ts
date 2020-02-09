@@ -10,8 +10,7 @@ export class CampsState {
 		buildings.forEach(buildingArr => {
 			this.stateDict[buildingArr[0].campID] = {};
 			this.stateDict[buildingArr[0].campID].active = true;
-			//TODO: dont forget to turn true
-			this.stateDict[buildingArr[0].campID].interactionCircleAlive = false;
+			this.stateDict[buildingArr[0].campID].interactionCircleAlive = true;
 			this.stateDict[buildingArr[0].campID].hostile = true;
 			this.stateDict[buildingArr[0].campID].activeBuildings = buildingArr.length;
 			this.stateDict[buildingArr[0].campID].buildings = {};

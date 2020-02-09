@@ -8,14 +8,12 @@ import { Point } from "../base/types";
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	pathArr: Point[];
-	color: string;
 	barrier: any;
 	stateHandler: EnemyState;
 
 	constructor(config, public velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
-		this.color = config.color;
 		this.stateHandler = new EnemyState(this);
 	}
 

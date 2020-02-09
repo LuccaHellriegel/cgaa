@@ -6,12 +6,13 @@ export class ElementCollection {
 
 	constructor() {}
 
-	getElementsWithColor(color) {
+	getElementsWithCampID(campID) {
 		return this.elements.reduce((prev, cur) => {
 			let hasScene = cur.scene;
 			if (hasScene) {
-				if (cur.color === color) prev.push(cur);
+				if (cur.campID === campID) prev.push(cur);
 			} else {
+				console.log("removing");
 				Util.removeEle(cur, this.elements);
 			}
 			return prev;
