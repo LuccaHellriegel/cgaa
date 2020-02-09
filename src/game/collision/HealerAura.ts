@@ -1,5 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Player } from "../player/unit/Player";
+import { Player } from "../unit/Player";
 
 export interface healable {
 	needsHealing(): boolean;

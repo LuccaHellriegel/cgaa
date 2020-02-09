@@ -1,14 +1,18 @@
 import { Generator } from "../Generator";
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { bigCircleRadius } from "../../../../game/base/globals/globalSizes";
-import { campHexColors } from "../../../../game/base/globals/globalColors";
+import { UnitSetup } from "../../../../game/setup/UnitSetup";
+import { CampSetup } from "../../../../game/setup/CampSetup";
 
 export class BossGenerator extends Generator {
 	title: string;
-	radius: number = bigCircleRadius;
+	radius: number = UnitSetup.bigCircleRadius;
+	color0 = CampSetup.colorDict[CampSetup.campIDs[2]];
+	color1 = CampSetup.colorDict[CampSetup.campIDs[3]];
+	color2 = CampSetup.colorDict[CampSetup.campIDs[4]];
+	color3 = CampSetup.colorDict[CampSetup.campIDs[5]];
 
 	constructor(scene: Gameplay, title: string) {
-		super(campHexColors[0], scene);
+		super(CampSetup.colorDict[CampSetup.campIDs[2]], scene);
 		this.title = title;
 		this.generate();
 	}
@@ -20,22 +24,22 @@ export class BossGenerator extends Generator {
 
 	drawCircleIdleFrame() {
 		this.graphics.fillCircle(this.radius, this.radius, this.radius);
-		this.graphics.fillStyle(campHexColors[1]);
+		this.graphics.fillStyle(this.color1);
 		this.graphics.fillCircle(this.radius, this.radius, this.radius * 0.9);
-		this.graphics.fillStyle(campHexColors[2]);
+		this.graphics.fillStyle(this.color2);
 		this.graphics.fillCircle(this.radius, this.radius, this.radius * 0.8);
-		this.graphics.fillStyle(campHexColors[3]);
+		this.graphics.fillStyle(this.color3);
 		this.graphics.fillCircle(this.radius, this.radius, this.radius * 0.7);
 	}
 
 	drawCircleDamageFrame() {
-		this.graphics.fillStyle(campHexColors[0]);
+		this.graphics.fillStyle(this.color0);
 		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius);
-		this.graphics.fillStyle(campHexColors[1]);
+		this.graphics.fillStyle(this.color1);
 		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius * 0.9);
-		this.graphics.fillStyle(campHexColors[2]);
+		this.graphics.fillStyle(this.color2);
 		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius * 0.8);
-		this.graphics.fillStyle(campHexColors[3]);
+		this.graphics.fillStyle(this.color3);
 		this.graphics.fillCircle(3 * this.radius, this.radius, this.radius * 0.7);
 
 		this.graphics.fillStyle(0xf08080);

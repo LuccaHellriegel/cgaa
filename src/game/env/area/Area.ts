@@ -1,59 +1,30 @@
-import { StaticConfig, Point, RelativePosition } from "../../base/types";
-import { exitSymbol, wallSymbol } from "../../base/globals/globalSymbols";
-import { gridPartHalfSize } from "../../base/globals/globalSizes";
-import { WallSide } from "../wall/WallSide";
 import { Exit } from "./Exit";
-import { realCoordinateToRelative } from "../../base/position";
-import { EmptyArea } from "./EmptyArea";
+import { AreaDimensions, RelativeMap } from "../types";
+import { WallFactory } from "../wall/WallFactory";
+import { EnvSetup } from "../../setup/EnvSetup";
+import { RelPos } from "../../base/RelPos";
 
-export interface AreaDimensions {
-	sizeOfXAxis: number;
-	sizeOfYAxis: number;
-}
+export class Area {
+	private wallPosArr: RelPos[][];
 
-export class Area extends EmptyArea {
-	relativeAreaTopLeftX: number;
-	relativeAreaWidth: number;
-	relativeAreaTopLeftY: number;
-	relativeAreaHeight: number;
-
-	constructor(
-		public staticConfig: StaticConfig,
-		public topLeft: Point,
-		public dims: AreaDimensions,
-		public exit: Exit
-	) {
-		super(dims);
-		this.addAreaExitsToMap();
-		this.createWalls();
-
-		this.relativeAreaTopLeftX = realCoordinateToRelative(topLeft.x);
-		this.relativeAreaWidth = dims.sizeOfXAxis;
-		this.relativeAreaTopLeftY = realCoordinateToRelative(topLeft.y);
-		this.relativeAreaHeight = dims.sizeOfYAxis;
+	constructor(public exit: Exit, public dims: AreaDimensions, public topLeft: RelPos, factory: WallFactory) {
+		this.createWalls(factory);
 	}
 
-	private addAreaExitsToMap() {
-		this.exit.relPositions.forEach(pos => {
-			this.areaMap[pos.row][pos.column] = exitSymbol;
-		});
-	}
-
-	private splitUp(positions: Point[]) {
-		//TODO: use positions from Exit class?
+	private splitUp(positions: RelPos[]) {
 		//Assumes there is only one exit with consecutive points
 		let newPositionsArr = [[], []];
 		let index = 0;
 
 		let lastPos = positions[0];
 		for (const pos of positions) {
-			const distanceIsOneGridPart =
-				(Math.abs(lastPos.x - pos.x) == 2 * gridPartHalfSize && Math.abs(lastPos.y - pos.y) == 0) ||
-				(Math.abs(lastPos.y - pos.y) == 2 * gridPartHalfSize && Math.abs(lastPos.x - pos.x) == 0);
-			const distanceIsZero = Math.abs(lastPos.x - pos.x) == 0 && Math.abs(lastPos.y - pos.y) == 0;
-			const distanceOneGridOrZero = distanceIsOneGridPart || distanceIsZero;
+			const distanceIsOne =
+				(Math.abs(lastPos.column - pos.column) == 1 && Math.abs(lastPos.row - pos.row) == 0) ||
+				(Math.abs(lastPos.row - pos.row) == 1 && Math.abs(lastPos.column - pos.column) == 0);
+			const distanceIsZero = Math.abs(lastPos.column - pos.column) == 0 && Math.abs(lastPos.row - pos.row) == 0;
+			const distanceIsOneOrZero = distanceIsOne || distanceIsZero;
 
-			if (!distanceOneGridOrZero) index = 1;
+			if (!distanceIsOneOrZero) index = 1;
 			newPositionsArr[index].push(pos);
 			lastPos = pos;
 		}
@@ -66,58 +37,59 @@ export class Area extends EmptyArea {
 		return newPositionsArr;
 	}
 
-	private createWalls() {
+	private createWalls(factory: WallFactory) {
 		//Assumes Walls are always around the area
-		//TODO: sneakly updates the map
-		let x = this.topLeft.x;
-		let y = this.topLeft.y;
-		let leftPartPositions: Point[] = [];
-		let rightPartPositions: Point[] = [];
-		let topPartPositions: Point[] = [];
-		let bottomPartPositions: Point[] = [];
-		let positions = [leftPartPositions, rightPartPositions, bottomPartPositions, topPartPositions];
+		let leftPartPositions: RelPos[] = [];
+		let rightPartPositions: RelPos[] = [];
+		let topPartPositions: RelPos[] = [];
+		let bottomPartPositions: RelPos[] = [];
+
+		let rowIndex = this.topLeft.row;
+		let columnIndex = this.topLeft.column;
+
 		for (let row = 0; row < this.dims.sizeOfYAxis; row++) {
 			for (let column = 0; column < this.dims.sizeOfXAxis; column++) {
-				let isExit = this.areaMap[row][column] === exitSymbol;
-				//TODO: is hardcoded, but should not be a problem
+				//Comparisons are relative to area
 				let isLeftWall = column === 0;
 				let isRightWall = column === this.dims.sizeOfXAxis - 1;
 				let isTopWall = row === 0;
 				let isBottomWall = row === this.dims.sizeOfYAxis - 1;
-				let isWall = (isLeftWall || isRightWall || isTopWall || isBottomWall) && !isExit;
-				if (isLeftWall && isWall) leftPartPositions.push({ x, y });
-				if (isRightWall && isWall) rightPartPositions.push({ x, y });
-				if (isTopWall && isWall) topPartPositions.push({ x, y });
-				if (isBottomWall && isWall) bottomPartPositions.push({ x, y });
+				//Comparisons are relative to global
+				let isExit = this.exit.isOverlapping(new RelPos(rowIndex, columnIndex));
+				if (isLeftWall && !isExit) leftPartPositions.push(new RelPos(rowIndex, columnIndex));
+				if (isRightWall && !isExit) rightPartPositions.push(new RelPos(rowIndex, columnIndex));
+				if (isTopWall && !isExit) topPartPositions.push(new RelPos(rowIndex, columnIndex));
+				if (isBottomWall && !isExit) bottomPartPositions.push(new RelPos(rowIndex, columnIndex));
 
-				//TODO: updates map here
-				if (!isExit && isWall) {
-					this.areaMap[row][column] = wallSymbol;
-				}
-				x += 2 * gridPartHalfSize;
+				columnIndex++;
 			}
-			y += 2 * gridPartHalfSize;
-			x = this.topLeft.x;
+			rowIndex++;
+			columnIndex = this.topLeft.column;
 		}
 
-		this.splitupAtExit(positions).forEach(positions => {
-			new WallSide(this.staticConfig.scene, this.staticConfig.physicsGroup, positions);
-		});
+		let positions = [leftPartPositions, rightPartPositions, bottomPartPositions, topPartPositions];
+		this.wallPosArr = this.splitupAtExit(positions);
+		factory.produce(this.wallPosArr);
 	}
 
-	getMiddlePoint() {
-		return {
-			x: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.x,
-			y: (2 * gridPartHalfSize * this.dims.sizeOfXAxis) / 2 + this.topLeft.y
-		};
+	addTo(map: RelativeMap) {
+		this.wallPosArr.forEach(arr => arr.forEach(pos => (map[pos.row][pos.column] = EnvSetup.wallSymbol)));
+		return map;
 	}
 
-	isInside(relPos: RelativePosition) {
+	isInside(relPos: RelPos) {
 		return (
-			relPos.column < this.relativeAreaTopLeftX + this.relativeAreaWidth &&
-			relPos.column >= this.relativeAreaTopLeftX &&
-			relPos.row < this.relativeAreaTopLeftY + this.relativeAreaHeight &&
-			relPos.row >= this.relativeAreaTopLeftY
+			relPos.column < this.topLeft.column + this.dims.sizeOfXAxis &&
+			relPos.column >= this.topLeft.column &&
+			relPos.row < this.topLeft.row + this.dims.sizeOfYAxis &&
+			relPos.row >= this.topLeft.row
+		);
+	}
+
+	getMiddle(): RelPos {
+		return new RelPos(
+			this.topLeft.row + Math.floor(this.dims.sizeOfYAxis / 2),
+			this.topLeft.column + Math.floor(this.dims.sizeOfXAxis / 2)
 		);
 	}
 }

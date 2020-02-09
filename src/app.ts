@@ -22,3 +22,11 @@ export function createGameConfig() {
 }
 
 new Phaser.Game(createGameConfig());
+//TODO: make layout random too -> just need to make sure the exits are valid, then I am good to go?
+//TODO: find something to do in the empty areas -> creeps? -> boss units?
+//TODO: randomize position of areas (maybe also shape? maybe also shape of complete map?)
+//TODO: number of camps adjustable? -> Game Menu
+//TODO: upgraden wenn shift gehalten
+//TODO unit producing towers?
+//TODO: dynamich pathfinding on Web Worker?
+//TODO: actualize map when buildings are destroyed?

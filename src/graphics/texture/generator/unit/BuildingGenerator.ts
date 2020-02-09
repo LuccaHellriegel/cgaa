@@ -1,7 +1,7 @@
 import { Generator } from "../Generator";
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { RectPolygon } from "../../../../game/base/polygons/RectPolygon";
-import { rectBuildingHalfWidth, rectBuildinghalfHeight } from "../../../../game/base/globals/globalSizes";
+import { RectPolygon } from "../../../../game/polygons/RectPolygon";
+import { BuildingSetup } from "../../../../game/setup/BuildingSetup";
 
 export class BuildingGenerator extends Generator {
 	rectBuilding: RectPolygon;
@@ -14,19 +14,19 @@ export class BuildingGenerator extends Generator {
 		this.title = title;
 		this.innerRectHexColor = innerRectHexColor;
 		this.rectBuilding = new RectPolygon(
-			rectBuildingHalfWidth,
-			rectBuildinghalfHeight,
-			rectBuildingHalfWidth * 2,
-			rectBuildinghalfHeight * 2
+			BuildingSetup.halfBuildingWidth,
+			BuildingSetup.halfBuildingHeight,
+			BuildingSetup.halfBuildingWidth * 2,
+			BuildingSetup.halfBuildingHeight * 2
 		);
 
 		let innerReduction = sizeName === "Big" ? 20 : sizeName === "Normal" ? 25 : 30;
 
 		this.rectBuildingInnerRect = new RectPolygon(
-			rectBuildingHalfWidth,
-			rectBuildinghalfHeight,
-			(rectBuildingHalfWidth - innerReduction) * 2,
-			(rectBuildinghalfHeight - innerReduction) * 2
+			BuildingSetup.halfBuildingWidth,
+			BuildingSetup.halfBuildingHeight,
+			(BuildingSetup.halfBuildingWidth - innerReduction) * 2,
+			(BuildingSetup.halfBuildingHeight - innerReduction) * 2
 		);
 		this.generate();
 	}
@@ -37,7 +37,11 @@ export class BuildingGenerator extends Generator {
 		this.rectBuildingInnerRect.draw(this.graphics, 0);
 	}
 	generateTexture() {
-		this.graphics.generateTexture(this.title, rectBuildingHalfWidth * 2, rectBuildinghalfHeight * 2);
+		this.graphics.generateTexture(
+			this.title,
+			BuildingSetup.halfBuildingWidth * 2,
+			BuildingSetup.halfBuildingHeight * 2
+		);
 	}
 	addFrames() {}
 }

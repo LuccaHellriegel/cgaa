@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { ChainWeapon } from "../../../../game/weapons/ChainWeapon";
 import { WeaponGenerator } from "./WeaponGenerator";
+import { ChainWeapon } from "../../../../game/weapon/ChainWeapon";
 
 export class ChainWeaponGenerator extends WeaponGenerator {
 	chainWeapon: ChainWeapon;

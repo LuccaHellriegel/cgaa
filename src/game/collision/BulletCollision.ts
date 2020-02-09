@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Bullet } from "../player/unit/shooter/Bullet";
-import { EnemyCircle } from "../enemies/unit/EnemyCircle";
-import { gainSouls } from "../base/events/player";
+import { Bullet } from "../tower/shooter/Bullet";
+import { EnemyCircle } from "../unit/EnemyCircle";
+import { EventSetup } from "../setup/EventSetup";
 
 export class BulletCollision {
 	constructor(private scene: Gameplay, bulletGroup: Phaser.Physics.Arcade.Group, otherGroups) {
@@ -15,7 +15,7 @@ export class BulletCollision {
 		let enemyKilled = damage >= enemy.healthbar.value;
 		if (enemyKilled) {
 			damage = enemy.healthbar.value;
-			gainSouls(this.scene, 100);
+			EventSetup.gainSouls(this.scene, 100);
 		}
 		enemy.damage(damage);
 

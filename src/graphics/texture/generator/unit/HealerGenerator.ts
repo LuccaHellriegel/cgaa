@@ -1,7 +1,7 @@
-import { RectPolygon } from "../../../../game/base/polygons/RectPolygon";
 import { Generator } from "../Generator";
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { gridPartHalfSize } from "../../../../game/base/globals/globalSizes";
+import { RectPolygon } from "../../../../game/polygons/RectPolygon";
+import { EnvSetup } from "../../../../game/setup/EnvSetup";
 
 export class HealerGenerator extends Generator {
 	rect: RectPolygon;
@@ -13,10 +13,10 @@ export class HealerGenerator extends Generator {
 	constructor(scene: Gameplay) {
 		let hexColor = 0xa9a9a9;
 		let textureName = "healer";
-		let centerX = gridPartHalfSize;
-		let centerY = gridPartHalfSize;
-		let width = 2 * gridPartHalfSize;
-		let height = 2 * gridPartHalfSize;
+		let centerX = EnvSetup.halfGridPartSize;
+		let centerY = EnvSetup.halfGridPartSize;
+		let width = EnvSetup.gridPartSize;
+		let height = EnvSetup.gridPartSize;
 
 		super(hexColor, scene);
 		this.rect = new RectPolygon(centerX, centerY, width, height);

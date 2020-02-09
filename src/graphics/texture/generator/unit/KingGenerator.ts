@@ -1,11 +1,11 @@
 import { Generator } from "../Generator";
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { bigCircleRadius } from "../../../../game/base/globals/globalSizes";
+import { UnitSetup } from "../../../../game/setup/UnitSetup";
 
 //TODO: remove duplication
 export class KingGenerator extends Generator {
 	title: string;
-	radius: number = bigCircleRadius;
+	radius: number = UnitSetup.bigCircleRadius;
 
 	constructor(scene: Gameplay, title: string) {
 		super(0xffffff, scene);

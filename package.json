@@ -9,7 +9,7 @@
 		"start": "parcel serve index.html",
 		"clean": "rm -v dist/*",
 		"ts": "tsc",
-		"test": "./node_modules/.bin/mocha --require ts-node/register  \"test/**/*.test.ts\"",
+		"test": "./node_modules/.bin/mocha --require ts-node/register --require easystarjs \"test/**/*.test.ts\"",
 		"graph": "npx depcruise --exclude '^(node_modules)' --output-type dot src/app.ts | dot -T svg > mingraph.svg",
 		"could": "npm run test && npm run ts"
 	},
@@ -28,6 +28,7 @@
 		"@types/chai": "^4.2.5",
 		"@types/mocha": "^5.2.7",
 		"chai": "^4.2.0",
+		"chai-arrays": "^2.0.0",
 		"coderoad": "^1.0.10",
 		"cssnano": "^4.1.10",
 		"dependency-cruiser": "^5.4.0",

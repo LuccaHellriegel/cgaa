@@ -1,8 +1,8 @@
 import { Generator } from "./Generator";
-import { RectPolygon } from "../../../game/base/polygons/RectPolygon";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { gridPartHalfSize } from "../../../game/base/globals/globalSizes";
-import { CompositePolygon } from "../../../game/base/polygons/CompositePolygon";
+import { RectPolygon } from "../../../game/polygons/RectPolygon";
+import { EnvSetup } from "../../../game/setup/EnvSetup";
+import { CompositePolygon } from "../../../game/polygons/CompositePolygon";
 
 export class PathMarkingGenerator extends Generator {
 	rects = {};
@@ -14,67 +14,163 @@ export class PathMarkingGenerator extends Generator {
 
 	drawFrames() {
 		this.rects["left-right"] = new RectPolygon(
-			gridPartHalfSize,
-			gridPartHalfSize,
-			2 * gridPartHalfSize,
-			gridPartHalfSize / 4
+			EnvSetup.halfGridPartSize,
+			EnvSetup.halfGridPartSize,
+			EnvSetup.gridPartSize,
+			EnvSetup.halfGridPartSize / 4
 		);
 		this.rects["right-left"] = new RectPolygon(
-			gridPartHalfSize,
-			gridPartHalfSize,
-			2 * gridPartHalfSize,
-			gridPartHalfSize / 4
+			EnvSetup.halfGridPartSize,
+			EnvSetup.halfGridPartSize,
+			EnvSetup.gridPartSize,
+			EnvSetup.halfGridPartSize / 4
 		);
 
 		this.rects["top-bottom"] = new RectPolygon(
-			gridPartHalfSize,
-			gridPartHalfSize,
+			EnvSetup.halfGridPartSize,
+			EnvSetup.halfGridPartSize,
 
-			gridPartHalfSize / 4,
-			2 * gridPartHalfSize
+			EnvSetup.halfGridPartSize / 4,
+			EnvSetup.gridPartSize
 		);
 		this.rects["bottom-top"] = new RectPolygon(
-			gridPartHalfSize,
-			gridPartHalfSize,
+			EnvSetup.halfGridPartSize,
+			EnvSetup.halfGridPartSize,
 
-			gridPartHalfSize / 4,
-			2 * gridPartHalfSize
+			EnvSetup.halfGridPartSize / 4,
+			EnvSetup.gridPartSize
 		);
 
 		this.rects["left-top"] = new CompositePolygon([
-			[gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 		this.rects["top-left"] = new CompositePolygon([
-			[gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 
 		this.rects["left-bottom"] = new CompositePolygon([
-			[gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 		this.rects["bottom-left"] = new CompositePolygon([
-			[gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 
 		this.rects["right-top"] = new CompositePolygon([
-			[gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 		this.rects["top-right"] = new CompositePolygon([
-			[gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 
 		this.rects["right-bottom"] = new CompositePolygon([
-			[gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 		this.rects["bottom-right"] = new CompositePolygon([
-			[gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize, gridPartHalfSize, gridPartHalfSize / 4, "rect"],
-			[gridPartHalfSize, gridPartHalfSize + gridPartHalfSize / 2, gridPartHalfSize / 4, gridPartHalfSize, "rect"]
+			[
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize / 4,
+				"rect"
+			],
+			[
+				EnvSetup.halfGridPartSize,
+				EnvSetup.halfGridPartSize + EnvSetup.halfGridPartSize / 2,
+				EnvSetup.halfGridPartSize / 4,
+				EnvSetup.halfGridPartSize,
+				"rect"
+			]
 		]);
 	}
 
@@ -85,7 +181,7 @@ export class PathMarkingGenerator extends Generator {
 		for (const key of keys) {
 			this.rects[key].draw(this.graphics, 0);
 			let texture = "pathMarking-" + key;
-			this.graphics.generateTexture(texture, 2 * gridPartHalfSize, 2 * gridPartHalfSize);
+			this.graphics.generateTexture(texture, EnvSetup.gridPartSize, EnvSetup.gridPartSize);
 			this.graphics.clear();
 			this.graphics.fillStyle(0xffe4b2);
 		}

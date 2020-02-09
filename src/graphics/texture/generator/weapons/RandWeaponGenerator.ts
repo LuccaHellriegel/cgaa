@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../../scenes/Gameplay";
-import { RandWeapon } from "../../../../game/weapons/RandWeapon";
 import { WeaponGenerator } from "./WeaponGenerator";
+import { RandWeapon } from "../../../../game/weapon/RandWeapon";
 
 export class RandWeaponGenerator extends WeaponGenerator {
 	randWeapon: RandWeapon;

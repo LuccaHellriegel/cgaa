@@ -1,4 +1,4 @@
-import { HealthBar } from "./ui/HealthBar";
+import { HealthBar } from "../ui/HealthBar";
 
 export interface damageable {
 	syncPolygon();
@@ -15,9 +15,4 @@ export interface poolable {
 export interface listenable {
 	once(event: any, callback: Function);
 	on(event: any, callback: Function);
-}
-
-export interface BuildingInfo {
-	color: string;
-	spawnPositions: number[][];
 }

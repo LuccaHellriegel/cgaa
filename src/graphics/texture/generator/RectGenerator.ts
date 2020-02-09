@@ -1,6 +1,6 @@
 import { Generator } from "./Generator";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { RectPolygon } from "../../../game/base/polygons/RectPolygon";
+import { RectPolygon } from "../../../game/polygons/RectPolygon";
 
 export class RectGenerator extends Generator {
 	rect: RectPolygon;

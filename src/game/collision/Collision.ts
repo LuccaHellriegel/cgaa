@@ -1,9 +1,10 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { executeOverAllCamps } from "../base/globals/global";
+import { CampSetup } from "../setup/CampSetup";
 import { BulletCollision } from "./BulletCollision";
 import { SightOverlap } from "./SightOverlap";
 import { BounceCollision } from "./BounceCollision";
 import { HealerAura } from "./HealerAura";
+import { Cooperation } from "../state/Cooperation";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
@@ -15,16 +16,17 @@ export interface PhysicGroups {
 	areas: Phaser.Physics.Arcade.StaticGroup;
 	shooterBulletGroup: Phaser.Physics.Arcade.Group;
 	buildings: {};
+	pairs: {};
 }
 
 export class Collision {
 	physicGroups: PhysicGroups;
 
-	constructor(scene: Gameplay) {
+	constructor(scene: Gameplay, cooperation: Cooperation) {
 		this.createPhysicGroups(scene);
 
-		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr());
-		new BounceCollision(scene, this.getBounceCombinatorialArr());
+		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr(), cooperation);
+		new BounceCollision(scene, this.getBounceCombinatorialArr(), cooperation);
 		new BulletCollision(scene, this.physicGroups.shooterBulletGroup, this.getEnemyGroups());
 
 		new HealerAura(scene, this.physicGroups.healer, this.physicGroups.shooter, this.physicGroups.player);
@@ -40,18 +42,21 @@ export class Collision {
 
 		let healer = scene.physics.add.staticGroup();
 
+		let pairs = {};
 		let enemies = {};
 		let enemyWeapons = {};
 		let buildings = {};
-		executeOverAllCamps(color => {
-			enemies[color] = scene.physics.add.group();
-			enemyWeapons[color] = scene.physics.add.group();
-			buildings[color] = scene.physics.add.staticGroup();
+		CampSetup.campIDs.forEach(id => {
+			enemies[id] = scene.physics.add.group();
+			enemyWeapons[id] = scene.physics.add.group();
+			buildings[id] = scene.physics.add.staticGroup();
+			//TODO: no duplication
+			pairs[id] = { physicsGroup: enemies[id], weaponGroup: enemyWeapons[id] };
 		});
 
-		//TODO: color -> camp so "boss" makes sense
-		enemies["boss"] = scene.physics.add.group();
-		enemyWeapons["boss"] = scene.physics.add.group();
+		// //TODO: color -> camp so "boss" makes sense
+		// enemies["boss"] = scene.physics.add.group();
+		// enemyWeapons["boss"] = scene.physics.add.group();
 
 		let areas = scene.physics.add.staticGroup();
 
@@ -62,6 +67,7 @@ export class Collision {
 			shooterBulletGroup,
 			healer,
 
+			pairs,
 			enemies,
 			enemyWeapons,
 			buildings,

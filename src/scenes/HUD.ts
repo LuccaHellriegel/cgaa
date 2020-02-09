@@ -1,11 +1,10 @@
-import { PlayerHealthBar } from "../game/player/ui/PlayerHealthBar";
-import { PlayerSoulCounter } from "../game/player/ui/counters/PlayerSoulCounter";
-import { executeOverAllCamps } from "../game/base/globals/global";
-import { CampState } from "../game/player/ui/state/CampState";
-import { campHexColors } from "../game/base/globals/globalColors";
-import { Gameplay } from "./Gameplay";
-import { Tutorial } from "../game/player/ui/tutorial/Tutorial";
 import { createGameConfig } from "../app";
+import { PlayerHealthBar } from "../game/ui/PlayerHealthBar";
+import { Gameplay } from "./Gameplay";
+import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
+import { CampState } from "../game/ui/state/CampState";
+import { Tutorial } from "../game/ui/tutorial/Tutorial";
+import { CampSetup } from "../game/setup/CampSetup";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -77,10 +76,10 @@ export class HUD extends Phaser.Scene {
 		let x;
 		let y;
 
-		executeOverAllCamps((color, index) => {
+		CampSetup.ordinaryCampIDs.forEach((color, index) => {
 			x = 1280 - halfSize - 5;
 			y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
-			campStates.push(new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, campHexColors[index]));
+			campStates.push(new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, CampSetup.colorDict[color]));
 		});
 		this.campStates = campStates;
 

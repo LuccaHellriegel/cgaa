@@ -1,13 +1,15 @@
-import { Weapon } from "../weapons/Weapon";
-import { InteractionCircle } from "../enemies/unit/InteractionCircle";
-import { EnemyCircle } from "../enemies/unit/EnemyCircle";
-import { Shooter } from "../player/unit/shooter/Shooter";
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
-import { King } from "../enemies/boss/King";
+import { Weapon } from "../weapon/Weapon";
+import { EnemyCircle } from "../unit/EnemyCircle";
+import { InteractionCircle } from "../unit/InteractionCircle";
+import { King } from "../unit/King";
+import { Shooter } from "../tower/shooter/Shooter";
+import { Cooperation } from "../state/Cooperation";
+import { CampID, CampSetup } from "../setup/CampSetup";
 
 export class SightOverlap {
-	constructor(private scene: Gameplay, combinatorialArr) {
+	constructor(private scene: Gameplay, combinatorialArr, private cooperation: Cooperation) {
 		combinatorialArr.forEach(arr => {
 			let firstsArr = arr[0];
 			let secondsArr = arr[1];
@@ -32,22 +34,18 @@ export class SightOverlap {
 
 		//TODO: fix instanceof
 		//TODO: King should always move back to his start-position
+		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).color] as Set<CampID>;
 		let isNotInCooperation =
-			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) &&
-			!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes(
-				enemy.color
-			);
+			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) && !cooperationSet.has(enemy.color);
 		return (
 			isNotPlayer && isNotInAmbush && isNotInteractionCircle && isNotSameCamp && isNotAlreadyGuard && isNotInCooperation
 		);
 	}
 
 	private isInSight(weapon: Weapon, enemy) {
+		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).color] as Set<CampID>;
 		let isNotInCooperationWithPlayer =
-			weapon.owner instanceof EnemyCircle &&
-			!(weapon.owner as EnemyCircle).scene.cgaa.camps[(weapon.owner as EnemyCircle).color].dontAttackList.includes(
-				"blue"
-			);
+			weapon.owner instanceof EnemyCircle && !cooperationSet.has(CampSetup.playerCampID);
 		if (enemy instanceof Shooter && isNotInCooperationWithPlayer) {
 			enemy.fire(weapon.owner);
 		}

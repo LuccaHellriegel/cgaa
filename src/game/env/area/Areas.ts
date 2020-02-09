@@ -1,100 +1,75 @@
-import { StaticConfig } from "../../base/types";
-import { areaSize } from "../../base/globals/globalConfig";
-import { relativeCoordinateToReal } from "../../base/position";
-import { Area, AreaDimensions } from "./Area";
-import { EmptyArea } from "./EmptyArea";
-import { GameMap } from "../GameMap";
+import { AreaDimensions, MapDimensions, ExitSide, EmptyArea, RelativeMap } from "../types";
+import { EnvSetup } from "../../setup/EnvSetup";
+import { Area } from "./Area";
 import { Exit } from "./Exit";
+import { WallFactory } from "../wall/WallFactory";
+import { RelPos } from "../../base/RelPos";
 
 export class Areas {
-	public areas: Area[] = [];
-	public playerArea: Area;
-	public bossArea: Area;
+	arr: (Area | EmptyArea)[][];
+	nonEmpty: Area[] = [];
+	dims: MapDimensions;
+	exits: Exit[] = [];
 
-	constructor(staticConfig: StaticConfig) {
-		const exitWidth = 3;
+	constructor(factory: WallFactory) {
+		let dims: AreaDimensions = { sizeOfXAxis: EnvSetup.areaSize, sizeOfYAxis: EnvSetup.areaSize };
 
-		const playerPos = [1, 0];
-		const bossPos = [1, 3];
-		//Right = Player, Left = Boss
-		const exitLayout = [
-			["empty", "down", "down", "empty"],
-			["right", "empty", "empty", "left"],
-			["empty", "up", "up", "empty"]
+		let layout = [
+			[0, 1, 1, 0],
+			[1, 0, 0, 1],
+			[0, 1, 1, 0]
 		];
 
-		let areaDims: AreaDimensions = { sizeOfXAxis: areaSize, sizeOfYAxis: areaSize };
+		let exitSides: ExitSide[][] = [
+			["none", "down", "down", "none"],
+			["right", "none", "none", "left"],
+			["none", "up", "up", "none"]
+		];
 
-		let startX = 0;
-		let startY = 0;
+		let topLeftPositions = layout.map((row, rowIndex) => {
+			return row.map((_, columnIndex) => {
+				return new RelPos(rowIndex * EnvSetup.areaSize, columnIndex * EnvSetup.areaSize);
+			});
+		});
 
-		for (let layoutRow = 0; layoutRow < exitLayout.length; layoutRow++) {
-			for (let layoutColumn = 0; layoutColumn < exitLayout[0].length; layoutColumn++) {
-				if (exitLayout[layoutRow][layoutColumn] !== "empty") {
-					//TODO: duplication
-					let topLeftX = relativeCoordinateToReal(startX + layoutColumn * areaDims.sizeOfXAxis);
-					let topLeftY = relativeCoordinateToReal(startY + layoutRow * areaDims.sizeOfYAxis);
-					let wallSide = exitLayout[layoutRow][layoutColumn];
-					let area;
-					let column;
-					let row;
+		this.arr = layout.map((row, rowIndex) => {
+			return row.map((column, columnIndex) => {
+				if (column === 0) {
+					return "empty";
+				} else {
+					let exit = new Exit(
+						topLeftPositions[rowIndex][columnIndex],
+						exitSides[rowIndex][columnIndex],
+						EnvSetup.exitWidth
+					);
 
-					switch (wallSide) {
-						case "down":
-						case "up":
-							//TODO: is hardcoded
-							column = 6;
-							row = layoutRow === 0 ? areaSize - 1 : 0;
-							area = new Area(
-								staticConfig,
-								{ x: topLeftX, y: topLeftY },
-								areaDims,
-								new Exit(wallSide, exitWidth, { column, row })
-							);
-							break;
-						case "left":
-							column = layoutColumn === 0 ? areaDims.sizeOfXAxis - 1 : 0;
-							row = 6 - 1;
-							area = new Area(
-								staticConfig,
-								{ x: topLeftX, y: topLeftY },
-								areaDims,
-								new Exit(wallSide, exitWidth, { column, row })
-							);
-							break;
-						case "right":
-							column = layoutColumn === 0 ? areaDims.sizeOfXAxis - 1 : 0;
-							row = 6 - 1;
-							area = new Area(
-								staticConfig,
-								{ x: topLeftX, y: topLeftY },
-								areaDims,
-								new Exit(wallSide, exitWidth, { column, row })
-							);
-							break;
-					}
+					this.exits.push(exit);
 
-					if (layoutRow == playerPos[0] && layoutColumn == playerPos[1]) {
-						this.playerArea = area;
-					} else if (layoutRow == bossPos[0] && layoutColumn == bossPos[1]) {
-						this.bossArea = area;
-					} else {
-						this.areas.push(area);
-					}
+					return new Area(exit, dims, topLeftPositions[rowIndex][columnIndex], factory);
 				}
-			}
-		}
+			});
+		});
+
+		this.dims = {
+			sizeOfXAxis: layout[0].length * EnvSetup.areaSize,
+			sizeOfYAxis: layout.length * EnvSetup.areaSize
+		};
+
+		this.arr.forEach(row =>
+			row.forEach(column => {
+				if (column !== "empty") this.nonEmpty.push(column);
+			})
+		);
 	}
 
-	createGameMap() {
-		let dims: AreaDimensions = { sizeOfXAxis: areaSize, sizeOfYAxis: areaSize };
-		//TODO: order in maps is hardcoded
-		let layout = [
-			[new EmptyArea(dims), this.areas[0], this.areas[1], new EmptyArea(dims)],
-			[this.playerArea, new EmptyArea(dims), new EmptyArea(dims), this.bossArea],
-			[new EmptyArea(dims), this.areas[2], this.areas[3], new EmptyArea(dims)]
-		];
+	addTo(map: RelativeMap) {
+		this.nonEmpty.forEach(area => {
+			map = area.addTo(map);
+		});
 
-		return new GameMap(layout);
+		this.exits.forEach(exit => {
+			map = exit.addTo(map);
+		});
+		return map;
 	}
 }
