@@ -10,7 +10,6 @@ export class Orientation {
 		public camps: Camps
 	) {}
 
-	//TODO: switch to using middle of camps too, otherwise cooperation not really helpful
 	getPosFor(campID: CampID) {
 		switch (campID) {
 			case CampSetup.playerCampID:

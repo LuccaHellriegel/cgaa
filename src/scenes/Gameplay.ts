@@ -167,7 +167,7 @@ export class Gameplay extends Phaser.Scene {
 		let healerPool = new HealerPool(
 			this,
 			TowerSetup.towerGroupSize,
-			collision.physicGroups.shooter,
+			collision.physicGroups.tower,
 			collision.physicGroups.healer
 		);
 		let healerSpawner = Spawner.createHealerSpawner(this, healerPool, towerSpawnObj);
@@ -175,8 +175,8 @@ export class Gameplay extends Phaser.Scene {
 		let shooterPool = new ShooterPool(
 			this,
 			TowerSetup.towerGroupSize,
-			collision.physicGroups.shooter,
-			collision.physicGroups.shooterBulletGroup
+			collision.physicGroups.tower,
+			collision.physicGroups.bulletGroup
 		);
 		let shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
 		let spawners = [shooterSpawner, healerSpawner];

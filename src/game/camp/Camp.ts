@@ -52,14 +52,9 @@ export class Camp implements CampLike {
 
 	populate(scene: Gameplay, pool: GroupPool, enemies: Enemies) {
 		new CampPopulator(scene, pool, new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies));
-
-		//TODO wave again
-		//TODO: interaction unit
 	}
 
 	createBuildingSpawnableDictsPerBuilding(): any[][] {
-		//TODO: pool per building? -> otherwise pop results not in spawnUnit compliance
-
 		let result = [];
 		this.buildingSpawnPairs.forEach(pair => {
 			let arr = [];

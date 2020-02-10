@@ -9,12 +9,12 @@ import { Cooperation } from "../state/Cooperation";
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
-	shooter: Phaser.Physics.Arcade.StaticGroup;
+	tower: Phaser.Physics.Arcade.StaticGroup;
 	healer: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
-	shooterBulletGroup: Phaser.Physics.Arcade.Group;
+	bulletGroup: Phaser.Physics.Arcade.Group;
 	buildings: {};
 	pairs: {};
 }
@@ -27,18 +27,17 @@ export class Collision {
 
 		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr(), cooperation);
 		new BounceCollision(scene, this.getBounceCombinatorialArr(), cooperation);
-		new BulletCollision(scene, this.physicGroups.shooterBulletGroup, this.getEnemyGroups());
+		new BulletCollision(scene, this.physicGroups.bulletGroup, this.getEnemyGroups());
 
-		new HealerAura(scene, this.physicGroups.healer, this.physicGroups.shooter, this.physicGroups.player);
+		new HealerAura(scene, this.physicGroups.healer, this.physicGroups.tower, this.physicGroups.player);
 	}
 
 	private createPhysicGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
 
-		//TODO: shooter should be tower, as it is used in Healer too
-		let shooter = scene.physics.add.staticGroup();
-		let shooterBulletGroup = scene.physics.add.group();
+		let tower = scene.physics.add.staticGroup();
+		let bulletGroup = scene.physics.add.group();
 
 		let healer = scene.physics.add.staticGroup();
 
@@ -63,8 +62,8 @@ export class Collision {
 		this.physicGroups = {
 			player,
 			playerWeapon,
-			shooter,
-			shooterBulletGroup,
+			tower,
+			bulletGroup,
 			healer,
 
 			pairs,
@@ -85,7 +84,7 @@ export class Collision {
 		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
 		result.push([
 			[...Object.values(this.physicGroups.enemyWeapons)],
-			[this.physicGroups.player, this.physicGroups.shooter]
+			[this.physicGroups.player, this.physicGroups.tower]
 		]);
 		result.push(
 			...Object.keys(this.physicGroups.enemyWeapons).map(color => {
@@ -104,13 +103,13 @@ export class Collision {
 		let result = [];
 		result.push([
 			[this.physicGroups.player],
-			[...this.getEnemyGroups(), this.physicGroups.shooter] //TODO: enable again this.physicGroups.areas]
+			[...this.getEnemyGroups(), this.physicGroups.tower] //TODO: enable again this.physicGroups.areas]
 		]);
 		result.push([
 			[...Object.values(this.physicGroups.enemies)],
 			[
 				this.physicGroups.player,
-				this.physicGroups.shooter,
+				this.physicGroups.tower,
 				this.physicGroups.areas,
 				...Object.values(this.physicGroups.buildings)
 			]
