@@ -31,10 +31,10 @@ import { TowerSetup } from "../game/setup/TowerSetup";
 import { ShooterPool } from "../game/pool/ShooterPool";
 import { InteractionModus } from "../game/modi/interaction/InteractionModus";
 import { Cooperation } from "../game/state/Cooperation";
-import { Quests } from "../game/state/Quest";
+import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
 import { Rivalries } from "../game/state/Rivalries";
-import { ElementCollection } from "../game/base/ElementCollection";
+import { UnitCollection } from "../game/base/UnitCollection";
 import { BuildingFactory } from "../game/building/BuildingFactory";
 import { BossCamp } from "../game/camp/BossCamp";
 import { BossPool } from "../game/pool/BossPool";
@@ -62,10 +62,10 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	create() {
-		//Setup GameState
+		//Setup minimal Game State for collision handling
 		let rivalries = new Rivalries();
 		let router = new CampRouting(this.events, rivalries);
-		let cooperation = new Cooperation(new Quests(this), router, rivalries);
+		let cooperation = new Cooperation(router);
 
 		//Setup Physics and Sight
 		let collision = new Collision(this, cooperation);
@@ -98,6 +98,15 @@ export class Gameplay extends Phaser.Scene {
 			camps.ordinary.map(camp => camp.buildings)
 		);
 
+		//Setup GameState
+		let essentialDict = camps.ordinary.reduce((prev, cur) => {
+			prev[cur.id] = (cur.buildings as any[]).concat(cur.interactionUnit);
+			return prev;
+		}, {});
+
+		let quests = new Quests(this, rivalries, essentialDict);
+		cooperation.setQuests(quests);
+
 		//Setup Boss
 		new BossCamp(camps.boss.area, gameMap).populate(
 			this,
@@ -117,9 +126,9 @@ export class Gameplay extends Phaser.Scene {
 			gameMap.getMiddle(),
 			camps.player.area.getMiddle(),
 			camps.boss.area.getMiddle(),
-			exits
+			camps
 		);
-		let configs = PathConfig.createConfigs(orientation, camps.arr);
+		let configs = PathConfig.createConfigs(orientation, exits, camps.arr);
 		let paths = new Paths(orientation, PathFactory.produce(new PathCalculator(gameMap.map), configs));
 		let assigner = new PathAssigner(paths, router);
 
@@ -167,15 +176,17 @@ export class Gameplay extends Phaser.Scene {
 			this,
 			TowerSetup.towerGroupSize,
 			collision.physicGroups.shooter,
-			collision.physicGroups.healer
+			collision.physicGroups.shooterBulletGroup
 		);
 		let shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
 		let spawners = [shooterSpawner, healerSpawner];
 		let buildMode = new BuildModus(spawners);
-		let interactionCollection = new ElementCollection();
-		camps.ordinary.forEach(camp => {
-			interactionCollection.addElement(camp.interactionUnit);
-		});
+		let interactionCollection = new UnitCollection(
+			camps.ordinary.map(camp => {
+				return camp.interactionUnit;
+			})
+		);
+
 		let interactionMode = new InteractionModus(cooperation, interactionCollection);
 		let selectorRect = new SelectorRect(this, 0, 0);
 		this.cgaa.inputs = new Inputs(this);

@@ -76,7 +76,7 @@ export class HUD extends Phaser.Scene {
 		let x;
 		let y;
 
-		CampSetup.ordinaryCampIDs.forEach((color, index) => {
+		this.ourGame.cgaa.waveOrder.order.forEach((color, index) => {
 			x = 1280 - halfSize - 5;
 			y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
 			campStates.push(new CampState(this, this.ourGame, x, y, halfSize, color, 0xffffff, CampSetup.colorDict[color]));

@@ -1,6 +1,8 @@
 import { Orientation } from "./Orientation";
 import { RelPos } from "../base/RelPos";
 import { Camp } from "../camp/Camp";
+import { CampSetup } from "../setup/CampSetup";
+import { CampExits } from "../camp/CampExits";
 
 export interface MultiPosPath {
 	start: RelPos;
@@ -10,11 +12,11 @@ export interface MultiPosPath {
 
 export class PathConfig {
 	private constructor() {}
-	static createConfigs(orientation: Orientation, camps: Camp[]): MultiPosPath[] {
+	static createConfigs(orientation: Orientation, exits: CampExits, camps: Camp[]): MultiPosPath[] {
 		let configs = [];
 
 		camps.forEach(camp => {
-			let waypoints = [orientation.getPosFor(camp.id), orientation.middleOfGameMap];
+			let waypoints = [exits.getExitFor(camp.id), orientation.middleOfGameMap];
 			camp.buildingSetup.spawnPos.forEach(start => {
 				configs.push({
 					start,
@@ -25,6 +27,17 @@ export class PathConfig {
 					start,
 					waypoints,
 					goal: orientation.middleOfBossArea
+				});
+
+				//Reroute paths
+				CampSetup.ordinaryCampIDs.forEach(id => {
+					if (id !== camp.id) {
+						configs.push({
+							start,
+							waypoints,
+							goal: orientation.getPosFor(id)
+						});
+					}
 				});
 			});
 		});

@@ -1,7 +1,7 @@
 import { SelectorRect } from "../SelectorRect";
 import { ModiState } from "../ModiState";
 import { Spawner } from "../../pool/Spawner";
-import { ElementCollection } from "../../base/ElementCollection";
+import { UnitCollection } from "../../base/UnitCollection";
 import { Healer } from "../../tower/healer/Healer";
 import { HealerPool } from "../../pool/HealerPool";
 import { ShooterPool } from "../../pool/ShooterPool";
@@ -15,12 +15,12 @@ export class BuildModus {
 	//TODO: dont lock at all if nothing in reach
 
 	private findClosestElement(selectorRect: SelectorRect) {
-		let [ele, dist] = ElementCollection.findClosestElement(
+		let [ele, dist] = UnitCollection.findClosestUnit(
 			this.spawners[0].pool.getActiveUnits(),
 			selectorRect.x,
 			selectorRect.y
 		);
-		let [ele2, dist2] = ElementCollection.findClosestElement(
+		let [ele2, dist2] = UnitCollection.findClosestUnit(
 			this.spawners[1].pool.getActiveUnits(),
 			selectorRect.x,
 			selectorRect.y

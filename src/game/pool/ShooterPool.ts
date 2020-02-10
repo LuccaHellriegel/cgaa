@@ -9,7 +9,7 @@ export class ShooterPool extends Pool {
 		scene: Gameplay,
 		numberOfUnits: number,
 		unitGroup: Phaser.Physics.Arcade.StaticGroup,
-		private bulletGroup: Phaser.Physics.Arcade.StaticGroup
+		private bulletGroup: Phaser.Physics.Arcade.Group
 	) {
 		super(scene, numberOfUnits, unitGroup);
 	}

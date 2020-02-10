@@ -1,13 +1,13 @@
 import { RelPos } from "../base/RelPos";
-import { CampExits } from "../camp/CampExits";
 import { CampID, CampSetup } from "../setup/CampSetup";
+import { Camps } from "../camp/Camps";
 
 export class Orientation {
 	constructor(
 		public middleOfGameMap: RelPos,
 		public middleOfPlayerArea: RelPos,
 		public middleOfBossArea: RelPos,
-		public exits: CampExits
+		public camps: Camps
 	) {}
 
 	//TODO: switch to using middle of camps too, otherwise cooperation not really helpful
@@ -18,7 +18,7 @@ export class Orientation {
 			case CampSetup.bossCampID:
 				return this.middleOfBossArea;
 			default:
-				return this.exits.getExitFor(campID);
+				return this.camps.get(campID).area.getMiddle();
 		}
 	}
 }

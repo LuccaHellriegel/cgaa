@@ -52,10 +52,12 @@ export class CampState {
 
 	reset() {
 		let killlistArgs = [
-			"added-to-killlist-" + this.color,
-			() => {
-				this.onKillist = true;
-				this.redraw();
+			EventSetup.questAccecptedEvent,
+			color => {
+				if (color === this.color) {
+					this.onKillist = true;
+					this.redraw();
+				}
 			}
 		];
 		let rerouteArgs = [

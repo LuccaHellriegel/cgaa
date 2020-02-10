@@ -1,39 +1,45 @@
-import { Quests } from "./Quest";
-import { ElementCollection } from "../base/ElementCollection";
+import { Quests } from "./Quests";
 import { CampRouting } from "../camp/CampRouting";
-import { Rivalries } from "./Rivalries";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { InteractionCircle } from "../unit/InteractionCircle";
 
 export class Cooperation {
 	dict: { [key in CampID]: Set<CampID> };
-	constructor(private quests: Quests, private router: CampRouting, private rivalries: Rivalries) {
-		let dict = {};
-		CampSetup.campIDs.forEach(id => {
-			dict[id] = new Set<CampID>();
+	private quests: Quests;
+	constructor(private router: CampRouting) {
+		this.dict = CampSetup.campIDs.reduce((prev, id) => {
+			prev[id] = new Set<CampID>();
+			return prev;
+		}, {} as { [key in CampID]: Set<CampID> });
+	}
+
+	setQuests(quests: Quests) {
+		this.quests = quests;
+	}
+
+	interactWithCircle(pair: [InteractionCircle, number]) {
+		let id = pair[0].campID;
+		this.quests.accept(id);
+		if (this.quests.isDone(id)) {
+			this.router.reroute(id);
+			this.updateCooperation(id);
+		}
+	}
+
+	updateCooperation(campID: CampID) {
+		(this.dict[campID] as Set<CampID>).add(CampSetup.playerCampID);
+
+		//TODO: multiple camp cooperation
+		Object.keys(this.dict).forEach(key => {
+			let set: Set<CampID> = this.dict[key];
+			if (set.has(CampSetup.playerCampID)) set.add(campID);
 		});
-		this.dict = dict;
+		//TODO: get rid of scene call
+		//TODO: update already spawned units
+		// (this.scene.cgaa.campObj as Camps).setNonHostile(ele.campID);
 	}
 
-	interactWithCircle(ele: [InteractionCircle, number], essentialElements: ElementCollection) {
-		if (this.quests.questIsSolved(this.rivalries.getRival(ele[0].campID), ele[0].campID, essentialElements)) {
-			console.log(ele, "here");
-			this.router.reroute(ele[0].campID);
-		}
-	}
-
-	updateCooperationState(ele) {
-		if (this.quests.killSolvedQuest(ele)) {
-			(this.dict[ele.campID] as Set<CampID>).add(CampSetup.playerCampID);
-
-			//TODO: multiple camp cooperation
-			Object.keys(this.dict).forEach(key => {
-				let set: Set<CampID> = this.dict[key];
-				if (set.has(CampSetup.playerCampID)) set.add(ele.campID);
-			});
-			//TODO: get rid of scene call
-			//TODO: update already spawned units
-			// (this.scene.cgaa.campObj as Camps).setNonHostile(ele.campID);
-		}
+	hasCooperation(campID, otherCampID) {
+		return campID === otherCampID || this.dict[campID].has(otherCampID);
 	}
 }

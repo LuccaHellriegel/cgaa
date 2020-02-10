@@ -58,4 +58,6 @@ export class EventSetup {
 	static endWave(scene: Phaser.Scene, campID: CampID) {
 		scene.events.emit(this.endWaveEvent, campID);
 	}
+
+	static questAccecptedEvent = "quest-accepted";
 }

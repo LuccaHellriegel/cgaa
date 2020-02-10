@@ -34,18 +34,18 @@ export class SightOverlap {
 
 		//TODO: fix instanceof
 		//TODO: King should always move back to his start-position
-		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).campID] as Set<CampID>;
 		let isNotInCooperation =
-			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) && !cooperationSet.has(enemy.campID);
+			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) &&
+			!this.cooperation.hasCooperation((weapon.owner as EnemyCircle).campID, enemy.campID);
 		return (
 			isNotPlayer && isNotInAmbush && isNotInteractionCircle && isNotSameCamp && isNotAlreadyGuard && isNotInCooperation
 		);
 	}
 
 	private isInSight(weapon: Weapon, enemy) {
-		let cooperationSet = this.cooperation.dict[(weapon.owner as EnemyCircle).campID] as Set<CampID>;
 		let isNotInCooperationWithPlayer =
-			weapon.owner instanceof EnemyCircle && !cooperationSet.has(CampSetup.playerCampID);
+			weapon.owner instanceof EnemyCircle &&
+			!this.cooperation.hasCooperation((weapon.owner as EnemyCircle).campID, CampSetup.playerCampID);
 		if (enemy instanceof Shooter && isNotInCooperationWithPlayer) {
 			enemy.fire(weapon.owner);
 		}

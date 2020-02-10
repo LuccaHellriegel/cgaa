@@ -8,18 +8,15 @@ export class EnemySpawnObj {
 	public relativeDict: RealDict = new RealDict([]);
 
 	//dict : RealDict is spawnable dict
-	//TODO: dict : RealDict needs real positions because enemies have real positions
 	constructor(private dict: RealDict, private enemies: Enemies) {}
 
 	private updateRelativeDictWithMovingUnits() {
 		this.enemies.getAllEnemyPositions().forEach(pos => {
-			console.log(this.relativeDict);
 			if (this.relativeDict.get(pos) !== undefined) this.relativeDict.set(pos, EnvSetup.enemySymbol);
 		});
 	}
 
 	private updateRelativeDict() {
-		console.log(this.dict);
 		this.relativeDict = RealDict.fromDict(this.dict.dict);
 		this.updateRelativeDictWithMovingUnits();
 	}
