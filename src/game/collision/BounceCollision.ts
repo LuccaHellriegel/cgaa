@@ -31,6 +31,7 @@ export class BounceCollision {
 			unit.setPosition(lastPos.x, lastPos.y);
 			unit.state = "guard";
 			//TODO: this really might be the source of the lag? Sometimes at least
+			//TODO: hypothesis -> tries to attack wall? walk to wall position?
 			console.log("WallSide collision", unit.campID);
 		} else if (unit.campID !== "blue") {
 			let cooperationSet = this.cooperation.dict[unit.campID] as Set<CampID>;

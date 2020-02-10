@@ -5,6 +5,7 @@ import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
 import { CampState } from "../game/ui/state/CampState";
 import { Tutorial } from "../game/ui/tutorial/Tutorial";
 import { CampSetup } from "../game/setup/CampSetup";
+import { SelectBar } from "../game/ui/selectbar/SelectBar";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -89,5 +90,7 @@ export class HUD extends Phaser.Scene {
 		//TODO: Interaction / Shooter / Healer menu (Q/E or scroll switch)
 
 		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
+
+		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs);
 	}
 }
