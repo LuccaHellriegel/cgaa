@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnvSetup } from "../setup/EnvSetup";
-import { CircleFactory } from "./CircleFactory";
+import { CircleFactory, EnemyConfig, CircleFactoryConfig } from "./CircleFactory";
 import { Point } from "../base/types";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
@@ -9,7 +9,7 @@ export class PlayerFriends {
 	constructor(scene: Gameplay, physicsGroup, weaponGroup, realMiddlePos: Point, factory: CircleFactory) {
 		let baseConfig = {
 			scene: scene,
-			color: "blue",
+			campID: "blue",
 			size: "Big",
 			x: 100,
 			y: 100,
@@ -45,7 +45,7 @@ export class PlayerFriends {
 
 		//TODO: string vs type errors
 		friendConfigs.forEach(config => {
-			factory.createEnemy(config);
+			factory.createEnemy(config as CircleFactoryConfig);
 		});
 	}
 }

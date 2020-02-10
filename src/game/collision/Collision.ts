@@ -53,10 +53,6 @@ export class Collision {
 			pairs[id] = { physicsGroup: enemies[id], weaponGroup: enemyWeapons[id] };
 		});
 
-		// //TODO: color -> camp so "boss" makes sense
-		// enemies["boss"] = scene.physics.add.group();
-		// enemyWeapons["boss"] = scene.physics.add.group();
-
 		let areas = scene.physics.add.staticGroup();
 
 		this.physicGroups = {
@@ -87,12 +83,12 @@ export class Collision {
 			[this.physicGroups.player, this.physicGroups.tower]
 		]);
 		result.push(
-			...Object.keys(this.physicGroups.enemyWeapons).map(color => {
+			...Object.keys(this.physicGroups.enemyWeapons).map(campID => {
 				return [
-					[this.physicGroups.enemyWeapons[color]],
+					[this.physicGroups.enemyWeapons[campID]],
 					Object.keys(this.physicGroups.enemyWeapons)
-						.filter(secondColor => secondColor !== color)
-						.map(secondColor => this.physicGroups.enemies[secondColor])
+						.filter(secondCampID => secondCampID !== campID)
+						.map(secondCampID => this.physicGroups.enemies[secondCampID])
 				];
 			})
 		);
@@ -115,12 +111,12 @@ export class Collision {
 			]
 		]);
 		result.push(
-			...Object.keys(this.physicGroups.enemies).map(color => {
+			...Object.keys(this.physicGroups.enemies).map(campID => {
 				return [
-					[this.physicGroups.enemies[color]],
+					[this.physicGroups.enemies[campID]],
 					Object.keys(this.physicGroups.enemies)
-						.filter(secondColor => secondColor !== color)
-						.map(secondColor => this.physicGroups.enemies[secondColor])
+						.filter(secondCampID => secondCampID !== campID)
+						.map(secondCampID => this.physicGroups.enemies[secondCampID])
 				];
 			})
 		);

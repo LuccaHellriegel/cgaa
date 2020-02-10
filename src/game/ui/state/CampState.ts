@@ -1,6 +1,6 @@
 import { CirclePolygon } from "../../polygons/CirclePolygon";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { CampSetup } from "../../setup/CampSetup";
+import { CampSetup, CampID } from "../../setup/CampSetup";
 import { RectPolygon } from "../../polygons/RectPolygon";
 import { ArrowHeadPolygon } from "../../polygons/ArrowHeadPolygon";
 import { SymmetricCrossPolygon } from "../../polygons/SymmetricCrossPolygon";
@@ -28,7 +28,7 @@ export class CampState {
 		x,
 		y,
 		halfSize,
-		private color: string,
+		private campID: CampID,
 		private backgroundHexColor,
 		private foregroundHexColor
 	) {
@@ -53,25 +53,25 @@ export class CampState {
 	reset() {
 		let killlistArgs = [
 			EventSetup.questAccecptedEvent,
-			color => {
-				if (color === this.color) {
+			campID => {
+				if (campID === this.campID) {
 					this.onKillist = true;
 					this.redraw();
 				}
 			}
 		];
 		let rerouteArgs = [
-			EventSetup.partialReroutingEvent + this.color,
-			targetColor => {
-				this.ambushTargetHex = CampSetup.colorDict[targetColor];
+			EventSetup.partialReroutingEvent + this.campID,
+			targetCampID => {
+				this.ambushTargetHex = CampSetup.colorDict[targetCampID];
 				this.isRerouted = true;
 				this.redraw();
 			}
 		];
 		let startWaveArgs = [
 			EventSetup.startWaveEvent,
-			color => {
-				if (color === this.color) {
+			campID => {
+				if (campID === this.campID) {
 					this.redraw();
 					this.drawAmbush();
 				}
@@ -79,14 +79,14 @@ export class CampState {
 		];
 		let endWaveArgs = [
 			EventSetup.endWaveEvent,
-			color => {
-				if (color === this.color) this.redraw();
+			campID => {
+				if (campID === this.campID) this.redraw();
 			}
 		];
 		let destroyedArgs = [
 			EventSetup.campDestroyEvent,
-			color => {
-				if (color === this.color) {
+			campID => {
+				if (campID === this.campID) {
 					this.redraw();
 					this.drawDestroyed();
 					let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];

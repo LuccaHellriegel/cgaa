@@ -2,7 +2,7 @@ import { HealthBar } from "./HealthBar";
 import { BuildingSetup } from "../setup/BuildingSetup";
 import { Gameplay } from "../../scenes/Gameplay";
 
-const healthBarEnemyCircleConfigs = {
+const healthBarEnemyCircleFactoryConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
 	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
 	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 51, healthLength: 17, value: 200, scene: null }
@@ -23,7 +23,7 @@ export class HealthBarFactory {
 	}
 
 	static createEnemyCircleHealthBar(scene: Gameplay, x, y, size) {
-		let healthBarConfig = healthBarEnemyCircleConfigs[size];
+		let healthBarConfig = healthBarEnemyCircleFactoryConfigs[size];
 		healthBarConfig["scene"] = scene;
 		return new HealthBar(x, y, healthBarConfig);
 	}

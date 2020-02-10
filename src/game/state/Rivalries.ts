@@ -1,4 +1,4 @@
-import { WaveOrder } from "../wave/WaveOrder";
+import { OrdinaryOrder } from "./OrdinaryOrder";
 
 export class Rivalries {
 	private rivalries = {};
@@ -8,22 +8,20 @@ export class Rivalries {
 	}
 
 	private setupRivalriesForFourCamps() {
-		//TODO: waveOrder -> ordinaryOrder
-		//TODO: color -> id
-		let colors = new WaveOrder().order;
+		let campIDs = new OrdinaryOrder().order;
 
-		let color = colors.pop();
-		let secondColor = colors.pop();
-		this.rivalries[color] = secondColor;
-		this.rivalries[secondColor] = color;
+		let campID = campIDs.pop();
+		let secondCampID = campIDs.pop();
+		this.rivalries[campID] = secondCampID;
+		this.rivalries[secondCampID] = campID;
 
-		color = colors.pop();
-		secondColor = colors.pop();
-		this.rivalries[color] = secondColor;
-		this.rivalries[secondColor] = color;
+		campID = campIDs.pop();
+		secondCampID = campIDs.pop();
+		this.rivalries[campID] = secondCampID;
+		this.rivalries[secondCampID] = campID;
 	}
 
-	getRival(color) {
-		return this.rivalries[color];
+	getRival(campID) {
+		return this.rivalries[campID];
 	}
 }

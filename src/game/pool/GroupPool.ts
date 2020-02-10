@@ -2,7 +2,7 @@ import { GroupComposition } from "./EnemyPool";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Util } from "../base/Util";
 import { EnemyCircle } from "../unit/EnemyCircle";
-import { CircleFactory, CircleConfig, EnemySize, WeaponTypes } from "../unit/CircleFactory";
+import { CircleFactory, CircleFactoryConfig, EnemySize, WeaponTypes } from "../unit/CircleFactory";
 import { Enemies } from "../unit/Enemies";
 
 export abstract class GroupPool {
@@ -33,7 +33,7 @@ export abstract class GroupPool {
 	}
 	protected abstract createUnit(config);
 	private initPool() {
-		let circleConfig: CircleConfig = {
+		let circleConfig: CircleFactoryConfig = {
 			size: "Big",
 			x: 0,
 			y: 0,

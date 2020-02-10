@@ -4,6 +4,7 @@ import { damageable } from "../base/interfaces";
 import { Circle } from "./Circle";
 import { HealthBar } from "../ui/HealthBar";
 import { CampID } from "../setup/CampSetup";
+import { EnemyConfig } from "./CircleFactory";
 
 //TODO: remove duplication from EnemyCircle
 export class King extends Circle implements damageable {
@@ -13,10 +14,9 @@ export class King extends Circle implements damageable {
 	barrier: any;
 	stateHandler: EnemyState;
 
-	constructor(config, public velo: number) {
+	constructor(config: EnemyConfig, public velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
-		this.campID = config.color;
 		//TODO: remove path, make stateHandler more general
 		this.stateHandler = new EnemyState(this);
 		this.state = "guard";

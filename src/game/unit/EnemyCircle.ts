@@ -4,6 +4,7 @@ import { HealthBar } from "../ui/HealthBar";
 import { EnemyState } from "./EnemyState";
 import { PoolHelper } from "../pool/PoolHelper";
 import { Point } from "../base/types";
+import { EnemyConfig } from "./CircleFactory";
 
 export class EnemyCircle extends Circle implements damageable {
 	healthbar: HealthBar;
@@ -11,7 +12,7 @@ export class EnemyCircle extends Circle implements damageable {
 	barrier: any;
 	stateHandler: EnemyState;
 
-	constructor(config, public velo: number) {
+	constructor(config: EnemyConfig, public velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
 		this.stateHandler = new EnemyState(this);

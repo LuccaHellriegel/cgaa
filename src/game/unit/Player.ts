@@ -9,7 +9,6 @@ const playerStartY = 1200;
 const playerTextureName = "blueNormalCircle";
 
 export class Player extends Circle {
-	color: string;
 	constructor(scene, physicsGroup, weapon) {
 		let polygon = new CirclePolygon(playerStartX, playerStartY, UnitSetup.normalCircleRadius);
 
@@ -21,9 +20,9 @@ export class Player extends Circle {
 			physicsGroup,
 			polygon,
 			weapon,
-			radius: UnitSetup.normalCircleRadius
+			radius: UnitSetup.normalCircleRadius,
+			campID: CampSetup.playerCampID
 		});
-		this.campID = CampSetup.playerCampID;
 		this.unitType = "player";
 	}
 

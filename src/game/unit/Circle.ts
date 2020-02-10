@@ -3,6 +3,7 @@ import { CirclePolygon } from "../polygons/CirclePolygon";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapon/Weapon";
 import { CampID } from "../setup/CampSetup";
+import { CircleConfig } from "./CircleFactory";
 
 export class Circle extends SpriteWithAnimEvents {
 	weapon: Weapon;
@@ -12,9 +13,9 @@ export class Circle extends SpriteWithAnimEvents {
 	scene: Gameplay;
 	campID: CampID;
 
-	constructor(config) {
+	constructor(config: CircleConfig) {
 		super(config);
-		this.campID = config.color;
+		this.campID = config.campID;
 		this.polygon = config.polygon;
 		this.unitType = "circle";
 		this.setCircle(config.radius);

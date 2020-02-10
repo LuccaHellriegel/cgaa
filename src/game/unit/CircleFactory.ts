@@ -9,6 +9,9 @@ import { CirclePolygon } from "../polygons/CirclePolygon";
 import { King } from "./King";
 import { EnemyCircle } from "./EnemyCircle";
 import { InteractionCircle } from "./InteractionCircle";
+import { CampID } from "../setup/CampSetup";
+import { HealthBar } from "../ui/HealthBar";
+import { Weapon } from "../weapon/Weapon";
 
 const radiusConfigs = {
 	Small: UnitSetup.smallCircleRadius,
@@ -22,22 +25,37 @@ export type EnemySize = "Small" | "Normal" | "Big";
 
 export type WeaponTypes = "rand" | "chain";
 
-export interface EnemyConfig {
+export interface EnemyConfig extends CircleConfig {
 	scene: Gameplay;
-	color: string;
+	campID: CampID;
 	size: EnemySize;
 	x: number;
 	y: number;
-	weaponType: WeaponTypes;
+	weapon: Weapon;
 	physicsGroup: Phaser.Physics.Arcade.Group;
-	weaponGroup: Phaser.Physics.Arcade.Group;
+	healthbar: HealthBar;
+	polygon: any;
+	texture: string;
+	radius: number;
 }
 
-export interface CircleConfig {
+export interface CircleFactoryConfig {
 	size: EnemySize;
 	x: number;
 	y: number;
 	weaponType: WeaponTypes;
+}
+
+export class CircleConfig {
+	scene: Gameplay;
+	campID: CampID;
+	x: number;
+	y: number;
+	weapon: Weapon;
+	physicsGroup: Phaser.Physics.Arcade.Group;
+	polygon: any;
+	texture: string;
+	radius: number;
 }
 
 export class CircleFactory {
@@ -50,8 +68,8 @@ export class CircleFactory {
 		private enemies: Enemies
 	) {
 		this.baseConfig = {
-			scene: this.scene,
-			color: campID,
+			scene,
+			campID,
 			physicsGroup: this.circlePhysics.physicsGroup
 		};
 	}
@@ -73,7 +91,7 @@ export class CircleFactory {
 		this.enemies.addEnemy(circle);
 	}
 
-	createKing(enemyConfig: CircleConfig) {
+	createKing(enemyConfig: CircleFactoryConfig) {
 		let { x, y, weaponType } = enemyConfig;
 		let size = "Big";
 		let radius = radiusConfigs[size];
@@ -92,14 +110,14 @@ export class CircleFactory {
 			radius
 		};
 
-		let circle = new King(circleConfig, veloConfigs[size]);
+		let circle = new King(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;
 	}
 
 	//TODO: remove duplication
-	createBoss(enemyConfig: CircleConfig) {
+	createBoss(enemyConfig: CircleFactoryConfig) {
 		let { size, x, y, weaponType } = enemyConfig;
 		size = "Big";
 		let radius = radiusConfigs[size];
@@ -118,13 +136,13 @@ export class CircleFactory {
 			radius
 		};
 
-		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
+		let circle = new EnemyCircle(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;
 	}
 
-	createEnemy(enemyConfig: CircleConfig) {
+	createEnemy(enemyConfig: CircleFactoryConfig) {
 		let { size, x, y, weaponType } = enemyConfig;
 		let radius = radiusConfigs[size];
 		let weapon = this.createWeapon(weaponType, x, y, radius, size);
@@ -142,7 +160,7 @@ export class CircleFactory {
 			radius
 		};
 
-		let circle = new EnemyCircle(circleConfig, veloConfigs[size]);
+		let circle = new EnemyCircle(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;
