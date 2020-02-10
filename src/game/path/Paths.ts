@@ -11,7 +11,12 @@ export class Paths {
 	}
 
 	getPath(start: RelPos, goal: RelPos) {
-		return this.pathDict[Paths.makeID(start, goal)];
+		let path = this.pathDict[Paths.makeID(start, goal)];
+		if (path) {
+			return path;
+		} else {
+			throw "Path not found: " + start + " " + goal;
+		}
 	}
 
 	getPathToCamp(start: RelPos, campID: CampID) {

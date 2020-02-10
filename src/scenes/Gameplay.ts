@@ -121,13 +121,13 @@ export class Gameplay extends Phaser.Scene {
 		);
 
 		//Setup Pathfinding
-		let exits = new CampExits(areas.exits, order);
 		let orientation = new Orientation(
 			gameMap.getMiddle(),
 			camps.player.area.getMiddle(),
 			camps.boss.area.getMiddle(),
 			camps
 		);
+		let exits = new CampExits(areas.exits, order);
 		let configs = PathConfig.createConfigs(orientation, exits, camps.arr);
 		let paths = new Paths(orientation, PathFactory.produce(new PathCalculator(gameMap.map), configs));
 		let assigner = new PathAssigner(paths, router);

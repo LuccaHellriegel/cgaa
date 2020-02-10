@@ -4,8 +4,7 @@ export class EventSetup {
 	//TODO: make actual object with scene
 	private constructor() {}
 
-	//TODO: make non camp specific -> logic in listener
-	static rerouting = "reroute-";
+	static partialReroutingEvent = "reroute-";
 
 	static gainSouls(scene: Phaser.Scene, type) {
 		//TODO: gain dependent on size and type
