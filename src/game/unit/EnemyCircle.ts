@@ -1,6 +1,6 @@
 import { Circle } from "./Circle";
 import { damageable } from "../base/interfaces";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { EnemyState } from "./EnemyState";
 import { PoolHelper } from "../pool/PoolHelper";
 import { Point } from "../base/types";

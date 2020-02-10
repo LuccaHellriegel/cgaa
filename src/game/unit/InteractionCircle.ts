@@ -1,6 +1,6 @@
 import { Circle } from "./Circle";
 import { damageable } from "../base/interfaces";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { Annotator } from "../base/Annotator";
 import { EnvSetup } from "../setup/EnvSetup";
 import { EventSetup } from "../setup/EventSetup";

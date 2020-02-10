@@ -4,13 +4,13 @@ import { CirclePhysics } from "../pool/EnemyPool";
 import { Enemies } from "./Enemies";
 import { ChainWeapon } from "../weapon/ChainWeapon";
 import { RandWeapon } from "../weapon/RandWeapon";
-import { HealthBarFactory } from "../ui/HealthBarFactory";
+import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { King } from "./King";
 import { EnemyCircle } from "./EnemyCircle";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { Weapon } from "../weapon/Weapon";
 
 const radiusConfigs = {

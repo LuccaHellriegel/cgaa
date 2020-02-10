@@ -1,4 +1,4 @@
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 
 export interface damageable {
 	syncPolygon();

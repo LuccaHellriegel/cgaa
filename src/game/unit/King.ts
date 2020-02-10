@@ -2,7 +2,7 @@ import { Path } from "../path/Path";
 import { EnemyState } from "./EnemyState";
 import { damageable } from "../base/interfaces";
 import { Circle } from "./Circle";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CampID } from "../setup/CampSetup";
 import { EnemyConfig } from "./CircleFactory";
 

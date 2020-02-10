@@ -1,6 +1,6 @@
 import { HealthBar } from "./HealthBar";
-import { BuildingSetup } from "../setup/BuildingSetup";
-import { Gameplay } from "../../scenes/Gameplay";
+import { BuildingSetup } from "../../setup/BuildingSetup";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 const healthBarEnemyCircleFactoryConfigs = {
 	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },

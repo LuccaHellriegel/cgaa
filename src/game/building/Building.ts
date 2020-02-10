@@ -1,8 +1,8 @@
 import { Image } from "../base/BasePhaser";
 import { damageable } from "../base/interfaces";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { Gameplay } from "../../scenes/Gameplay";
-import { HealthBarFactory } from "../ui/HealthBarFactory";
+import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { RectPolygon } from "../polygons/RectPolygon";
 import { Annotator } from "../base/Annotator";
 import { CampID } from "../setup/CampSetup";

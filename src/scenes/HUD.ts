@@ -1,5 +1,5 @@
 import { createGameConfig } from "../app";
-import { PlayerHealthBar } from "../game/ui/PlayerHealthBar";
+import { PlayerHealthBar } from "../game/ui/healthbar/PlayerHealthBar";
 import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
 import { CampState } from "../game/ui/state/CampState";

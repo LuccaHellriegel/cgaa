@@ -1,10 +1,10 @@
 import { Image } from "../base/BasePhaser";
 import { damageable } from "../base/interfaces";
 import { poolable } from "../base/interfaces";
-import { HealthBar } from "../ui/HealthBar";
+import { HealthBar } from "../ui/healthbar/HealthBar";
 import { RectPolygon } from "../polygons/RectPolygon";
 import { Gameplay } from "../../scenes/Gameplay";
-import { HealthBarFactory } from "../ui/HealthBarFactory";
+import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { Annotator } from "../base/Annotator";
 import { EnvSetup } from "../setup/EnvSetup";
 import { healable } from "../collision/HealerAura";
