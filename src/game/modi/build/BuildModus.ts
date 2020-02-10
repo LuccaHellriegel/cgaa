@@ -32,10 +32,8 @@ export class BuildModus {
 		return ele2;
 	}
 
-	//TODO: Healer Aura
-	//TODO: switch to Healers with q
+	//TODO: pressing Q does nothing, can just switch from F, maybe make shift system first?
 
-	//TODO: lock onto healer
 	lockOn(selectorRect: SelectorRect) {
 		//TODO: if closest point too far -> dont lock on
 		let ele = this.findClosestElement(selectorRect);

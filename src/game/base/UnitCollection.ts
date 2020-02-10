@@ -46,8 +46,11 @@ export class UnitCollection {
 
 	findClosestUnit(x, y): [InteractionCircle, number] {
 		this.refreshUnits();
-
-		return UnitCollection.findClosestUnit(this.units, x, y) as [InteractionCircle, number];
+		let unit = UnitCollection.findClosestUnit(this.units, x, y) as [InteractionCircle, number];
+		if (unit[1] === Infinity) {
+			return null;
+		}
+		return unit;
 	}
 
 	static findClosestUnit(arr, x, y) {
@@ -61,10 +64,6 @@ export class UnitCollection {
 				dist = curDist;
 			}
 		}
-		if (obj) {
-			return [obj, dist];
-		} else {
-			return null;
-		}
+		return [obj, dist];
 	}
 }

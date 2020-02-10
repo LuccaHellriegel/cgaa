@@ -25,7 +25,6 @@ export class King extends Circle implements damageable {
 	damage(amount) {
 		if (this.healthbar.decrease(amount)) {
 			//TODO: win Game
-			console.log("here");
 			this.scene.events.emit("win");
 			this.destroy();
 		} else {

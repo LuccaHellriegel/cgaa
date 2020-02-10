@@ -25,27 +25,6 @@ export type EnemySize = "Small" | "Normal" | "Big";
 
 export type WeaponTypes = "rand" | "chain";
 
-export interface EnemyConfig extends CircleConfig {
-	scene: Gameplay;
-	campID: CampID;
-	size: EnemySize;
-	x: number;
-	y: number;
-	weapon: Weapon;
-	physicsGroup: Phaser.Physics.Arcade.Group;
-	healthbar: HealthBar;
-	polygon: any;
-	texture: string;
-	radius: number;
-}
-
-export interface CircleFactoryConfig {
-	size: EnemySize;
-	x: number;
-	y: number;
-	weaponType: WeaponTypes;
-}
-
 export class CircleConfig {
 	scene: Gameplay;
 	campID: CampID;
@@ -56,6 +35,17 @@ export class CircleConfig {
 	polygon: any;
 	texture: string;
 	radius: number;
+}
+export interface EnemyConfig extends CircleConfig {
+	size: EnemySize;
+	healthbar: HealthBar;
+}
+
+export interface CircleFactoryConfig {
+	size: EnemySize;
+	x: number;
+	y: number;
+	weaponType: WeaponTypes;
 }
 
 export class CircleFactory {

@@ -40,8 +40,7 @@ export class WeaponHandler {
 		scene.events.emit("damage-" + enemy.unitType, damage);
 		enemy.damage(damage);
 
-		//TODO: which spotted is correct? (see BulletCollision)
-		enemy.spotted = weapon.owner;
+		if (enemy.stateHandler) enemy.stateHandler.spotted = weapon.owner;
 		enemy.state = "guard";
 	}
 }

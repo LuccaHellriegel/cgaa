@@ -28,7 +28,6 @@ export class HealerAura {
 
 			const notAlreadyBeenHealedInTheLastSeconds =
 				first.hasHealed[second.id] && curTimeInSec - first.hasHealed[second.id] > 3;
-			//TODO: does not work -> every overlap gives health
 
 			return second.needsHealing() && notAlreadyBeenHealedInTheLastSeconds;
 		}

@@ -49,7 +49,6 @@ export class Collision {
 			enemies[id] = scene.physics.add.group();
 			enemyWeapons[id] = scene.physics.add.group();
 			buildings[id] = scene.physics.add.staticGroup();
-			//TODO: no duplication
 			pairs[id] = { physicsGroup: enemies[id], weaponGroup: enemyWeapons[id] };
 		});
 

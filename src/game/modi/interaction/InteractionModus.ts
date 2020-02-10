@@ -18,7 +18,7 @@ export class InteractionModus {
 		//TODO: execute anyways if close enough
 		if (modiState.lock) {
 			let ele = this.interactionElements.findClosestUnit(selectorRect.x, selectorRect.y);
-			this.cooperation.interactWithCircle(ele);
+			if (ele) this.cooperation.interactWithCircle(ele);
 		}
 	}
 }
