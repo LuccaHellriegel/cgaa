@@ -2,11 +2,12 @@ import { Quests } from "./Quests";
 import { CampRouting } from "../camp/CampRouting";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { InteractionCircle } from "../unit/InteractionCircle";
+import { Rivalries } from "./Rivalries";
 
 export class Cooperation {
 	dict: { [key in CampID]: Set<CampID> };
 	private quests: Quests;
-	constructor(private router: CampRouting) {
+	constructor(private router: CampRouting, private rivalriers: Rivalries) {
 		this.dict = CampSetup.campIDs.reduce((prev, id) => {
 			prev[id] = new Set<CampID>();
 			return prev;
@@ -19,10 +20,14 @@ export class Cooperation {
 
 	interactWithCircle(pair: [InteractionCircle, number]) {
 		let id = pair[0].campID;
-		this.quests.accept(id);
-		if (this.quests.isDone(id)) {
-			this.router.reroute(id);
-			this.updateCooperation(id);
+
+		//Can not accept quests from rivals
+		if (!this.quests.hasAccepted(this.rivalriers.getRival(id))) {
+			this.quests.accept(id);
+			if (this.quests.isDone(id)) {
+				this.router.reroute(id);
+				this.updateCooperation(id);
+			}
 		}
 	}
 

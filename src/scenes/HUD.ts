@@ -91,6 +91,6 @@ export class HUD extends Phaser.Scene {
 
 		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 
-		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs);
+		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
 	}
 }

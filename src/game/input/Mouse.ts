@@ -1,10 +1,15 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Player } from "../unit/Player";
 import { SelectorRect } from "../modi/SelectorRect";
-import { Modi } from "../modi/Modi";
+import { SelectBarState } from "../ui/selectbar/SelectBarState";
 
 export class Mouse {
-	constructor(private scene: Gameplay, private player: Player, private selectorRect: SelectorRect, private modi: Modi) {
+	constructor(
+		private scene: Gameplay,
+		private player: Player,
+		private selectorRect: SelectorRect,
+		private state: SelectBarState
+	) {
 		this.setupEvents();
 	}
 
@@ -25,12 +30,16 @@ export class Mouse {
 
 		this.rotatePlayerTowardsMouse(x, y);
 
-		if (this.selectorRect.active) {
+		if (this.selectorRect.active || !this.selectorRect.visible) {
 			this.selectorRect.setPosition(x, y);
 		}
 	}
 
 	private down() {
-		if (!this.modi.click()) this.player.attack();
+		if (this.state.isActive) {
+			this.state.execute();
+		} else {
+			this.player.attack();
+		}
 	}
 }

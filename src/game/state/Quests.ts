@@ -17,8 +17,11 @@ export class Quests {
 	}
 
 	isDone(campID) {
-		console.log(this.questDict);
 		return this.questDict[campID].isDone();
+	}
+
+	hasAccepted(campID) {
+		return this.questDict[campID].hasAccepted();
 	}
 
 	accept(campID) {

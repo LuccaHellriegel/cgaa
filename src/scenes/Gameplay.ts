@@ -21,15 +21,13 @@ import { Movement } from "../game/input/Movement";
 import { WASD } from "../game/input/WASD";
 import { Mouse } from "../game/input/Mouse";
 import { SelectorRect } from "../game/modi/SelectorRect";
-import { Modi } from "../game/modi/Modi";
 import { Inputs } from "../game/input/Inputs";
-import { BuildModus } from "../game/modi/build/BuildModus";
 import { Spawner } from "../game/pool/Spawner";
 import { HealerPool } from "../game/pool/HealerPool";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { ShooterPool } from "../game/pool/ShooterPool";
-import { InteractionModus } from "../game/modi/interaction/InteractionModus";
+import { InteractionModus } from "../game/modi/InteractionModus";
 import { Cooperation } from "../game/state/Cooperation";
 import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
@@ -48,6 +46,8 @@ import { CampsState } from "../game/state/CampsState";
 import { WaveController } from "../game/wave/WaveController";
 import { WaveOrder } from "../game/wave/WaveOrder";
 import { Building } from "../game/building/Building";
+import { SelectBarState } from "../game/ui/selectbar/SelectBarState";
+import { TowerModus } from "../game/modi/TowerModus";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -65,7 +65,7 @@ export class Gameplay extends Phaser.Scene {
 		//Setup minimal Game State for collision handling
 		let rivalries = new Rivalries();
 		let router = new CampRouting(this.events, rivalries);
-		let cooperation = new Cooperation(router);
+		let cooperation = new Cooperation(router, rivalries);
 
 		//Setup Physics and Sight
 		let collision = new Collision(this, cooperation);
@@ -179,18 +179,28 @@ export class Gameplay extends Phaser.Scene {
 			collision.physicGroups.bulletGroup
 		);
 		let shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
-		let spawners = [shooterSpawner, healerSpawner];
-		let buildMode = new BuildModus(spawners);
 		let interactionCollection = new UnitCollection(
 			camps.ordinary.map(camp => {
 				return camp.interactionUnit;
 			})
 		);
 
-		let interactionMode = new InteractionModus(cooperation, interactionCollection);
-		let selectorRect = new SelectorRect(this, 0, 0);
 		this.cgaa.inputs = new Inputs(this);
-		new Mouse(this, player, selectorRect, new Modi(this.cgaa.inputs, buildMode, interactionMode, selectorRect));
+		let selectorRect = new SelectorRect(this, 0, 0, this.cgaa.inputs);
+		let interactionMode = new InteractionModus(cooperation, interactionCollection, selectorRect);
+		let healerMode = new TowerModus(healerSpawner, selectorRect);
+		let shooterMode = new TowerModus(shooterSpawner, selectorRect);
+		let arr = [interactionMode.getFuncArr(), healerMode.getFuncArr(), shooterMode.getFuncArr()].reduce(
+			(prev, cur) => {
+				prev[0].push(cur[0]);
+				prev[1].push(cur[1]);
+				prev[2].push(cur[2]);
+				return prev;
+			},
+			[[], [], []]
+		);
+		this.cgaa.selectBarState = new SelectBarState(arr[0], arr[1], arr[2], this.cgaa.inputs, selectorRect);
+		new Mouse(this, player, selectorRect, this.cgaa.selectBarState);
 	}
 
 	startWaves() {
