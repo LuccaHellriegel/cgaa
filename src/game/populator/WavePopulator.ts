@@ -4,7 +4,7 @@ import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { PathAssigner } from "../path/PathAssigner";
 import { WaveSetup } from "../setup/WaveSetup";
 import { RelPos } from "../base/RelPos";
-import { Wave } from "./Wave";
+import { Wave } from "../wave/Wave";
 import { CampID } from "../setup/CampSetup";
 import { CampsState } from "../state/CampsState";
 import { EventSetup } from "../setup/EventSetup";

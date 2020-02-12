@@ -21,12 +21,13 @@ export class HealerPool extends Pool {
 		super.poolDestroy(healer);
 		healer.aura.disableBody(true, true);
 		healer.aura.setPosition(-1000, -1000);
-		healer.aura.hasHealed = {};
+		healer.aura.deactivate();
 	}
 
 	poolActivate(healer, x, y) {
 		super.poolActivate(healer, x, y);
 		healer.aura.enableBody(true, x, y, true, false);
 		healer.aura.setVisible(false);
+		healer.aura.activate();
 	}
 }

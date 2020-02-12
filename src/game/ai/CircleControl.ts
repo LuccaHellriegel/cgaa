@@ -13,7 +13,6 @@ export interface AIComponent {
 	recursionFinished();
 }
 
-//TODO: reset circleControl via poolDestroy
 export class CircleControl implements AIComponent {
 	childComponent: AIComponent;
 	components: AIComponent[];

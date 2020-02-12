@@ -19,8 +19,6 @@ export class BounceCollision {
 		if (unit.campID === obj.campID) {
 			unit.stateHandler.moveBack();
 		} else {
-			//TODO: this really might be the source of the lag? Sometimes at least
-			//TODO: hypothesis -> tries to attack wall? walk to wall position?
 			let cooperationSet = this.cooperation.dict[unit.campID] as Set<CampID>;
 			if (!cooperationSet.has(obj.campID)) {
 				unit.stateHandler.obstacle = obj;

@@ -38,7 +38,7 @@ import { BossCamp } from "../game/camp/BossCamp";
 import { BossPool } from "../game/pool/BossPool";
 import { BossSetup } from "../game/setup/BossSetup";
 import { CampSetup } from "../game/setup/CampSetup";
-import { WavePopulator } from "../game/wave/WavePopulator";
+import { WavePopulator } from "../game/populator/WavePopulator";
 import { WaveSetup } from "../game/setup/WaveSetup";
 import { EnemySpawnObj } from "../game/spawn/EnemySpawnObj";
 import { PathAssigner } from "../game/path/PathAssigner";

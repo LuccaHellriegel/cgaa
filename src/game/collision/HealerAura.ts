@@ -1,5 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Player } from "../unit/Player";
+import { Aura } from "../tower/healer/Aura";
 
 export interface healable {
 	needsHealing(): boolean;
@@ -19,22 +20,18 @@ export class HealerAura {
 		return false;
 	}
 
-	private needsHealing(first, second: healable) {
-		if (second instanceof Player) {
-			return this.playerNeedsHealing(first, second);
-		} else {
-			//TODO: research if timeouts for overlaps exists
-			const curTimeInSec = Math.floor(Date.now() / 1000);
-
-			const notAlreadyBeenHealedInTheLastSeconds =
-				first.hasHealed[second.id] && curTimeInSec - first.hasHealed[second.id] > 3;
-
-			return second.needsHealing() && notAlreadyBeenHealedInTheLastSeconds;
+	private needsHealing(first: Aura, second: healable) {
+		if (first.canHeal) {
+			if (second instanceof Player) {
+				return this.playerNeedsHealing(first, second);
+			} else {
+				return second.needsHealing();
+			}
 		}
+		return false;
 	}
 
 	private heal(first, second: healable) {
 		second.heal(5);
-		first.hasHealed[second.id] = Math.floor(Date.now() / 1000);
 	}
 }

@@ -83,7 +83,6 @@ export class Collision {
 	private getSightAndWeaponCombinatorialArr() {
 		let result = [];
 
-		//TODO: playerWeapon does not need sight -> friendWeapon
 		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
 
 		result.push([

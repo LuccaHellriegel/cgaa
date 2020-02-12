@@ -18,12 +18,7 @@ export class BulletCollision {
 			EventSetup.gainSouls(this.scene, 100);
 		}
 		enemy.damage(damage);
-
-		//TODO:
-		if (enemy.state !== "ambush") {
-			enemy.stateHandler.spotted = bullet.owner;
-			enemy.state = "guard";
-		}
+		enemy.stateHandler.spotted = bullet.owner;
 		bullet.reset();
 	}
 }

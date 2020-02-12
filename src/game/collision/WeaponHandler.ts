@@ -41,6 +41,5 @@ export class WeaponHandler {
 		enemy.damage(damage);
 
 		if (enemy.stateHandler) enemy.stateHandler.spotted = weapon.owner;
-		enemy.state = "guard";
 	}
 }
