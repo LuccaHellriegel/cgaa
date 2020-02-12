@@ -5,10 +5,12 @@ import { SightOverlap } from "./SightOverlap";
 import { BounceCollision } from "./BounceCollision";
 import { HealerAura } from "./HealerAura";
 import { Cooperation } from "../state/Cooperation";
+import { StandardCollision } from "./StandardCollision";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
+	playerFriends: Phaser.Physics.Arcade.Group;
 	tower: Phaser.Physics.Arcade.StaticGroup;
 	healer: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
@@ -25,6 +27,8 @@ export class Collision {
 	constructor(scene: Gameplay, cooperation: Cooperation) {
 		this.createPhysicGroups(scene);
 
+		new StandardCollision(scene, this.getStandardCollisionCombArr());
+
 		new SightOverlap(scene, this.getSightAndWeaponCombinatorialArr(), cooperation);
 		new BounceCollision(scene, this.getBounceCombinatorialArr(), cooperation);
 		new BulletCollision(scene, this.physicGroups.bulletGroup, this.getEnemyGroups());
@@ -35,6 +39,7 @@ export class Collision {
 	private createPhysicGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
+		let playerFriends = scene.physics.add.group();
 
 		let tower = scene.physics.add.staticGroup();
 		let bulletGroup = scene.physics.add.group();
@@ -57,6 +62,7 @@ export class Collision {
 		this.physicGroups = {
 			player,
 			playerWeapon,
+			playerFriends,
 			tower,
 			bulletGroup,
 			healer,
@@ -76,11 +82,15 @@ export class Collision {
 
 	private getSightAndWeaponCombinatorialArr() {
 		let result = [];
+
+		//TODO: playerWeapon does not need sight -> friendWeapon
 		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
+
 		result.push([
 			[...Object.values(this.physicGroups.enemyWeapons)],
 			[this.physicGroups.player, this.physicGroups.tower]
 		]);
+
 		result.push(
 			...Object.keys(this.physicGroups.enemyWeapons).map(campID => {
 				return [
@@ -94,20 +104,20 @@ export class Collision {
 		return result;
 	}
 
+	private getStandardCollisionCombArr() {
+		let result = [];
+		result.push([[...Object.values(this.physicGroups.enemies), this.physicGroups.player], [this.physicGroups.areas]]);
+
+		result.push([[this.physicGroups.player], [...this.getEnemyGroups(), this.physicGroups.tower]]);
+
+		return result;
+	}
+
 	private getBounceCombinatorialArr() {
 		let result = [];
 		result.push([
-			[this.physicGroups.player],
-			[...this.getEnemyGroups(), this.physicGroups.tower] //TODO: enable again this.physicGroups.areas]
-		]);
-		result.push([
 			[...Object.values(this.physicGroups.enemies)],
-			[
-				this.physicGroups.player,
-				this.physicGroups.tower,
-				this.physicGroups.areas,
-				...Object.values(this.physicGroups.buildings)
-			]
+			[this.physicGroups.player, this.physicGroups.tower, ...Object.values(this.physicGroups.buildings)]
 		]);
 		result.push(
 			...Object.keys(this.physicGroups.enemies).map(campID => {
