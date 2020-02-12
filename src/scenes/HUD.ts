@@ -6,6 +6,7 @@ import { CampState } from "../game/ui/state/CampState";
 import { Tutorial } from "../game/ui/tutorial/Tutorial";
 import { CampSetup } from "../game/setup/CampSetup";
 import { SelectBar } from "../game/ui/selectbar/SelectBar";
+import { EventSetup } from "../game/setup/EventSetup";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -19,22 +20,24 @@ export class HUD extends Phaser.Scene {
 
 	private setupEventListeners() {
 		//TODO: dont forget to comment in
-		// this.ourGame.events.on(
-		// 	"damage-player",
-		// 	function(amount) {
-		// 		if (this.playerHealthBar.decrease(amount)) {
-		// 			(this as HUD).sys.game.destroy(true);
+		this.ourGame.events.on(
+			"damage-player",
+			function(amount) {
+				if (this.playerHealthBar.decrease(amount)) {
+					(this as HUD).sys.game.destroy(true);
 
-		// 			document.getElementById("game").remove();
-		// 			const canvas = document.createElement("canvas");
-		// 			canvas.id = "game";
-		// 			document.body.appendChild(canvas);
+					document.getElementById("game").remove();
+					const canvas = document.createElement("canvas");
+					canvas.id = "game";
+					document.body.appendChild(canvas);
 
-		// 			new Phaser.Game(createGameConfig());
-		// 		}
-		// 	},
-		// 	this
-		// );
+					new Phaser.Game(createGameConfig());
+				}
+			},
+			this
+		);
+
+		this.ourGame.events.on(EventSetup.healPlayer, this.playerHealthBar.increase.bind(this.playerHealthBar));
 
 		//TODO: make interaction for opening boss camp -> so you can prepare for Boss Waves
 		//TODO: make a Game Over screen

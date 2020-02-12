@@ -4,6 +4,8 @@ export class EventSetup {
 	//TODO: make actual object with scene
 	private constructor() {}
 
+	static healPlayer = "heal-player";
+
 	static partialReroutingEvent = "reroute-";
 
 	static gainSouls(scene: Phaser.Scene, type) {

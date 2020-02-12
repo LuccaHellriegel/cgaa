@@ -3,12 +3,14 @@ import { CirclePolygon } from "../polygons/CirclePolygon";
 import { UnitSetup } from "../setup/UnitSetup";
 import { ChainWeapon } from "../weapon/ChainWeapon";
 import { CampSetup } from "../setup/CampSetup";
+import { healable } from "../collision/HealerAura";
+import { EventSetup } from "../setup/EventSetup";
 
 const playerStartX = 1400;
 const playerStartY = 1200;
 const playerTextureName = "blueNormalCircle";
 
-export class Player extends Circle {
+export class Player extends Circle implements healable {
 	stateHandler: { spotted: any; obstacle: any };
 
 	constructor(scene, physicsGroup, weapon) {
@@ -38,6 +40,14 @@ export class Player extends Circle {
 	setVelocityY(velo) {
 		this.weapon.setVelocityY(velo);
 		return super.setVelocityY(velo);
+	}
+
+	needsHealing(): boolean {
+		return true;
+	}
+	heal(amount: number) {
+		//Logic is handled in HUD
+		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 
 	//TODO: Player should spawn in PlayerAreaCamp
