@@ -10,7 +10,6 @@ export class InteractionModus {
 	) {}
 
 	lockOn() {
-		//TODO: if closest point too far -> dont lock on
 		let result = this.interactionElements.findClosestUnit(this.selectorRect.x, this.selectorRect.y);
 		if (result && result[1] < 100) {
 			this.selectorRect.setPosition(result[0].x, result[0].y);
@@ -19,7 +18,6 @@ export class InteractionModus {
 	}
 
 	private interact() {
-		//TODO: execute anyways if close enough
 		let ele = this.interactionElements.findClosestUnit(this.selectorRect.x, this.selectorRect.y);
 		if (ele && ele[1] < 100) this.cooperation.interactWithCircle(ele);
 	}

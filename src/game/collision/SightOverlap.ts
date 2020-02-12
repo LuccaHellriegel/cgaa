@@ -1,12 +1,12 @@
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Weapon } from "../weapon/Weapon";
-import { EnemyCircle } from "../unit/EnemyCircle";
+import { DangerousCircle } from "../unit/DangerousCircle";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { King } from "../unit/King";
 import { Shooter } from "../tower/shooter/Shooter";
 import { Cooperation } from "../state/Cooperation";
-import { CampID, CampSetup } from "../setup/CampSetup";
+import { CampSetup } from "../setup/CampSetup";
 
 export class SightOverlap {
 	constructor(private scene: Gameplay, combinatorialArr, private cooperation: Cooperation) {
@@ -29,14 +29,14 @@ export class SightOverlap {
 		let isNotPlayer = weapon.owner.unitType !== "player";
 		let isNotInAmbush = weapon.owner.state !== "ambush";
 		let isNotInteractionCircle = !(weapon.owner instanceof InteractionCircle);
-		let isNotSameCamp = (weapon.owner as EnemyCircle).campID !== enemy.campID;
+		let isNotSameCamp = (weapon.owner as DangerousCircle).campID !== enemy.campID;
 		let isNotAlreadyGuard = weapon.owner.state !== "guard";
 
 		//TODO: fix instanceof
 		//TODO: King should always move back to his start-position
 		let isNotInCooperation =
-			(weapon.owner instanceof EnemyCircle || weapon.owner instanceof King) &&
-			!this.cooperation.hasCooperation((weapon.owner as EnemyCircle).campID, enemy.campID);
+			(weapon.owner instanceof DangerousCircle || weapon.owner instanceof King) &&
+			!this.cooperation.hasCooperation((weapon.owner as DangerousCircle).campID, enemy.campID);
 		return (
 			isNotPlayer && isNotInAmbush && isNotInteractionCircle && isNotSameCamp && isNotAlreadyGuard && isNotInCooperation
 		);
@@ -44,16 +44,15 @@ export class SightOverlap {
 
 	private isInSight(weapon: Weapon, enemy) {
 		let isNotInCooperationWithPlayer =
-			weapon.owner instanceof EnemyCircle &&
-			!this.cooperation.hasCooperation((weapon.owner as EnemyCircle).campID, CampSetup.playerCampID);
+			weapon.owner instanceof DangerousCircle &&
+			!this.cooperation.hasCooperation((weapon.owner as DangerousCircle).campID, CampSetup.playerCampID);
 		if (enemy instanceof Shooter && isNotInCooperationWithPlayer) {
 			enemy.fire(weapon.owner);
 		}
 		if (WeaponHandler.shouldTryDamage(weapon, enemy)) {
 			return WeaponHandler.tryCollision(weapon, enemy);
-		} else if (this.shouldSwitchToGuard(weapon, enemy)) {
-			(weapon.owner as EnemyCircle).stateHandler.spotted = enemy;
-			weapon.owner.state = "guard";
+		} else {
+			(weapon.owner as DangerousCircle).stateHandler.spotted = enemy;
 		}
 
 		return false;

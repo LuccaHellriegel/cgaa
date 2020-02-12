@@ -2,6 +2,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { UnitSetup } from "../setup/UnitSetup";
 import { GroupPool } from "../pool/GroupPool";
+import { GuardComponent } from "../ai/GuardComponent";
 
 export class CampPopulator {
 	constructor(private scene: Gameplay, private enemyPool: GroupPool, private enemySpawnObj: EnemySpawnObj) {
@@ -44,11 +45,7 @@ export class CampPopulator {
 		if (spawnPosition) {
 			let enemy = this.enemyPool.pop();
 
-			//TODO
-			// if (this.buildings.areDestroyed()) {
-			// 	enemy.destroy();
-			// 	return;
-			// }
+			enemy.stateHandler.setComponents([new GuardComponent(enemy, enemy.stateHandler)]);
 
 			enemy.state = "guard";
 			enemy.poolActivate(spawnPosition[0], spawnPosition[1]);

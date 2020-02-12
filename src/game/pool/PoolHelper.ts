@@ -15,12 +15,12 @@ export class PoolHelper {
 		unit.healthbar.move(x, y);
 	}
 
-	static activateEnemyCircle(circle, x, y) {
+	static activateDangerousCircle(circle, x, y) {
 		this.genericActivate(circle, x, y);
 		circle.weapon.enableBody(true, x, y, true, true);
 	}
 
-	static destroyEnemyCircle(circle) {
+	static destroyDangerousCircle(circle) {
 		this.genericDestroy(circle);
 		circle.weapon.disableBody(true, true);
 	}

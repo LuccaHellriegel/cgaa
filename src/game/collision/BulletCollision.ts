@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Bullet } from "../tower/shooter/Bullet";
-import { EnemyCircle } from "../unit/EnemyCircle";
+import { DangerousCircle } from "../unit/DangerousCircle";
 import { EventSetup } from "../setup/EventSetup";
 
 export class BulletCollision {
@@ -10,7 +10,7 @@ export class BulletCollision {
 		});
 	}
 
-	private collision(bullet: Bullet, enemy: EnemyCircle) {
+	private collision(bullet: Bullet, enemy: DangerousCircle) {
 		let damage = bullet.amount;
 		let enemyKilled = damage >= enemy.healthbar.value;
 		if (enemyKilled) {
@@ -20,7 +20,7 @@ export class BulletCollision {
 		enemy.damage(damage);
 
 		//TODO:
-		if (enemy.state !== "ambush" && enemy.stateHandler) {
+		if (enemy.state !== "ambush") {
 			enemy.stateHandler.spotted = bullet.owner;
 			enemy.state = "guard";
 		}

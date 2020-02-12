@@ -9,6 +9,8 @@ const playerStartY = 1200;
 const playerTextureName = "blueNormalCircle";
 
 export class Player extends Circle {
+	stateHandler: { spotted: any; obstacle: any };
+
 	constructor(scene, physicsGroup, weapon) {
 		let polygon = new CirclePolygon(playerStartX, playerStartY, UnitSetup.normalCircleRadius);
 
@@ -24,6 +26,8 @@ export class Player extends Circle {
 			campID: CampSetup.playerCampID
 		});
 		this.unitType = "player";
+
+		this.stateHandler = { spotted: null, obstacle: null };
 	}
 
 	setVelocityX(velo) {

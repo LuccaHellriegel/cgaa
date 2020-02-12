@@ -1,21 +1,21 @@
 import { Circle } from "./Circle";
 import { damageable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
-import { EnemyState } from "./EnemyState";
+import { CircleControl } from "../ai/CircleControl";
 import { PoolHelper } from "../pool/PoolHelper";
 import { Point } from "../base/types";
 import { EnemyConfig } from "./CircleFactory";
 
-export class EnemyCircle extends Circle implements damageable {
+export class DangerousCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	pathArr: Point[];
 	barrier: any;
-	stateHandler: EnemyState;
+	stateHandler: CircleControl;
 
 	constructor(config: EnemyConfig, public velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
-		this.stateHandler = new EnemyState(this);
+		this.stateHandler = new CircleControl(this);
 	}
 
 	damage(amount) {
@@ -33,21 +33,20 @@ export class EnemyCircle extends Circle implements damageable {
 	}
 
 	poolDestroy() {
-		PoolHelper.destroyEnemyCircle(this);
+		PoolHelper.destroyDangerousCircle(this);
 	}
 
 	poolActivate(x, y) {
-		PoolHelper.activateEnemyCircle(this, x, y);
+		PoolHelper.activateDangerousCircle(this, x, y);
 		this.stateHandler.lastPositions.push({ x, y });
 	}
 
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
 		this.healthbar.move(this.x, this.y);
-		this.stateHandler.execute();
+		this.stateHandler.tick();
 	}
 
-	//TODO: not "EnemyCircle" anymore, maybe Circle with State and Health?
 	needsHealing() {
 		return this.healthbar.value !== this.healthbar.defaultValue;
 	}

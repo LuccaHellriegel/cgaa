@@ -8,6 +8,8 @@ import { Wave } from "./Wave";
 import { CampID } from "../setup/CampSetup";
 import { CampsState } from "../state/CampsState";
 import { EventSetup } from "../setup/EventSetup";
+import { AmbushComponent } from "../ai/AmbushComponent";
+import { GuardComponent } from "../ai/GuardComponent";
 
 export class WavePopulator {
 	constructor(
@@ -44,13 +46,21 @@ export class WavePopulator {
 				spawnPositions.push(spawnPosition);
 
 				let enemy = this.enemyPool.pop();
-
 				//Path is saved in logical order (A to B), needs to be reversed for pop()
-				enemy.pathArr = this.assigner
-					.assign(enemy, RelPos.fromPoint({ x: spawnPosition[0], y: spawnPosition[1] }))
-					.getRealPath()
-					.reverse();
-				enemy.state = "ambush";
+
+				enemy.stateHandler.setComponents([
+					new GuardComponent(enemy, enemy.stateHandler),
+					new AmbushComponent(
+						this.assigner
+							.assign(enemy, RelPos.fromPoint({ x: spawnPosition[0], y: spawnPosition[1] }))
+							.getRealPath()
+							.reverse(),
+						enemy,
+						enemy.stateHandler,
+						enemy.stateHandler
+					)
+				]);
+
 				enemyCircles.push(enemy);
 			} else {
 				break;

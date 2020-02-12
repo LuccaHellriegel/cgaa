@@ -1,7 +1,7 @@
 import { GroupComposition } from "./EnemyPool";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Util } from "../base/Util";
-import { EnemyCircle } from "../unit/EnemyCircle";
+import { DangerousCircle } from "../unit/DangerousCircle";
 import { CircleFactory, CircleFactoryConfig, EnemySize, WeaponTypes } from "../unit/CircleFactory";
 import { Enemies } from "../unit/Enemies";
 
@@ -51,7 +51,7 @@ export abstract class GroupPool {
 			}
 		}
 	}
-	pop(): EnemyCircle {
+	pop(): DangerousCircle {
 		if (this.inactiveIDArr.length === 0) {
 			this.numberOfGroups = 1;
 			this.initPool();

@@ -15,20 +15,15 @@ export class BounceCollision {
 		});
 	}
 
-	private setback(unit) {
-		let lastPos = unit.stateHandler.lastPositions[0];
-		unit.setPosition(lastPos.x, lastPos.y);
-	}
 	private bounceCallback(unit, obj) {
 		if (unit.campID === obj.campID) {
-			this.setback(unit);
+			unit.stateHandler.moveBack();
 		} else {
 			//TODO: this really might be the source of the lag? Sometimes at least
 			//TODO: hypothesis -> tries to attack wall? walk to wall position?
 			let cooperationSet = this.cooperation.dict[unit.campID] as Set<CampID>;
 			if (!cooperationSet.has(obj.campID)) {
-				unit.barrier = obj;
-				unit.state = "obstacle";
+				unit.stateHandler.obstacle = obj;
 			}
 		}
 	}

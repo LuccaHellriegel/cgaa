@@ -7,7 +7,7 @@ import { RandWeapon } from "../weapon/RandWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { King } from "./King";
-import { EnemyCircle } from "./EnemyCircle";
+import { DangerousCircle } from "./DangerousCircle";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
@@ -87,7 +87,7 @@ export class CircleFactory {
 		let radius = radiusConfigs[size];
 		let weapon = this.createWeapon(weaponType, x, y, radius, size);
 
-		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(this.scene, x, y, size);
+		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
 		let circleConfig = {
 			...this.baseConfig,
@@ -113,7 +113,7 @@ export class CircleFactory {
 		let radius = radiusConfigs[size];
 		let weapon = this.createWeapon(weaponType, x, y, radius, size);
 
-		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(this.scene, x, y, size);
+		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
 		let circleConfig = {
 			...this.baseConfig,
@@ -126,7 +126,7 @@ export class CircleFactory {
 			radius
 		};
 
-		let circle = new EnemyCircle(circleConfig as EnemyConfig, veloConfigs[size]);
+		let circle = new DangerousCircle(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;
@@ -137,7 +137,7 @@ export class CircleFactory {
 		let radius = radiusConfigs[size];
 		let weapon = this.createWeapon(weaponType, x, y, radius, size);
 
-		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(this.scene, x, y, size);
+		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
 		let circleConfig = {
 			...this.baseConfig,
@@ -150,7 +150,7 @@ export class CircleFactory {
 			radius
 		};
 
-		let circle = new EnemyCircle(circleConfig as EnemyConfig, veloConfigs[size]);
+		let circle = new DangerousCircle(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;
@@ -163,7 +163,7 @@ export class CircleFactory {
 
 		let radius = radiusConfigs["Normal"];
 
-		let healthbar = HealthBarFactory.createEnemyCircleHealthBar(this.scene, x, y, size);
+		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
 		let circleConfig = {
 			...this.baseConfig,

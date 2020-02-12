@@ -7,6 +7,7 @@ import { EventSetup } from "../setup/EventSetup";
 
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
+	stateHandler = { spotted: null, obstacle: null };
 
 	constructor(config) {
 		super(config);

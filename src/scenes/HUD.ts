@@ -85,9 +85,7 @@ export class HUD extends Phaser.Scene {
 		this.campStates = campStates;
 
 		//Waves should start after CampState is initialized, otherwise first Wave is not recognized
-		this.ourGame.startWaves();
-
-		//TODO: Interaction / Shooter / Healer menu (Q/E or scroll switch)
+		//this.ourGame.startWaves();
 
 		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 

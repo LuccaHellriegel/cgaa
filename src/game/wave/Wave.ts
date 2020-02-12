@@ -1,4 +1,4 @@
-import { EnemyCircle } from "../unit/EnemyCircle";
+import { DangerousCircle } from "../unit/DangerousCircle";
 import { CampsState } from "../state/CampsState";
 import { CampID } from "../setup/CampSetup";
 
@@ -6,7 +6,7 @@ export class Wave {
 	constructor(
 		private campID: CampID,
 		private buildingID: string,
-		private enemyCircles: EnemyCircle[],
+		private enemyCircles: DangerousCircle[],
 		private spawnPositions,
 		private time,
 		private state: CampsState
