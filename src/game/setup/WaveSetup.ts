@@ -6,9 +6,9 @@ export class WaveSetup {
 	static waveSize = 3;
 
 	static groupCompDict = {
-		Normal: [UnitSetup.smallCircleWithRand, UnitSetup.smallCircleWithChain],
-		Small: [UnitSetup.normalCircleWithRand, UnitSetup.normalCircleWithChain],
-		Big: [UnitSetup.bigCircleWithRand, UnitSetup.bigCircleWithChain]
+		Normal: [UnitSetup.smallCircleWithChain, UnitSetup.smallCircleWithChain],
+		Small: [UnitSetup.normalCircleWithChain, UnitSetup.normalCircleWithChain],
+		Big: [UnitSetup.bigCircleWithChain, UnitSetup.bigCircleWithChain]
 	};
 
 	static timeBetweenWaves = 15000;

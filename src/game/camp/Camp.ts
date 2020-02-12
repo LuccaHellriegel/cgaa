@@ -46,7 +46,7 @@ export class Camp implements CampLike {
 	}
 
 	createInteractionCircle(factory: CircleFactory) {
-		let circleConfig = { ...this.area.exit.getMiddle().toPoint(), size: "Big", weaponType: "rand" };
+		let circleConfig = { ...this.area.exit.getMiddle().toPoint(), size: "Big", weaponType: "chain" };
 		this.interactionUnit = factory.createInteractionCircle(circleConfig);
 	}
 

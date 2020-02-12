@@ -13,22 +13,20 @@ export class UnitSetup {
 		Big: UnitSetup.bigCircleRadius
 	};
 
-	static maxCampPopulation = 5;
+	static maxCampPopulation = 6;
 
 	static groupSize = 4;
 
-	static bigCircleWithRand = { weaponType: "rand", size: "Big" };
 	static bigCircleWithChain = { weaponType: "chain", size: "Big" };
-	static normalCircleWithRand = { weaponType: "rand", size: "Normal" };
 	static normalCircleWithChain = { weaponType: "chain", size: "Normal" };
-	static smallCircleWithRand = { weaponType: "rand", size: "Small" };
 	static smallCircleWithChain = { weaponType: "chain", size: "Small" };
 
 	static campGroupComposition = [
-		UnitSetup.bigCircleWithRand,
 		UnitSetup.bigCircleWithChain,
 		UnitSetup.bigCircleWithChain,
-		UnitSetup.normalCircleWithRand,
-		UnitSetup.normalCircleWithChain
+		UnitSetup.normalCircleWithChain,
+		UnitSetup.normalCircleWithChain,
+		UnitSetup.smallCircleWithChain,
+		UnitSetup.smallCircleWithChain
 	];
 }

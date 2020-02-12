@@ -10,15 +10,6 @@ export function createWeaponAnims(anims) {
 
 	for (let index = 0; index < UnitSetup.circleSizeNames.length; index++) {
 		const element = UnitSetup.circleSizeNames[index];
-		createNonRepeatingAnim(anims, "idle-" + element + "randWeapon", element + "randWeapon", 1, 1, 10);
-		createNonRepeatingAnim(
-			anims,
-			"attack-" + element + "randWeapon",
-			element + "randWeapon",
-			1,
-			2,
-			speedPerSize[element]
-		);
 		createNonRepeatingAnim(anims, "idle-" + element + "chainWeapon", element + "chainWeapon", 1, 1, 10);
 		createNonRepeatingAnim(
 			anims,

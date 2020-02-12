@@ -3,7 +3,6 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { CirclePhysics } from "../pool/EnemyPool";
 import { Enemies } from "./Enemies";
 import { ChainWeapon } from "../weapon/ChainWeapon";
-import { RandWeapon } from "../weapon/RandWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { King } from "./King";
@@ -23,7 +22,7 @@ const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
-export type WeaponTypes = "rand" | "chain";
+export type WeaponTypes = "chain";
 
 export class CircleConfig {
 	scene: Gameplay;
@@ -65,13 +64,7 @@ export class CircleFactory {
 	}
 
 	private createWeapon(weaponType: string, x: number, y: number, radius: number, size: string) {
-		let weapon;
-		if (weaponType === "chain") {
-			weapon = new ChainWeapon(this.scene, x, y, this.circlePhysics.weaponGroup, null, radius, size);
-		} else {
-			weapon = new RandWeapon(this.scene, x, y, this.circlePhysics.weaponGroup, null, radius, size);
-		}
-		return weapon;
+		return new ChainWeapon(this.scene, x, y, this.circlePhysics.weaponGroup, null, radius, size);
 	}
 
 	private afterCreate(circle) {
