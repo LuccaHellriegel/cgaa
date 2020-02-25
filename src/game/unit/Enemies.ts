@@ -5,8 +5,12 @@ export class Enemies {
 	private idDict = {};
 	constructor() {}
 
-	addEnemy(enemy: Circle) {
-		this.idDict[enemy.id] = enemy;
+	set(id: string, enemy: Circle) {
+		this.idDict[id] = enemy;
+	}
+
+	addEnemy(enemy) {
+		this.set(enemy.id, enemy);
 	}
 
 	getAllEnemyPositions() {
@@ -22,7 +26,7 @@ export class Enemies {
 		return positions;
 	}
 
-	getEnemy(id) {
+	get(id: string) {
 		return this.idDict[id];
 	}
 

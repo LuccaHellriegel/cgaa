@@ -32,12 +32,11 @@ export class WeaponHandler {
 			damage = enemy.healthbar.value;
 			//Gain souls if player kill or player friend kill
 			if (weapon.owner.unitType === "player" || weapon.owner.campID === "blue") {
-				EventSetup.gainSouls(scene, 100);
+				EventSetup.gainSouls(scene, enemy.type);
 			}
 		}
 
-		//TODO: why emit this? For player damage?
-		scene.events.emit("damage-" + enemy.unitType, damage);
+		scene.events.emit(EventSetup.partialDamage + enemy.unitType, damage);
 		enemy.damage(damage);
 
 		if (enemy.stateHandler) enemy.stateHandler.spotted = weapon.owner;

@@ -18,8 +18,9 @@ export class CampSetup {
 		none: null
 	};
 
-	//TODO use
 	static numbOfBuildings = 3;
+
+	static delayForCampPopulation = 40000;
 }
 
 export type CampID = "blue" | "yellow" | "orange" | "green" | "purple" | "boss" | "none";

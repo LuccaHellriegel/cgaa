@@ -1,7 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
 
-//TODO: find out why Units are crashing into the wall in the first place
-//TODO: idea: path gets aborted?
 export class StandardCollision {
 	constructor(scene: Gameplay, combinatorialArr) {
 		combinatorialArr.forEach(arr => {

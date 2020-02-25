@@ -4,7 +4,6 @@ import { MultiPosPath } from "./PathConfig";
 import { RelPos } from "../base/RelPos";
 import { Path } from "./Path";
 
-//TODO: find out how to properly type dicts in ts
 export type PathDict = {};
 
 export class PathFactory {

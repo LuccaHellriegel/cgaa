@@ -3,8 +3,8 @@ import { CirclePolygon } from "../polygons/CirclePolygon";
 import { UnitSetup } from "../setup/UnitSetup";
 import { ChainWeapon } from "../weapon/ChainWeapon";
 import { CampSetup } from "../setup/CampSetup";
-import { healable } from "../collision/HealerAura";
 import { EventSetup } from "../setup/EventSetup";
+import { healable } from "../base/interfaces";
 
 const playerStartX = 1400;
 const playerStartY = 1200;
@@ -42,11 +42,7 @@ export class Player extends Circle implements healable {
 		return super.setVelocityY(velo);
 	}
 
-	needsHealing(): boolean {
-		return true;
-	}
 	heal(amount: number) {
-		//Logic is handled in HUD
 		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 

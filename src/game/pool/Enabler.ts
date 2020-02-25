@@ -1,9 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
-
-export interface enableable {
-	disable();
-	enable();
-}
+import { enableable } from "../base/interfaces";
 
 export class Enabler {
 	constructor(private scene: Gameplay, private enableEvent, private disableEvent) {}

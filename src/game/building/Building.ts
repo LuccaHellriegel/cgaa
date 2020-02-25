@@ -21,6 +21,9 @@ export class Building extends Image implements damageable {
 
 		this.polygon = new RectPolygon(x, y, this.width, this.height);
 
+		//Needed for gaining souls
+		this.type = spawnUnit;
+
 		Annotator.annotate(this, "id", "immovable");
 	}
 

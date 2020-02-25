@@ -1,21 +1,23 @@
 import { Circle } from "./Circle";
-import { damageable } from "../base/interfaces";
+import { damageable, poolable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CircleControl } from "../ai/CircleControl";
 import { PoolHelper } from "../pool/PoolHelper";
 import { Point } from "../base/types";
 import { EnemyConfig } from "./CircleFactory";
 
-export class DangerousCircle extends Circle implements damageable {
+export class DangerousCircle extends Circle implements damageable, poolable {
 	healthbar: HealthBar;
 	pathArr: Point[];
-	barrier: any;
 	stateHandler: CircleControl;
 
 	constructor(config: EnemyConfig, public velo: number) {
 		super(config);
 		this.healthbar = config.healthbar;
 		this.stateHandler = new CircleControl(this);
+
+		//Needed for gaining souls
+		this.type = config.size;
 	}
 
 	damage(amount) {
@@ -33,11 +35,13 @@ export class DangerousCircle extends Circle implements damageable {
 	}
 
 	poolDestroy() {
-		PoolHelper.destroyDangerousCircle(this);
+		PoolHelper.genericDestroy(this);
+		this.weapon.disableBody(true, true);
 	}
 
 	poolActivate(x, y) {
-		PoolHelper.activateDangerousCircle(this, x, y);
+		PoolHelper.genericActivate(this, x, y);
+		this.weapon.enableBody(true, x, y, true, true);
 		this.stateHandler.lastPositions.push({ x, y });
 	}
 
@@ -45,10 +49,6 @@ export class DangerousCircle extends Circle implements damageable {
 		super.preUpdate(time, delta);
 		this.healthbar.move(this.x, this.y);
 		this.stateHandler.tick();
-	}
-
-	needsHealing() {
-		return this.healthbar.value !== this.healthbar.defaultValue;
 	}
 
 	heal(amount: number) {

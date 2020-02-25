@@ -13,7 +13,6 @@ import { PathFactory } from "../game/path/PathFactory";
 import { PathCalculator } from "../game/path/PathCalculator";
 import { PathConfig } from "../game/path/PathConfig";
 import { Enemies } from "../game/unit/Enemies";
-import { EnemyPool } from "../game/pool/EnemyPool";
 import { UnitSetup } from "../game/setup/UnitSetup";
 import { CircleFactory } from "../game/unit/CircleFactory";
 import { Player } from "../game/unit/Player";
@@ -35,7 +34,6 @@ import { Rivalries } from "../game/state/Rivalries";
 import { UnitCollection } from "../game/base/UnitCollection";
 import { BuildingFactory } from "../game/building/BuildingFactory";
 import { BossCamp } from "../game/camp/BossCamp";
-import { BossPool } from "../game/pool/BossPool";
 import { BossSetup } from "../game/setup/BossSetup";
 import { CampSetup } from "../game/setup/CampSetup";
 import { WavePopulator } from "../game/populator/WavePopulator";
@@ -48,6 +46,7 @@ import { WaveOrder } from "../game/wave/WaveOrder";
 import { Building } from "../game/building/Building";
 import { SelectBarState } from "../game/ui/selectbar/SelectBarState";
 import { TowerModus } from "../game/modi/TowerModus";
+import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -84,19 +83,22 @@ export class Gameplay extends Phaser.Scene {
 			camp.createBuildings(new BuildingFactory(this, collision.physicGroups.buildings[camp.id]), [
 				...UnitSetup.circleSizeNames
 			]);
-
-			let factory = new CircleFactory(this, camp.id, collision.physicGroups.pairs[camp.id], enemies);
-			camp.populate(
-				this,
-				new EnemyPool(this, UnitSetup.groupSize, UnitSetup.campGroupComposition, enemies, factory),
-				enemies
-			);
-			camp.createInteractionCircle(factory);
 		});
 		let campsState = new CampsState(
 			this,
 			camps.ordinary.map(camp => camp.buildings)
 		);
+		camps.ordinary.forEach(camp => {
+			let factory = new CircleFactory(this, camp.id, collision.physicGroups.pairs[camp.id], enemies);
+			//TODO: populate camp with more than big units
+			camp.populate(
+				this,
+				new DangerousCirclePool(this, UnitSetup.campSize, factory, enemies, "Big"),
+				enemies,
+				campsState
+			);
+			camp.createInteractionCircle(factory);
+		});
 
 		//Setup GameState
 		let essentialDict = camps.ordinary.reduce((prev, cur) => {
@@ -113,11 +115,11 @@ export class Gameplay extends Phaser.Scene {
 			new BossPool(
 				this,
 				BossSetup.bossGroupSize,
-				BossSetup.bossCampGroupComposition,
-				enemies,
-				new CircleFactory(this, CampSetup.bossCampID, collision.physicGroups.pairs[CampSetup.bossCampID], enemies)
+				new CircleFactory(this, CampSetup.bossCampID, collision.physicGroups.pairs[CampSetup.bossCampID], enemies),
+				enemies
 			),
-			enemies
+			enemies,
+			campsState
 		);
 
 		//Setup Pathfinding
@@ -142,12 +144,12 @@ export class Gameplay extends Phaser.Scene {
 					new WavePopulator(
 						this,
 						campID,
-						new EnemyPool(
+						new DangerousCirclePool(
 							this,
-							1,
-							WaveSetup.groupCompDict[(pair[0] as Building).spawnUnit],
+							4,
+							new CircleFactory(this, campID, collision.physicGroups.pairs[campID], enemies),
 							enemies,
-							new CircleFactory(this, campID, collision.physicGroups.pairs[campID], enemies)
+							(pair[0] as Building).spawnUnit
 						),
 						new EnemySpawnObj(pair[1], enemies),
 						assigner,
@@ -163,21 +165,18 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.movement = new Movement(new WASD(this), player);
 
 		//Setup Mouse Modes
-		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
-		let healerPool = new HealerPool(
-			this,
-			TowerSetup.towerGroupSize,
-			collision.physicGroups.tower,
-			collision.physicGroups.healer
-		);
-		let healerSpawner = Spawner.createHealerSpawner(this, healerPool, towerSpawnObj);
-
 		let shooterPool = new ShooterPool(
 			this,
 			TowerSetup.towerGroupSize,
 			collision.physicGroups.tower,
 			collision.physicGroups.bulletGroup
 		);
+		let healerPool = new HealerPool(this, TowerSetup.towerGroupSize, collision.physicGroups.tower, player, [
+			shooterPool
+		]);
+		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
+		let healerSpawner = Spawner.createHealerSpawner(this, healerPool, towerSpawnObj);
+
 		let shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
 		let interactionCollection = new UnitCollection(
 			camps.ordinary.map(camp => {
@@ -188,8 +187,8 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.inputs = new Inputs(this);
 		let selectorRect = new SelectorRect(this, 0, 0, this.cgaa.inputs);
 		let interactionMode = new InteractionModus(cooperation, interactionCollection, selectorRect);
-		let healerMode = new TowerModus(healerSpawner, selectorRect);
-		let shooterMode = new TowerModus(shooterSpawner, selectorRect);
+		let healerMode = new TowerModus(healerSpawner, selectorRect, "Healer");
+		let shooterMode = new TowerModus(shooterSpawner, selectorRect, "Shooter");
 		let arr = [interactionMode.getFuncArr(), healerMode.getFuncArr(), shooterMode.getFuncArr()].reduce(
 			(prev, cur) => {
 				prev[0].push(cur[0]);

@@ -8,16 +8,19 @@ import { CampPopulator } from "../populator/CampPopulator";
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { Enemies } from "../unit/Enemies";
-import { GroupPool } from "../pool/GroupPool";
 import { RealAreaSpawnableDict } from "../env/SpawnableDict";
 import { EnvSetup } from "../setup/EnvSetup";
 import { RealDict } from "../base/Dict";
 import { RelPos } from "../base/RelPos";
 import { CircleFactory } from "../unit/CircleFactory";
 import { InteractionCircle } from "../unit/InteractionCircle";
+import { CampsState } from "../state/CampsState";
+import { UnitSetup } from "../setup/UnitSetup";
+import { Pool } from "../pool/Pool";
+import { DangerousCirclePool } from "../pool/CirclePool";
 
 export interface CampLike {
-	populate(scene: Gameplay, pool: GroupPool, enemies: Enemies);
+	populate(scene: Gameplay, pool: Pool, enemies: Enemies, campsState: CampsState);
 	id: CampID;
 	area: Area;
 }
@@ -50,8 +53,15 @@ export class Camp implements CampLike {
 		this.interactionUnit = factory.createInteractionCircle(circleConfig);
 	}
 
-	populate(scene: Gameplay, pool: GroupPool, enemies: Enemies) {
-		new CampPopulator(scene, pool, new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies));
+	populate(scene: Gameplay, pool: DangerousCirclePool, enemies: Enemies, campsState: CampsState) {
+		new CampPopulator(
+			this.id,
+			scene,
+			pool,
+			new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies),
+			UnitSetup.maxCampPopulation,
+			campsState
+		);
 	}
 
 	createBuildingSpawnableDictsPerBuilding(): any[][] {

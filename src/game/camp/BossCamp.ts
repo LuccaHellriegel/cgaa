@@ -7,10 +7,12 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { BossPool } from "../pool/BossPool";
 import { CampPopulator } from "../populator/CampPopulator";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
-import { CircleFactory, WeaponTypes } from "../unit/CircleFactory";
+import { CircleFactory } from "../unit/CircleFactory";
 import { BarrierFactory } from "./BarrierFactory";
 import { GameMap } from "../env/GameMap";
 import { RealAreaSpawnableDict } from "../env/SpawnableDict";
+import { CampsState } from "../state/CampsState";
+import { BossSetup } from "../setup/BossSetup";
 
 export class BossCamp implements CampLike {
 	id = CampSetup.bossCampID;
@@ -31,18 +33,22 @@ export class BossCamp implements CampLike {
 	}
 
 	createKing(factory: CircleFactory) {
+		let king = factory.createKing();
 		let realTopLeft = this.area.topLeft.toPoint();
-		let kingConfig = {
-			size: "Big",
-			x: (EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.x,
-			y: (EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.y,
-			weaponType: "chain" as WeaponTypes
-		};
-
-		factory.createKing(kingConfig);
+		king.setPosition(
+			(EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.x,
+			(EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.y
+		);
 	}
 
-	populate(scene: Gameplay, pool: BossPool, enemies: Enemies) {
-		new CampPopulator(scene, pool, new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies));
+	populate(scene: Gameplay, pool: BossPool, enemies: Enemies, campsState: CampsState) {
+		new CampPopulator(
+			CampSetup.bossCampID,
+			scene,
+			pool,
+			new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies),
+			BossSetup.maxBossCampPopulation,
+			campsState
+		);
 	}
 }

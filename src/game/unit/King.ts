@@ -6,13 +6,13 @@ import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CampID } from "../setup/CampSetup";
 import { EnemyConfig } from "./CircleFactory";
 import { GuardComponent } from "../ai/GuardComponent";
+import { DangerousCircle } from "./DangerousCircle";
 
 //TODO: remove duplication from DangerousCircle
 export class King extends Circle implements damageable {
 	healthbar: HealthBar;
 	path: Path;
 	campID: CampID;
-	barrier: any;
 	stateHandler: CircleControl;
 
 	constructor(config: EnemyConfig, public velo: number) {

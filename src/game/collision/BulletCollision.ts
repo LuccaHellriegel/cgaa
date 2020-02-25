@@ -15,7 +15,7 @@ export class BulletCollision {
 		let enemyKilled = damage >= enemy.healthbar.value;
 		if (enemyKilled) {
 			damage = enemy.healthbar.value;
-			EventSetup.gainSouls(this.scene, 100);
+			EventSetup.gainSouls(this.scene, enemy.type);
 		}
 		enemy.damage(damage);
 		enemy.stateHandler.spotted = bullet.owner;

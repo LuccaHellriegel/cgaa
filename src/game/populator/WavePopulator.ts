@@ -36,7 +36,6 @@ export class WavePopulator {
 		}
 	}
 
-	//TODO: remove building pos from non ordinary camps in GameMap
 	private prepareWave() {
 		let spawnPositions = [];
 		let enemyCircles = [];

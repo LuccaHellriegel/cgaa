@@ -34,8 +34,7 @@ export class PathCalculator {
 		this.easyStar.findPath(start.column, start.row, goal.column, goal.row, this.callback.bind(this));
 		this.easyStar.enableSync();
 		this.easyStar.calculate();
-		//EasyStar uses x,y
-		//TODO: why is x,y reversed?
+		//EasyStar uses x,y and outputs x,y reverse
 		let outputArr = this.tempArr.map((pos: Point) => new RelPos(pos.y, pos.x));
 		this.tempArr = undefined;
 		this.tempStart = undefined;

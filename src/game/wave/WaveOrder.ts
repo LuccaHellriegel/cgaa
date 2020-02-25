@@ -12,13 +12,11 @@ export class WaveOrder extends OrdinaryOrder {
 	}
 
 	increment() {
-		console.log(this.index, "increment1");
 		this.index++;
 
 		if (this.index > this.order.length - 1) {
 			this.index = 0;
 		}
-		console.log(this.index, "increment2");
 	}
 
 	private shouldHaveWave(campID: CampID) {

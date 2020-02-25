@@ -3,7 +3,6 @@ import { Pool } from "./Pool";
 import { Gameplay } from "../../scenes/Gameplay";
 import { poolable } from "../base/interfaces";
 
-//TODO: abstract TowerPool
 export class ShooterPool extends Pool {
 	constructor(
 		scene: Gameplay,
@@ -12,20 +11,10 @@ export class ShooterPool extends Pool {
 		private bulletGroup: Phaser.Physics.Arcade.Group
 	) {
 		super(scene, numberOfUnits, unitGroup);
+		this.init();
 	}
 
 	protected createNewUnit(): poolable {
-		return new Shooter(this.scene, -1000, -1000, this.unitGroup, this.bulletGroup);
-	}
-
-	static poolDestroy(shooter) {
-		super.poolDestroy(shooter);
-		shooter.bullets.forEach(bullet => bullet.reset());
-	}
-
-	poolActivate(shooter: Shooter, x, y) {
-		super.poolActivate(shooter, x, y);
-		//TODO: why do I need this?
-		shooter.bullets.forEach(bullet => bullet.reset());
+		return new Shooter(this.scene, -1000, -1000, this.unitGroup as Phaser.Physics.Arcade.StaticGroup, this.bulletGroup);
 	}
 }

@@ -46,15 +46,6 @@ export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 		);
 	}
 
-	buildShift() {
-		//TODO: magic number from tint math
-		if (this.tintBottomLeft === 2109953) {
-			this.setTint(0x98fb98, 0x98fb98, 0x98fb98, 0x98fb98);
-		} else {
-			this.setTint(0x013220, 0x013220, 0x013220, 0x013220);
-		}
-	}
-
 	toggleOn() {
 		if (this.visible) {
 			this.turnOff();

@@ -34,14 +34,10 @@ export class Cooperation {
 	updateCooperation(campID: CampID) {
 		(this.dict[campID] as Set<CampID>).add(CampSetup.playerCampID);
 
-		//TODO: multiple camp cooperation
 		Object.keys(this.dict).forEach(key => {
 			let set: Set<CampID> = this.dict[key];
 			if (set.has(CampSetup.playerCampID)) set.add(campID);
 		});
-		//TODO: get rid of scene call
-		//TODO: update already spawned units
-		// (this.scene.cgaa.campObj as Camps).setNonHostile(ele.campID);
 	}
 
 	hasCooperation(campID, otherCampID) {

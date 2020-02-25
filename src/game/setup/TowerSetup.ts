@@ -1,3 +1,5 @@
+import { EnvSetup } from "./EnvSetup";
+
 export class TowerSetup {
 	private constructor() {}
 
@@ -5,4 +7,8 @@ export class TowerSetup {
 	static healerCost = 200;
 
 	static towerGroupSize = 15;
+
+	static towerDistance = 2 * EnvSetup.gridPartSize;
+
+	static singleHealAmount = 5;
 }

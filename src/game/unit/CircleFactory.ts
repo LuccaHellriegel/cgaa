@@ -1,6 +1,5 @@
 import { UnitSetup } from "../setup/UnitSetup";
 import { Gameplay } from "../../scenes/Gameplay";
-import { CirclePhysics } from "../pool/EnemyPool";
 import { Enemies } from "./Enemies";
 import { ChainWeapon } from "../weapon/ChainWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
@@ -11,6 +10,7 @@ import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { Weapon } from "../weapon/Weapon";
+import { CirclePhysics } from "../base/types";
 
 const radiusConfigs = {
 	Small: UnitSetup.smallCircleRadius,
@@ -40,13 +40,6 @@ export interface EnemyConfig extends CircleConfig {
 	healthbar: HealthBar;
 }
 
-export interface CircleFactoryConfig {
-	size: EnemySize;
-	x: number;
-	y: number;
-	weaponType: WeaponTypes;
-}
-
 export class CircleFactory {
 	private baseConfig = {};
 
@@ -63,7 +56,7 @@ export class CircleFactory {
 		};
 	}
 
-	private createWeapon(weaponType: string, x: number, y: number, radius: number, size: string) {
+	private createWeapon(x: number, y: number, radius: number, size: string) {
 		return new ChainWeapon(this.scene, x, y, this.circlePhysics.weaponGroup, null, radius, size);
 	}
 
@@ -74,11 +67,12 @@ export class CircleFactory {
 		this.enemies.addEnemy(circle);
 	}
 
-	createKing(enemyConfig: CircleFactoryConfig) {
-		let { x, y, weaponType } = enemyConfig;
+	createKing() {
+		let x = 0;
+		let y = 0;
 		let size = "Big";
 		let radius = radiusConfigs[size];
-		let weapon = this.createWeapon(weaponType, x, y, radius, size);
+		let weapon = this.createWeapon(x, y, radius, size);
 
 		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
@@ -100,11 +94,12 @@ export class CircleFactory {
 	}
 
 	//TODO: remove duplication
-	createBoss(enemyConfig: CircleFactoryConfig) {
-		let { size, x, y, weaponType } = enemyConfig;
-		size = "Big";
+	createBoss() {
+		let x = 0;
+		let y = 0;
+		let size = "Big";
 		let radius = radiusConfigs[size];
-		let weapon = this.createWeapon(weaponType, x, y, radius, size);
+		let weapon = this.createWeapon(x, y, radius, size);
 
 		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
@@ -125,10 +120,11 @@ export class CircleFactory {
 		return circle;
 	}
 
-	createEnemy(enemyConfig: CircleFactoryConfig) {
-		let { size, x, y, weaponType } = enemyConfig;
+	createEnemy(size: EnemySize) {
+		let x = 0;
+		let y = 0;
 		let radius = radiusConfigs[size];
-		let weapon = this.createWeapon(weaponType, x, y, radius, size);
+		let weapon = this.createWeapon(x, y, radius, size);
 
 		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 

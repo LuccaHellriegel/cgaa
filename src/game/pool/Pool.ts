@@ -1,16 +1,17 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Util } from "../base/Util";
 import { poolable } from "../base/interfaces";
+import { UnitDict } from "../base/Dict";
 
 export abstract class Pool {
-	private unitDict = {};
-	private activeIDArr: string[] = [];
-	private inactiveIDArr: string[] = [];
+	activeIDArr: string[] = [];
+	inactiveIDArr: string[] = [];
 
 	constructor(
 		protected scene: Gameplay,
 		private numberOfUnits: number,
-		protected unitGroup: Phaser.Physics.Arcade.StaticGroup
+		protected unitGroup?: Phaser.Physics.Arcade.StaticGroup | Phaser.Physics.Arcade.Group,
+		protected unitDict = new UnitDict([])
 	) {}
 
 	init() {
@@ -19,7 +20,7 @@ export abstract class Pool {
 	}
 
 	private listenForInactiveUnits() {
-		let keys = Object.keys(this.unitDict);
+		let keys = Object.keys(this.unitDict.dict);
 		for (const key of keys) {
 			this.scene.events.on("inactive-" + key, id => {
 				Util.removeEle(id, this.activeIDArr);
@@ -31,38 +32,26 @@ export abstract class Pool {
 	protected abstract createNewUnit(): poolable;
 
 	private initPool() {
+		console.log("Init Pool", this.constructor.name, this.numberOfUnits, this.inactiveIDArr.length);
+
 		for (let index = 0; index < this.numberOfUnits; index++) {
 			const newUnit = this.createNewUnit();
-			Pool.poolDestroy(newUnit);
-			this.unitDict[newUnit.id] = newUnit;
+			newUnit.poolDestroy();
+			this.unitDict.set(newUnit.id, newUnit);
 			this.inactiveIDArr.push(newUnit.id);
 		}
 	}
 
-	static poolDestroy(unit) {
-		unit.scene.events.emit("inactive-" + unit.id, unit.id);
-		unit.disableBody(true, true);
-		unit.setPosition(-1000, -1000);
-		unit.healthbar.bar.setActive(false).setVisible(false);
-		unit.healthbar.value = unit.healthbar.defaultValue;
-	}
-
-	poolActivate(unit, x, y) {
-		unit.enableBody(true, x, y, true, true);
-		unit.healthbar.bar.setActive(true).setVisible(true);
-		unit.healthbar.move(x, y);
-	}
-
-	pop() {
-		if (this.inactiveIDArr.length === 0) {
+	pop(): poolable {
+		if (this.inactiveIDArr.length < this.numberOfUnits / 2) {
 			this.initPool();
 		}
 		const id = this.inactiveIDArr.pop();
 		this.activeIDArr.push(id);
-		return this.unitDict[id];
+		return this.unitDict.get(id);
 	}
 
 	getActiveUnits() {
-		return this.activeIDArr.map(id => this.unitDict[id]);
+		return this.activeIDArr.map(id => this.unitDict.get(id));
 	}
 }

@@ -7,7 +7,7 @@ import { ShooterPool } from "./ShooterPool";
 import { TowerSetup } from "../setup/TowerSetup";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { HealerPool } from "./HealerPool";
-import { EnvSetup } from "../setup/EnvSetup";
+import { Grid } from "../base/Grid";
 
 export class Spawner implements enableable {
 	private canSpawn = false;
@@ -30,49 +30,6 @@ export class Spawner implements enableable {
 		this.canSpawn = false;
 	}
 
-	//TODO: duplication in Grid
-	private snapCoordinateToGrid(coordinate) {
-		let ceil = Math.ceil(coordinate / EnvSetup.halfGridPartSize) * EnvSetup.halfGridPartSize;
-		let floor = Math.floor(coordinate / EnvSetup.halfGridPartSize) * EnvSetup.halfGridPartSize;
-
-		if ((ceil / EnvSetup.halfGridPartSize) % 2 === 0) ceil = Infinity;
-		if ((floor / EnvSetup.halfGridPartSize) % 2 === 0) floor = Infinity;
-
-		let diffCeil = Math.abs(ceil - coordinate);
-		let diffFloor = Math.abs(floor - coordinate);
-
-		if (ceil === Infinity && floor === Infinity) {
-			return coordinate - EnvSetup.halfGridPartSize;
-		} else if (diffCeil < diffFloor) {
-			return ceil;
-		} else {
-			return floor;
-		}
-	}
-
-	private snapXYToGrid(x, y) {
-		let needToSnapX = (x - EnvSetup.halfGridPartSize) % (2 * EnvSetup.halfGridPartSize) !== 0;
-		let needToSnapY = (y - EnvSetup.halfGridPartSize) % (2 * EnvSetup.halfGridPartSize) !== 0;
-
-		if (!needToSnapX && !needToSnapY) return { newX: x, newY: y };
-
-		let newX;
-		let newY;
-
-		if (needToSnapX) {
-			newX = this.snapCoordinateToGrid(x);
-		} else {
-			newX = x;
-		}
-
-		if (needToSnapY) {
-			newY = this.snapCoordinateToGrid(y);
-		} else {
-			newY = y;
-		}
-		return { newX, newY };
-	}
-
 	spawn(selectorRect: SelectorRect) {
 		if (!this.canSpawn) {
 			selectorRect.anims.play("invalid-shooter-pos");
@@ -82,12 +39,12 @@ export class Spawner implements enableable {
 		let y = selectorRect.y;
 
 		if (!(x < 0 || y < 0)) {
-			let snappedXY = this.snapXYToGrid(x, y);
+			let snappedXY = Grid.snapXYToGrid(x, y);
 			x = snappedXY.newX;
 			y = snappedXY.newY;
 			if (this.spawnObj.evaluatePoint({ x, y })) {
 				EventSetup.spendSouls(this.scene, this.cost);
-				this.pool.poolActivate(this.pool.pop(), x, y);
+				this.pool.pop().poolActivate(x, y);
 			} else {
 				selectorRect.anims.play("invalid-shooter-pos");
 			}

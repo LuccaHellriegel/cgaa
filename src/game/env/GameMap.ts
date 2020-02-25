@@ -4,6 +4,7 @@ import { RelPos } from "../base/RelPos";
 import { Camps } from "../camp/Camps";
 import { EnvSetup } from "../setup/EnvSetup";
 import { RealDict } from "../base/Dict";
+import { CampSetup } from "../setup/CampSetup";
 
 export class GameMap {
 	map: RelativeMap = [];
@@ -29,11 +30,13 @@ export class GameMap {
 
 	updateWith(camps: Camps) {
 		camps.arr.forEach(camp => {
-			camp.buildingSetup.positions.forEach(pos => {
-				this.map[pos.row][pos.column - 1] = EnvSetup.buildingSymbol;
-				this.map[pos.row][pos.column] = EnvSetup.buildingSymbol;
-				this.map[pos.row][pos.column + 1] = EnvSetup.buildingSymbol;
-			});
+			if (camp.id !== CampSetup.bossCampID && camp.id !== CampSetup.playerCampID) {
+				camp.buildingSetup.positions.forEach(pos => {
+					this.map[pos.row][pos.column - 1] = EnvSetup.buildingSymbol;
+					this.map[pos.row][pos.column] = EnvSetup.buildingSymbol;
+					this.map[pos.row][pos.column + 1] = EnvSetup.buildingSymbol;
+				});
+			}
 		});
 	}
 

@@ -1,17 +1,24 @@
 import { CampID } from "./CampSetup";
 
 export class EventSetup {
-	//TODO: make actual object with scene
 	private constructor() {}
 
 	static healPlayer = "heal-player";
 
+	static partialDamage = "damage-";
+
 	static partialReroutingEvent = "reroute-";
 
+	static soulsDict = {
+		Shooter: 100,
+		Healer: 200,
+		Big: 100,
+		Normal: 60,
+		Small: 40
+	};
+
 	static gainSouls(scene: Phaser.Scene, type) {
-		//TODO: gain dependent on size and type
-		//TODO: make general type?
-		scene.events.emit("souls-gained", 100);
+		scene.events.emit("souls-gained", this.soulsDict[type]);
 	}
 
 	static spendSouls(scene: Phaser.Scene, amount) {

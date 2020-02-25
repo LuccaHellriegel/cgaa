@@ -1,44 +1,45 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { UnitSetup } from "../setup/UnitSetup";
-import { GroupPool } from "../pool/GroupPool";
 import { GuardComponent } from "../ai/GuardComponent";
+import { CampSetup, CampID } from "../setup/CampSetup";
+import { CampsState } from "../state/CampsState";
+import { Pool } from "../pool/Pool";
+import { DangerousCirclePool } from "../pool/CirclePool";
 
 export class CampPopulator {
-	constructor(private scene: Gameplay, private enemyPool: GroupPool, private enemySpawnObj: EnemySpawnObj) {
-		//TODO: why also in start() ?
-		this.startWave();
+	constructor(
+		private campID: CampID,
+		private scene: Gameplay,
+		private enemyPool: DangerousCirclePool,
+		private enemySpawnObj: EnemySpawnObj,
+		private maxCampPopulation: number,
+		private campsState: CampsState
+	) {
+		this.startPopulating();
 	}
 
-	start() {
-		this.startWave();
-	}
+	//Populates the camp with a single new enemy
+	private startPopulating() {
+		if (this.campID !== CampSetup.bossCampID && !this.campsState.isActive(this.campID)) {
+			this.enemyPool.destroy();
+			return;
+		}
 
-	private startWave() {
-		//TODO (also boss case?)
-		// if (this.buildings.areDestroyed()) {
-		// 	this.enemyPool.destroy();
-		// 	return;
-		// }
-		//TODO: if king destroyed stop (or maybe not necessary because its Game End)
-
-		//TODO: make maxPop configurable -> for bossCamp
-		let areaIsPopulated = this.enemyPool.activeIDArr.length === UnitSetup.maxCampPopulation;
+		let areaIsPopulated = this.enemyPool.activeIDArr.length === this.maxCampPopulation;
 		if (!areaIsPopulated) {
 			let leftToSpawn = UnitSetup.maxCampPopulation - this.enemyPool.activeIDArr.length;
 			this.spawnEnemy(leftToSpawn);
 		}
 
 		this.scene.time.addEvent({
-			delay: 40000,
+			delay: CampSetup.delayForCampPopulation,
 			callback: () => {
-				this.startWave();
+				this.startPopulating();
 			},
 			repeat: 0
 		});
 	}
-
-	//TODO: activate units only once boss camp is unlocked
 
 	private spawnEnemy(leftToSpawn: number) {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();

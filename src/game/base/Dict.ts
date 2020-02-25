@@ -46,3 +46,20 @@ export class RelativeDict extends Dict {
 		return relative;
 	}
 }
+
+export class UnitDict extends Dict {
+	protected toID(_: any): string {
+		throw new Error("Method should not be used.");
+	}
+
+	get(id: string) {
+		return this.dict[id];
+	}
+	set(id: string, unit: any) {
+		this.dict[id] = unit;
+	}
+
+	destroy() {
+		Object.values(this.dict).forEach(val => val.destroy());
+	}
+}

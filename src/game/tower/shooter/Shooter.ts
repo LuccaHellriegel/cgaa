@@ -1,7 +1,7 @@
 import { Bullet } from "./Bullet";
-import { ShooterPool } from "../../pool/ShooterPool";
 import { Tower } from "../Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
+import { PoolHelper } from "../../pool/PoolHelper";
 
 export class Shooter extends Tower {
 	bullets: Bullet[] = [];
@@ -18,7 +18,6 @@ export class Shooter extends Tower {
 		super(scene, x, y, "shooter", physicsGroup);
 		this.initBullets();
 
-		//TODO: on spawn we need to find a way to shoot -> overlap is just evaluated if new units come
 		//TODO: can be spawned ontop of units - why?
 	}
 
@@ -31,7 +30,7 @@ export class Shooter extends Tower {
 
 	damage(amount: number) {
 		if (this.healthbar.decrease(amount)) {
-			ShooterPool.poolDestroy(this);
+			this.poolDestroy();
 		}
 	}
 
@@ -52,5 +51,15 @@ export class Shooter extends Tower {
 					repeat: 0
 				});
 		}
+	}
+
+	poolDestroy() {
+		PoolHelper.genericDestroy(this);
+		this.bullets.forEach(bullet => bullet.reset());
+	}
+
+	poolActivate(x, y) {
+		PoolHelper.genericActivate(this, x, y);
+		this.bullets.forEach(bullet => bullet.reset());
 	}
 }

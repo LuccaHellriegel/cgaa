@@ -19,9 +19,8 @@ export class HUD extends Phaser.Scene {
 	}
 
 	private setupEventListeners() {
-		//TODO: dont forget to comment in
 		this.ourGame.events.on(
-			"damage-player",
+			EventSetup.partialDamage + "-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
 					(this as HUD).sys.game.destroy(true);
@@ -48,7 +47,7 @@ export class HUD extends Phaser.Scene {
 				(this as HUD).sys.game.destroy(true);
 
 				document.getElementById("game").remove();
-				const canvas = document.createElement("canvas");
+				const canvas: HTMLCanvasElement = document.createElement("canvas");
 				canvas.id = "game";
 				document.body.appendChild(canvas);
 

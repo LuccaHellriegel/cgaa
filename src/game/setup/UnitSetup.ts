@@ -15,18 +15,9 @@ export class UnitSetup {
 
 	static maxCampPopulation = 6;
 
-	static groupSize = 4;
+	static campSize = 4;
 
 	static bigCircleWithChain = { weaponType: "chain", size: "Big" };
 	static normalCircleWithChain = { weaponType: "chain", size: "Normal" };
 	static smallCircleWithChain = { weaponType: "chain", size: "Small" };
-
-	static campGroupComposition = [
-		UnitSetup.bigCircleWithChain,
-		UnitSetup.bigCircleWithChain,
-		UnitSetup.normalCircleWithChain,
-		UnitSetup.normalCircleWithChain,
-		UnitSetup.smallCircleWithChain,
-		UnitSetup.smallCircleWithChain
-	];
 }
