@@ -47,6 +47,8 @@ import { Building } from "../game/building/Building";
 import { SelectBarState } from "../game/ui/selectbar/SelectBarState";
 import { TowerModus } from "../game/modi/TowerModus";
 import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
+import { BarrierFactory } from "../game/camp/BarrierFactory";
+import { PlayerFriends } from "../game/unit/PlayerFriends";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -109,26 +111,31 @@ export class Gameplay extends Phaser.Scene {
 		let quests = new Quests(this, rivalries, essentialDict);
 		cooperation.setQuests(quests);
 
-		//Setup Boss
-		new BossCamp(camps.boss.area, gameMap).populate(
-			this,
-			new BossPool(
-				this,
-				BossSetup.bossGroupSize,
-				new CircleFactory(this, CampSetup.bossCampID, collision.physicGroups.pairs[CampSetup.bossCampID], enemies),
-				enemies
-			),
-			enemies,
-			campsState
-		);
-
-		//Setup Pathfinding
+		//Setup Orientation
 		let orientation = new Orientation(
 			gameMap.getMiddle(),
 			camps.player.area.getMiddle(),
 			camps.boss.area.getMiddle(),
 			camps
 		);
+
+		//Setup Boss
+		let bossFactory = new CircleFactory(
+			this,
+			CampSetup.bossCampID,
+			collision.physicGroups.pairs[CampSetup.bossCampID],
+			enemies
+		);
+		let bossCamp = new BossCamp(camps.boss.area, gameMap);
+		bossCamp.populate(this, new BossPool(this, BossSetup.bossGroupSize, bossFactory, enemies), enemies, campsState);
+		let king = bossFactory.createKing();
+		let point = orientation.middleOfBossArea.toPoint();
+		king.setPosition(point.x, point.y);
+
+		let bossExitPositions = bossCamp.area.exit.relativePositions.map(relPos => relPos.toPoint());
+		new BarrierFactory(this, collision.physicGroups.areas).produce(bossExitPositions);
+
+		//Setup Pathfinding
 		let exits = new CampExits(areas.exits, order);
 		let configs = PathConfig.createConfigs(orientation, exits, camps.arr);
 		let paths = new Paths(orientation, PathFactory.produce(new PathCalculator(gameMap.map), configs));
@@ -146,7 +153,7 @@ export class Gameplay extends Phaser.Scene {
 						campID,
 						new DangerousCirclePool(
 							this,
-							4,
+							8,
 							new CircleFactory(this, campID, collision.physicGroups.pairs[campID], enemies),
 							enemies,
 							(pair[0] as Building).spawnUnit
@@ -163,6 +170,18 @@ export class Gameplay extends Phaser.Scene {
 		let player = Player.withChainWeapon(this, collision.physicGroups.player, collision.physicGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
 		this.cgaa.movement = new Movement(new WASD(this), player);
+		new PlayerFriends(
+			orientation.middleOfPlayerArea.toPoint(),
+			new CircleFactory(
+				this,
+				CampSetup.playerCampID,
+				{
+					physicsGroup: collision.physicGroups.player,
+					weaponGroup: collision.physicGroups.playerWeapon
+				},
+				enemies
+			)
+		);
 
 		//Setup Mouse Modes
 		let shooterPool = new ShooterPool(

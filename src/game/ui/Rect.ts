@@ -1,5 +1,5 @@
-import { HUD } from "../../../scenes/HUD";
-import { RectPolygon } from "../../polygons/RectPolygon";
+import { HUD } from "../../scenes/HUD";
+import { RectPolygon } from "../polygons/RectPolygon";
 
 export class Rect {
 	polygon: RectPolygon;
@@ -18,16 +18,19 @@ export class Rect {
 		this.innerPolygon = new RectPolygon(x, y, 2 * (width / 3), 2 * (height / 3));
 		this.redraw(hexColor);
 	}
+
 	redraw(hexColor) {
 		this.graphics.clear();
 		this.graphics.fillStyle(hexColor);
 		this.polygon.draw(this.graphics, 0);
 	}
+
 	select() {
 		this.redraw(0x0000ff);
 		this.graphics.fillStyle(this.hexColor);
 		this.innerPolygon.draw(this.graphics, 0);
 	}
+
 	deselect() {
 		this.redraw(this.hexColor);
 	}

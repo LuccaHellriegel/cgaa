@@ -15,7 +15,7 @@ export class UnitSetup {
 
 	static maxCampPopulation = 6;
 
-	static campSize = 4;
+	static campSize = 10;
 
 	static bigCircleWithChain = { weaponType: "chain", size: "Big" };
 	static normalCircleWithChain = { weaponType: "chain", size: "Normal" };

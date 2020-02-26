@@ -5,12 +5,5 @@ export class BossSetup {
 
 	static maxBossCampPopulation = 10;
 
-	static bossGroupSize = 4;
-
-	static bossCampGroupComposition = [
-		UnitSetup.bigCircleWithChain,
-		UnitSetup.bigCircleWithChain,
-		UnitSetup.bigCircleWithChain,
-		UnitSetup.bigCircleWithChain
-	];
+	static bossGroupSize = 10;
 }

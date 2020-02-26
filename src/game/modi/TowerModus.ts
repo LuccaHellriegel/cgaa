@@ -2,6 +2,7 @@ import { Spawner } from "../pool/Spawner";
 import { SelectorRect } from "./SelectorRect";
 import { UnitCollection } from "../base/UnitCollection";
 import { EventSetup } from "../setup/EventSetup";
+import { EnvSetup } from "../setup/EnvSetup";
 
 export class TowerModus {
 	constructor(private spawner: Spawner, private selectorRect: SelectorRect, private type: string) {}
@@ -12,7 +13,7 @@ export class TowerModus {
 			this.selectorRect.x,
 			this.selectorRect.y
 		);
-		if (dist < 100) return ele;
+		if (dist < EnvSetup.halfGridPartSize) return ele;
 		return null;
 	}
 
@@ -25,12 +26,16 @@ export class TowerModus {
 	}
 
 	executeLocked() {
-		let ele = this.findClosestElement();
-		if (ele) this.interactWithTower(ele);
+		let eleDist = this.findClosestElement();
+		if (eleDist) this.interactWithTower(eleDist);
 	}
 
 	execute() {
-		this.spawner.spawn(this.selectorRect);
+		if (this.spawner.pool.getActiveUnits().length === 0 || !this.findClosestElement()) {
+			this.spawner.spawn(this.selectorRect);
+		} else {
+			this.selectorRect.play("invalid-shooter-pos");
+		}
 	}
 
 	private interactWithTower(ele) {

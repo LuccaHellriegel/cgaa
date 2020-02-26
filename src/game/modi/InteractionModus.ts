@@ -1,6 +1,7 @@
 import { SelectorRect } from "./SelectorRect";
 import { Cooperation } from "../state/Cooperation";
 import { UnitCollection } from "../base/UnitCollection";
+import { EnvSetup } from "../setup/EnvSetup";
 
 export class InteractionModus {
 	constructor(
@@ -11,7 +12,7 @@ export class InteractionModus {
 
 	lockOn() {
 		let result = this.interactionElements.findClosestUnit(this.selectorRect.x, this.selectorRect.y);
-		if (result && result[1] < 100) {
+		if (result && result[1] < EnvSetup.halfGridPartSize) {
 			this.selectorRect.setPosition(result[0].x, result[0].y);
 			this.selectorRect.lockOn();
 		}
@@ -19,7 +20,7 @@ export class InteractionModus {
 
 	private interact() {
 		let ele = this.interactionElements.findClosestUnit(this.selectorRect.x, this.selectorRect.y);
-		if (ele && ele[1] < 100) this.cooperation.interactWithCircle(ele);
+		if (ele && ele[1] < EnvSetup.halfGridPartSize) this.cooperation.interactWithCircle(ele);
 	}
 
 	executeLocked() {

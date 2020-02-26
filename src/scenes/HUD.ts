@@ -3,7 +3,6 @@ import { PlayerHealthBar } from "../game/ui/healthbar/PlayerHealthBar";
 import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
 import { CampState } from "../game/ui/state/CampState";
-import { Tutorial } from "../game/ui/tutorial/Tutorial";
 import { CampSetup } from "../game/setup/CampSetup";
 import { SelectBar } from "../game/ui/selectbar/SelectBar";
 import { EventSetup } from "../game/setup/EventSetup";
@@ -89,7 +88,8 @@ export class HUD extends Phaser.Scene {
 		//Waves should start after CampState is initialized, otherwise first Wave is not recognized
 		this.ourGame.startWaves();
 
-		new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
+		//TODO
+		//new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 
 		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
 	}

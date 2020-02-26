@@ -1,6 +1,6 @@
 import { HUD } from "../../../scenes/HUD";
 import { Inputs } from "../../input/Inputs";
-import { Rect, TextRect, ImageRect } from "./Rect";
+import { Rect, TextRect, ImageRect } from "../Rect";
 import { SelectBarState } from "./SelectBarState";
 
 //TODO: maybe show selected option in SelectorRect?

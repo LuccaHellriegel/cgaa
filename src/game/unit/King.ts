@@ -6,7 +6,6 @@ import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CampID } from "../setup/CampSetup";
 import { EnemyConfig } from "./CircleFactory";
 import { GuardComponent } from "../ai/GuardComponent";
-import { DangerousCircle } from "./DangerousCircle";
 
 //TODO: remove duplication from DangerousCircle
 export class King extends Circle implements damageable {
@@ -21,7 +20,6 @@ export class King extends Circle implements damageable {
 		//TODO: remove path, make stateHandler more general
 		this.stateHandler = new CircleControl(this);
 		this.stateHandler.setComponents([new GuardComponent(this, this.stateHandler)]);
-		this.state = "guard";
 	}
 
 	damage(amount) {

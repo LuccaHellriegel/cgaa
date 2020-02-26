@@ -4,8 +4,8 @@ import { UnitSetup } from "../setup/UnitSetup";
 import { GuardComponent } from "../ai/GuardComponent";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { CampsState } from "../state/CampsState";
-import { Pool } from "../pool/Pool";
 import { DangerousCirclePool } from "../pool/CirclePool";
+import { DangerousCircle } from "../unit/DangerousCircle";
 
 export class CampPopulator {
 	constructor(
@@ -44,7 +44,7 @@ export class CampPopulator {
 	private spawnEnemy(leftToSpawn: number) {
 		let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 		if (spawnPosition) {
-			let enemy = this.enemyPool.pop();
+			let enemy = this.enemyPool.pop() as DangerousCircle;
 
 			enemy.stateHandler.setComponents([new GuardComponent(enemy, enemy.stateHandler)]);
 

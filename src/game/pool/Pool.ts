@@ -43,7 +43,7 @@ export abstract class Pool {
 	}
 
 	pop(): poolable {
-		if (this.inactiveIDArr.length < this.numberOfUnits / 2) {
+		if (this.inactiveIDArr.length < this.numberOfUnits / 3) {
 			this.initPool();
 		}
 		const id = this.inactiveIDArr.pop();

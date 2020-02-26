@@ -1,4 +1,3 @@
-import { HealerPool } from "../../pool/HealerPool";
 import { Tower } from "../Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { Player } from "../../unit/Player";
@@ -11,6 +10,7 @@ export class Healer extends Tower {
 	constructor(scene: Gameplay, x, y, physicsGroup, private player: Player, private pools: Pool[]) {
 		//TODO: modify texture so its obvious we can only heal down and right
 		//TODO: maybe just heal downward? Or maybe better: only right, because of the layout
+		//TODO: much more expensive -> healUnits is to computationally expensive
 		super(scene, x, y, "healer", physicsGroup);
 	}
 
