@@ -28,7 +28,8 @@ export class Wave {
 		}
 
 		let spawnPosition = this.spawnPositions.pop();
-		this.enemyCircles.pop().poolActivate(spawnPosition[0], spawnPosition[1]);
+		let enemy = this.enemyCircles.pop();
+		enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
 
 		this.time.addEvent({
 			delay: 4000,

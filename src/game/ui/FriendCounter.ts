@@ -1,4 +1,4 @@
-import { PlayerFriend } from "../unit/DangerousCircle";
+import { PlayerFriend } from "../unit/PlayerFriend";
 import { notifyWithVal, ObserverWrapper } from "./Observer";
 import { Gameplay } from "../../scenes/Gameplay";
 import { EventSetup } from "../setup/EventSetup";

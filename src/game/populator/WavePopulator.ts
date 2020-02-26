@@ -1,5 +1,4 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { EnemyPool } from "../pool/EnemyPool";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { PathAssigner } from "../path/PathAssigner";
 import { WaveSetup } from "../setup/WaveSetup";
@@ -10,12 +9,14 @@ import { CampsState } from "../state/CampsState";
 import { EventSetup } from "../setup/EventSetup";
 import { AmbushComponent } from "../ai/AmbushComponent";
 import { GuardComponent } from "../ai/GuardComponent";
+import { DangerousCirclePool } from "../pool/CirclePool";
+import { DangerousCircle } from "../unit/DangerousCircle";
 
 export class WavePopulator {
 	constructor(
 		private scene: Gameplay,
 		public id: CampID,
-		private enemyPool: EnemyPool,
+		private enemyPool: DangerousCirclePool,
 		private enemySpawnObj: EnemySpawnObj,
 		private assigner: PathAssigner,
 		private state: CampsState,
@@ -44,7 +45,7 @@ export class WavePopulator {
 			if (spawnPosition) {
 				spawnPositions.push(spawnPosition);
 
-				let enemy = this.enemyPool.pop();
+				let enemy = this.enemyPool.pop() as DangerousCircle;
 				//Path is saved in logical order (A to B), needs to be reversed for pop()
 
 				enemy.stateHandler.setComponents([

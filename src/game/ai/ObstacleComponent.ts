@@ -1,5 +1,4 @@
 import { DangerousCircle } from "../unit/DangerousCircle";
-import { EnvSetup } from "../setup/EnvSetup";
 import { AIComponent, CircleControl } from "./CircleControl";
 
 export class ObstacleComponent implements AIComponent {

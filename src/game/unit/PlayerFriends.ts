@@ -2,7 +2,7 @@ import { EnvSetup } from "../setup/EnvSetup";
 import { CircleFactory, EnemySize } from "./CircleFactory";
 import { Point } from "../base/types";
 import { GuardComponent } from "../ai/GuardComponent";
-import { PlayerFriend } from "./DangerousCircle";
+import { PlayerFriend } from "./PlayerFriend";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money

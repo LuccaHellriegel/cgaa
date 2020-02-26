@@ -37,7 +37,6 @@ import { BossCamp } from "../game/camp/BossCamp";
 import { BossSetup } from "../game/setup/BossSetup";
 import { CampSetup } from "../game/setup/CampSetup";
 import { WavePopulator } from "../game/populator/WavePopulator";
-import { WaveSetup } from "../game/setup/WaveSetup";
 import { EnemySpawnObj } from "../game/spawn/EnemySpawnObj";
 import { PathAssigner } from "../game/path/PathAssigner";
 import { CampsState } from "../game/state/CampsState";
@@ -206,8 +205,8 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.inputs = new Inputs(this);
 		let selectorRect = new SelectorRect(this, 0, 0, this.cgaa.inputs);
 		let interactionMode = new InteractionModus(cooperation, interactionCollection, selectorRect);
-		let healerMode = new TowerModus(healerSpawner, selectorRect, "Healer");
-		let shooterMode = new TowerModus(shooterSpawner, selectorRect, "Shooter");
+		let healerMode = new TowerModus(healerSpawner, selectorRect, "Healer", 2);
+		let shooterMode = new TowerModus(shooterSpawner, selectorRect, "Shooter", 10);
 		let arr = [interactionMode.getFuncArr(), healerMode.getFuncArr(), shooterMode.getFuncArr()].reduce(
 			(prev, cur) => {
 				prev[0].push(cur[0]);

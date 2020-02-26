@@ -5,7 +5,12 @@ import { EventSetup } from "../setup/EventSetup";
 import { EnvSetup } from "../setup/EnvSetup";
 
 export class TowerModus {
-	constructor(private spawner: Spawner, private selectorRect: SelectorRect, private type: string) {}
+	constructor(
+		private spawner: Spawner,
+		private selectorRect: SelectorRect,
+		private type: string,
+		private maxTowers: number
+	) {}
 
 	private findClosestElement() {
 		let [ele, dist] = UnitCollection.findClosestUnit(
@@ -31,7 +36,8 @@ export class TowerModus {
 	}
 
 	execute() {
-		if (this.spawner.pool.getActiveUnits().length === 0 || !this.findClosestElement()) {
+		let len = this.spawner.pool.getActiveUnits().length;
+		if (len === 0 || (len < this.maxTowers && !this.findClosestElement())) {
 			this.spawner.spawn(this.selectorRect);
 		} else {
 			this.selectorRect.play("invalid-shooter-pos");

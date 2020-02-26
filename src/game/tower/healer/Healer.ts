@@ -3,15 +3,32 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { Player } from "../../unit/Player";
 import { Pool } from "../../pool/Pool";
 import { TowerSetup } from "../../setup/TowerSetup";
+import { RectPolygon } from "../../polygons/RectPolygon";
+
+export class HollowRectPoylgon extends RectPolygon {
+	draw(graphics, offset) {
+		graphics.beginPath();
+		graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
+		for (let index = 0; index < this.points.length; index++) {
+			graphics.lineTo(this.points[index].x + offset, this.points[index].y + offset);
+		}
+		graphics.closePath();
+		graphics.strokePath();
+	}
+}
 
 export class Healer extends Tower {
 	healIntervalID: number;
+	graphics: Phaser.GameObjects.Graphics;
+	auraPolygon: HollowRectPoylgon;
 
 	constructor(scene: Gameplay, x, y, physicsGroup, private player: Player, private pools: Pool[]) {
 		//TODO: modify texture so its obvious we can only heal down and right
 		//TODO: maybe just heal downward? Or maybe better: only right, because of the layout
 		//TODO: much more expensive -> healUnits is to computationally expensive
 		super(scene, x, y, "healer", physicsGroup);
+		this.graphics = scene.add.graphics({});
+		this.auraPolygon = new HollowRectPoylgon(x, y, TowerSetup.towerDistance, TowerSetup.towerDistance);
 	}
 
 	damage(amount: number) {
@@ -45,6 +62,11 @@ export class Healer extends Tower {
 		this.healIntervalID = setInterval(this.healUnits.bind(this), 10000);
 	}
 
+	redraw() {
+		this.graphics.lineStyle(4, 0xa9a9a9);
+		this.auraPolygon.draw(this.graphics, 0);
+	}
+
 	poolDestroy() {
 		this.scene.events.emit("inactive-" + this.id, this.id);
 		this.disableBody(true, true);
@@ -52,6 +74,7 @@ export class Healer extends Tower {
 		this.healthbar.bar.setActive(false).setVisible(false);
 		this.healthbar.value = this.healthbar.defaultValue;
 		this.deactivate();
+		this.graphics.clear();
 	}
 
 	poolActivate(x, y) {
@@ -59,5 +82,7 @@ export class Healer extends Tower {
 		this.healthbar.bar.setActive(true).setVisible(true);
 		this.healthbar.move(x, y);
 		this.activate();
+		this.auraPolygon.setPosition(x, y);
+		this.redraw();
 	}
 }

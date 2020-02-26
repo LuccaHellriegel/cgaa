@@ -5,7 +5,6 @@ import { CircleControl } from "../ai/CircleControl";
 import { PoolHelper } from "../pool/PoolHelper";
 import { Point } from "../base/types";
 import { EnemyConfig } from "./CircleFactory";
-import { subscribable, ObserverWrapper } from "../ui/Observer";
 
 export class DangerousCircle extends Circle implements damageable, poolable {
 	healthbar: HealthBar;
@@ -54,24 +53,5 @@ export class DangerousCircle extends Circle implements damageable, poolable {
 
 	heal(amount: number) {
 		this.healthbar.increase(amount);
-	}
-}
-
-export class PlayerFriend extends DangerousCircle implements subscribable {
-	observer: ObserverWrapper;
-
-	damage(amount) {
-		if (this.healthbar.decrease(amount)) {
-			this.observer.notify();
-			this.destroy();
-		} else {
-			this.anims.play("damage-" + this.texture.key);
-		}
-	}
-
-	subscribe(type: string, observer: ObserverWrapper) {
-		if (type === "destroy") {
-			this.observer = observer;
-		}
 	}
 }
