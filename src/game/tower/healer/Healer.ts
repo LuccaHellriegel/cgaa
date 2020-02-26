@@ -23,8 +23,6 @@ export class Healer extends Tower {
 	auraPolygon: HollowRectPoylgon;
 
 	constructor(scene: Gameplay, x, y, physicsGroup, private player: Player, private pools: Pool[]) {
-		//TODO: modify texture so its obvious we can only heal down and right
-		//TODO: maybe just heal downward? Or maybe better: only right, because of the layout
 		//TODO: much more expensive -> healUnits is to computationally expensive
 		super(scene, x, y, "healer", physicsGroup);
 		this.graphics = scene.add.graphics({});

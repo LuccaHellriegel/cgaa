@@ -137,7 +137,8 @@ export class CircleFactory {
 			polygon: new CirclePolygon(x, y, radius),
 			texture: this.campID + size + "Circle",
 			healthbar,
-			radius
+			radius,
+			size
 		};
 
 		let circle = new DangerousCircle(circleConfig as EnemyConfig, veloConfigs[size]);

@@ -14,6 +14,9 @@ export class InteractionCircle extends Circle implements damageable {
 		this.healthbar = config.healthbar;
 		Annotator.annotate(this, "immovable");
 		this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
+
+		//Needed for gaining souls
+		this.type = "Small";
 	}
 
 	damage(amount) {

@@ -18,6 +18,7 @@ export class EventSetup {
 	};
 
 	static gainSouls(scene: Phaser.Scene, type) {
+		console.log(type);
 		scene.events.emit("souls-gained", this.soulsDict[type]);
 	}
 

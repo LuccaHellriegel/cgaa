@@ -17,6 +17,7 @@ export class DangerousCircle extends Circle implements damageable, poolable {
 		this.stateHandler = new CircleControl(this);
 
 		//Needed for gaining souls
+		console.log(config.size);
 		this.type = config.size;
 	}
 

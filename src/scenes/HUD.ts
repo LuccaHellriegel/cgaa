@@ -20,15 +20,7 @@ export class HUD extends Phaser.Scene {
 	}
 
 	private setupEventListeners() {
-		this.ourGame.events.on(
-			EventSetup.partialDamage + "-player",
-			function(amount) {
-				if (this.playerHealthBar.decrease(amount)) {
-					this.restartCGAA();
-				}
-			}.bind(this),
-			this
-		);
+		this.ourGame.events.on(EventSetup.partialDamage + "player", this.damagePlayer.bind(this), this);
 
 		this.ourGame.events.on(EventSetup.healPlayer, this.playerHealthBar.increase.bind(this.playerHealthBar));
 
@@ -41,6 +33,12 @@ export class HUD extends Phaser.Scene {
 		});
 
 		this.ourGame.events.on(EventSetup.gameOverEvent, this.restartCGAA.bind(this));
+	}
+
+	damagePlayer(amount) {
+		if (this.playerHealthBar.decrease(amount)) {
+			this.restartCGAA();
+		}
 	}
 
 	restartCGAA() {

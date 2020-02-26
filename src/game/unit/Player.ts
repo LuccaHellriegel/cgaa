@@ -61,7 +61,7 @@ export class Player extends Circle implements healable {
 		weapon.owner = circle;
 
 		weapon.amount = 40;
-		weapon.amount = 40000;
+		//weapon.amount = 40000;
 		return circle;
 	}
 }

@@ -18,7 +18,7 @@ export class Shooter extends Tower {
 		super(scene, x, y, "shooter", physicsGroup);
 		this.initBullets();
 
-		//TODO: can be spawned ontop of units - why?
+		//TODO: can be spawned ontop of units because I dont check enemies in TowerModus
 	}
 
 	private initBullets() {

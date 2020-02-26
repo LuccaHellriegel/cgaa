@@ -1,5 +1,6 @@
 import { Weapon } from "../weapon/Weapon";
 import { EventSetup } from "../setup/EventSetup";
+import { Gameplay } from "../../scenes/Gameplay";
 
 export class WeaponHandler {
 	private constructor() {}
@@ -21,21 +22,19 @@ export class WeaponHandler {
 		return hasColided;
 	}
 
-	static doDamage(scene: Phaser.Scene, weapon, enemy) {
+	static doDamage(scene: Gameplay, weapon, enemy) {
 		//Need this, otherwise all animation frames do damage
 		weapon.alreadyAttacked.push(enemy.id);
 
 		let damage = weapon.amount;
 		//Player unit has no healthbar
-		let enemyKilled = weapon.owner.unitType === "player" && damage >= enemy.healthbar.value;
-		if (enemyKilled) {
-			damage = enemy.healthbar.value;
-			//Gain souls if player kill or player friend kill
-			if (weapon.owner.unitType === "player" || weapon.owner.campID === "blue") {
-				EventSetup.gainSouls(scene, enemy.type);
-			}
-		}
+		let isPlayer = weapon.owner.unitType === "player";
 
+		if (isPlayer) {
+			//Gain souls if player kill (otherwise too much money)
+			if (damage >= enemy.healthbar.value) EventSetup.gainSouls(scene, enemy.type);
+		}
+		console.log(EventSetup.partialDamage + enemy.unitType);
 		scene.events.emit(EventSetup.partialDamage + enemy.unitType, damage);
 		enemy.damage(damage);
 
