@@ -5,7 +5,7 @@ import { ChainWeapon } from "../weapon/ChainWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { King } from "./King";
-import { DangerousCircle } from "./DangerousCircle";
+import { DangerousCircle, PlayerFriend } from "./DangerousCircle";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
@@ -140,6 +140,31 @@ export class CircleFactory {
 		};
 
 		let circle = new DangerousCircle(circleConfig as EnemyConfig, veloConfigs[size]);
+		this.afterCreate(circle);
+
+		return circle;
+	}
+
+	createFriend(size: EnemySize) {
+		let x = 0;
+		let y = 0;
+		let radius = radiusConfigs[size];
+		let weapon = this.createWeapon(x, y, radius, size);
+
+		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
+
+		let circleConfig = {
+			...this.baseConfig,
+			x,
+			y,
+			weapon,
+			polygon: new CirclePolygon(x, y, radius),
+			texture: this.campID + size + "Circle",
+			healthbar,
+			radius
+		};
+
+		let circle = new PlayerFriend(circleConfig as EnemyConfig, veloConfigs[size]);
 		this.afterCreate(circle);
 
 		return circle;

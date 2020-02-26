@@ -170,7 +170,7 @@ export class Gameplay extends Phaser.Scene {
 		let player = Player.withChainWeapon(this, collision.physicGroups.player, collision.physicGroups.playerWeapon);
 		this.cameras.main.startFollow(player);
 		this.cgaa.movement = new Movement(new WASD(this), player);
-		new PlayerFriends(
+		this.cgaa.friends = new PlayerFriends(
 			orientation.middleOfPlayerArea.toPoint(),
 			new CircleFactory(
 				this,
@@ -181,7 +181,7 @@ export class Gameplay extends Phaser.Scene {
 				},
 				enemies
 			)
-		);
+		).friends;
 
 		//Setup Mouse Modes
 		let shooterPool = new ShooterPool(

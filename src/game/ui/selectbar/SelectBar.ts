@@ -1,12 +1,12 @@
 import { HUD } from "../../../scenes/HUD";
 import { Inputs } from "../../input/Inputs";
-import { Rect, TextRect, ImageRect } from "../Rect";
+import { TextRect, ImageRect, DoubleRect } from "../DoubleRect";
 import { SelectBarState } from "./SelectBarState";
 
 //TODO: maybe show selected option in SelectorRect?
 
 export class SelectBar {
-	rects: Rect[] = [];
+	rects: DoubleRect[] = [];
 	curSelected = 0;
 	showing = false;
 	constructor(sceneToUse: HUD, startX: number, startY: number, inputs: Inputs, private state: SelectBarState) {

@@ -39,6 +39,10 @@ export class WeaponHandler {
 		scene.events.emit(EventSetup.partialDamage + enemy.unitType, damage);
 		enemy.damage(damage);
 
-		if (enemy.stateHandler) enemy.stateHandler.spotted = weapon.owner;
+		if (enemy.stateHandler) {
+			//TODO: this is suboptimal?
+			enemy.stateHandler.spotted = weapon.owner;
+			enemy.stateHandler.obstacle = weapon.owner;
+		}
 	}
 }

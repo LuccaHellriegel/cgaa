@@ -55,6 +55,8 @@ export class EventSetup {
 		scene.events.emit(this.conqueredEvent);
 	}
 
+	static gameOverEvent = "game-over";
+
 	static startWaveEvent = "start-wave";
 
 	static startWave(scene: Phaser.Scene, campID: CampID) {

@@ -6,6 +6,8 @@ import { CampState } from "../game/ui/state/CampState";
 import { CampSetup } from "../game/setup/CampSetup";
 import { SelectBar } from "../game/ui/selectbar/SelectBar";
 import { EventSetup } from "../game/setup/EventSetup";
+import { CounterRect } from "../game/ui/Rect";
+import { FriendCounter } from "../game/ui/FriendCounter";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -22,16 +24,9 @@ export class HUD extends Phaser.Scene {
 			EventSetup.partialDamage + "-player",
 			function(amount) {
 				if (this.playerHealthBar.decrease(amount)) {
-					(this as HUD).sys.game.destroy(true);
-
-					document.getElementById("game").remove();
-					const canvas = document.createElement("canvas");
-					canvas.id = "game";
-					document.body.appendChild(canvas);
-
-					new Phaser.Game(createGameConfig());
+					this.restartCGAA();
 				}
-			},
+			}.bind(this),
 			this
 		);
 
@@ -40,23 +35,23 @@ export class HUD extends Phaser.Scene {
 		//TODO: make interaction for opening boss camp -> so you can prepare for Boss Waves
 		//TODO: make a Game Over screen
 		//TODO: make a Celebration scene
-		this.ourGame.events.on(
-			"win",
-			function() {
-				(this as HUD).sys.game.destroy(true);
-
-				document.getElementById("game").remove();
-				const canvas: HTMLCanvasElement = document.createElement("canvas");
-				canvas.id = "game";
-				document.body.appendChild(canvas);
-
-				new Phaser.Game(createGameConfig());
-			},
-			this
-		);
+		this.ourGame.events.on("win", this.restartCGAA.bind(this), this);
 		this.ourGame.events.on("life-gained", amount => {
 			this.playerHealthBar.increase(amount);
 		});
+
+		this.ourGame.events.on(EventSetup.gameOverEvent, this.restartCGAA.bind(this));
+	}
+
+	restartCGAA() {
+		(this as HUD).sys.game.destroy(true);
+
+		document.getElementById("game").remove();
+		const canvas: HTMLCanvasElement = document.createElement("canvas");
+		canvas.id = "game";
+		document.body.appendChild(canvas);
+
+		new Phaser.Game(createGameConfig());
 	}
 
 	create() {
@@ -92,5 +87,9 @@ export class HUD extends Phaser.Scene {
 		//new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 
 		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
+
+		let counterRect = new CounterRect(this, 0 + halfSize + 5, y + 300, 14 * halfSize, 2 * halfSize, "Friends left: ");
+		counterRect.notify(this.ourGame.cgaa.friends.length);
+		new FriendCounter(this.ourGame, this.ourGame.cgaa.friends, counterRect);
 	}
 }

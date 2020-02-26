@@ -2,10 +2,13 @@ import { EnvSetup } from "../setup/EnvSetup";
 import { CircleFactory, EnemySize } from "./CircleFactory";
 import { Point } from "../base/types";
 import { GuardComponent } from "../ai/GuardComponent";
+import { PlayerFriend } from "./DangerousCircle";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
 export class PlayerFriends {
+	friends: PlayerFriend[] = [];
+
 	constructor(realMiddlePos: Point, factory: CircleFactory) {
 		let baseConfig = {
 			size: "Big"
@@ -35,9 +38,10 @@ export class PlayerFriends {
 		];
 
 		friendConfigs.forEach(config => {
-			let circle = factory.createEnemy(config.size as EnemySize);
+			let circle = factory.createFriend(config.size as EnemySize);
 			circle.stateHandler.setComponents([new GuardComponent(circle, circle.stateHandler)]);
 			circle.setPosition(config.x, config.y);
+			this.friends.push(circle);
 		});
 	}
 }
