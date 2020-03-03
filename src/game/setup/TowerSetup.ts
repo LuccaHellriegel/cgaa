@@ -11,4 +11,8 @@ export class TowerSetup {
 	static towerDistance = 2 * EnvSetup.gridPartSize;
 
 	static singleHealAmount = 5;
+
+	static maxShooters = 10;
+
+	static maxHealers = 2;
 }

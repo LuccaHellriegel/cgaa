@@ -36,6 +36,9 @@ export class HealerGenerator extends Generator {
 
 	generateTexture() {
 		this.graphics.generateTexture(this.textureName, this.width, this.height);
+		//TODO: sell/upgrade textures
+		this.graphics.generateTexture("sell" + this.textureName, this.width, this.height);
+		this.graphics.generateTexture("upgrade" + this.textureName, this.width, this.height);
 	}
 
 	addFrames() {}

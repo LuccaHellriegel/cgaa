@@ -14,8 +14,8 @@ export class PlayerSoulCounter {
 		let increaseEvent = "souls-gained";
 		let decreaseEvent = "souls-spent";
 
-		//this.startValue = 1000000;
 		this.startValue = 100;
+		this.startValue = 1000000;
 
 		let graphics = sceneToUse.add.graphics({
 			fillStyle: {

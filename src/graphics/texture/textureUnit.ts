@@ -22,6 +22,25 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
+	new RectGenerator(
+		scene,
+		0x013220,
+		"sellshooter",
+		EnvSetup.halfGridPartSize,
+		EnvSetup.halfGridPartSize,
+		EnvSetup.gridPartSize,
+		EnvSetup.gridPartSize
+	);
+	new RectGenerator(
+		scene,
+		0x013220,
+		"upgradeshooter",
+		EnvSetup.halfGridPartSize,
+		EnvSetup.halfGridPartSize,
+		EnvSetup.gridPartSize,
+		EnvSetup.gridPartSize
+	);
+
 	new SelectorRectGenerator(scene);
 }
 

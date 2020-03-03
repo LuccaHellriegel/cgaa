@@ -1,13 +1,15 @@
 import { HUD } from "../../scenes/HUD";
 import { RectPolygon } from "../polygons/RectPolygon";
-export class DoubleRect {
+import { SelectableGUIElement } from "./select/SelectBar";
+export class DoubleRect implements SelectableGUIElement {
 	polygon: RectPolygon;
 	innerPolygon: RectPolygon;
 	graphics: Phaser.GameObjects.Graphics;
+	selected = false;
 	constructor(
 		protected sceneToUse: HUD,
-		x: number,
-		y: number,
+		public x: number,
+		public y: number,
 		width: number,
 		height: number,
 		protected hexColor: number
@@ -23,11 +25,14 @@ export class DoubleRect {
 		this.polygon.draw(this.graphics, 0);
 	}
 	select() {
+		this.selected = true;
 		this.redraw(0x0000ff);
 		this.graphics.fillStyle(this.hexColor);
 		this.innerPolygon.draw(this.graphics, 0);
 	}
+
 	deselect() {
+		this.selected = false;
 		this.redraw(this.hexColor);
 	}
 	hide() {
@@ -36,13 +41,20 @@ export class DoubleRect {
 	show() {
 		this.deselect();
 	}
+	toggle() {
+		if (this.selected) {
+			this.deselect();
+		} else {
+			this.select();
+		}
+	}
 }
 export class TextRect extends DoubleRect {
 	textObj: Phaser.GameObjects.Text;
 	constructor(
 		sceneToUse: HUD,
-		private x: number,
-		private y: number,
+		x: number,
+		y: number,
 		width: number,
 		height: number,
 		hexColor: number,
@@ -76,10 +88,34 @@ export class ImageRect extends DoubleRect {
 	}
 	hide() {
 		super.hide();
-		this.image.setVisible(false);
+		this.image.setVisible(false).setActive(false);
 	}
 	show() {
 		super.show();
-		this.image.setVisible(true);
+		this.image.setVisible(true).setActive(true);
+	}
+}
+
+export class ClickableImageRect extends ImageRect {
+	mouseOver = false;
+
+	constructor(sceneToUse: HUD, x: number, y: number, width: number, height: number, hexColor: number, texture: string) {
+		super(sceneToUse, x, y, width, height, hexColor, texture);
+		this.image.setInteractive();
+		this.image.once("pointerover", this.pointerOver.bind(this));
+	}
+
+	pointerOver() {
+		this.mouseOver = true;
+		this.image.once("pointerout", this.pointerOut.bind(this));
+	}
+
+	pointerOut() {
+		this.mouseOver = false;
+		this.image.once("pointerover", this.pointerOver.bind(this));
+	}
+
+	setInteractive(event, func) {
+		this.image.on(event, func);
 	}
 }

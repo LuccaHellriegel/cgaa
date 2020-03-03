@@ -71,4 +71,8 @@ export class EventSetup {
 	}
 
 	static questAccecptedEvent = "quest-accepted";
+
+	static towerBuildEvent = "tower-build";
+
+	static towerSoldEvent = "tower-sold";
 }

@@ -1,6 +1,7 @@
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampID } from "../setup/CampSetup";
+import { ActiveElementCollection } from "../ui/select/Selector";
 
 interface basicUnit {
 	scene: Gameplay;
@@ -8,7 +9,7 @@ interface basicUnit {
 }
 
 //Collection of units that are not destroyed
-export class UnitCollection {
+export class UnitCollection implements ActiveElementCollection {
 	private units: basicUnit[] = [];
 
 	constructor(units: basicUnit[]) {
@@ -30,6 +31,11 @@ export class UnitCollection {
 			if (cur.campID === campID) prev.push(cur);
 			return prev;
 		}, []);
+	}
+
+	getActiveElements() {
+		this.refreshUnits();
+		return this.units;
 	}
 
 	hasUnitsWithCampID(campID: CampID) {

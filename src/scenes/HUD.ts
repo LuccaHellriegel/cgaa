@@ -4,10 +4,24 @@ import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
 import { CampState } from "../game/ui/state/CampState";
 import { CampSetup } from "../game/setup/CampSetup";
-import { SelectBar } from "../game/ui/selectbar/SelectBar";
 import { EventSetup } from "../game/setup/EventSetup";
-import { CounterRect } from "../game/ui/Rect";
+import { CounterRect } from "../game/ui/CounterRect";
 import { FriendCounter } from "../game/ui/FriendCounter";
+import { TowerCounter } from "../game/ui/TowerCounter";
+import { TowerSelectBar } from "../game/ui/select/TowerSelectBar";
+import { BuildBar } from "../game/ui/select/BuildBar";
+import { SellManager } from "../game/ui/select/SellManager";
+import { SelectionManager } from "../game/ui/select/SelectionManager";
+import { ClosestSelector, ActiveElementCollection } from "../game/ui/select/Selector";
+import { SelectBars } from "../game/ui/select/SelectBars";
+import { SelectorRect } from "../game/modi/SelectorRect";
+import { ImageRect, ClickableImageRect } from "../game/ui/DoubleRect";
+import { Inputs } from "../game/ui/select/State";
+import { UIState } from "../game/ui/select/UIState";
+import { BuildManager } from "../game/ui/select/BuildManager";
+import { InteractionSelectBar } from "../game/ui/select/InteractionSelectBar";
+import { Cooperation } from "../game/state/Cooperation";
+import { TowerSetup } from "../game/setup/TowerSetup";
 
 export class HUD extends Phaser.Scene {
 	playerHealthBar: PlayerHealthBar;
@@ -84,10 +98,133 @@ export class HUD extends Phaser.Scene {
 		//TODO
 		//new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 
-		new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
+		//new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
+		let sellManager = new SellManager(this.ourGame);
+		let activeColls: ActiveElementCollection[] = [
+			this.ourGame.cgaa.shooterPool,
+			this.ourGame.cgaa.healerPool,
+			this.ourGame.cgaa.interactionCollection
+		];
+		let selectionManager = new SelectionManager(new ClosestSelector(activeColls), this.ourGame.cgaa.selectorRect);
+		let healerSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5, "healer");
+		let shooterSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5, "shooter");
+		let interactionSelectBar = new InteractionSelectBar(this, 0 + 180, 0 + 30 + 5);
+		let selectBars = new SelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
+		let questFunc = function() {
+			if (selectionManager.selectedUnit) {
+				(this.ourGame.cgaa.cooperation as Cooperation).interactWithCircle(selectionManager.selectedUnit);
+				selectBars.hide();
+			}
+		}.bind(this);
+		(interactionSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", questFunc);
 
-		let counterRect = new CounterRect(this, 0 + halfSize + 5, y + 300, 14 * halfSize, 2 * halfSize, "Friends left: ");
-		counterRect.notify(this.ourGame.cgaa.friends.length);
-		new FriendCounter(this.ourGame, this.ourGame.cgaa.friends, counterRect);
+		let sellFunc = function() {
+			if (selectionManager.selectedUnit) {
+				sellManager.sell(selectionManager.selectedUnit);
+				selectBars.hide();
+				this.ourGame.cgaa.selectorRect.turnOff();
+			}
+		}.bind(this);
+		(healerSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
+		(shooterSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
+
+		selectionManager.setSelectBars(selectBars);
+		selectBars.hide();
+
+		let buildBar = new BuildBar(this, 0 + 30, 0 + 30 + 5);
+		buildBar.hide();
+
+		let state = new UIState(
+			this.ourGame.cgaa.build,
+			this.ourGame.cgaa.player,
+			selectionManager,
+			[
+				...(buildBar.contentElements as ClickableImageRect[]),
+				...(healerSelectBar.contentElements as ClickableImageRect[]),
+				...(shooterSelectBar.contentElements as ClickableImageRect[])
+			],
+			this.ourGame.cgaa.selectorRect,
+			buildBar
+		);
+		this.ourGame.input.on("pointerdown", state.down.bind(state));
+		let inputs = new Inputs(
+			this.ourGame,
+			state,
+			buildBar,
+			[healerSelectBar, shooterSelectBar],
+			this.ourGame.cgaa.selectorRect
+		);
+		(buildBar.contentElements[0] as ClickableImageRect).setInteractive(
+			"pointerdown",
+			function() {
+				(buildBar.contentElements[0] as ImageRect).toggle();
+
+				if ((buildBar.contentElements[0] as ImageRect).selected) {
+					buildBar.contentElements.forEach((ele, index) => {
+						if (index !== 0) ele.deselect();
+					});
+					(this.ourGame.cgaa.selectorRect as SelectorRect).turnOn();
+
+					(this.ourGame.cgaa.build as BuildManager).activateHealerBuilding();
+					state.setState("build");
+				} else {
+					(this.ourGame.cgaa.selectorRect as SelectorRect).turnOff();
+					state.setState("select");
+				}
+			}.bind(this)
+		);
+		(buildBar.contentElements[1] as ClickableImageRect).setInteractive(
+			"pointerdown",
+			function() {
+				(buildBar.contentElements[1] as ImageRect).toggle();
+
+				if ((buildBar.contentElements[1] as ImageRect).selected) {
+					buildBar.contentElements.forEach((ele, index) => {
+						if (index !== 1) ele.deselect();
+					});
+					(this.ourGame.cgaa.selectorRect as SelectorRect).turnOn();
+					(this.ourGame.cgaa.build as BuildManager).activateShooterBuilding();
+					state.setState("build");
+				} else {
+					(this.ourGame.cgaa.selectorRect as SelectorRect).turnOff();
+					state.setState("select");
+				}
+			}.bind(this)
+		);
+
+		let friendCounterRect = new CounterRect(
+			this,
+			0 + halfSize + 5,
+			y + 300,
+			14 * halfSize,
+			2 * halfSize,
+			"Friends left: ",
+			""
+		);
+		friendCounterRect.notify(this.ourGame.cgaa.friends.length);
+		new FriendCounter(this.ourGame, this.ourGame.cgaa.friends, friendCounterRect);
+
+		let shooterCounterRect = new CounterRect(
+			this,
+			0 + halfSize + 5,
+			y + 300 + 2 * halfSize + 5,
+			14 * halfSize + 50,
+			2 * halfSize,
+			"Shooters: ",
+			" / " + TowerSetup.maxShooters
+		);
+
+		new TowerCounter("Shooter", this.ourGame, shooterCounterRect);
+
+		let healerCounterRect = new CounterRect(
+			this,
+			0 + halfSize + 5,
+			y + 300 + 2 * halfSize + 5 + 2 * halfSize + 5,
+			14 * halfSize + 50,
+			2 * halfSize,
+			"Healers: ",
+			" / " + TowerSetup.maxHealers
+		);
+		new TowerCounter("Healer", this.ourGame, healerCounterRect);
 	}
 }

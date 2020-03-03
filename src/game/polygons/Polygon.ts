@@ -38,7 +38,7 @@ export class Polygon {
 	}
 
 	movePoints(diffX, diffY) {
-		this.points.forEach((point, index, array) => {
+		this.points.forEach((_, index, array) => {
 			array[index].x += diffX;
 			array[index].y += diffY;
 		});

@@ -34,7 +34,6 @@ export class WeaponHandler {
 			//Gain souls if player kill (otherwise too much money)
 			if (damage >= enemy.healthbar.value) EventSetup.gainSouls(scene, enemy.type);
 		}
-		console.log(EventSetup.partialDamage + enemy.unitType);
 		scene.events.emit(EventSetup.partialDamage + enemy.unitType, damage);
 		enemy.damage(damage);
 

@@ -18,15 +18,13 @@ import { CircleFactory } from "../game/unit/CircleFactory";
 import { Player } from "../game/unit/Player";
 import { Movement } from "../game/input/Movement";
 import { WASD } from "../game/input/WASD";
-import { Mouse } from "../game/input/Mouse";
+import { MouseMovement } from "../game/input/MouseMovement";
 import { SelectorRect } from "../game/modi/SelectorRect";
-import { Inputs } from "../game/input/Inputs";
 import { Spawner } from "../game/pool/Spawner";
 import { HealerPool } from "../game/pool/HealerPool";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { ShooterPool } from "../game/pool/ShooterPool";
-import { InteractionModus } from "../game/modi/InteractionModus";
 import { Cooperation } from "../game/state/Cooperation";
 import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
@@ -43,11 +41,11 @@ import { CampsState } from "../game/state/CampsState";
 import { WaveController } from "../game/wave/WaveController";
 import { WaveOrder } from "../game/wave/WaveOrder";
 import { Building } from "../game/building/Building";
-import { SelectBarState } from "../game/ui/selectbar/SelectBarState";
 import { TowerModus } from "../game/modi/TowerModus";
 import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
 import { BarrierFactory } from "../game/camp/BarrierFactory";
 import { PlayerFriends } from "../game/unit/PlayerFriends";
+import { BuildManager } from "../game/ui/select/BuildManager";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -167,6 +165,7 @@ export class Gameplay extends Phaser.Scene {
 
 		//Setup Player
 		let player = Player.withChainWeapon(this, collision.physicGroups.player, collision.physicGroups.playerWeapon);
+		this.cgaa.player = player;
 		this.cameras.main.startFollow(player);
 		this.cgaa.movement = new Movement(new WASD(this), player);
 		this.cgaa.friends = new PlayerFriends(
@@ -182,42 +181,34 @@ export class Gameplay extends Phaser.Scene {
 			)
 		).friends;
 
-		//Setup Mouse Modes
-		let shooterPool = new ShooterPool(
+		//Setup MouseMovement Modes
+		//TODO: shooter pool should respect healer placments
+		this.cgaa.shooterPool = new ShooterPool(
 			this,
 			TowerSetup.towerGroupSize,
 			collision.physicGroups.tower,
 			collision.physicGroups.bulletGroup
 		);
-		let healerPool = new HealerPool(this, TowerSetup.towerGroupSize, collision.physicGroups.tower, player, [
-			shooterPool
+		this.cgaa.healerPool = new HealerPool(this, TowerSetup.towerGroupSize, collision.physicGroups.tower, player, [
+			this.cgaa.shooterPool
 		]);
 		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
-		let healerSpawner = Spawner.createHealerSpawner(this, healerPool, towerSpawnObj);
+		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.healerPool, towerSpawnObj);
 
-		let shooterSpawner = Spawner.createShooterSpawner(this, shooterPool, towerSpawnObj);
-		let interactionCollection = new UnitCollection(
+		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.shooterPool, towerSpawnObj);
+		this.cgaa.interactionCollection = new UnitCollection(
 			camps.ordinary.map(camp => {
 				return camp.interactionUnit;
 			})
 		);
 
-		this.cgaa.inputs = new Inputs(this);
-		let selectorRect = new SelectorRect(this, 0, 0, this.cgaa.inputs);
-		let interactionMode = new InteractionModus(cooperation, interactionCollection, selectorRect);
-		let healerMode = new TowerModus(healerSpawner, selectorRect, "Healer", 2);
-		let shooterMode = new TowerModus(shooterSpawner, selectorRect, "Shooter", 10);
-		let arr = [interactionMode.getFuncArr(), healerMode.getFuncArr(), shooterMode.getFuncArr()].reduce(
-			(prev, cur) => {
-				prev[0].push(cur[0]);
-				prev[1].push(cur[1]);
-				prev[2].push(cur[2]);
-				return prev;
-			},
-			[[], [], []]
-		);
-		this.cgaa.selectBarState = new SelectBarState(arr[0], arr[1], arr[2], this.cgaa.inputs, selectorRect);
-		new Mouse(this, player, selectorRect, this.cgaa.selectBarState);
+		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
+		this.cgaa.cooperation = cooperation;
+		let healerMode = new TowerModus(healerSpawner, this.cgaa.selectorRect, TowerSetup.maxHealers);
+		let shooterMode = new TowerModus(shooterSpawner, this.cgaa.selectorRect, TowerSetup.maxShooters);
+		this.cgaa.build = new BuildManager(this, healerMode, shooterMode);
+
+		new MouseMovement(this, player, this.cgaa.selectorRect);
 	}
 
 	startWaves() {

@@ -1,24 +1,17 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Player } from "../unit/Player";
 import { SelectorRect } from "../modi/SelectorRect";
-import { SelectBarState } from "../ui/selectbar/SelectBarState";
 
-export class Mouse {
-	constructor(
-		private scene: Gameplay,
-		private player: Player,
-		private selectorRect: SelectorRect,
-		private state: SelectBarState
-	) {
+export class MouseMovement {
+	constructor(private scene: Gameplay, private player: Player, private selectorRect: SelectorRect) {
 		this.setupEvents();
 	}
 
 	private setupEvents() {
 		this.scene.input.on("pointermove", this.move.bind(this));
-		this.scene.input.on("pointerdown", this.down.bind(this));
 	}
 
-	private rotatePlayerTowardsMouse(newX, newY) {
+	private rotatePlayerTowardsMouseMovement(newX, newY) {
 		let rotation = Phaser.Math.Angle.Between(this.player.x, this.player.y, newX, newY);
 		let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
 		this.player.setRotation(rotation + correctionForPhasersMinus90DegreeTopPostion);
@@ -28,18 +21,10 @@ export class Mouse {
 		let x = pointer.x + this.scene.cameras.main.scrollX;
 		let y = pointer.y + this.scene.cameras.main.scrollY;
 
-		this.rotatePlayerTowardsMouse(x, y);
+		this.rotatePlayerTowardsMouseMovement(x, y);
 
 		if (this.selectorRect.active || !this.selectorRect.visible) {
 			this.selectorRect.setPosition(x, y);
-		}
-	}
-
-	private down() {
-		if (this.state.isActive) {
-			this.state.execute();
-		} else {
-			this.player.attack();
 		}
 	}
 }

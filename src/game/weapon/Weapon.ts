@@ -72,4 +72,11 @@ export abstract class Weapon extends SpriteWithAnimEvents {
 		super.preUpdate(time, delta);
 		this.setOffSetForFrame();
 	}
+	toggle() {
+		if (this.visible) {
+			this.setVisible(false);
+		} else {
+			this.setVisible(true);
+		}
+	}
 }

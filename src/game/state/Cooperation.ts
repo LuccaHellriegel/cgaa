@@ -18,8 +18,8 @@ export class Cooperation {
 		this.quests = quests;
 	}
 
-	interactWithCircle(pair: [InteractionCircle, number]) {
-		let id = pair[0].campID;
+	interactWithCircle(interactCircle: InteractionCircle) {
+		let id = interactCircle.campID;
 
 		//Can not accept quests from rivals
 		if (!this.quests.hasAccepted(this.rivalriers.getRival(id))) {

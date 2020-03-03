@@ -2,8 +2,9 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Util } from "../base/Util";
 import { poolable } from "../base/interfaces";
 import { UnitDict } from "../base/Dict";
+import { ActiveElementCollection } from "../ui/select/Selector";
 
-export abstract class Pool {
+export abstract class Pool implements ActiveElementCollection {
 	activeIDArr: string[] = [];
 	inactiveIDArr: string[] = [];
 
@@ -53,5 +54,9 @@ export abstract class Pool {
 
 	getActiveUnits() {
 		return this.activeIDArr.map(id => this.unitDict.get(id));
+	}
+
+	getActiveElements() {
+		return this.getActiveUnits();
 	}
 }

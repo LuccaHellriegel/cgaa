@@ -30,4 +30,4 @@ new Phaser.Game(createGameConfig());
 //TODO unit producing towers?
 //TODO: dynamich pathfinding on Web Worker?
 //TODO: actualize map when buildings are destroyed?
-//TODO: make healing indepdendant of collision (every x seconds give all active units in range x life)
+//TODO: hide player weapon if interactionModus

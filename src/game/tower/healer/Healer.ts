@@ -27,6 +27,7 @@ export class Healer extends Tower {
 		super(scene, x, y, "healer", physicsGroup);
 		this.graphics = scene.add.graphics({});
 		this.auraPolygon = new HollowRectPoylgon(x, y, TowerSetup.towerDistance, TowerSetup.towerDistance);
+		this.type = "Healer";
 	}
 
 	damage(amount: number) {
