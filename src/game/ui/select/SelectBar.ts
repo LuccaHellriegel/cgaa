@@ -22,7 +22,7 @@ export abstract class SelectBar implements GUIElement {
 	y: number;
 	isOn = false;
 
-	constructor(private baseElement: GUIElement, public contentElements: SelectableGUIElement[]) {
+	constructor(private baseElement: GUIElement, public contentElements: GUIElement[]) {
 		this.x = baseElement.x;
 		this.y = baseElement.y;
 	}

@@ -1,11 +1,11 @@
-import { TowerSelectBar } from "./TowerSelectBar";
-import { SelectBar } from "./SelectBar";
+import { TowerSelectBar } from "./bars/TowerSelectBar";
+import { InteractionSelectBar } from "./bars/InteractionSelectBar";
 
 export class SelectBars {
 	constructor(
 		private healerSelectBar: TowerSelectBar,
 		private shooterSelectBar: TowerSelectBar,
-		private interactionSelectBar: SelectBar
+		private interactionSelectBar: InteractionSelectBar
 	) {}
 	showHealerBar() {
 		this.healerSelectBar.show();

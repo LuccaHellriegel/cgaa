@@ -10,8 +10,8 @@ export class DoubleRect implements SelectableGUIElement {
 		protected sceneToUse: HUD,
 		public x: number,
 		public y: number,
-		width: number,
-		height: number,
+		protected width: number,
+		protected height: number,
 		protected hexColor: number
 	) {
 		this.graphics = sceneToUse.add.graphics({});
@@ -58,14 +58,12 @@ export class TextRect extends DoubleRect {
 		width: number,
 		height: number,
 		hexColor: number,
-		private text: string
+		private text: string,
+		textOptions
 	) {
 		super(sceneToUse, x, y, width, height, hexColor);
-		this.textObj = this.sceneToUse.add.text(this.x - 20, this.y - 22, this.text, {
-			font: "60px Verdana ",
-			fill: "#000000",
-			fontWeight: "bold"
-		});
+		this.textObj = this.sceneToUse.add.text(this.x - 20, this.y - 22, this.text, textOptions);
+		this.hide();
 	}
 
 	hide() {
@@ -78,6 +76,48 @@ export class TextRect extends DoubleRect {
 		this.textObj.setText(this.text);
 	}
 }
+
+export class ClickableTextRect extends TextRect {
+	mouseOver = false;
+
+	constructor(sceneToUse: HUD, x: number, y: number, width: number, height: number, hexColor: number, text: string) {
+		super(sceneToUse, x, y, width, height, hexColor, text, {
+			font: "20px Verdana ",
+			fill: "#000000",
+			fontWeight: "bold"
+		});
+		this.graphics.once("pointerover", this.pointerOver.bind(this));
+	}
+
+	pointerOver() {
+		this.mouseOver = true;
+		this.graphics.once("pointerout", this.pointerOut.bind(this));
+	}
+
+	pointerOut() {
+		this.mouseOver = false;
+		this.graphics.once("pointerover", this.pointerOver.bind(this));
+	}
+
+	setInteractive(event, func) {
+		this.graphics.setInteractive(
+			new Phaser.Geom.Rectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height),
+			Phaser.Geom.Rectangle.Contains
+		);
+		this.graphics.on(event, func);
+	}
+
+	hide() {
+		super.hide();
+		this.graphics.disableInteractive();
+	}
+
+	show() {
+		super.show();
+		this.graphics.setInteractive();
+	}
+}
+
 export class ImageRect extends DoubleRect {
 	image: Phaser.Physics.Arcade.Image;
 	constructor(sceneToUse: HUD, x: number, y: number, width: number, height: number, hexColor: number, texture: string) {
@@ -85,6 +125,7 @@ export class ImageRect extends DoubleRect {
 		this.image = new Phaser.Physics.Arcade.Image(sceneToUse, x, y, texture);
 		this.image.setScale(0.5, 0.5);
 		sceneToUse.add.existing(this.image);
+		this.hide();
 	}
 	hide() {
 		super.hide();
@@ -117,5 +158,10 @@ export class ClickableImageRect extends ImageRect {
 
 	setInteractive(event, func) {
 		this.image.on(event, func);
+		this.graphics.setInteractive(
+			new Phaser.Geom.Rectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height),
+			Phaser.Geom.Rectangle.Contains
+		);
+		this.graphics.on(event, func);
 	}
 }

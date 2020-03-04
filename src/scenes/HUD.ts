@@ -8,7 +8,7 @@ import { EventSetup } from "../game/setup/EventSetup";
 import { CounterRect } from "../game/ui/CounterRect";
 import { FriendCounter } from "../game/ui/FriendCounter";
 import { TowerCounter } from "../game/ui/TowerCounter";
-import { TowerSelectBar } from "../game/ui/select/TowerSelectBar";
+import { TowerSelectBar } from "../game/ui/select/bars/TowerSelectBar";
 import { BuildBar } from "../game/ui/select/BuildBar";
 import { SellManager } from "../game/ui/select/SellManager";
 import { SelectionManager } from "../game/ui/select/SelectionManager";
@@ -16,10 +16,11 @@ import { ClosestSelector, ActiveElementCollection } from "../game/ui/select/Sele
 import { SelectBars } from "../game/ui/select/SelectBars";
 import { SelectorRect } from "../game/modi/SelectorRect";
 import { ImageRect, ClickableImageRect } from "../game/ui/DoubleRect";
+import { UnitCompositeRect } from "../game/ui/CompositeRect";
 import { Inputs } from "../game/ui/select/State";
 import { UIState } from "../game/ui/select/UIState";
 import { BuildManager } from "../game/ui/select/BuildManager";
-import { InteractionSelectBar } from "../game/ui/select/InteractionSelectBar";
+import { InteractionSelectBar } from "../game/ui/select/bars/InteractionSelectBar";
 import { Cooperation } from "../game/state/Cooperation";
 import { TowerSetup } from "../game/setup/TowerSetup";
 
@@ -128,6 +129,8 @@ export class HUD extends Phaser.Scene {
 		(healerSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 		(shooterSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 
+		// let test = new UnitCompositeRect(this, "healer", 0 + 180, 0 + 30 + 5);
+		// test.show();
 		selectionManager.setSelectBars(selectBars);
 		selectBars.hide();
 
@@ -147,13 +150,15 @@ export class HUD extends Phaser.Scene {
 			buildBar
 		);
 		this.ourGame.input.on("pointerdown", state.down.bind(state));
-		let inputs = new Inputs(
+
+		new Inputs(
 			this.ourGame,
 			state,
 			buildBar,
-			[healerSelectBar, shooterSelectBar],
+			[healerSelectBar, shooterSelectBar, interactionSelectBar],
 			this.ourGame.cgaa.selectorRect
 		);
+
 		(buildBar.contentElements[0] as ClickableImageRect).setInteractive(
 			"pointerdown",
 			function() {

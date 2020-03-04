@@ -16,6 +16,7 @@ export class SelectionManager {
 	down() {
 		let result = this.selector.select(this.selectorRect);
 		if (result && result[1] < EnvSetup.halfGridPartSize) {
+			this.selectBars.hide();
 			this.selectorRect.setPosition(result[0].x, result[0].y);
 			this.selectorRect.setVisible(true);
 			this.selectedUnit = result[0];

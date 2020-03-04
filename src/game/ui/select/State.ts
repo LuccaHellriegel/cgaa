@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
 import { BuildBar } from "./BuildBar";
-import { TowerSelectBar } from "./TowerSelectBar";
+import { TowerSelectBar } from "./bars/TowerSelectBar";
 import { SelectorRect } from "../../modi/SelectorRect";
 import { UIState } from "./UIState";
 export type State = "build" | "attack" | "select";
