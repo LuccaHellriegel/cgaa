@@ -1,6 +1,6 @@
 # CGAA
 
-[Play Circle Gladiator Army Arena Version 0.03 here](https://luccahellriegel.github.io/cgaa/dist/index.html)
+[Play Circle Gladiator Army Arena Version 0.03 here](https://luccahellriegel.github.io/cgaa/prod/index.html)
 
 ## Tutorial
 
