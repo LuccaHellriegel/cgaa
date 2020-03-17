@@ -4,9 +4,8 @@
 	"description": "Circle Gladiator Army Arena",
 	"main": "index.html",
 	"scripts": {
-		"build": "npm run clean && parcel build index.html --public-url ./ && rm -v ../cgaa-page/dist/* && cp -r ./dist ../cgaa-page && cd ../cgaa-page && git pull && git add -A && git commit -m 'update' && git push",
 		"watch": "parcel watch index.html",
-		"start": "parcel serve index.html",
+		"start": "parcel serve index.html --public-url ./",
 		"clean": "rm -v dist/*",
 		"ts": "tsc",
 		"test": "./node_modules/.bin/mocha --require ts-node/register --require easystarjs \"test/**/*.test.ts\"",
