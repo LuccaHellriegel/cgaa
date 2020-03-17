@@ -1,4 +1,3 @@
-import { ClickableImageRect } from "../DoubleRect";
 import { HUD } from "../../../scenes/HUD";
 import { Rect } from "../Rect";
 import { SelectBar } from "./SelectBar";
