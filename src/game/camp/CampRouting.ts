@@ -30,9 +30,8 @@ export class CampRouting {
 	}
 
 	reroute(campID: string) {
-		console.log(campID);
 		let otherCamp = this.rerouteQueues[campID].pop();
-		this.rerouteQueues[campID].shift(otherCamp);
+		this.rerouteQueues[campID].unshift(otherCamp);
 		this.routings[campID] = otherCamp;
 		this.events.emit(EventSetup.partialReroutingEvent + campID, otherCamp);
 	}

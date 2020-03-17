@@ -9,7 +9,7 @@ import { CounterRect } from "../game/ui/CounterRect";
 import { FriendCounter } from "../game/ui/FriendCounter";
 import { TowerCounter } from "../game/ui/TowerCounter";
 import { TowerSelectBar } from "../game/ui/select/bars/TowerSelectBar";
-import { BuildBar } from "../game/ui/select/BuildBar";
+import { BuildBar, PureCounter } from "../game/ui/select/BuildBar";
 import { SellManager } from "../game/ui/select/SellManager";
 import { SelectionManager } from "../game/ui/select/SelectionManager";
 import { ClosestSelector, ActiveElementCollection } from "../game/ui/select/Selector";
@@ -137,8 +137,13 @@ export class HUD extends Phaser.Scene {
 		selectionManager.setSelectBars(selectBars);
 		selectBars.hide();
 
-		let buildBar = new BuildBar(this, 0 + 30, 0 + 30 + 5);
+		let shooterCounter = new PureCounter(this, 0, 0, "", "/" + TowerSetup.maxShooters);
+		let healerCounter = new PureCounter(this, 0, 0, "", "/" + TowerSetup.maxHealers);
+
+		let buildBar = new BuildBar(this, 0 + 30, 0 + 30 + 5, shooterCounter, healerCounter);
 		buildBar.hide();
+		new TowerCounter("Shooter", this.ourGame, shooterCounter);
+		new TowerCounter("Healer", this.ourGame, healerCounter);
 
 		let state = new UIState(
 			this.ourGame.cgaa.build,
@@ -203,36 +208,13 @@ export class HUD extends Phaser.Scene {
 		let friendCounterRect = new CounterRect(
 			this,
 			0 + halfSize + 5,
-			y + 300,
+			y + 300 + 2 * halfSize + 5 + 2 * halfSize + 5,
 			14 * halfSize,
 			2 * halfSize,
-			"Friends left: ",
+			"Friends alive: ",
 			""
 		);
 		friendCounterRect.notify(this.ourGame.cgaa.friends.length);
 		new FriendCounter(this.ourGame, this.ourGame.cgaa.friends, friendCounterRect);
-
-		let shooterCounterRect = new CounterRect(
-			this,
-			0 + halfSize + 5,
-			y + 300 + 2 * halfSize + 5,
-			14 * halfSize + 50,
-			2 * halfSize,
-			"Shooters: ",
-			" / " + TowerSetup.maxShooters
-		);
-
-		new TowerCounter("Shooter", this.ourGame, shooterCounterRect);
-
-		let healerCounterRect = new CounterRect(
-			this,
-			0 + halfSize + 5,
-			y + 300 + 2 * halfSize + 5 + 2 * halfSize + 5,
-			14 * halfSize + 50,
-			2 * halfSize,
-			"Healers: ",
-			" / " + TowerSetup.maxHealers
-		);
-		new TowerCounter("Healer", this.ourGame, healerCounterRect);
 	}
 }

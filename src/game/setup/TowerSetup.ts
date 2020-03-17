@@ -12,7 +12,7 @@ export class TowerSetup {
 
 	static singleHealAmount = 5;
 
-	static maxShooters = 10;
+	static maxShooters = 9;
 
 	static maxHealers = 2;
 }

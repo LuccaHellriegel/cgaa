@@ -63,6 +63,7 @@ export class CampState {
 		let rerouteArgs = [
 			EventSetup.partialReroutingEvent + this.campID,
 			targetCampID => {
+				console.log(targetCampID, CampSetup.colorDict[targetCampID]);
 				this.ambushTargetHex = CampSetup.colorDict[targetCampID];
 				this.isRerouted = true;
 				this.redraw();

@@ -31,11 +31,11 @@ export class CompositeRect implements SelectableGUIElement {
 }
 export class UnitCompositeRect extends CompositeRect {
 	constructor(sceneToUse: HUD, title: string, x, y) {
-		let unitRect = new ClickableImageRect(sceneToUse, x, y, 60, 60, 0xffffff, title);
-		unitRect.image.setScale(0.4, 0.4);
+		let unitRect = new ClickableImageRect(sceneToUse, x, y, 70, 70, 0xffffff, title);
+		unitRect.image.setScale(0.5, 0.5);
 		unitRect.image.setPosition(unitRect.image.x, unitRect.image.y + 8);
 		unitRect.hide();
-		let titleEle = new TextGUIElement(sceneToUse, title[0].toUpperCase() + title.slice(1), x - 25, y - 30, {
+		let titleEle = new TextGUIElement(sceneToUse, title[0].toUpperCase() + title.slice(1), x - 29, y - 30, {
 			font: "20px Verdana ",
 			fill: "#000000",
 			fontWeight: "bold"
@@ -45,5 +45,11 @@ export class UnitCompositeRect extends CompositeRect {
 
 	setInteractive(event, func) {
 		(this.sele as ClickableImageRect).setInteractive(event, func);
+	}
+}
+
+export class UnitCompositeRectWithCounter extends UnitCompositeRect {
+	constructor(sceneToUse: HUD, title: string, x, y) {
+		super(sceneToUse, title, x, y);
 	}
 }
