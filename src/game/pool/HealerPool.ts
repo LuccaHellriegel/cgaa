@@ -1,10 +1,10 @@
 import { Healer } from "../tower/healer/Healer";
-import { Pool } from "./Pool";
+import { Pool, StaticPool } from "./Pool";
 import { Gameplay } from "../../scenes/Gameplay";
 import { poolable } from "../base/interfaces";
 import { Player } from "../unit/Player";
 
-export class HealerPool extends Pool {
+export class HealerPool extends StaticPool {
 	constructor(
 		scene: Gameplay,
 		numberOfUnits: number,

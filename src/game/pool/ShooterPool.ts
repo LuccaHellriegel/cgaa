@@ -1,9 +1,9 @@
 import { Shooter } from "../tower/shooter/Shooter";
-import { Pool } from "./Pool";
+import { StaticPool } from "./Pool";
 import { Gameplay } from "../../scenes/Gameplay";
 import { poolable } from "../base/interfaces";
 
-export class ShooterPool extends Pool {
+export class ShooterPool extends StaticPool {
 	constructor(
 		scene: Gameplay,
 		numberOfUnits: number,

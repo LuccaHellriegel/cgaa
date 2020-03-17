@@ -60,3 +60,11 @@ export abstract class Pool implements ActiveElementCollection {
 		return this.getActiveUnits();
 	}
 }
+
+export abstract class StaticPool extends Pool {
+	pop(): poolable {
+		const id = this.inactiveIDArr.pop();
+		this.activeIDArr.push(id);
+		return this.unitDict.get(id);
+	}
+}
