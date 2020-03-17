@@ -9,6 +9,7 @@ import { KingGenerator } from "./generator/unit/KingGenerator";
 import { UnitSetup } from "../../game/setup/UnitSetup";
 import { EnvSetup } from "../../game/setup/EnvSetup";
 import { CampSetup } from "../../game/setup/CampSetup";
+import { DiplomatSymbolGenerator } from "./generator/DiplomatSymbolGenerator";
 
 function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", UnitSetup.normalCircleRadius);
@@ -69,4 +70,6 @@ function generateEnemyUnits(scene) {
 export function generateUnits(scene) {
 	generatePlayerUnits(scene);
 	generateEnemyUnits(scene);
+
+	new DiplomatSymbolGenerator(scene, UnitSetup.smallCircleRadius);
 }

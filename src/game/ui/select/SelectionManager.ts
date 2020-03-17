@@ -7,25 +7,33 @@ import { SelectorRect } from "../../modi/SelectorRect";
 export class SelectionManager {
 	selectedUnit;
 	private selectBars: SelectBars;
-	constructor(private selector: ClosestSelector, private selectorRect: SelectorRect) {
-		//TODO: close when click somewhere else or on other unit
-	}
+	constructor(private selector: ClosestSelector, private selectorRect: SelectorRect) {}
 	setSelectBars(selectBars: SelectBars) {
 		this.selectBars = selectBars;
 	}
+
 	down() {
-		let result = this.selector.select(this.selectorRect);
-		if (result && result[1] < EnvSetup.halfGridPartSize) {
+		if (this.selectedUnit) {
+			this.selectedUnit = null;
+			this.selectorRect.setActive(true);
 			this.selectBars.hide();
-			this.selectorRect.setPosition(result[0].x, result[0].y);
-			this.selectorRect.setVisible(true);
-			this.selectedUnit = result[0];
-			if (this.selectedUnit instanceof Shooter) {
-				this.selectBars.showShooterBar();
-			} else if (this.selectedUnit instanceof Healer) {
-				this.selectBars.showHealerBar();
-			} else {
-				this.selectBars.showInteractionBar();
+		} else {
+			let result = this.selector.select(this.selectorRect);
+			if (result && result[1] < EnvSetup.halfGridPartSize) {
+				this.selectBars.hide();
+
+				//Turn on but not active because rect should be fixed on selected unit
+				this.selectorRect.setPosition(result[0].x, result[0].y);
+				this.selectorRect.setVisible(true).setActive(false);
+
+				this.selectedUnit = result[0];
+				if (this.selectedUnit instanceof Shooter) {
+					this.selectBars.showShooterBar();
+				} else if (this.selectedUnit instanceof Healer) {
+					this.selectBars.showHealerBar();
+				} else {
+					this.selectBars.showInteractionBar();
+				}
 			}
 		}
 	}

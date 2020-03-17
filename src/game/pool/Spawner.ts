@@ -1,4 +1,4 @@
-import { enableable, Enabler } from "./Enabler";
+import { Enabler } from "./Enabler";
 import { Gameplay } from "../../scenes/Gameplay";
 import { Pool } from "./Pool";
 import { SelectorRect } from "../modi/SelectorRect";
@@ -8,9 +8,10 @@ import { TowerSetup } from "../setup/TowerSetup";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { HealerPool } from "./HealerPool";
 import { Grid } from "../base/Grid";
+import { enableable } from "../base/interfaces";
 
 export class Spawner implements enableable {
-	private canSpawn = false;
+	canSpawn = false;
 
 	private constructor(
 		public scene: Gameplay,
@@ -33,7 +34,7 @@ export class Spawner implements enableable {
 	spawn(selectorRect: SelectorRect) {
 		if (!this.canSpawn) {
 			selectorRect.anims.play("invalid-shooter-pos");
-			return;
+			return false;
 		}
 		let x = selectorRect.x;
 		let y = selectorRect.y;
@@ -47,10 +48,14 @@ export class Spawner implements enableable {
 				this.pool.pop().poolActivate(x, y);
 			} else {
 				selectorRect.anims.play("invalid-shooter-pos");
+				return false;
 			}
 		} else {
 			selectorRect.anims.play("invalid-shooter-pos");
+			return false;
 		}
+
+		return true;
 	}
 
 	static createShooterSpawner(scene: Gameplay, shooterPool: ShooterPool, towerSpawnObj: TowerSpawnObj) {
@@ -58,7 +63,7 @@ export class Spawner implements enableable {
 			scene,
 			shooterPool,
 			towerSpawnObj,
-			new Enabler(scene, "can-build", "can-not-build"),
+			new Enabler(scene, EventSetup.canBuildShooter, EventSetup.cannotBuildShooter),
 			TowerSetup.shooterCost
 		);
 	}
@@ -68,7 +73,7 @@ export class Spawner implements enableable {
 			scene,
 			healerPool,
 			towerSpawnObj,
-			new Enabler(scene, "can-build", "can-not-build"),
+			new Enabler(scene, EventSetup.canBuildHealer, EventSetup.cannotBuildHealer),
 			TowerSetup.healerCost
 		);
 	}

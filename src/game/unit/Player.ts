@@ -13,13 +13,13 @@ const playerTextureName = "blueNormalCircle";
 export class Player extends Circle implements healable {
 	stateHandler: { spotted: any; obstacle: any };
 
-	constructor(scene, physicsGroup, weapon) {
-		let polygon = new CirclePolygon(playerStartX, playerStartY, UnitSetup.normalCircleRadius);
+	constructor(scene, physicsGroup, weapon, playerX, playerY) {
+		let polygon = new CirclePolygon(playerX, playerY, UnitSetup.normalCircleRadius);
 
 		super({
 			scene,
-			x: playerStartX,
-			y: playerStartY,
+			x: playerX,
+			y: playerY,
 			texture: playerTextureName,
 			physicsGroup,
 			polygon,
@@ -47,21 +47,21 @@ export class Player extends Circle implements healable {
 	}
 
 	//TODO: Player should spawn in PlayerAreaCamp
-	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup) {
+	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup, playerX, playerY) {
 		let weapon = new ChainWeapon(
 			scene,
-			playerStartX,
-			playerStartY,
+			playerX,
+			playerY,
 			playerWeaponPhysicsGroup,
 			null,
 			UnitSetup.normalCircleRadius,
 			"Normal"
 		);
-		let circle = new Player(scene, playerPhysicsGroup, weapon);
+		let circle = new Player(scene, playerPhysicsGroup, weapon, playerX, playerY);
 		weapon.owner = circle;
 
 		weapon.amount = 40;
-		//weapon.amount = 40000;
+		weapon.amount = 40000;
 		return circle;
 	}
 }

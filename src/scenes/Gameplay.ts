@@ -164,7 +164,14 @@ export class Gameplay extends Phaser.Scene {
 		});
 
 		//Setup Player
-		let player = Player.withChainWeapon(this, collision.physicGroups.player, collision.physicGroups.playerWeapon);
+		let playerExit = exits.getExitFor(CampSetup.playerCampID).toPoint();
+		let player = Player.withChainWeapon(
+			this,
+			collision.physicGroups.player,
+			collision.physicGroups.playerWeapon,
+			playerExit.x,
+			playerExit.y
+		);
 		this.cgaa.player = player;
 		this.cameras.main.startFollow(player);
 		this.cgaa.movement = new Movement(new WASD(this), player);
@@ -193,9 +200,12 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.shooterPool
 		]);
 		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
-		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.healerPool, towerSpawnObj);
 
+		//Depending on start-money can spawn or not
+		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.healerPool, towerSpawnObj);
 		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.shooterPool, towerSpawnObj);
+		shooterSpawner.canSpawn = true;
+
 		this.cgaa.interactionCollection = new UnitCollection(
 			camps.ordinary.map(camp => {
 				return camp.interactionUnit;

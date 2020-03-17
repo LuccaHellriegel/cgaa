@@ -5,7 +5,7 @@ import { ClickableImageRect } from "./DoubleRect";
 export class CompositeRect implements SelectableGUIElement {
 	selected = false;
 
-	constructor(protected sele: selectable, protected rects: GUIElement[]) {}
+	constructor(protected sele: selectable, public rects: GUIElement[]) {}
 	show() {
 		this.rects.forEach(rect => rect.show());
 	}

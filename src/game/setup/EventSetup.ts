@@ -75,4 +75,10 @@ export class EventSetup {
 	static towerBuildEvent = "tower-build";
 
 	static towerSoldEvent = "tower-sold";
+
+	static canBuildShooter = "can-build-shooter";
+	static cannotBuildShooter = "can-not-build-shooter";
+
+	static canBuildHealer = "can-build-healer";
+	static cannotBuildHealer = "can-not-build-healer";
 }

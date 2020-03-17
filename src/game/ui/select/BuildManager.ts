@@ -6,10 +6,18 @@ export class BuildManager {
 	constructor(private scene: Gameplay, private healerMode: TowerModus, private shooterMode: TowerModus) {}
 	build() {
 		if (this.activeSpawner) {
-			if (this.healerMode.execute()) this.scene.events.emit(EventSetup.towerBuildEvent, "Healer");
+			if (this.healerMode.execute()) {
+				this.scene.events.emit(EventSetup.towerBuildEvent, "Healer");
+				return true;
+			}
 		} else {
-			if (this.shooterMode.execute()) this.scene.events.emit(EventSetup.towerBuildEvent, "Shooter");
+			if (this.shooterMode.execute()) {
+				this.scene.events.emit(EventSetup.towerBuildEvent, "Shooter");
+				return true;
+			}
 		}
+
+		return false;
 	}
 	activateHealerBuilding() {
 		this.activeSpawner = true;

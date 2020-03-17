@@ -2,6 +2,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { SymmetricCrossPolygon } from "../../polygons/SymmetricCrossPolygon";
 import { HUD } from "../../../scenes/HUD";
 import { TowerSetup } from "../../setup/TowerSetup";
+import { EventSetup } from "../../setup/EventSetup";
 
 export class PlayerSoulCounter {
 	value: number;
@@ -36,7 +37,6 @@ export class PlayerSoulCounter {
 	reset() {
 		this.value = this.startValue;
 		this.playerCounterText.setText(this.value.toString());
-		this.sceneToListen.events.emit("can-build");
 	}
 
 	setupEventListeners(sceneToListen: Gameplay, increaseEvent, decreaseEvent) {
@@ -46,7 +46,10 @@ export class PlayerSoulCounter {
 				this.value += amount;
 				this.playerCounterText.setText(this.value.toString());
 				if (this.value >= TowerSetup.shooterCost) {
-					sceneToListen.events.emit("can-build");
+					sceneToListen.events.emit(EventSetup.canBuildShooter);
+				}
+				if (this.value >= TowerSetup.healerCost) {
+					sceneToListen.events.emit(EventSetup.canBuildHealer);
 				}
 			},
 			this
@@ -61,7 +64,11 @@ export class PlayerSoulCounter {
 				}
 
 				if (this.value < TowerSetup.shooterCost) {
-					sceneToListen.events.emit("can-not-build");
+					sceneToListen.events.emit(EventSetup.cannotBuildShooter);
+				}
+
+				if (this.value < TowerSetup.healerCost) {
+					sceneToListen.events.emit(EventSetup.cannotBuildHealer);
 				}
 
 				this.playerCounterText.setText(this.value.toString());

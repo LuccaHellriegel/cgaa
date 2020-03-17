@@ -18,11 +18,12 @@ export class UIState {
 	down() {
 		if (!this.uiElements.reduce((prev, ele) => prev || ele.mouseOver, false)) {
 			if (this.state === "build") {
-				this.build.build();
-				this.selectorRect.turnOff();
-				//Reset show
-				this.buildBar.show();
-				this.default();
+				if (this.build.build()) {
+					this.selectorRect.turnOff();
+					//Reset show
+					this.buildBar.show();
+					this.default();
+				}
 			} else if (this.state === "select") {
 				this.select.down();
 			} else {

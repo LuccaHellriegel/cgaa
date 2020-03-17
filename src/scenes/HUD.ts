@@ -99,7 +99,6 @@ export class HUD extends Phaser.Scene {
 		//TODO
 		//new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
 
-		//new SelectBar(this, 0 + 5, 0 + 30 + 5, this.ourGame.cgaa.inputs, this.ourGame.cgaa.selectBarState);
 		let sellManager = new SellManager(this.ourGame);
 		let activeColls: ActiveElementCollection[] = [
 			this.ourGame.cgaa.shooterPool,
@@ -109,7 +108,13 @@ export class HUD extends Phaser.Scene {
 		let selectionManager = new SelectionManager(new ClosestSelector(activeColls), this.ourGame.cgaa.selectorRect);
 		let healerSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5, "healer");
 		let shooterSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5, "shooter");
-		let interactionSelectBar = new InteractionSelectBar(this, 0 + 180, 0 + 30 + 5);
+		let interactionSelectBar = new InteractionSelectBar(
+			this,
+			0 + 180,
+			0 + 30 + 5,
+			this.ourGame.cgaa.cooperation,
+			selectionManager
+		);
 		let selectBars = new SelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
 		let questFunc = function() {
 			if (selectionManager.selectedUnit) {
@@ -129,8 +134,6 @@ export class HUD extends Phaser.Scene {
 		(healerSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 		(shooterSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 
-		// let test = new UnitCompositeRect(this, "healer", 0 + 180, 0 + 30 + 5);
-		// test.show();
 		selectionManager.setSelectBars(selectBars);
 		selectBars.hide();
 

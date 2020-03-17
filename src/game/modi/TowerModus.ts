@@ -19,8 +19,7 @@ export class TowerModus {
 	execute() {
 		let len = this.spawner.pool.getActiveUnits().length;
 		if (len === 0 || (len < this.maxTowers && !this.findClosestElement())) {
-			this.spawner.spawn(this.selectorRect);
-			return true;
+			return this.spawner.spawn(this.selectorRect);
 		} else {
 			this.selectorRect.play("invalid-shooter-pos");
 			return false;

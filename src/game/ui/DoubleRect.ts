@@ -3,7 +3,6 @@ import { RectPolygon } from "../polygons/RectPolygon";
 import { SelectableGUIElement } from "./select/SelectBar";
 export class DoubleRect implements SelectableGUIElement {
 	polygon: RectPolygon;
-	innerPolygon: RectPolygon;
 	graphics: Phaser.GameObjects.Graphics;
 	selected = false;
 	constructor(
@@ -16,7 +15,6 @@ export class DoubleRect implements SelectableGUIElement {
 	) {
 		this.graphics = sceneToUse.add.graphics({});
 		this.polygon = new RectPolygon(x, y, width, height);
-		this.innerPolygon = new RectPolygon(x, y, 2 * (width / 3), 2 * (height / 3));
 		this.redraw(hexColor);
 	}
 	redraw(hexColor) {
@@ -28,7 +26,6 @@ export class DoubleRect implements SelectableGUIElement {
 		this.selected = true;
 		this.redraw(0x0000ff);
 		this.graphics.fillStyle(this.hexColor);
-		this.innerPolygon.draw(this.graphics, 0);
 	}
 
 	deselect() {
@@ -64,6 +61,10 @@ export class TextRect extends DoubleRect {
 		super(sceneToUse, x, y, width, height, hexColor);
 		this.textObj = this.sceneToUse.add.text(this.x - 20, this.y - 22, this.text, textOptions);
 		this.hide();
+	}
+
+	setText(newText: string) {
+		this.text = newText;
 	}
 
 	hide() {

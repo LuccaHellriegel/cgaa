@@ -30,4 +30,5 @@ new Phaser.Game(createGameConfig());
 //TODO unit producing towers?
 //TODO: dynamich pathfinding on Web Worker?
 //TODO: actualize map when buildings are destroyed?
-//TODO: hide player weapon if interactionModus
+
+//TODO: make interaction circle invincible and destroy it when buildings are destroyed
