@@ -63,7 +63,7 @@ export class Gameplay extends Phaser.Scene {
 		//Setup minimal Game State for collision handling
 		let rivalries = new Rivalries();
 		let router = new CampRouting(this.events, rivalries);
-		let cooperation = new Cooperation(router, rivalries);
+		let cooperation = new Cooperation(this, router, rivalries);
 
 		//Setup Physics and Sight
 		let collision = new Collision(this, cooperation);

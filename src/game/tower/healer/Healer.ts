@@ -23,7 +23,6 @@ export class Healer extends Tower {
 	auraPolygon: HollowRectPoylgon;
 
 	constructor(scene: Gameplay, x, y, physicsGroup, private player: Player, private pools: Pool[]) {
-		//TODO: much more expensive -> healUnits is to computationally expensive
 		super(scene, x, y, "healer", physicsGroup);
 		this.graphics = scene.add.graphics({});
 		this.auraPolygon = new HollowRectPoylgon(x, y, TowerSetup.towerDistance, TowerSetup.towerDistance);
@@ -45,7 +44,6 @@ export class Healer extends Tower {
 			pool.getActiveUnits().forEach(unit => {
 				if (this.inDistance(unit)) {
 					unit.heal(TowerSetup.singleHealAmount);
-					console.log("Healing unit");
 				}
 			})
 		);

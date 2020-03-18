@@ -14,7 +14,7 @@ export class CounterRect extends Rect implements notifyWithVal {
 		private postfixText: string
 	) {
 		super(sceneToUse, x, y, width, height, 0x0000ff);
-		this.textObj = this.sceneToUse.add.text(this.x - 30, this.y - 22, prefixText + this.count + postfixText, {
+		this.textObj = this.sceneToUse.add.text(this.x - 120, this.y - 22, prefixText + this.count + postfixText, {
 			font: "38px Verdana ",
 			fill: "#000000",
 			fontWeight: "bold"

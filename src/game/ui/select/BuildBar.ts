@@ -55,7 +55,7 @@ export class PureCounter implements notifyWithVal, GUIElement {
 	) {
 		this.textObj = sceneToUse.add.text(this.x, this.y, prefixText + this.count + postfixText, {
 			font: "25px Verdana ",
-			fill: "#ff0000",
+			fill: "#cc0000",
 			fontWeight: "bold"
 		});
 	}

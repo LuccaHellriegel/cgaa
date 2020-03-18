@@ -10,7 +10,7 @@ export class PlayerSoulCounter {
 	playerCounterText: Phaser.GameObjects.Text;
 
 	constructor(sceneToUse: HUD, private sceneToListen: Gameplay, x, y) {
-		let playerSoulCountGraphic = new SymmetricCrossPolygon(x, y, 50, 25);
+		let playerSoulCountGraphic = new SymmetricCrossPolygon(x - 100, y, 40, 15);
 
 		let increaseEvent = "souls-gained";
 		let decreaseEvent = "souls-spent";

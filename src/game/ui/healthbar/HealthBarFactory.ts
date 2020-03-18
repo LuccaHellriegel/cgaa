@@ -14,7 +14,7 @@ export class HealthBarFactory {
 	static createBuildingHealthBar(scene: Gameplay, x, y) {
 		return new HealthBar(x - 25, y - BuildingSetup.halfBuildingHeight, {
 			posCorrectionX: 0,
-			posCorrectionY: -BuildingSetup.halfBuildingHeight,
+			posCorrectionY: 0,
 			healthWidth: 46,
 			healthLength: 12,
 			value: 100,
@@ -32,7 +32,7 @@ export class HealthBarFactory {
 		return new HealthBar(x, y, {
 			scene,
 			posCorrectionX: -26,
-			posCorrectionY: -38,
+			posCorrectionY: -40,
 			healthWidth: 46,
 			healthLength: 12,
 			value: 100

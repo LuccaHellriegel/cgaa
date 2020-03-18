@@ -18,7 +18,7 @@ export class BulletCollision {
 			EventSetup.gainSouls(this.scene, enemy.type);
 		}
 		enemy.damage(damage);
-		enemy.stateHandler.spotted = bullet.owner;
+		if (enemy instanceof DangerousCircle) enemy.stateHandler.spotted = bullet.owner;
 		bullet.reset();
 	}
 }

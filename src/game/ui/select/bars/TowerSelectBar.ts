@@ -9,7 +9,7 @@ export class TowerSelectBar extends SelectBar {
 
 		super(baseRect, [
 			new ClickableTextRect(sceneToUse, x - 50, y, 60, 60, 0xffffff, "Sell"),
-			new UnitCompositeRect(sceneToUse, textureBase, x + 40, y)
+			new UnitCompositeRect(sceneToUse, textureBase, x + 40, y + 2)
 		]);
 	}
 }

@@ -3,11 +3,13 @@ import { CampRouting } from "../camp/CampRouting";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { InteractionCircle } from "../unit/InteractionCircle";
 import { Rivalries } from "./Rivalries";
+import { Gameplay } from "../../scenes/Gameplay";
+import { EventSetup } from "../setup/EventSetup";
 
 export class Cooperation {
 	dict: { [key in CampID]: Set<CampID> };
 	quests: Quests;
-	constructor(private router: CampRouting, private rivalriers: Rivalries) {
+	constructor(private scene: Gameplay, private router: CampRouting, private rivalriers: Rivalries) {
 		this.dict = CampSetup.campIDs.reduce((prev, id) => {
 			prev[id] = new Set<CampID>();
 			return prev;
@@ -25,8 +27,12 @@ export class Cooperation {
 		if (!this.quests.hasAccepted(this.rivalriers.getRival(id))) {
 			this.quests.accept(id);
 			if (this.quests.isDone(id)) {
-				this.router.reroute(id);
-				this.activateCooperation(id);
+				if ((this.dict[id] as Set<CampID>).has(CampSetup.playerCampID)) {
+					this.router.reroute(id);
+				} else {
+					this.activateCooperation(id);
+					this.scene.events.emit(EventSetup.cooperationEvent, id);
+				}
 			}
 		}
 	}

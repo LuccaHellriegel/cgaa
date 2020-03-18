@@ -8,5 +8,5 @@ export function generateWeapons(scene) {
 		new ChainWeaponGenerator(0xff0000, scene, element);
 	}
 
-	new CircleGenerator(0x6495ed, scene, "bullet", UnitSetup.normalCircleRadius / 4);
+	new CircleGenerator(0xff0000, scene, "bullet", UnitSetup.normalCircleRadius / 4);
 }

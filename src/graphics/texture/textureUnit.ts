@@ -1,5 +1,5 @@
 import { CircleGenerator } from "./generator/unit/CircleGenerator";
-import { HealerGenerator } from "./generator/unit/HealerGenerator";
+import { BlockadeGenerator } from "./generator/unit/BlockadeGenerator";
 import { InteractionCircleGenerator } from "./generator/unit/InteractionCircleGenerator";
 import { BuildingGenerator } from "./generator/unit/BuildingGenerator";
 import { RectGenerator } from "./generator/RectGenerator";
@@ -13,10 +13,39 @@ import { DiplomatSymbolGenerator } from "./generator/DiplomatSymbolGenerator";
 
 function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", UnitSetup.normalCircleRadius);
-	new HealerGenerator(scene);
+	new BlockadeGenerator(scene);
+
 	new RectGenerator(
 		scene,
 		0x013220,
+		"healer",
+		EnvSetup.halfGridPartSize,
+		EnvSetup.halfGridPartSize,
+		EnvSetup.gridPartSize,
+		EnvSetup.gridPartSize
+	);
+	new RectGenerator(
+		scene,
+		0x013220,
+		"sellhealer",
+		EnvSetup.halfGridPartSize,
+		EnvSetup.halfGridPartSize,
+		EnvSetup.gridPartSize,
+		EnvSetup.gridPartSize
+	);
+	new RectGenerator(
+		scene,
+		0x013220,
+		"upgradehealer",
+		EnvSetup.halfGridPartSize,
+		EnvSetup.halfGridPartSize,
+		EnvSetup.gridPartSize,
+		EnvSetup.gridPartSize
+	);
+
+	new RectGenerator(
+		scene,
+		0x6495ed,
 		"shooter",
 		EnvSetup.halfGridPartSize,
 		EnvSetup.halfGridPartSize,
@@ -25,7 +54,7 @@ function generatePlayerUnits(scene) {
 	);
 	new RectGenerator(
 		scene,
-		0x013220,
+		0x6495ed,
 		"sellshooter",
 		EnvSetup.halfGridPartSize,
 		EnvSetup.halfGridPartSize,
@@ -34,7 +63,7 @@ function generatePlayerUnits(scene) {
 	);
 	new RectGenerator(
 		scene,
-		0x013220,
+		0x6495ed,
 		"upgradeshooter",
 		EnvSetup.halfGridPartSize,
 		EnvSetup.halfGridPartSize,

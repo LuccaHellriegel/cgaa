@@ -20,7 +20,9 @@ export class CampState {
 	targetForeground: CirclePolygon;
 	onKillist = false;
 	isRerouted = false;
+	hasCooperation = false;
 	ambushTargetHex;
+	textObj: Phaser.GameObjects.Text;
 
 	constructor(
 		sceneToUse: HUD,
@@ -48,6 +50,12 @@ export class CampState {
 		this.targetBackground = new RectPolygon(x - 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
 		this.targetForeground = new CirclePolygon(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 		this.reset();
+
+		this.textObj = sceneToUse.add.text(x - 18, y - 25, "", {
+			font: "50px Verdana ",
+			fill: "#000000",
+			fontWeight: "bold"
+		});
 	}
 
 	reset() {
@@ -98,8 +106,17 @@ export class CampState {
 				}
 			}
 		];
+		let cooperationArgs = [
+			EventSetup.cooperationEvent,
+			campID => {
+				if (campID === this.campID) {
+					this.hasCooperation = true;
+					this.redraw();
+				}
+			}
+		];
 
-		let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];
+		let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs, cooperationArgs];
 		args.forEach(arg => {
 			let [event, callback] = arg;
 			this.sceneToListen.events.removeListener(event as string, callback as Function);
@@ -110,6 +127,7 @@ export class CampState {
 		this.listen(this.sceneToListen, endWaveArgs);
 		this.listen(this.sceneToListen, rerouteArgs);
 		this.listen(this.sceneToListen, destroyedArgs);
+		this.listen(this.sceneToListen, cooperationArgs);
 
 		this.redraw();
 	}
@@ -154,5 +172,7 @@ export class CampState {
 		this.foreground.draw(this.graphics, 0);
 
 		if (this.isRerouted) this.drawAmbushTarget();
+
+		if (this.hasCooperation) this.textObj.setText("C");
 	}
 }

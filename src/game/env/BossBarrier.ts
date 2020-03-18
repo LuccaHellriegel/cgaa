@@ -5,7 +5,7 @@ import { EventSetup } from "../setup/EventSetup";
 
 export class BossBarrier extends Image {
 	constructor(scene: Gameplay, x, y, physicsGroup) {
-		super({ scene, x, y, texture: "healer", physicsGroup });
+		super({ scene, x, y, texture: "blockade", physicsGroup });
 		Annotator.annotate(this, "immovable");
 		scene.events.once(EventSetup.conqueredEvent, this.destroy.bind(this));
 	}
