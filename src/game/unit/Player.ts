@@ -6,8 +6,6 @@ import { CampSetup } from "../setup/CampSetup";
 import { EventSetup } from "../setup/EventSetup";
 import { healable } from "../base/interfaces";
 
-const playerStartX = 1400;
-const playerStartY = 1200;
 const playerTextureName = "blueNormalCircle";
 
 export class Player extends Circle implements healable {
@@ -61,7 +59,7 @@ export class Player extends Circle implements healable {
 		weapon.owner = circle;
 
 		weapon.amount = 40;
-		weapon.amount = 40000;
+		//weapon.amount = 40000;
 		return circle;
 	}
 }
