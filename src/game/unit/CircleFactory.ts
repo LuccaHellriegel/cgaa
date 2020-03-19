@@ -85,7 +85,8 @@ export class CircleFactory {
 			polygon: new CirclePolygon(x, y, radius),
 			texture: "kingCircle",
 			healthbar,
-			radius
+			radius,
+			size
 		};
 
 		let circle = new King(circleConfig as EnemyConfig, veloConfigs[size]);
@@ -112,7 +113,8 @@ export class CircleFactory {
 			polygon: new CirclePolygon(x, y, radius),
 			texture: "bossCircle",
 			healthbar,
-			radius
+			radius,
+			size
 		};
 
 		let circle = new DangerousCircle(circleConfig as EnemyConfig, veloConfigs[size]);

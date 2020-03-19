@@ -1,0 +1,182 @@
+{
+  "type": "excalidraw",
+  "version": 1,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "rDb8L9MnWxn_nngDtZCJf",
+      "type": "rectangle",
+      "x": 739,
+      "y": 158,
+      "width": 395,
+      "height": 409,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 1985566163,
+      "version": 39,
+      "versionNonce": 530282776,
+      "isDeleted": false
+    },
+    {
+      "id": "FGKRjFP4tfMyEpc8KyQVZ",
+      "type": "ellipse",
+      "x": 524,
+      "y": 176,
+      "width": 85,
+      "height": 89,
+      "strokeColor": "#000000",
+      "backgroundColor": "#fa5252",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 1516227754,
+      "version": 31,
+      "versionNonce": 201842158,
+      "isDeleted": false
+    },
+    {
+      "id": "nGsyNj2FP7mjkIGmvKU9y",
+      "type": "ellipse",
+      "x": 520,
+      "y": 305,
+      "width": 99,
+      "height": 76,
+      "strokeColor": "#000000",
+      "backgroundColor": "#15aabf",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 915079797,
+      "version": 48,
+      "versionNonce": 732654397,
+      "isDeleted": false
+    },
+    {
+      "id": "-htwP9JGg82AJ_hcZyxsj",
+      "type": "arrow",
+      "x": 624,
+      "y": 216,
+      "width": 165,
+      "height": 2,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 1728022722,
+      "version": 23,
+      "versionNonce": 873236016,
+      "isDeleted": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          165,
+          2
+        ]
+      ],
+      "lastCommittedPoint": null
+    },
+    {
+      "id": "FIDoLKZ4APq6zP7gNdIBt",
+      "type": "ellipse",
+      "x": 787,
+      "y": 435,
+      "width": 93,
+      "height": 87,
+      "strokeColor": "#000000",
+      "backgroundColor": "#40c057",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 464798048,
+      "version": 46,
+      "versionNonce": 2032656066,
+      "isDeleted": false
+    },
+    {
+      "id": "gVdR3h9ry3EbMiEtX-QfY",
+      "type": "arrow",
+      "x": 764,
+      "y": 472,
+      "width": 176,
+      "height": 2,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 2102450485,
+      "version": 33,
+      "versionNonce": 1120886056,
+      "isDeleted": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -176,
+          -2
+        ]
+      ],
+      "lastCommittedPoint": null
+    },
+    {
+      "id": "WW3US2XnqWZwhemvL98-m",
+      "type": "text",
+      "x": 469.5,
+      "y": 102.5,
+      "width": 163,
+      "height": 35,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 1793686825,
+      "version": 61,
+      "versionNonce": 97685625,
+      "isDeleted": false,
+      "text": "Object Pool:",
+      "font": "28px Virgil",
+      "baseline": 25
+    },
+    {
+      "id": "26IJ6QqFgWi64ZIyiXzfR",
+      "type": "text",
+      "x": 869.5,
+      "y": 103.5,
+      "width": 85,
+      "height": 35,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "opacity": 100,
+      "seed": 1095828139,
+      "version": 61,
+      "versionNonce": 610354948,
+      "isDeleted": false,
+      "text": "Game:",
+      "font": "28px Virgil",
+      "baseline": 25
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  }
+}
