@@ -20,6 +20,8 @@ export class King extends Circle implements damageable {
 		//TODO: remove path, make stateHandler more general
 		this.stateHandler = new CircleControl(this);
 		this.stateHandler.setComponents([new GuardComponent(this, this.stateHandler)]);
+
+		this.type = config.size;
 	}
 
 	damage(amount) {

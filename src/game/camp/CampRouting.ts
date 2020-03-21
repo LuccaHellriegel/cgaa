@@ -8,6 +8,15 @@ export class CampRouting {
 	constructor(private events, rivalries: Rivalries) {
 		this.initRoutings();
 		this.initRerouteQueues(rivalries);
+
+		events.on(EventSetup.conqueredEvent, this.allowKingRouting.bind(this));
+	}
+
+	private allowKingRouting() {
+		console.log("herere");
+		CampSetup.ordinaryCampIDs.forEach(id => {
+			this.rerouteQueues[id].push(CampSetup.bossCampID);
+		});
 	}
 
 	private initRoutings() {

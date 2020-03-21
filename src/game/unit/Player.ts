@@ -44,7 +44,6 @@ export class Player extends Circle implements healable {
 		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 
-	//TODO: Player should spawn in PlayerAreaCamp
 	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup, playerX, playerY) {
 		let weapon = new ChainWeapon(
 			scene,

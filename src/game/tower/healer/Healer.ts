@@ -56,7 +56,7 @@ export class Healer extends Tower {
 	}
 
 	activate() {
-		this.healIntervalID = setInterval(this.healUnits.bind(this), 10000);
+		this.healIntervalID = setInterval(this.healUnits.bind(this), 1500);
 	}
 
 	redraw() {
