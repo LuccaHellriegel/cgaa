@@ -3285,7 +3285,7 @@ table.alt tbody tr td {
 
 .wrapper.style2 {
 	background-color: #3498db;
-	color: #aed6f1;
+	color: #d9ecf9;
 }
 
 .wrapper.style2 input,
@@ -3295,7 +3295,7 @@ table.alt tbody tr td {
 }
 
 .wrapper.style2 a {
-	color: #999999;
+	color: #d9ecf9;
 }
 
 .wrapper.style2 a:hover {
@@ -3373,7 +3373,7 @@ table.alt tbody tr td {
 .wrapper.style2 input[type="button"].alt.icon:before,
 .wrapper.style2 button.alt.icon:before,
 .wrapper.style2 .button.alt.icon:before {
-	color: #67b2e4;
+	color: #d9ecf9;
 }
 
 .wrapper.style2 input[type="submit"].special,
@@ -3429,7 +3429,7 @@ table.alt tbody tr td {
 
 .wrapper.style2 input[type="checkbox"] + label,
 .wrapper.style2 input[type="radio"] + label {
-	color: #aed6f1;
+	color: #d9ecf9;
 }
 
 .wrapper.style2 input[type="checkbox"] + label:before,
@@ -3452,23 +3452,23 @@ table.alt tbody tr td {
 }
 
 .wrapper.style2 ::-webkit-input-placeholder {
-	color: #67b2e4 !important;
+	color: #d9ecf9 !important;
 }
 
 .wrapper.style2 :-moz-placeholder {
-	color: #67b2e4 !important;
+	color: #d9ecf9 !important;
 }
 
 .wrapper.style2 ::-moz-placeholder {
-	color: #67b2e4 !important;
+	color: #d9ecf9 !important;
 }
 
 .wrapper.style2 :-ms-input-placeholder {
-	color: #67b2e4 !important;
+	color: #d9ecf9 !important;
 }
 
 .wrapper.style2 .formerize-placeholder {
-	color: #67b2e4 !important;
+	color: #d9ecf9 !important;
 }
 
 .wrapper.style2 ul.alt li {
@@ -3476,7 +3476,7 @@ table.alt tbody tr td {
 }
 
 .wrapper.style2 header p {
-	color: #67b2e4;
+	color: #d9ecf9;
 }
 
 .wrapper.style2 table tbody tr {
@@ -3581,7 +3581,7 @@ body.subpage {
 
 #header {
 	background: rgba(0, 0, 0, 0.75);
-	color: #aed6f1;
+	color: #d9ecf9;
 	cursor: default;
 	height: 4em;
 	left: 0;
