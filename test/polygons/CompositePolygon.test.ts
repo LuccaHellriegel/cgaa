@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import { CompositePolygon } from "../../src/game/polygons/CompositePolygon";
+import { Point } from "../../src/game/base/types";
 
 describe("Test CompositePolygon", function() {
 	describe("Move singular CompositePolygon", function() {

@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { ArrowHeadPolygon } from "../../src/game/polygons/ArrowHeadPolygon";
 
 describe("Test ArrowHeadPolygon", function() {
 	describe("Find centerPoint of ArrowHead", function() {

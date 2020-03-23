@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { RectPolygon } from "../../src/graphics/polygons/RectPolygon";
-import { Point } from "../../src/graphics/polygons/Point";
+import { RectPolygon } from "../../src/game/polygons/RectPolygon";
+import { Point } from "../../src/game/base/types";
 
 describe("Test RectPolygon", function() {
 	describe("Rotate RectPolygon", function() {
