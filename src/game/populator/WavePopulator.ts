@@ -13,6 +13,9 @@ import { DangerousCirclePool } from "../pool/CirclePool";
 import { DangerousCircle } from "../unit/DangerousCircle";
 
 export class WavePopulator {
+	waveSize = WaveSetup.waveSize;
+	waveCount = 0;
+
 	constructor(
 		private scene: Gameplay,
 		public id: CampID,
@@ -40,7 +43,7 @@ export class WavePopulator {
 	private prepareWave() {
 		let spawnPositions = [];
 		let enemyCircles = [];
-		for (let index = 0; index < WaveSetup.waveSize; index++) {
+		for (let index = 0; index < this.waveSize; index++) {
 			let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
 			if (spawnPosition) {
 				spawnPositions.push(spawnPosition);
@@ -62,6 +65,10 @@ export class WavePopulator {
 				]);
 
 				enemyCircles.push(enemy);
+
+				this.waveCount++;
+
+				if (this.waveCount % 6 === 0) this.waveSize++;
 			} else {
 				break;
 			}
