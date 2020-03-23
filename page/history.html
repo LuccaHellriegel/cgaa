@@ -99,7 +99,7 @@
 <span class="hljs-keyword">this</span>.scene.textures.list[<span class="hljs-keyword">this</span>.title].add(<span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">2</span> * <span class="hljs-keyword">this</span>.radius, <span class="hljs-number">0</span>, <span class="hljs-number">2</span> * <span class="hljs-keyword">this</span>.radius, <span class="hljs-number">2</span> * <span class="hljs-keyword">this</span>.radius);
 </div></code></pre>
 					<p>
-						This approach was very convenient, because it mostly avoided needing to ship additional assets, input-ouput
+						This approach was very convenient, because it mostly avoided needing to ship additional assets, input-output
 						problems from graphic programs or pixel errors. The hard part was finding the correct APIs and hardcoding
 						the basic measurements for the shapes without an immediate visual feedback. <br />
 						This worked fine for basic shapes and even for more complicated combined shapes like the chain-weapon I
@@ -111,12 +111,12 @@
 						<br />
 						However, the drawbacks where that only circles and rectangles were supported by Arcade and the chain-weapon
 						consisted of a more complex shape: the arrow. To allow for this kind of collision detection I implemented
-						polygon shapes and a separate collision detecion system, that would only be activated when a unit was
+						polygon shapes and a separate collision detection system, that would only be activated when a unit was
 						attacking and then would synchronize the textures position (e.g. the weapon) with the corresponding polygon
-						shape to calculate if a collision happend (in hindsight it might be more performant to approximate all the
+						shape to calculate if a collision happened (in hindsight it might be more performant to approximate all the
 						parts of the weapon separately with basic circles and rectangles). For the polygon based collision I tried
-						out many different libaries (e.g. that used the Separating Axis Theorem) and due to huge differences in how
-						the coordinates are interpreted, I setled for the one library that was compatible and wrote missing cases
+						out many different libraries (e.g. that used the Separating Axis Theorem) and due to huge differences in how
+						the coordinates are interpreted, I settled for the one library that was compatible and wrote missing cases
 						(e.g. collision of circle with circle) myself.
 					</p>
 					<p>
@@ -124,7 +124,7 @@
 					</p>
 					<p>
 						As the development progressed it became more and more tedious to hand-adjust the measurements of the shapes
-						and complex shapes like the chain-weapon took nearly a week of fulltime work to get right, including the
+						and complex shapes like the chain-weapon took nearly a week of full-time work to get right, including the
 						animations (this also had to do with Phasers weird interpretation of angles). <br />
 						It also became clear that trying to enhance the graphics (e.g. rounding the edges of towers to make them
 						more distinct from walls) would not be feasible with this approach. <br />
@@ -257,7 +257,7 @@
 						<img src="./images/keyboard.png" alt="Keyboard Controls" />
 					</p>
 					<p>
-						After playtesting this with different groups of players (people with gaming experience to non-gamers), it
+						After play-testing this with different groups of players (people with gaming experience to non-gamers), it
 						was obvious that this was not going to work. While for me the different modes were obvious and I was able to
 						use them to build towers very fast and interact with the diplomats, for my playtesters this was just
 						confusing and most of them even did not figure out that you could interact with the diplomats at all. <br />
