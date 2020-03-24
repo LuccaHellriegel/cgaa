@@ -68,7 +68,7 @@ export class WavePopulator {
 
 				this.waveCount++;
 
-				if (this.waveCount % 6 === 0) this.waveSize++;
+				if (this.waveCount % 10 === 0) this.waveSize++;
 			} else {
 				break;
 			}
