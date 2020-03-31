@@ -44,6 +44,8 @@ import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
 import { BarrierFactory } from "../game/camp/BarrierFactory";
 import { PlayerFriends } from "../game/unit/PlayerFriends";
 import { BuildManager } from "../game/ui/select/BuildManager";
+import { GuardComponent } from "../game/ai/GuardComponent";
+import { ChainWeapons } from "../game/weapon/ChainWeapon";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -86,7 +88,13 @@ export class Gameplay extends Phaser.Scene {
 			camps.ordinary.map(camp => camp.buildings)
 		);
 		camps.ordinary.forEach(camp => {
-			let factory = new CircleFactory(this, camp.id, collision.physicGroups.pairs[camp.id], enemies);
+			let factory = new CircleFactory(
+				this,
+				camp.id,
+				collision.physicGroups.pairs[camp.id],
+				enemies,
+				collision.physicGroups.pairs[camp.id].weaponGroup
+			);
 			//TODO: populate camp with more than big units
 			camp.populate(
 				this,
@@ -119,11 +127,14 @@ export class Gameplay extends Phaser.Scene {
 			this,
 			CampSetup.bossCampID,
 			collision.physicGroups.pairs[CampSetup.bossCampID],
-			enemies
+			enemies,
+			collision.physicGroups.pairs[CampSetup.bossCampID].weaponGroup
 		);
 		let bossCamp = new BossCamp(camps.boss.area, gameMap);
 		bossCamp.populate(this, new BossPool(this, BossSetup.bossGroupSize, bossFactory, enemies), enemies, campsState);
 		let king = bossFactory.createKing();
+		king.stateHandler.setComponents([new GuardComponent(king, king.stateHandler)]);
+
 		let point = orientation.middleOfBossArea.toPoint();
 		king.setPosition(point.x, point.y);
 
@@ -149,7 +160,13 @@ export class Gameplay extends Phaser.Scene {
 						new DangerousCirclePool(
 							this,
 							8,
-							new CircleFactory(this, campID, collision.physicGroups.pairs[campID], enemies),
+							new CircleFactory(
+								this,
+								campID,
+								collision.physicGroups.pairs[campID],
+								enemies,
+								collision.physicGroups.pairs[campID].weaponGroup
+							),
 							enemies,
 							(pair[0] as Building).spawnUnit
 						),
@@ -182,7 +199,8 @@ export class Gameplay extends Phaser.Scene {
 					physicsGroup: collision.physicGroups.player,
 					weaponGroup: collision.physicGroups.playerWeapon
 				},
-				enemies
+				enemies,
+				{ Big: collision.physicGroups.playerFriendsWeapons, Small: null, Normal: null }
 			)
 		).friends;
 

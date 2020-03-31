@@ -1,26 +1,78 @@
-import { SpriteWithAnimEvents } from "../base/BasePhaser";
 import { CirclePolygon } from "../polygons/CirclePolygon";
 import { Gameplay } from "../../scenes/Gameplay";
-import { Weapon } from "../weapon/Weapon";
+import { ChainWeapon } from "../weapon/ChainWeapon";
 import { CampID } from "../setup/CampSetup";
-import { CircleConfig } from "./CircleFactory";
 
-export class Circle extends SpriteWithAnimEvents {
-	weapon: Weapon;
+// export class Circles extends Phaser.Physics.Arcade.Group {
+// 	constructor(scene) {
+// 		super(scene.physics.world, scene);
+
+// 		this.maxSize = TowerSetup.maxShooters * TowerSetup.maxBullets;
+
+// 		this.createMultiple({
+// 			frameQuantity: TowerSetup.maxShooters * 2,
+// 			key: "bullet",
+// 			active: false,
+// 			visible: false,
+// 			classType: Bullet
+// 		});
+// 	}
+
+// 	placeCircle(x, y) {
+// 		let circle = this.getFirstDead(true);
+// 		circle.place(x, y);
+// 	}
+// }
+
+export class Circle extends Phaser.Physics.Arcade.Sprite {
+	weapon: ChainWeapon;
 	polygon: CirclePolygon;
 	unitType: string;
 	id: string;
 	scene: Gameplay;
 	campID: CampID;
+	radius: number;
 
-	constructor(config: CircleConfig) {
-		super(config);
-		this.campID = config.campID;
-		this.polygon = config.polygon;
+	constructor(
+		scene: Gameplay,
+		x: number,
+		y: number,
+		texture: string,
+		campID: CampID,
+		weapon: ChainWeapon,
+		physicsGroup: Phaser.Physics.Arcade.Group
+	) {
+		super(scene, x, y, texture);
+		this.radius = this.scene.textures.get(texture).get(0).halfHeight;
+
+		this.id =
+			"_" +
+			Math.random()
+				.toString(36)
+				.substr(2, 9);
+
+		this.on(
+			"animationcomplete",
+			function(anim, frame) {
+				this.emit("animationcomplete_" + anim.key, anim, frame);
+			},
+			this
+		);
+		this.polygon = new CirclePolygon(this.x, this.y, this.radius);
+
+		scene.add.existing(this);
+		physicsGroup.add(this);
+		this.campID = campID;
 		this.unitType = "circle";
-		this.setCircle(config.radius);
+		this.setCircle(this.radius);
 		this.setupAnimEvents();
-		this.weapon = config.weapon;
+		this.weapon = weapon;
+	}
+
+	place(campID, weapon) {
+		if (!this.campID) this.campID = campID;
+		if (!this.weapon) this.weapon = weapon;
+		if (!this.body.isCircle) this.setCircle(this.radius);
 	}
 
 	attack() {

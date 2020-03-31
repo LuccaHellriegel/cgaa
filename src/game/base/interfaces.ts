@@ -10,7 +10,7 @@ export interface damageable {
 
 export interface poolable {
 	poolDestroy();
-	poolActivate(x: number, y: number);
+	poolActivate?(x: number, y: number);
 	id: string;
 }
 

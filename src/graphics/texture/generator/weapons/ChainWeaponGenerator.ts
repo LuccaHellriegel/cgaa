@@ -12,15 +12,9 @@ export class ChainWeaponGenerator extends WeaponGenerator {
 
 	constructor(hexColor: number, scene: Gameplay, circleSize) {
 		super(hexColor, scene);
-		this.chainWeapon = new ChainWeapon(
-			scene,
-			this.biggerThanWeapon,
-			this.biggerThanWeapon,
-			this.tempWeaponGroup,
-			null,
-			0,
-			circleSize
-		);
+		this.chainWeapon = new ChainWeapon(scene, this.biggerThanWeapon, this.biggerThanWeapon, circleSize);
+		this.tempWeaponGroup.add(this.chainWeapon);
+		this.chainWeapon.place(this.biggerThanWeapon, this.biggerThanWeapon, 0, circleSize);
 		this.circleSize = circleSize;
 		this.generate();
 	}

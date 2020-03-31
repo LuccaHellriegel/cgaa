@@ -8,11 +8,14 @@ import { StandardCollision } from "./StandardCollision";
 import { Bullets } from "../tower/shooter/Bullet";
 import { Shooters } from "../tower/shooter/Shooter";
 import { Healers } from "../tower/healer/Healer";
+import { UnitSetup } from "../setup/UnitSetup";
+import { ChainWeapons } from "../weapon/ChainWeapon";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
 	playerFriends: Phaser.Physics.Arcade.Group;
+	playerFriendsWeapons: ChainWeapons;
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
@@ -40,6 +43,7 @@ export class Collision {
 		let player = scene.physics.add.group();
 		let playerWeapon = scene.physics.add.group();
 		let playerFriends = scene.physics.add.group();
+		let playerFriendsWeapons = new ChainWeapons(scene, UnitSetup.sizeDict["Big"], "Big", 9);
 
 		let bulletGroup = new Bullets(scene);
 		let shooters = new Shooters(scene, bulletGroup);
@@ -51,7 +55,11 @@ export class Collision {
 		let buildings = {};
 		CampSetup.campIDs.forEach(id => {
 			enemies[id] = scene.physics.add.group();
-			enemyWeapons[id] = scene.physics.add.group();
+
+			let obj = {};
+			for (let size of UnitSetup.circleSizeNames)
+				obj[size] = new ChainWeapons(scene, UnitSetup.sizeDict[size], size, 30);
+			enemyWeapons[id] = obj;
 			buildings[id] = scene.physics.add.staticGroup();
 			pairs[id] = { physicsGroup: enemies[id], weaponGroup: enemyWeapons[id] };
 		});
@@ -62,6 +70,7 @@ export class Collision {
 			player,
 			playerWeapon,
 			playerFriends,
+			playerFriendsWeapons,
 			bulletGroup,
 			healers,
 			shooters,
@@ -82,17 +91,18 @@ export class Collision {
 	private getSightAndWeaponCombinatorialArr() {
 		let result = [];
 
-		result.push([[this.physicGroups.playerWeapon], this.getEnemyGroups()]);
+		result.push([[this.physicGroups.playerWeapon, this.physicGroups.playerFriendsWeapons], this.getEnemyGroups()]);
 
-		result.push([
-			[...Object.values(this.physicGroups.enemyWeapons)],
-			[this.physicGroups.player, this.physicGroups.shooters, this.physicGroups.healers]
-		]);
+		let allWeaponGroups = Object.values(this.physicGroups.enemyWeapons).reduce((prev, cur) => {
+			return Object.values(cur).concat(prev);
+		}, []);
+
+		result.push([allWeaponGroups, [this.physicGroups.player, this.physicGroups.shooters, this.physicGroups.healers]]);
 
 		result.push(
 			...Object.keys(this.physicGroups.enemyWeapons).map(campID => {
 				return [
-					[this.physicGroups.enemyWeapons[campID]],
+					[Object.values(this.physicGroups.enemyWeapons[campID])],
 					Object.keys(this.physicGroups.enemyWeapons)
 						.filter(secondCampID => secondCampID !== campID)
 						.map(secondCampID => this.physicGroups.enemies[secondCampID])

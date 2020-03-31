@@ -1,6 +1,6 @@
 import { WeaponHandler } from "./WeaponHandler";
 import { Gameplay } from "../../scenes/Gameplay";
-import { Weapon } from "../weapon/Weapon";
+import { ChainWeapon } from "../weapon/ChainWeapon";
 import { DangerousCircle } from "../unit/DangerousCircle";
 import { Shooter } from "../tower/shooter/Shooter";
 import { Cooperation } from "../state/Cooperation";
@@ -18,22 +18,25 @@ export class SightOverlap {
 		});
 	}
 
-	private doDamage(weapon, enemy) {
-		WeaponHandler.doDamage(this.scene, weapon, enemy);
+	private doDamage(ChainWeapon, enemy) {
+		WeaponHandler.doDamage(this.scene, ChainWeapon, enemy);
 	}
 
-	private isInSight(weapon: Weapon, enemy) {
-		let isNotInCooperation = !this.cooperation.hasCooperation((weapon.owner as DangerousCircle).campID, enemy.campID);
+	private isInSight(ChainWeapon: ChainWeapon, enemy) {
+		let isNotInCooperation = !this.cooperation.hasCooperation(
+			(ChainWeapon.owner as DangerousCircle).campID,
+			enemy.campID
+		);
 
 		if (isNotInCooperation) {
 			if (enemy instanceof Shooter) {
-				enemy.fire(weapon.owner);
+				enemy.fire(ChainWeapon.owner);
 			}
 
-			if (WeaponHandler.shouldTryDamage(weapon, enemy)) {
-				return WeaponHandler.tryCollision(weapon, enemy);
+			if (WeaponHandler.shouldTryDamage(ChainWeapon, enemy)) {
+				return WeaponHandler.tryCollision(ChainWeapon, enemy);
 			} else {
-				(weapon.owner as DangerousCircle).stateHandler.spotted = enemy;
+				(ChainWeapon.owner as DangerousCircle).stateHandler.spotted = enemy;
 			}
 		}
 

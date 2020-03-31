@@ -52,10 +52,10 @@ export abstract class Tower extends Phaser.Physics.Arcade.Image implements damag
 
 	abstract poolDestroy();
 
-	abstract poolActivate(x: number, y: number);
-
 	place(x, y, _) {
-		this.poolActivate(x, y);
+		this.enableBody(true, x, y, true, true);
+		this.healthbar.bar.setActive(true).setVisible(true);
+		this.healthbar.move(x, y);
 		this.setImmovable(true);
 		this.setSize(this.polygon.width, this.polygon.height);
 	}

@@ -1,5 +1,5 @@
-import { Weapon } from "./Weapon";
 import { CompositePolygon } from "../polygons/CompositePolygon";
+import { Circle } from "../unit/Circle";
 
 const chainWeaponConfig = {
 	Small: { numberOfSmallCircles: 7, numberOfBiggerCircles: 1, arrowWidth: 30, arrowHeight: 15, amount: 5 },
@@ -7,48 +7,99 @@ const chainWeaponConfig = {
 	Big: { numberOfSmallCircles: 2, numberOfBiggerCircles: 3, arrowWidth: 84, arrowHeight: 42, amount: 20 }
 };
 
-export class ChainWeapon extends Weapon {
+export class ChainWeapons extends Phaser.Physics.Arcade.Group {
+	constructor(scene, private ownerSize, private ownerSizeName, amount) {
+		super(scene.physics.world, scene);
+
+		this.createMultiple({
+			frameQuantity: amount,
+			key: ownerSizeName + "chainWeapon",
+			active: false,
+			visible: false,
+			classType: ChainWeapon
+		});
+
+		this.getChildren().forEach(child => (child as Phaser.Physics.Arcade.Sprite).disableBody());
+	}
+
+	placeWeapon(x, y) {
+		let weapon = this.getFirstDead(true);
+		weapon.place(x, y, this.ownerSize, this.ownerSizeName);
+		return weapon;
+	}
+}
+
+export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 	numberOfSmallCircles: number;
 	numberOfBiggerCircles: number;
 	arrowWidth: number;
 	arrowHeight: number;
 	biggerCirclesRadius: number;
 	smallerCirclesRadius: number;
+	polygon: CompositePolygon;
+	alreadyAttacked: string[] = [];
+	attacking: boolean = false;
+	unitOffSetX: number;
+	unitOffSetY: number;
+	amount: number;
+	id: string;
+	polygonArr: CompositePolygon[];
+	offSetArr: number[][];
+	owner: Circle;
+	ownerSize: any;
 
-	constructor(scene, x, y, weaponGroup, owner, ownerSize, ownerSizeName) {
-		super(
-			scene,
-			x,
-			y,
-			ownerSizeName + "chainWeapon",
-			weaponGroup,
-			[[]],
-			[
-				[0, -ownerSize],
-				[0, -ownerSize],
-				[0, -ownerSize]
-			],
-			owner,
-			ownerSize
+	constructor(scene, x, y, texture) {
+		super(scene, x, y, texture);
+		this.id =
+			"_" +
+			Math.random()
+				.toString(36)
+				.substr(2, 9);
+
+		this.on(
+			"animationcomplete",
+			function(anim, frame) {
+				this.emit("animationcomplete_" + anim.key, anim, frame);
+			},
+			this
 		);
+		this.on(
+			"animationcomplete_attack-" + this.texture.key,
+			function() {
+				this.anims.play("idle-" + this.texture.key);
+				this.attacking = false;
+				this.alreadyAttacked = [];
+			},
+			this
+		);
+	}
 
-		let sizes = chainWeaponConfig[ownerSizeName];
+	place(x, y, ownerSize, ownerSizeName) {
+		if (!this.ownerSize) this.ownerSize = ownerSize;
+		if (!this.numberOfBiggerCircles) {
+			let sizes = chainWeaponConfig[ownerSizeName];
 
-		this.numberOfSmallCircles = sizes.numberOfSmallCircles;
-		this.numberOfBiggerCircles = sizes.numberOfBiggerCircles;
+			this.numberOfSmallCircles = sizes.numberOfSmallCircles;
+			this.numberOfBiggerCircles = sizes.numberOfBiggerCircles;
 
-		this.x = x;
-		this.y = y;
+			this.arrowWidth = sizes.arrowWidth;
+			this.arrowHeight = sizes.arrowHeight;
+			this.biggerCirclesRadius = this.arrowWidth / 3 / 2;
+			this.smallerCirclesRadius = 2 * (this.biggerCirclesRadius / 3);
 
-		this.arrowWidth = sizes.arrowWidth;
-		this.arrowHeight = sizes.arrowHeight;
-		this.biggerCirclesRadius = this.arrowWidth / 3 / 2;
-		this.smallerCirclesRadius = 2 * (this.biggerCirclesRadius / 3);
+			this.amount = sizes.amount;
+			this.createPolygons();
+			this.setOffSetArr();
+		}
 
-		this.createPolygons();
-		//TODO: better distinction between unit offset and physics sprite offset
-		this.setOffSetArr();
-		this.amount = sizes.amount;
+		this.unitOffSetX = this.offSetArr[0][0];
+		this.unitOffSetY = this.offSetArr[0][1];
+		this.enableBody(true, x, y, true, true);
+		this.setSize(444, 444);
+	}
+
+	setOwner(owner) {
+		this.owner = owner;
 	}
 
 	setOffSetArr() {
@@ -131,5 +182,42 @@ export class ChainWeapon extends Weapon {
 		}
 
 		return biggerCirclesConfig;
+	}
+
+	movePolygon() {
+		if (this.polygon.centerX !== this.x || this.polygon.centerY !== this.y) {
+			this.polygon.setPosition(this.x, this.y);
+		}
+		if (this.polygon.rotation !== this.rotation) {
+			this.polygon.rotate(this.rotation);
+		}
+	}
+
+	setPolygonForFrame() {
+		this.polygon = this.polygonArr[parseInt(this.frame.name) - 1];
+	}
+
+	syncPolygon() {
+		this.setPolygonForFrame();
+		this.movePolygon();
+	}
+
+	setOffSetForFrame() {
+		let curFrameIndex = parseInt(this.frame.name) - 1;
+		this.unitOffSetX = this.offSetArr[curFrameIndex][0];
+		this.unitOffSetY = this.offSetArr[curFrameIndex][1];
+	}
+
+	preUpdate(time, delta) {
+		super.preUpdate(time, delta);
+		this.setOffSetForFrame();
+	}
+
+	toggle() {
+		if (this.visible) {
+			this.setVisible(false);
+		} else {
+			this.setVisible(true);
+		}
 	}
 }

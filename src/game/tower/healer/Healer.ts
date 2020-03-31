@@ -29,6 +29,8 @@ export class Healers extends Towers {
 			visible: false,
 			classType: Healer
 		});
+
+		this.getChildren().forEach(child => (child as Phaser.Physics.Arcade.Sprite).disableBody());
 	}
 
 	placeTower(x, y) {
@@ -54,6 +56,9 @@ export class Healer extends Tower {
 		this.scene.children.sendToBack(this);
 		this.pools = pools;
 		super.place(x, y, null);
+		this.activate();
+		this.auraPolygon.setPosition(x, y);
+		this.redraw();
 	}
 
 	damage(amount: number) {
@@ -91,20 +96,10 @@ export class Healer extends Tower {
 	}
 
 	poolDestroy() {
-		this.scene.events.emit("inactive-" + this.id, this.id);
 		this.disableBody(true, true);
 		this.healthbar.bar.setActive(false).setVisible(false);
 		this.healthbar.value = this.healthbar.defaultValue;
 		this.deactivate();
 		this.graphics.clear();
-	}
-
-	poolActivate(x, y) {
-		this.enableBody(true, x, y, true, true);
-		this.healthbar.bar.setActive(true).setVisible(true);
-		this.healthbar.move(x, y);
-		this.activate();
-		this.auraPolygon.setPosition(x, y);
-		this.redraw();
 	}
 }

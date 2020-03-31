@@ -4,15 +4,14 @@ import { CampLike } from "./Camp";
 import { Area } from "../env/area/Area";
 import { EnvSetup } from "../setup/EnvSetup";
 import { Gameplay } from "../../scenes/Gameplay";
-import { BossPool } from "../pool/BossPool";
 import { CampPopulator } from "../populator/CampPopulator";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
-import { CircleFactory } from "../unit/CircleFactory";
 import { BarrierFactory } from "./BarrierFactory";
 import { GameMap } from "../env/GameMap";
 import { RealAreaSpawnableDict } from "../env/SpawnableDict";
 import { CampsState } from "../state/CampsState";
 import { BossSetup } from "../setup/BossSetup";
+import { BossPool } from "../pool/CirclePool";
 
 export class BossCamp implements CampLike {
 	id = CampSetup.bossCampID;
@@ -30,15 +29,6 @@ export class BossCamp implements CampLike {
 				};
 			});
 		factory.produce(relPositions);
-	}
-
-	createKing(factory: CircleFactory) {
-		let king = factory.createKing();
-		let realTopLeft = this.area.topLeft.toPoint();
-		king.setPosition(
-			(EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.x,
-			(EnvSetup.gridPartSize * this.area.dims.sizeOfXAxis) / 2 + realTopLeft.y
-		);
 	}
 
 	populate(scene: Gameplay, pool: BossPool, enemies: Enemies, campsState: CampsState) {

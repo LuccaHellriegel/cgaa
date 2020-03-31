@@ -1,22 +1,35 @@
 import { Circle } from "./Circle";
 import { damageable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
-import { Annotator } from "../base/Annotator";
 import { EnvSetup } from "../setup/EnvSetup";
 import { EventSetup } from "../setup/EventSetup";
+import { Gameplay } from "../../scenes/Gameplay";
+import { CampID } from "../setup/CampSetup";
+import { ChainWeapon } from "../weapon/ChainWeapon";
+import { EnemySize } from "./CircleFactory";
 
 export class InteractionCircle extends Circle implements damageable {
 	healthbar: HealthBar;
 	stateHandler = { spotted: null, obstacle: null };
 
-	constructor(config) {
-		super(config);
-		this.healthbar = config.healthbar;
-		Annotator.annotate(this, "immovable");
+	constructor(
+		scene: Gameplay,
+		x: number,
+		y: number,
+		texture: string,
+		campID: CampID,
+		weapon: ChainWeapon,
+		physicsGroup: Phaser.Physics.Arcade.Group,
+		size: EnemySize,
+		healthbar: HealthBar
+	) {
+		super(scene, x, y, texture, campID, weapon, physicsGroup);
+		this.healthbar = healthbar;
+		this.setImmovable(true);
 		this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
 
 		//Needed for gaining souls
-		this.type = "Small";
+		this.type = size;
 	}
 
 	damage(amount) {

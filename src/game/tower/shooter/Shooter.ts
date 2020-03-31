@@ -1,7 +1,6 @@
 import { Bullets } from "./Bullet";
 import { Tower, Towers } from "../Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { PoolHelper } from "../../pool/PoolHelper";
 import { TowerSetup } from "../../setup/TowerSetup";
 
 export class Shooters extends Towers {
@@ -17,6 +16,8 @@ export class Shooters extends Towers {
 			visible: false,
 			classType: Shooter
 		});
+
+		this.getChildren().forEach(child => (child as Phaser.Physics.Arcade.Sprite).disableBody());
 	}
 
 	placeTower(x, y) {
@@ -67,10 +68,8 @@ export class Shooter extends Tower {
 	}
 
 	poolDestroy() {
-		PoolHelper.genericDestroy(this);
-	}
-
-	poolActivate(x, y) {
-		PoolHelper.genericActivate(this, x, y);
+		this.disableBody(true, true);
+		this.healthbar.bar.setActive(false).setVisible(false);
+		this.healthbar.value = this.healthbar.defaultValue;
 	}
 }

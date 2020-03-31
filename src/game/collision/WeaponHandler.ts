@@ -1,15 +1,15 @@
-import { Weapon } from "../weapon/Weapon";
+import { ChainWeapon } from "../weapon/ChainWeapon";
 import { EventSetup } from "../setup/EventSetup";
 import { Gameplay } from "../../scenes/Gameplay";
 
 export class WeaponHandler {
 	private constructor() {}
 
-	static shouldTryDamage(weapon: Weapon, enemy) {
+	static shouldTryDamage(weapon: ChainWeapon, enemy) {
 		return weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id);
 	}
 
-	static tryCollision(weapon: Weapon, enemy) {
+	static tryCollision(weapon: ChainWeapon, enemy) {
 		weapon.syncPolygon();
 		enemy.syncPolygon();
 

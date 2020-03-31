@@ -1,12 +1,12 @@
-import { Image } from "../base/BasePhaser";
 import { Gameplay } from "../../scenes/Gameplay";
-import { Annotator } from "../base/Annotator";
 import { EventSetup } from "../setup/EventSetup";
 
-export class BossBarrier extends Image {
+export class BossBarrier extends Phaser.Physics.Arcade.Image {
 	constructor(scene: Gameplay, x, y, physicsGroup) {
-		super({ scene, x, y, texture: "blockade", physicsGroup });
-		Annotator.annotate(this, "immovable");
+		super(scene, x, y, "blockade");
+		scene.add.existing(this);
+		physicsGroup.add(this);
+		this.setImmovable(true);
 		scene.events.once(EventSetup.conqueredEvent, this.destroy.bind(this));
 	}
 }

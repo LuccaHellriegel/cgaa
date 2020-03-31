@@ -12,19 +12,7 @@ export class Player extends Circle implements healable {
 	stateHandler: { spotted: any; obstacle: any };
 
 	constructor(scene, physicsGroup, weapon, playerX, playerY) {
-		let polygon = new CirclePolygon(playerX, playerY, UnitSetup.normalCircleRadius);
-
-		super({
-			scene,
-			x: playerX,
-			y: playerY,
-			texture: playerTextureName,
-			physicsGroup,
-			polygon,
-			weapon,
-			radius: UnitSetup.normalCircleRadius,
-			campID: CampSetup.playerCampID
-		});
+		super(scene, playerX, playerY, playerTextureName, CampSetup.playerCampID, weapon, physicsGroup);
 		this.unitType = "player";
 
 		this.stateHandler = { spotted: null, obstacle: null };
@@ -45,15 +33,11 @@ export class Player extends Circle implements healable {
 	}
 
 	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup, playerX, playerY) {
-		let weapon = new ChainWeapon(
-			scene,
-			playerX,
-			playerY,
-			playerWeaponPhysicsGroup,
-			null,
-			UnitSetup.normalCircleRadius,
-			"Normal"
-		);
+		let weapon = new ChainWeapon(scene, playerX, playerY, "NormalchainWeapon");
+		playerWeaponPhysicsGroup.add(weapon);
+
+		scene.add.existing(weapon);
+		weapon.place(playerX, playerY, UnitSetup.sizeDict["Normal"], "Normal");
 		let circle = new Player(scene, playerPhysicsGroup, weapon, playerX, playerY);
 		weapon.owner = circle;
 
