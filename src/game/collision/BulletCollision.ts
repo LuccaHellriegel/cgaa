@@ -19,6 +19,6 @@ export class BulletCollision {
 		}
 		enemy.damage(damage);
 		if (enemy instanceof DangerousCircle) enemy.stateHandler.spotted = bullet.owner;
-		bullet.reset();
+		bullet.hitTarget();
 	}
 }

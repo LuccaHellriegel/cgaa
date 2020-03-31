@@ -1,43 +1,51 @@
-import { Shooter } from "./Shooter";
 import { UnitSetup } from "../../setup/UnitSetup";
+import { TowerSetup } from "../../setup/TowerSetup";
+
+export class Bullets extends Phaser.Physics.Arcade.Group {
+	constructor(scene) {
+		super(scene.physics.world, scene);
+
+		this.maxSize = TowerSetup.maxShooters * TowerSetup.maxBullets;
+
+		this.createMultiple({
+			frameQuantity: TowerSetup.maxShooters * 2,
+			key: "bullet",
+			active: false,
+			visible: false,
+			classType: Bullet
+		});
+	}
+
+	fireBullet(x, y, goalX, goalY) {
+		let bullet = this.getFirstDead(false);
+
+		if (bullet) {
+			bullet.shoot(x, y, goalX, goalY);
+		}
+	}
+}
 
 export class Bullet extends Phaser.Physics.Arcade.Sprite {
-	owner: Shooter;
 	goalX: number;
 	goalY: number;
-	amount: number;
-	id: string;
+	amount: number = TowerSetup.bulletDamage;
 
-	constructor(scene, bulletGroup, owner) {
-		super(scene, owner.x, owner.y, "bullet");
-		scene.add.existing(this);
-		bulletGroup.add(this);
-		this.id =
-			"_" +
-			Math.random()
-				.toString(36)
-				.substr(2, 9);
-		this.setCircle(UnitSetup.normalCircleRadius / 4);
-		this.owner = owner;
-		this.amount = 20;
+	constructor(scene, x, y) {
+		super(scene, x, y, "bullet");
 	}
 
-	reset() {
-		this.setVelocity(0, 0);
-		this.setActive(false);
-		this.setVisible(false);
-		this.x = this.owner.x;
-		this.y = this.owner.y;
-		this.goalX = undefined;
-		this.goalY = undefined;
-		this.owner.bulletPool.push(this);
-	}
-
-	shoot(goalX, goalY) {
+	shoot(x, y, goalX, goalY) {
+		this.body.reset(x, y);
 		this.setActive(true);
 		this.setVisible(true);
 		this.goalX = goalX;
 		this.goalY = goalY;
+	}
+
+	hitTarget() {
+		this.setActive(false);
+		this.setVisible(false);
+		this.setVelocity(0, 0);
 	}
 
 	preUpdate(time, delta) {
@@ -47,7 +55,7 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite {
 			if (dist > UnitSetup.normalCircleRadius) {
 				this.scene.physics.moveTo(this, this.goalX, this.goalY, 185);
 			} else {
-				this.reset();
+				this.hitTarget();
 			}
 		}
 	}

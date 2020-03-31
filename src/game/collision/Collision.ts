@@ -5,6 +5,7 @@ import { SightOverlap } from "./SightOverlap";
 import { BounceCollision } from "./BounceCollision";
 import { Cooperation } from "../state/Cooperation";
 import { StandardCollision } from "./StandardCollision";
+import { Bullets } from "../tower/shooter/Bullet";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
@@ -14,7 +15,7 @@ export interface PhysicGroups {
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
-	bulletGroup: Phaser.Physics.Arcade.Group;
+	bulletGroup: Bullets;
 	buildings: {};
 	pairs: {};
 }
@@ -38,7 +39,7 @@ export class Collision {
 		let playerFriends = scene.physics.add.group();
 
 		let tower = scene.physics.add.staticGroup();
-		let bulletGroup = scene.physics.add.group();
+		let bulletGroup = new Bullets(scene);
 
 		let pairs = {};
 		let enemies = {};

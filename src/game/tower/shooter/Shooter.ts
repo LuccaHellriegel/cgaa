@@ -1,32 +1,16 @@
-import { Bullet } from "./Bullet";
+import { Bullets } from "./Bullet";
 import { Tower } from "../Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { PoolHelper } from "../../pool/PoolHelper";
 
 export class Shooter extends Tower {
-	bullets: Bullet[] = [];
-	bulletPool: Bullet[] = [];
 	canFire = true;
 
-	constructor(
-		scene: Gameplay,
-		x,
-		y,
-		physicsGroup: Phaser.Physics.Arcade.StaticGroup,
-		private bulletGroup: Phaser.Physics.Arcade.Group
-	) {
+	constructor(scene: Gameplay, x, y, physicsGroup: Phaser.Physics.Arcade.StaticGroup, private bullets: Bullets) {
 		super(scene, x, y, "shooter", physicsGroup);
-		this.initBullets();
 		this.type = "Shooter";
 
 		//TODO: can be spawned ontop of units because I dont check enemies in TowerModus
-	}
-
-	private initBullets() {
-		for (let index = 0; index < 10; index++) {
-			let bullet = new Bullet(this.scene, this.bulletGroup, this);
-			this.bullets.push(bullet);
-		}
 	}
 
 	damage(amount: number) {
@@ -36,9 +20,8 @@ export class Shooter extends Tower {
 	}
 
 	fire(target) {
-		if (this.bulletPool.length && this.canFire) {
-			let bullet = this.bulletPool.pop();
-			bullet.shoot(target.x, target.y);
+		if (this.canFire) {
+			this.bullets.fireBullet(this.x, this.y, target.x, target.y);
 			this.canFire = false;
 			if (this.scene)
 				this.scene.time.addEvent({
@@ -56,11 +39,9 @@ export class Shooter extends Tower {
 
 	poolDestroy() {
 		PoolHelper.genericDestroy(this);
-		this.bullets.forEach(bullet => bullet.reset());
 	}
 
 	poolActivate(x, y) {
 		PoolHelper.genericActivate(this, x, y);
-		this.bullets.forEach(bullet => bullet.reset());
 	}
 }
