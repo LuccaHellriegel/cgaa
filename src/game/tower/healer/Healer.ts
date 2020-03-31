@@ -1,9 +1,8 @@
-import { Tower } from "../Tower";
+import { Tower, Towers } from "../Tower";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { Player } from "../../unit/Player";
-import { Pool } from "../../pool/Pool";
 import { TowerSetup } from "../../setup/TowerSetup";
 import { RectPolygon } from "../../polygons/RectPolygon";
+import { Shooters } from "../shooter/Shooter";
 
 export class HollowRectPoylgon extends RectPolygon {
 	draw(graphics, offset) {
@@ -17,16 +16,44 @@ export class HollowRectPoylgon extends RectPolygon {
 	}
 }
 
+export class Healers extends Towers {
+	constructor(scene, private shooters: Shooters) {
+		super(scene);
+
+		this.maxSize = TowerSetup.maxHealers;
+
+		this.createMultiple({
+			frameQuantity: TowerSetup.maxHealers / 2,
+			key: "healer",
+			active: false,
+			visible: false,
+			classType: Healer
+		});
+	}
+
+	placeTower(x, y) {
+		let healer = this.getFirstDead(true);
+		healer.place(x, y, [this.shooters, this]);
+	}
+}
+
 export class Healer extends Tower {
 	healIntervalID: number;
 	graphics: Phaser.GameObjects.Graphics;
 	auraPolygon: HollowRectPoylgon;
+	pools: Towers[];
 
-	constructor(scene: Gameplay, x, y, physicsGroup, private player: Player, private pools: Pool[]) {
-		super(scene, x, y, "healer", physicsGroup);
+	constructor(scene: Gameplay, x, y) {
+		super(scene, x, y, "healer");
 		this.graphics = scene.add.graphics({});
 		this.auraPolygon = new HollowRectPoylgon(x, y, TowerSetup.towerDistance, TowerSetup.towerDistance);
 		this.type = "Healer";
+	}
+
+	place(x, y, pools) {
+		this.scene.children.sendToBack(this);
+		this.pools = pools;
+		super.place(x, y, null);
 	}
 
 	damage(amount: number) {
@@ -47,8 +74,7 @@ export class Healer extends Tower {
 				}
 			})
 		);
-
-		if (this.inDistance(this.player)) this.player.heal(TowerSetup.singleHealAmount);
+		// if (this.inDistance(this.player)) this.player.heal(TowerSetup.singleHealAmount);
 	}
 
 	deactivate() {
@@ -67,7 +93,6 @@ export class Healer extends Tower {
 	poolDestroy() {
 		this.scene.events.emit("inactive-" + this.id, this.id);
 		this.disableBody(true, true);
-		this.setPosition(-1000, -1000);
 		this.healthbar.bar.setActive(false).setVisible(false);
 		this.healthbar.value = this.healthbar.defaultValue;
 		this.deactivate();

@@ -1,5 +1,6 @@
 import { UnitSetup } from "../../setup/UnitSetup";
 import { TowerSetup } from "../../setup/TowerSetup";
+import { Shooter } from "./Shooter";
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
 	constructor(scene) {
@@ -16,12 +17,9 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
 		});
 	}
 
-	fireBullet(x, y, goalX, goalY) {
-		let bullet = this.getFirstDead(false);
-
-		if (bullet) {
-			bullet.shoot(x, y, goalX, goalY);
-		}
+	fireBullet(x, y, goalX, goalY, shooter: Shooter) {
+		let bullet = this.getFirstDead(true);
+		bullet.shoot(x, y, goalX, goalY, shooter);
 	}
 }
 
@@ -29,23 +27,21 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite {
 	goalX: number;
 	goalY: number;
 	amount: number = TowerSetup.bulletDamage;
+	owner: Shooter;
 
 	constructor(scene, x, y) {
 		super(scene, x, y, "bullet");
 	}
 
-	shoot(x, y, goalX, goalY) {
-		this.body.reset(x, y);
-		this.setActive(true);
-		this.setVisible(true);
+	shoot(x, y, goalX, goalY, shooter) {
+		this.enableBody(true, x, y, true, true);
 		this.goalX = goalX;
 		this.goalY = goalY;
+		this.owner = shooter;
 	}
 
 	hitTarget() {
-		this.setActive(false);
-		this.setVisible(false);
-		this.setVelocity(0, 0);
+		this.disableBody(true, true);
 	}
 
 	preUpdate(time, delta) {
@@ -53,7 +49,7 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite {
 		if (this.goalX) {
 			let dist = Phaser.Math.Distance.Between(this.x, this.y, this.goalX, this.goalY);
 			if (dist > UnitSetup.normalCircleRadius) {
-				this.scene.physics.moveTo(this, this.goalX, this.goalY, 185);
+				this.scene.physics.moveTo(this, this.goalX, this.goalY, TowerSetup.bulletSpeed);
 			} else {
 				this.hitTarget();
 			}

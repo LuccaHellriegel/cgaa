@@ -1,29 +1,43 @@
-import { Image } from "../base/BasePhaser";
 import { damageable, healable } from "../base/interfaces";
 import { poolable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { RectPolygon } from "../polygons/RectPolygon";
 import { Gameplay } from "../../scenes/Gameplay";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
-import { Annotator } from "../base/Annotator";
 import { EnvSetup } from "../setup/EnvSetup";
 import { CampID } from "../setup/CampSetup";
 
+export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
+	constructor(scene) {
+		super(scene.physics.world, scene);
+	}
+
+	getActiveUnits() {
+		return this.getChildren().filter(child => child.active);
+	}
+
+	getActiveElements() {
+		return this.getActiveUnits();
+	}
+
+	abstract placeTower(x, y);
+}
+
 //TODO: make Tower that Spawns Units that walk to boss (? walking to dynamic positions might be to complicated)
-export abstract class Tower extends Image implements damageable, poolable, healable {
+export abstract class Tower extends Phaser.Physics.Arcade.Image implements damageable, poolable, healable {
 	healthbar: HealthBar;
 	id: string;
 	polygon: RectPolygon;
 	campID: CampID;
 
-	constructor(scene: Gameplay, x, y, texture, physicsGroup: Phaser.Physics.Arcade.StaticGroup) {
-		super({ scene, x, y, texture, physicsGroup });
+	constructor(scene: Gameplay, x, y, texture) {
+		super(scene, x, y, texture);
 		this.initUnitStats();
 		this.healthbar = HealthBarFactory.createTowerHealthBar(scene, x, y);
 	}
 
 	private initUnitStats() {
-		Annotator.annotate(this, "id", "immovable");
+		//Annotator.annotate(this, "id", "immovable");
 
 		this.polygon = new RectPolygon(
 			this.x + this.scene.cameras.main.scrollX,
@@ -32,7 +46,6 @@ export abstract class Tower extends Image implements damageable, poolable, heala
 			EnvSetup.gridPartSize
 		);
 		this.campID = "blue";
-		this.setSize(this.polygon.width, this.polygon.height);
 	}
 
 	abstract damage(amount: number);
@@ -40,6 +53,12 @@ export abstract class Tower extends Image implements damageable, poolable, heala
 	abstract poolDestroy();
 
 	abstract poolActivate(x: number, y: number);
+
+	place(x, y, _) {
+		this.poolActivate(x, y);
+		this.setImmovable(true);
+		this.setSize(this.polygon.width, this.polygon.height);
+	}
 
 	destroy() {
 		this.healthbar.destroy();

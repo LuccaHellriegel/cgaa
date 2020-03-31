@@ -14,6 +14,7 @@ export class TowerSetup {
 
 	static maxBullets = 10;
 	static bulletDamage = 20;
+	static bulletSpeed = 185;
 
 	static maxHealers = 2;
 }

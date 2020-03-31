@@ -6,16 +6,19 @@ import { BounceCollision } from "./BounceCollision";
 import { Cooperation } from "../state/Cooperation";
 import { StandardCollision } from "./StandardCollision";
 import { Bullets } from "../tower/shooter/Bullet";
+import { Shooters } from "../tower/shooter/Shooter";
+import { Healers } from "../tower/healer/Healer";
 
 export interface PhysicGroups {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: Phaser.Physics.Arcade.Group;
 	playerFriends: Phaser.Physics.Arcade.Group;
-	tower: Phaser.Physics.Arcade.StaticGroup;
 	enemies: {};
 	enemyWeapons: {};
 	areas: Phaser.Physics.Arcade.StaticGroup;
 	bulletGroup: Bullets;
+	shooters: Shooters;
+	healers: Healers;
 	buildings: {};
 	pairs: {};
 }
@@ -38,8 +41,9 @@ export class Collision {
 		let playerWeapon = scene.physics.add.group();
 		let playerFriends = scene.physics.add.group();
 
-		let tower = scene.physics.add.staticGroup();
 		let bulletGroup = new Bullets(scene);
+		let shooters = new Shooters(scene, bulletGroup);
+		let healers = new Healers(scene, shooters);
 
 		let pairs = {};
 		let enemies = {};
@@ -58,8 +62,9 @@ export class Collision {
 			player,
 			playerWeapon,
 			playerFriends,
-			tower,
 			bulletGroup,
+			healers,
+			shooters,
 
 			pairs,
 			enemies,
@@ -81,7 +86,7 @@ export class Collision {
 
 		result.push([
 			[...Object.values(this.physicGroups.enemyWeapons)],
-			[this.physicGroups.player, this.physicGroups.tower]
+			[this.physicGroups.player, this.physicGroups.shooters, this.physicGroups.healers]
 		]);
 
 		result.push(
@@ -101,7 +106,10 @@ export class Collision {
 		let result = [];
 		result.push([[...Object.values(this.physicGroups.enemies), this.physicGroups.player], [this.physicGroups.areas]]);
 
-		result.push([[this.physicGroups.player], [...this.getEnemyGroups(), this.physicGroups.tower]]);
+		result.push([
+			[this.physicGroups.player],
+			[...this.getEnemyGroups(), this.physicGroups.shooters, this.physicGroups.healers]
+		]);
 
 		return result;
 	}
@@ -110,7 +118,12 @@ export class Collision {
 		let result = [];
 		result.push([
 			[...Object.values(this.physicGroups.enemies)],
-			[this.physicGroups.player, this.physicGroups.tower, ...Object.values(this.physicGroups.buildings)]
+			[
+				this.physicGroups.player,
+				this.physicGroups.shooters,
+				this.physicGroups.healers,
+				...Object.values(this.physicGroups.buildings)
+			]
 		]);
 		result.push(
 			...Object.keys(this.physicGroups.enemies).map(campID => {

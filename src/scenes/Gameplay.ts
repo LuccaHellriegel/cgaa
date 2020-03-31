@@ -21,10 +21,8 @@ import { WASD } from "../game/input/WASD";
 import { MouseMovement } from "../game/input/MouseMovement";
 import { SelectorRect } from "../game/modi/SelectorRect";
 import { Spawner } from "../game/pool/Spawner";
-import { HealerPool } from "../game/pool/HealerPool";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
-import { ShooterPool } from "../game/pool/ShooterPool";
 import { Cooperation } from "../game/state/Cooperation";
 import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
@@ -190,20 +188,23 @@ export class Gameplay extends Phaser.Scene {
 
 		//Setup MouseMovement Modes
 		//TODO: shooter pool should respect healer placments
-		this.cgaa.shooterPool = new ShooterPool(
-			this,
-			TowerSetup.towerGroupSize,
-			collision.physicGroups.tower,
-			collision.physicGroups.bulletGroup
-		);
-		this.cgaa.healerPool = new HealerPool(this, TowerSetup.towerGroupSize, collision.physicGroups.tower, player, [
-			this.cgaa.shooterPool
-		]);
+		this.cgaa.shooterPool = collision.physicGroups.shooters;
+		this.cgaa.healerPool = collision.physicGroups.healers;
+
+		// this.cgaa.shooterPool = new ShooterPool(
+		// 	this,
+		// 	TowerSetup.maxShooters,
+		// 	collision.physicGroups.shooters,
+		// 	collision.physicGroups.bulletGroup
+		// );
+		// this.cgaa.healerPool = new HealerPool(this, TowerSetup.maxHealers, collision.physicGroups.healers, player, [
+		// 	this.cgaa.shooterPool
+		// ]);
 		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
 
 		//Depending on start-money can spawn or not
-		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.healerPool, towerSpawnObj);
-		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.shooterPool, towerSpawnObj);
+		let healerSpawner = Spawner.createHealerSpawner(this, collision.physicGroups.healers, towerSpawnObj);
+		let shooterSpawner = Spawner.createShooterSpawner(this, collision.physicGroups.shooters, towerSpawnObj);
 		shooterSpawner.canSpawn = true;
 
 		this.cgaa.interactionCollection = new UnitCollection(
