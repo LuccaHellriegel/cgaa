@@ -1,15 +1,22 @@
 import { Shooter } from "./Shooter";
-import { Sprite } from "../../base/BasePhaser";
 import { UnitSetup } from "../../setup/UnitSetup";
 
-export class Bullet extends Sprite {
+export class Bullet extends Phaser.Physics.Arcade.Sprite {
 	owner: Shooter;
 	goalX: number;
 	goalY: number;
 	amount: number;
+	id: string;
 
 	constructor(scene, bulletGroup, owner) {
-		super({ scene, x: owner.x, y: owner.y, texture: "bullet", physicsGroup: bulletGroup });
+		super(scene, owner.x, owner.y, "bullet");
+		scene.add.existing(this);
+		bulletGroup.add(this);
+		this.id =
+			"_" +
+			Math.random()
+				.toString(36)
+				.substr(2, 9);
 		this.setCircle(UnitSetup.normalCircleRadius / 4);
 		this.owner = owner;
 		this.amount = 20;
