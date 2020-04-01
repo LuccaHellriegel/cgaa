@@ -11,7 +11,7 @@ export function createGameConfig() {
 		physics: {
 			default: "arcade",
 			arcade: {
-				debug: false
+				debug: true
 			}
 		},
 		scale: {
