@@ -44,8 +44,8 @@ import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
 import { BarrierFactory } from "../game/camp/BarrierFactory";
 import { PlayerFriends } from "../game/unit/PlayerFriends";
 import { BuildManager } from "../game/ui/select/BuildManager";
+import { weaponTextures } from "../game/weapon/chain/texture";
 import { GuardComponent } from "../game/ai/GuardComponent";
-import { ChainWeapons } from "../game/weapon/ChainWeapon";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: any = {};
@@ -56,6 +56,8 @@ export class Gameplay extends Phaser.Scene {
 
 	preload() {
 		generateTextures(this);
+		weaponTextures(this);
+
 		createAnims(this.anims);
 	}
 
@@ -78,16 +80,16 @@ export class Gameplay extends Phaser.Scene {
 		let order = new CampOrder();
 		let camps = new Camps(order, areas, gameMap);
 		gameMap.updateWith(camps);
-		camps.ordinary.forEach(camp => {
+		camps.ordinary.forEach((camp) => {
 			camp.createBuildings(new BuildingFactory(this, collision.physicGroups.buildings[camp.id]), [
-				...UnitSetup.circleSizeNames
+				...UnitSetup.circleSizeNames,
 			]);
 		});
 		let campsState = new CampsState(
 			this,
-			camps.ordinary.map(camp => camp.buildings)
+			camps.ordinary.map((camp) => camp.buildings)
 		);
-		camps.ordinary.forEach(camp => {
+		camps.ordinary.forEach((camp) => {
 			let factory = new CircleFactory(
 				this,
 				camp.id,
@@ -138,7 +140,7 @@ export class Gameplay extends Phaser.Scene {
 		let point = orientation.middleOfBossArea.toPoint();
 		king.setPosition(point.x, point.y);
 
-		let bossExitPositions = bossCamp.area.exit.relativePositions.map(relPos => relPos.toPoint());
+		let bossExitPositions = bossCamp.area.exit.relativePositions.map((relPos) => relPos.toPoint());
 		new BarrierFactory(this, collision.physicGroups.areas).produce(bossExitPositions);
 
 		//Setup Pathfinding
@@ -149,11 +151,11 @@ export class Gameplay extends Phaser.Scene {
 
 		//Setup Waves
 		this.cgaa.waveOrder = new WaveOrder(campsState);
-		CampSetup.ordinaryCampIDs.forEach(campID => {
+		CampSetup.ordinaryCampIDs.forEach((campID) => {
 			camps
 				.get(campID)
 				.createBuildingSpawnableDictsPerBuilding()
-				.forEach(pair => {
+				.forEach((pair) => {
 					new WavePopulator(
 						this,
 						campID,
@@ -197,7 +199,7 @@ export class Gameplay extends Phaser.Scene {
 				CampSetup.playerCampID,
 				{
 					physicsGroup: collision.physicGroups.player,
-					weaponGroup: collision.physicGroups.playerWeapon
+					weaponGroup: collision.physicGroups.playerWeapon,
 				},
 				enemies,
 				{ Big: collision.physicGroups.playerFriendsWeapons, Small: null, Normal: null }
@@ -208,16 +210,6 @@ export class Gameplay extends Phaser.Scene {
 		//TODO: shooter pool should respect healer placments
 		this.cgaa.shooterPool = collision.physicGroups.shooters;
 		this.cgaa.healerPool = collision.physicGroups.healers;
-
-		// this.cgaa.shooterPool = new ShooterPool(
-		// 	this,
-		// 	TowerSetup.maxShooters,
-		// 	collision.physicGroups.shooters,
-		// 	collision.physicGroups.bulletGroup
-		// );
-		// this.cgaa.healerPool = new HealerPool(this, TowerSetup.maxHealers, collision.physicGroups.healers, player, [
-		// 	this.cgaa.shooterPool
-		// ]);
 		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
 
 		//Depending on start-money can spawn or not
@@ -226,7 +218,7 @@ export class Gameplay extends Phaser.Scene {
 		shooterSpawner.canSpawn = true;
 
 		this.cgaa.interactionCollection = new UnitCollection(
-			camps.ordinary.map(camp => {
+			camps.ordinary.map((camp) => {
 				return camp.interactionUnit;
 			})
 		);

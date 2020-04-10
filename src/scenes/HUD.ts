@@ -1,4 +1,3 @@
-import { createGameConfig } from "../app";
 import { PlayerHealthBar } from "../game/ui/healthbar/PlayerHealthBar";
 import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
@@ -16,7 +15,6 @@ import { ClosestSelector, ActiveElementCollection } from "../game/ui/select/Sele
 import { SelectBars } from "../game/ui/select/SelectBars";
 import { SelectorRect } from "../game/modi/SelectorRect";
 import { ImageRect, ClickableImageRect } from "../game/ui/DoubleRect";
-import { UnitCompositeRect } from "../game/ui/CompositeRect";
 import { Inputs } from "../game/ui/select/State";
 import { UIState } from "../game/ui/select/UIState";
 import { BuildManager } from "../game/ui/select/BuildManager";
@@ -48,7 +46,7 @@ export class HUD extends Phaser.Scene {
 		//TODO: make a Game Over screen
 		//TODO: make a Celebration scene
 		this.ourGame.events.on("win", this.win.bind(this), this);
-		this.ourGame.events.on("life-gained", amount => {
+		this.ourGame.events.on("life-gained", (amount) => {
 			this.playerHealthBar.increase(amount);
 		});
 
@@ -71,7 +69,7 @@ export class HUD extends Phaser.Scene {
 	win() {
 		this.won = true;
 		setTimeout(
-			function() {
+			function () {
 				Popup.winPopup(this, screenWidth / 2, screenLength / 2 - 150);
 				this.ourGame.input.once("pointerdown", this.restartCGAA.bind(this));
 			}.bind(this),
@@ -127,7 +125,7 @@ export class HUD extends Phaser.Scene {
 		let activeColls: ActiveElementCollection[] = [
 			this.ourGame.cgaa.shooterPool,
 			this.ourGame.cgaa.healerPool,
-			this.ourGame.cgaa.interactionCollection
+			this.ourGame.cgaa.interactionCollection,
 		];
 		let selectionManager = new SelectionManager(new ClosestSelector(activeColls), this.ourGame.cgaa.selectorRect);
 		let healerSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5 + 5, "healer");
@@ -140,7 +138,7 @@ export class HUD extends Phaser.Scene {
 			selectionManager
 		);
 		let selectBars = new SelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
-		let questFunc = function() {
+		let questFunc = function () {
 			if (selectionManager.selectedUnit) {
 				(this.ourGame.cgaa.cooperation as Cooperation).interactWithCircle(selectionManager.selectedUnit);
 				selectBars.hide();
@@ -148,7 +146,7 @@ export class HUD extends Phaser.Scene {
 		}.bind(this);
 		(interactionSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", questFunc);
 
-		let sellFunc = function() {
+		let sellFunc = function () {
 			if (selectionManager.selectedUnit) {
 				sellManager.sell(selectionManager.selectedUnit);
 				selectBars.hide();
@@ -176,7 +174,7 @@ export class HUD extends Phaser.Scene {
 			[
 				...(buildBar.contentElements as ClickableImageRect[]),
 				...(healerSelectBar.contentElements as ClickableImageRect[]),
-				...(shooterSelectBar.contentElements as ClickableImageRect[])
+				...(shooterSelectBar.contentElements as ClickableImageRect[]),
 			],
 			this.ourGame.cgaa.selectorRect,
 			buildBar
@@ -193,7 +191,7 @@ export class HUD extends Phaser.Scene {
 
 		(buildBar.contentElements[0] as ClickableImageRect).setInteractive(
 			"pointerdown",
-			function() {
+			function () {
 				(buildBar.contentElements[0] as ImageRect).toggle();
 
 				if ((buildBar.contentElements[0] as ImageRect).selected) {
@@ -212,7 +210,7 @@ export class HUD extends Phaser.Scene {
 		);
 		(buildBar.contentElements[1] as ClickableImageRect).setInteractive(
 			"pointerdown",
-			function() {
+			function () {
 				(buildBar.contentElements[1] as ImageRect).toggle();
 
 				if ((buildBar.contentElements[1] as ImageRect).selected) {
@@ -245,7 +243,7 @@ export class HUD extends Phaser.Scene {
 
 		this.ourGame.events.once(
 			EventSetup.conqueredEvent,
-			function() {
+			function () {
 				Popup.kingPopup(this, screenWidth / 2, screenLength / 2 - 150);
 			}.bind(this)
 		);
