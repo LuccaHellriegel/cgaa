@@ -13,7 +13,7 @@ import { addWeaponOverlap } from "./overlap-weapon";
 import { Sights } from "./Sights";
 import { addBasicCollision } from "./collision-basic";
 
-export type PhysicsGroups = {
+export type physicsGroups = {
 	player: Phaser.Physics.Arcade.Group;
 	playerWeapon: ChainWeapons;
 	playerFriends: Phaser.Physics.Arcade.Group;
@@ -53,7 +53,7 @@ export function addCombinatorialCollider(scene: Gameplay, combinatorialArr, coll
 	}
 }
 
-function createPhysicsGroups(scene: Gameplay): PhysicsGroups {
+function createphysicsGroups(scene: Gameplay): physicsGroups {
 	let player = scene.physics.add.group();
 
 	let playerWeaponGroup = scene.physics.add.group();
@@ -106,21 +106,21 @@ function createPhysicsGroups(scene: Gameplay): PhysicsGroups {
 }
 
 export class Collision {
-	PhysicsGroups: PhysicsGroups;
+	physicsGroups: physicsGroups;
 
 	constructor(scene: Gameplay, cooperation: Cooperation) {
-		this.createPhysicsGroups(scene);
+		this.createphysicsGroups(scene);
 
-		addBasicCollision(scene, this.PhysicsGroups);
+		addBasicCollision(scene, this.physicsGroups);
 
 		new SightOverlap(scene, this.getSightArr(), cooperation);
 		new BounceCollision(scene, this.getBounceCombinatorialArr(), cooperation);
-		new BulletCollision(scene, this.PhysicsGroups.bulletGroup, this.getEnemyGroups());
+		new BulletCollision(scene, this.physicsGroups.bulletGroup, this.getEnemyGroups());
 
 		addWeaponOverlap(scene, this.getWeaponArr());
 	}
 
-	private createPhysicsGroups(scene: Gameplay) {
+	private createphysicsGroups(scene: Gameplay) {
 		let player = scene.physics.add.group();
 
 		let playerWeaponGroup = scene.physics.add.group();
@@ -153,7 +153,7 @@ export class Collision {
 
 		let areas = scene.physics.add.staticGroup();
 
-		this.PhysicsGroups = {
+		this.physicsGroups = {
 			player,
 			playerWeapon,
 			playerFriends,
@@ -173,18 +173,18 @@ export class Collision {
 	}
 
 	private getEnemyGroups() {
-		return [...Object.values(this.PhysicsGroups.buildings), ...Object.values(this.PhysicsGroups.enemies)];
+		return [...Object.values(this.physicsGroups.buildings), ...Object.values(this.physicsGroups.enemies)];
 	}
 
 	private getSightArr() {
 		let result = [];
 		result.push(
-			...Object.keys(this.PhysicsGroups.sights).map((campID) => {
+			...Object.keys(this.physicsGroups.sights).map((campID) => {
 				return [
-					[this.PhysicsGroups.sights[campID]],
-					Object.keys(this.PhysicsGroups.sights)
+					[this.physicsGroups.sights[campID]],
+					Object.keys(this.physicsGroups.sights)
 						.filter((secondCampID) => secondCampID !== campID)
-						.map((secondCampID) => this.PhysicsGroups.sights[secondCampID]),
+						.map((secondCampID) => this.physicsGroups.sights[secondCampID]),
 				];
 			})
 		);
@@ -194,29 +194,29 @@ export class Collision {
 	private getWeaponArr() {
 		let result = [];
 
-		let playerWeaponVsEnemyUnits = [[this.PhysicsGroups.playerWeapon.weaponGroup], this.getEnemyGroups()];
+		let playerWeaponVsEnemyUnits = [[this.physicsGroups.playerWeapon.weaponGroup], this.getEnemyGroups()];
 		result.push(playerWeaponVsEnemyUnits);
 
 		let allWeaponGroups = [];
-		for (let enemyWeapon of Object.values(this.PhysicsGroups.enemyWeapons)) {
+		for (let enemyWeapon of Object.values(this.physicsGroups.enemyWeapons)) {
 			allWeaponGroups = allWeaponGroups.concat(
 				Object.values(enemyWeapon).map((enemyWeapon) => (enemyWeapon as ChainWeapons).weaponGroup)
 			);
 		}
 		let enemyWeaponsVsPlayerUnits = [
 			allWeaponGroups,
-			[this.PhysicsGroups.player, this.PhysicsGroups.shooters, this.PhysicsGroups.healers],
+			[this.physicsGroups.player, this.physicsGroups.shooters, this.physicsGroups.healers],
 		];
 		result.push(enemyWeaponsVsPlayerUnits);
 
 		let enemyWeaponsVsOtherUnits = [];
-		let campIDs = Object.keys(this.PhysicsGroups.enemyWeapons);
+		let campIDs = Object.keys(this.physicsGroups.enemyWeapons);
 		// this is so nested because we have three types per camp
 		for (let campID of campIDs) {
-			let curEnemyWeapon = this.PhysicsGroups.enemyWeapons[campID];
+			let curEnemyWeapon = this.physicsGroups.enemyWeapons[campID];
 			let curGroups = Object.values(curEnemyWeapon).map((enemyWeapon) => (enemyWeapon as ChainWeapons).weaponGroup);
 			let otherIDs = campIDs.filter((id) => id !== campID);
-			let otherEnemyWeapons = otherIDs.map((id) => this.PhysicsGroups.enemyWeapons[id]);
+			let otherEnemyWeapons = otherIDs.map((id) => this.physicsGroups.enemyWeapons[id]);
 			let otherGroups = [];
 			for (let enemyWeapon of otherEnemyWeapons) {
 				otherGroups = otherGroups.concat(
@@ -234,21 +234,21 @@ export class Collision {
 	private getBounceCombinatorialArr() {
 		let result = [];
 		result.push([
-			[...Object.values(this.PhysicsGroups.enemies)],
+			[...Object.values(this.physicsGroups.enemies)],
 			[
-				this.PhysicsGroups.player,
-				this.PhysicsGroups.shooters,
-				this.PhysicsGroups.healers,
-				...Object.values(this.PhysicsGroups.buildings),
+				this.physicsGroups.player,
+				this.physicsGroups.shooters,
+				this.physicsGroups.healers,
+				...Object.values(this.physicsGroups.buildings),
 			],
 		]);
 		result.push(
-			...Object.keys(this.PhysicsGroups.enemies).map((campID) => {
+			...Object.keys(this.physicsGroups.enemies).map((campID) => {
 				return [
-					[this.PhysicsGroups.enemies[campID]],
-					Object.keys(this.PhysicsGroups.enemies)
+					[this.physicsGroups.enemies[campID]],
+					Object.keys(this.physicsGroups.enemies)
 						.filter((secondCampID) => secondCampID !== campID)
-						.map((secondCampID) => this.PhysicsGroups.enemies[secondCampID]),
+						.map((secondCampID) => this.physicsGroups.enemies[secondCampID]),
 				];
 			})
 		);

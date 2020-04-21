@@ -8,21 +8,21 @@ export function addBounceCollision(scene: Gameplay, combinatorialArr, cooperatio
 function getBounceCombinatorialArr() {
 	let result = [];
 	result.push([
-		[...Object.values(this.PhysicsGroups.enemies)],
+		[...Object.values(this.physicsGroups.enemies)],
 		[
-			this.PhysicsGroups.player,
-			this.PhysicsGroups.shooters,
-			this.PhysicsGroups.healers,
-			...Object.values(this.PhysicsGroups.buildings),
+			this.physicsGroups.player,
+			this.physicsGroups.shooters,
+			this.physicsGroups.healers,
+			...Object.values(this.physicsGroups.buildings),
 		],
 	]);
 	result.push(
-		...Object.keys(this.PhysicsGroups.enemies).map((campID) => {
+		...Object.keys(this.physicsGroups.enemies).map((campID) => {
 			return [
-				[this.PhysicsGroups.enemies[campID]],
-				Object.keys(this.PhysicsGroups.enemies)
+				[this.physicsGroups.enemies[campID]],
+				Object.keys(this.physicsGroups.enemies)
 					.filter((secondCampID) => secondCampID !== campID)
-					.map((secondCampID) => this.PhysicsGroups.enemies[secondCampID]),
+					.map((secondCampID) => this.physicsGroups.enemies[secondCampID]),
 			];
 		})
 	);

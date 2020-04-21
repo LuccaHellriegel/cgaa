@@ -1,11 +1,11 @@
-import { PhysicsGroups, addCombinatorialCollider } from "./Collision";
+import { physicsGroups, addCombinatorialCollider } from "./Collision";
 import { Gameplay } from "../../scenes/Gameplay";
 
-export function addBasicCollision(scene: Gameplay, physicsGroups: PhysicsGroups) {
+export function addBasicCollision(scene: Gameplay, physicsGroups: physicsGroups) {
 	addCombinatorialCollider(scene, createBasicCollisionCombArr(physicsGroups), null, null);
 }
 
-function createBasicCollisionCombArr(physicsGroups: PhysicsGroups) {
+function createBasicCollisionCombArr(physicsGroups: physicsGroups) {
 	// all units should collide with each other, buildings and walls
 	let result = [];
 
@@ -21,6 +21,6 @@ function createBasicCollisionCombArr(physicsGroups: PhysicsGroups) {
 	return result;
 }
 
-function getEnemyGroups(physicsGroups: PhysicsGroups) {
+function getEnemyGroups(physicsGroups: physicsGroups) {
 	return [...Object.values(physicsGroups.buildings), ...Object.values(physicsGroups.enemies)];
 }

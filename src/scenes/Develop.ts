@@ -59,8 +59,8 @@ export class Develop extends Phaser.Scene {
 		this.cameras.main.centerOn(0, 50);
 		this.player = Player.withChainWeapon(
 			this,
-			collision.PhysicsGroups.player,
-			collision.PhysicsGroups.playerWeapon,
+			collision.physicsGroups.player,
+			collision.physicsGroups.playerWeapon,
 			200,
 			400
 		);
@@ -71,34 +71,26 @@ export class Develop extends Phaser.Scene {
 
 		this.input.on("pointerdown", this.player.weapon.attack.bind(this.player.weapon));
 
-		let weapon = (collision.PhysicsGroups.enemyWeapons[CampSetup.bossCampID]["Big"] as ChainWeapons).placeWeapon(
-			100,
-			100 - UnitSetup.sizeDict["Big"] - weaponHeights["Big"].frame2 / 2
-		);
-		let circle = new DangerousCircle(
-			this,
-			100,
-			100,
-			"orangeBigCircle",
-			"orange",
-			weapon,
-			collision.PhysicsGroups.enemies[CampSetup.bossCampID],
-			"Big",
-			HealthBarFactory.createDangerousCircleHealthBar(this, 100, 100, "Big"),
-			10
-		);
-		circle.stateHandler.setComponents([new GuardComponent(circle, circle.stateHandler)]);
-		weapon.setOwner(circle);
-
-		circle.setRotation(Phaser.Math.DegToRad(50));
-
-		//circle.setVelocityX(500);
-		//circle.setImmovable(true);
-		// this.physics.add.collider(this.player, circle, null, (player, circle) => {
-		// 	// collider sets velocity object directly to 0, need to do this for weapon too
-		// 	player.setVelocity(0, 0);
-		// 	circle.setVelocity(0, 0);
-		// });
+		for (let index = 0; index < 10; index++) {
+			let weapon = (collision.physicsGroups.enemyWeapons[CampSetup.bossCampID]["Big"] as ChainWeapons).placeWeapon(
+				100,
+				100 - UnitSetup.sizeDict["Big"] - weaponHeights["Big"].frame2 / 2
+			);
+			let circle = new DangerousCircle(
+				this,
+				100 + index * 100,
+				100,
+				"orangeBigCircle",
+				"orange",
+				weapon,
+				collision.physicsGroups.enemies[CampSetup.bossCampID],
+				"Big",
+				HealthBarFactory.createDangerousCircleHealthBar(this, 100, 100, "Big"),
+				10
+			);
+			circle.stateHandler.setComponents([new GuardComponent(circle, circle.stateHandler)]);
+			weapon.setOwner(circle);
+		}
 	}
 
 	update() {

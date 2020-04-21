@@ -4,6 +4,7 @@ import { Area } from "./Area";
 import { Exit } from "./Exit";
 import { WallFactory } from "../wall/WallFactory";
 import { RelPos } from "../../base/RelPos";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Areas {
 	arr: (Area | EmptyArea)[][];
@@ -11,7 +12,9 @@ export class Areas {
 	dims: MapDimensions;
 	exits: Exit[] = [];
 
-	constructor(factory: WallFactory) {
+	constructor(scene : Gameplay, areas: Phaser.Physics.Arcade.StaticGroup;) {
+		let factory = new WallFactory(scene, areas);
+
 		let dims: AreaDimensions = { sizeOfXAxis: EnvSetup.areaSize, sizeOfYAxis: EnvSetup.areaSize };
 
 		let layout = [

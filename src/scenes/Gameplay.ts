@@ -3,7 +3,6 @@ import { createAnims } from "../graphics/animation/animation";
 import { Paths } from "../game/path/Paths";
 import { Orientation } from "../game/path/Orientation";
 import { Areas } from "../game/env/area/Areas";
-import { WallFactory } from "../game/env/wall/WallFactory";
 import { Collision } from "../game/physic/Collision";
 import { CampOrder } from "../game/camp/CampOrder";
 import { Camps } from "../game/camp/Camps";
@@ -59,100 +58,130 @@ export class Gameplay extends Phaser.Scene {
 		weaponTextures(this);
 
 		createAnims(this.anims);
+
+		this.gameState();
+		this.gamePhysics();
+		this.gameEnv();
+		this.gameCamps();
+		this.gamePlayerState();
+		this.gameOrientation();
+		this.gameBoss();
+		this.gamePathfinding();
+		this.gameWaves();
+		this.gamePlayer();
 	}
 
-	create() {
+	gameState() {
 		//Setup minimal Game State for collision handling
-		let rivalries = new Rivalries();
-		let router = new CampRouting(this.events, rivalries);
-		let cooperation = new Cooperation(this, router, rivalries);
+		this.cgaa.rivalries = new Rivalries();
+		this.cgaa.router = new CampRouting(this.events, this.cgaa.rivalries);
+		this.cgaa.cooperation = new Cooperation(this, this.cgaa.router, this.cgaa.rivalries);
+	}
 
+	gamePhysics() {
 		//Setup Physics and Sight
-		let collision = new Collision(this, cooperation);
+		this.cgaa.collision = new Collision(this, this.cgaa.cooperation);
+	}
 
+	gameEnv() {
 		//Setup Environment
-		let wallFactory = new WallFactory(this, collision.PhysicsGroups.areas);
-		let areas = new Areas(wallFactory);
-		let gameMap = new GameMap(areas);
+		this.cgaa.areas = new Areas(this, this.cgaa.collision.physicsGroups.areas);
+		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
+	}
 
-		//Setup Camps
-		let enemies = new Enemies();
-		let order = new CampOrder();
-		let camps = new Camps(order, areas, gameMap);
-		gameMap.updateWith(camps);
-		camps.ordinary.forEach((camp) => {
-			camp.createBuildings(new BuildingFactory(this, collision.PhysicsGroups.buildings[camp.id]), [
+	gameCamps() {
+		this.cgaa.enemies = new Enemies();
+		this.cgaa.order = new CampOrder();
+		this.cgaa.camps = new Camps(this.cgaa.order, this.cgaa.areas, this.cgaa.gameMap);
+		this.cgaa.gameMap.updateWith(this.cgaa.camps);
+		this.cgaa.camps.ordinary.forEach((camp) => {
+			camp.createBuildings(new BuildingFactory(this, this.cgaa.collision.physicsGroups.buildings[camp.id]), [
 				...UnitSetup.circleSizeNames,
 			]);
 		});
-		let campsState = new CampsState(
+		this.cgaa.campsState = new CampsState(
 			this,
-			camps.ordinary.map((camp) => camp.buildings)
+			this.cgaa.camps.ordinary.map((camp) => camp.buildings)
 		);
-		camps.ordinary.forEach((camp) => {
+		this.cgaa.camps.ordinary.forEach((camp) => {
 			let factory = new CircleFactory(
 				this,
 				camp.id,
-				collision.PhysicsGroups.pairs[camp.id],
-				enemies,
-				collision.PhysicsGroups.pairs[camp.id].weaponGroup
+				this.cgaa.collision.physicsGroups.pairs[camp.id],
+				this.cgaa.enemies,
+				this.cgaa.collision.physicsGroups.pairs[camp.id].weaponGroup
 			);
 			//TODO: populate camp with more than big units
 			camp.populate(
 				this,
-				new DangerousCirclePool(this, UnitSetup.campSize, factory, enemies, "Big"),
-				enemies,
-				campsState
+				new DangerousCirclePool(this, UnitSetup.campSize, factory, this.cgaa.enemies, "Big"),
+				this.cgaa.enemies,
+				this.cgaa.campsState
 			);
 			camp.createInteractionCircle(factory);
 		});
+	}
 
-		//Setup GameState
-		let essentialDict = camps.ordinary.reduce((prev, cur) => {
+	gamePlayerState() {
+		let essentialDict = this.cgaa.camps.ordinary.reduce((prev, cur) => {
 			prev[cur.id] = (cur.buildings as any[]).concat(cur.interactionUnit);
 			return prev;
 		}, {});
 
-		let quests = new Quests(this, rivalries, essentialDict);
-		cooperation.setQuests(quests);
+		let quests = new Quests(this, this.cgaa.rivalries, essentialDict);
+		this.cgaa.cooperation.setQuests(quests);
+	}
 
+	gameOrientation() {
 		//Setup Orientation
-		let orientation = new Orientation(
-			gameMap.getMiddle(),
-			camps.player.area.getMiddle(),
-			camps.boss.area.getMiddle(),
-			camps
+		this.cgaa.orientation = new Orientation(
+			this.cgaa.gameMap.getMiddle(),
+			this.cgaa.camps.player.area.getMiddle(),
+			this.cgaa.camps.boss.area.getMiddle(),
+			this.cgaa.camps
 		);
+	}
 
-		//Setup Boss
+	gameBoss() {
 		let bossFactory = new CircleFactory(
 			this,
 			CampSetup.bossCampID,
-			collision.PhysicsGroups.pairs[CampSetup.bossCampID],
-			enemies,
-			collision.PhysicsGroups.pairs[CampSetup.bossCampID].weaponGroup
+			this.cgaa.collision.physicsGroups.pairs[CampSetup.bossCampID],
+			this.cgaa.enemies,
+			this.cgaa.collision.physicsGroups.pairs[CampSetup.bossCampID].weaponGroup
 		);
-		let bossCamp = new BossCamp(camps.boss.area, gameMap);
-		bossCamp.populate(this, new BossPool(this, BossSetup.bossGroupSize, bossFactory, enemies), enemies, campsState);
+		let bossCamp = new BossCamp(this.cgaa.camps.boss.area, this.cgaa.gameMap);
+		bossCamp.populate(
+			this,
+			new BossPool(this, BossSetup.bossGroupSize, bossFactory, this.cgaa.enemies),
+			this.cgaa.enemies,
+			this.cgaa.campsState
+		);
 		let king = bossFactory.createKing();
 		king.stateHandler.setComponents([new GuardComponent(king, king.stateHandler)]);
 
-		let point = orientation.middleOfBossArea.toPoint();
+		let point = this.cgaa.orientation.middleOfBossArea.toPoint();
 		king.setPosition(point.x, point.y);
 
 		let bossExitPositions = bossCamp.area.exit.relativePositions.map((relPos) => relPos.toPoint());
-		new BarrierFactory(this, collision.PhysicsGroups.areas).produce(bossExitPositions);
+		new BarrierFactory(this, this.cgaa.collision.physicsGroups.areas).produce(bossExitPositions);
+	}
 
-		//Setup Pathfinding
-		let exits = new CampExits(areas.exits, order);
-		let configs = PathConfig.createConfigs(orientation, exits, camps.arr);
-		let paths = new Paths(orientation, PathFactory.produce(new PathCalculator(gameMap.map), configs));
-		let assigner = new PathAssigner(paths, router);
+	gamePathfinding() {
+		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
+		let configs = PathConfig.createConfigs(this.cgaa.orientation, this.cgaa.exits, this.cgaa.camps.arr);
+		let paths = new Paths(
+			this.cgaa.orientation,
+			PathFactory.produce(new PathCalculator(this.cgaa.gameMap.map), configs)
+		);
+		this.cgaa.assigner = new PathAssigner(paths, this.cgaa.router);
+	}
 
+	gameWaves() {
 		//Setup Waves
-		this.cgaa.waveOrder = new WaveOrder(campsState);
+		this.cgaa.waveOrder = new WaveOrder(this.cgaa.campsState);
 		CampSetup.ordinaryCampIDs.forEach((campID) => {
-			camps
+			this.cgaa.camps
 				.get(campID)
 				.createBuildingSpawnableDictsPerBuilding()
 				.forEach((pair) => {
@@ -165,27 +194,29 @@ export class Gameplay extends Phaser.Scene {
 							new CircleFactory(
 								this,
 								campID,
-								collision.PhysicsGroups.pairs[campID],
-								enemies,
-								collision.PhysicsGroups.pairs[campID].weaponGroup
+								this.cgaa.collision.physicsGroups.pairs[campID],
+								this.cgaa.enemies,
+								this.cgaa.collision.physicsGroups.pairs[campID].weaponGroup
 							),
-							enemies,
+							this.cgaa.enemies,
 							(pair[0] as Building).spawnUnit
 						),
-						new EnemySpawnObj(pair[1], enemies),
-						assigner,
-						campsState,
+						new EnemySpawnObj(pair[1], this.cgaa.enemies),
+						this.cgaa.assigner,
+						this.cgaa.campsState,
 						(pair[0] as Building).id
 					);
 				});
 		});
+	}
 
+	gamePlayer() {
 		//Setup Player
-		let playerExit = exits.getExitFor(CampSetup.playerCampID).toPoint();
+		let playerExit = this.cgaa.exits.getExitFor(CampSetup.playerCampID).toPoint();
 		let player = Player.withChainWeapon(
 			this,
-			collision.PhysicsGroups.player,
-			collision.PhysicsGroups.playerWeapon,
+			this.cgaa.collision.physicsGroups.player,
+			this.cgaa.collision.physicsGroups.playerWeapon,
 			playerExit.x,
 			playerExit.y
 		);
@@ -193,38 +224,37 @@ export class Gameplay extends Phaser.Scene {
 		this.cameras.main.startFollow(player);
 		this.cgaa.movement = new Movement(new WASD(this), player);
 		this.cgaa.friends = new PlayerFriends(
-			orientation.middleOfPlayerArea.toPoint(),
+			this.cgaa.orientation.middleOfPlayerArea.toPoint(),
 			new CircleFactory(
 				this,
 				CampSetup.playerCampID,
 				{
-					physicsGroup: collision.PhysicsGroups.player,
-					weaponGroup: collision.PhysicsGroups.playerWeapon,
+					physicsGroup: this.cgaa.collision.physicsGroups.player,
+					weaponGroup: this.cgaa.collision.physicsGroups.playerWeapon,
 				},
-				enemies,
-				{ Big: collision.PhysicsGroups.playerFriendsWeapons, Small: null, Normal: null }
+				this.cgaa.enemies,
+				{ Big: this.cgaa.collision.physicsGroups.playerFriendsWeapons, Small: null, Normal: null }
 			)
 		).friends;
 
 		//Setup MouseMovement Modes
 		//TODO: shooter pool should respect healer placments
-		this.cgaa.shooterPool = collision.PhysicsGroups.shooters;
-		this.cgaa.healerPool = collision.PhysicsGroups.healers;
-		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
+		this.cgaa.shooterPool = this.cgaa.collision.physicsGroups.shooters;
+		this.cgaa.healerPool = this.cgaa.collision.physicsGroups.healers;
+		let towerSpawnObj = new TowerSpawnObj(this.cgaa.gameMap.getSpawnableDict(), this.cgaa.enemies);
 
 		//Depending on start-money can spawn or not
-		let healerSpawner = Spawner.createHealerSpawner(this, collision.PhysicsGroups.healers, towerSpawnObj);
-		let shooterSpawner = Spawner.createShooterSpawner(this, collision.PhysicsGroups.shooters, towerSpawnObj);
+		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.collision.physicsGroups.healers, towerSpawnObj);
+		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.collision.physicsGroups.shooters, towerSpawnObj);
 		shooterSpawner.canSpawn = true;
 
 		this.cgaa.interactionCollection = new UnitCollection(
-			camps.ordinary.map((camp) => {
+			this.cgaa.camps.ordinary.map((camp) => {
 				return camp.interactionUnit;
 			})
 		);
 
 		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
-		this.cgaa.cooperation = cooperation;
 		let healerMode = new TowerModus(healerSpawner, this.cgaa.selectorRect, TowerSetup.maxHealers);
 		let shooterMode = new TowerModus(shooterSpawner, this.cgaa.selectorRect, TowerSetup.maxShooters);
 		this.cgaa.build = new BuildManager(this, healerMode, shooterMode);
