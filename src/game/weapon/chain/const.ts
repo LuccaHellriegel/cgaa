@@ -16,3 +16,9 @@ export const unitCircleChainsConfig: { [key in EnemySize]: WeaponChain } = {
 export const chainWeaponColor = 0xff0000;
 
 export const cirlceSizeNames: EnemySize[] = ["Small", "Normal", "Big"];
+
+export const unitAmountConfig = {
+	Small: { amount: 5 },
+	Normal: { amount: 10 },
+	Big: { amount: 20 },
+};

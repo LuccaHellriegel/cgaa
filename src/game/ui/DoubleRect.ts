@@ -1,7 +1,7 @@
 import { HUD } from "../../scenes/HUD";
 import { RectPolygon } from "../polygons/RectPolygon";
 import { SelectableGUIElement } from "./select/SelectBar";
-export class DoubleRect implements SelectableGUIElement {
+class DoubleRect implements SelectableGUIElement {
 	polygon: RectPolygon;
 	graphics: Phaser.GameObjects.Graphics;
 	selected = false;
@@ -46,7 +46,7 @@ export class DoubleRect implements SelectableGUIElement {
 		}
 	}
 }
-export class TextRect extends DoubleRect {
+class TextRect extends DoubleRect {
 	textObj: Phaser.GameObjects.Text;
 	constructor(
 		sceneToUse: HUD,
@@ -85,7 +85,7 @@ export class ClickableTextRect extends TextRect {
 		super(sceneToUse, x, y, width, height, hexColor, text, {
 			font: "20px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 		this.graphics.once("pointerover", this.pointerOver.bind(this));
 	}

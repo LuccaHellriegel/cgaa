@@ -1,50 +1,109 @@
 import { Point } from "../../base/types";
-import { ArrowConfig, WeaponChain, WeaponGeom } from "./types";
+import { ArrowConfig, WeaponChain, WeaponGeoms, WeaponTopLefts, AllWeaponGeoms } from "./types";
+import { cirlceSizeNames, unitArrowHeadConfig, unitCircleChainsConfig } from "./const";
+import { EnemySize } from "../../unit/CircleFactory";
+import { weaponDists, weaponRadius, weaponTopLefts, weaponHeights } from "./data";
 
-export function distanceArrowCenterToChain(bigRadius: number) {
-	return 3 * bigRadius;
+export function weaponGeomsPerSize() {
+	let result = {};
+	for (let unitSize of cirlceSizeNames) {
+		let arrowConfig = unitArrowHeadConfig[unitSize];
+		let weaponChainConfig = unitCircleChainsConfig[unitSize];
+
+		let topLefts = weaponTopLefts[unitSize];
+		result[unitSize] = topDownWeaponGeom(topLefts, arrowConfig, weaponChainConfig, unitSize);
+	}
+
+	return result as AllWeaponGeoms;
 }
 
-export function topDownChainHeight(points: Point[]) {
-	// assumes points are alligned on x-axis
-	let topPointY = points[0].y;
-	let bottomPointY = points[points.length - 1].y;
-	return Math.abs(topPointY - bottomPointY);
+function topDownWeaponGeom(
+	topLefts: WeaponTopLefts,
+	arrowConfig: ArrowConfig,
+	weaponChainConfig: WeaponChain,
+	unitSize: EnemySize
+): WeaponGeoms {
+	// need three frames, to allow empty space (all frames should start at the bottom)
+	return {
+		frame0: topDownWeaponGeomFrame0(topLefts.frame0, arrowConfig, unitSize),
+		frame1: topDownWeaponGeomFrame1(topLefts.frame1, arrowConfig, weaponChainConfig, unitSize),
+		frame2: topDownWeaponGeomFrame2(topLefts.frame2, arrowConfig, weaponChainConfig, unitSize),
+	};
 }
 
-export function topDownWeaponGeom(
+function topDownWeaponGeomFrame0(topLeft: Point, arrowConfig: ArrowConfig, unitSize: EnemySize) {
+	let { width, height } = arrowConfig;
+	let { x, y } = topLeft;
+	let { frame0, frame2 } = weaponHeights[unitSize];
+	y += frame2 - frame0;
+	let arrow = arrowHeadPoints({ x, y }, width, height);
+
+	return { arrow };
+}
+
+function topDownWeaponGeomFrame1(
 	topLeft: Point,
 	arrowConfig: ArrowConfig,
-	weaponChainConfig: WeaponChain
-): WeaponGeom {
+	weaponChainConfig: WeaponChain,
+	unitSize: EnemySize
+) {
+	// calculate arrow
+	let { width, height } = arrowConfig;
+	let { x, y } = topLeft;
+	let { frame1, frame2 } = weaponHeights[unitSize];
+	y += frame2 - frame1;
+	let arrow = arrowHeadPoints({ x, y }, width, height);
+
+	// basic chain-circle data
+	let { bigCircles } = weaponChainConfig;
+	let { bigRadius } = weaponRadius[unitSize];
+	let { distArrowAndChain, distBetweenBigCircles } = weaponDists[unitSize];
+
+	// weapon geometry is aligned on x-axis, so any x = x
+	let arrowCenterX = x + width / 2;
+	let arrowCenterY = y + height / 2;
+
+	// calculate bigChainTopCenter
+	let bigChainTopCenter = { x: arrowCenterX, y: arrowCenterY + distArrowAndChain };
+
+	// calculate bigChain
+	let bigChain = { radius: bigRadius, points: topDownChain(bigChainTopCenter, distBetweenBigCircles, bigCircles) };
+
+	return { arrow, bigChain };
+}
+
+function topDownWeaponGeomFrame2(
+	topLeft: Point,
+	arrowConfig: ArrowConfig,
+	weaponChainConfig: WeaponChain,
+	unitSize: EnemySize
+) {
 	// calculate arrow
 	let { width, height } = arrowConfig;
 	let arrow = arrowHeadPoints(topLeft, width, height);
 
 	// basic chain-circle data
 	let { smallCircles, bigCircles } = weaponChainConfig;
-	let bigRadius = width / 3 / 2;
-	let smallRadius = 2 * (bigRadius / 3);
+	let { bigRadius, smallRadius } = weaponRadius[unitSize];
+	let { distArrowAndChain, distBetweenBigCircles, distBetweenBigAndSmallChain, distBetweenSmallCircles } = weaponDists[
+		unitSize
+	];
 
 	// weapon geometry is aligned on x-axis, so any x = x
 	let arrowCenterX = topLeft.x + width / 2;
 	let arrowCenterY = topLeft.y + height / 2;
 
 	// calculate bigChainTopCenter
-	let distArrowAndChain = distanceArrowCenterToChain(bigRadius);
 	let bigChainTopCenter = { x: arrowCenterX, y: arrowCenterY + distArrowAndChain };
 
 	// calculate bigChain
-	let distBetweenBigCircles = smallRadius * 1.5 + bigRadius * 2;
 	let bigChain = { radius: bigRadius, points: topDownChain(bigChainTopCenter, distBetweenBigCircles, bigCircles) };
 
 	// calculate smallChainTopCenter
-	let distBetweenBigAndSmallChain = 2 * smallRadius + bigRadius;
 	let lowestJoint = bigChain.points[bigChain.points.length - 1];
 	let smallChainTopCenter = { x: arrowCenterX, y: lowestJoint.y + distBetweenBigAndSmallChain };
 
 	// calculate smallChain
-	let distBetweenSmallCircles = smallRadius * 3.5;
 	let smallChain = {
 		radius: smallRadius,
 		points: topDownChain(smallChainTopCenter, distBetweenSmallCircles, smallCircles),

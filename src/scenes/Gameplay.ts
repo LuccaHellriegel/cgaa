@@ -4,7 +4,7 @@ import { Paths } from "../game/path/Paths";
 import { Orientation } from "../game/path/Orientation";
 import { Areas } from "../game/env/area/Areas";
 import { WallFactory } from "../game/env/wall/WallFactory";
-import { Collision } from "../game/collision/Collision";
+import { Collision } from "../game/physic/Collision";
 import { CampOrder } from "../game/camp/CampOrder";
 import { Camps } from "../game/camp/Camps";
 import { GameMap } from "../game/env/GameMap";
@@ -71,7 +71,7 @@ export class Gameplay extends Phaser.Scene {
 		let collision = new Collision(this, cooperation);
 
 		//Setup Environment
-		let wallFactory = new WallFactory(this, collision.physicGroups.areas);
+		let wallFactory = new WallFactory(this, collision.PhysicsGroups.areas);
 		let areas = new Areas(wallFactory);
 		let gameMap = new GameMap(areas);
 
@@ -81,7 +81,7 @@ export class Gameplay extends Phaser.Scene {
 		let camps = new Camps(order, areas, gameMap);
 		gameMap.updateWith(camps);
 		camps.ordinary.forEach((camp) => {
-			camp.createBuildings(new BuildingFactory(this, collision.physicGroups.buildings[camp.id]), [
+			camp.createBuildings(new BuildingFactory(this, collision.PhysicsGroups.buildings[camp.id]), [
 				...UnitSetup.circleSizeNames,
 			]);
 		});
@@ -93,9 +93,9 @@ export class Gameplay extends Phaser.Scene {
 			let factory = new CircleFactory(
 				this,
 				camp.id,
-				collision.physicGroups.pairs[camp.id],
+				collision.PhysicsGroups.pairs[camp.id],
 				enemies,
-				collision.physicGroups.pairs[camp.id].weaponGroup
+				collision.PhysicsGroups.pairs[camp.id].weaponGroup
 			);
 			//TODO: populate camp with more than big units
 			camp.populate(
@@ -128,9 +128,9 @@ export class Gameplay extends Phaser.Scene {
 		let bossFactory = new CircleFactory(
 			this,
 			CampSetup.bossCampID,
-			collision.physicGroups.pairs[CampSetup.bossCampID],
+			collision.PhysicsGroups.pairs[CampSetup.bossCampID],
 			enemies,
-			collision.physicGroups.pairs[CampSetup.bossCampID].weaponGroup
+			collision.PhysicsGroups.pairs[CampSetup.bossCampID].weaponGroup
 		);
 		let bossCamp = new BossCamp(camps.boss.area, gameMap);
 		bossCamp.populate(this, new BossPool(this, BossSetup.bossGroupSize, bossFactory, enemies), enemies, campsState);
@@ -141,7 +141,7 @@ export class Gameplay extends Phaser.Scene {
 		king.setPosition(point.x, point.y);
 
 		let bossExitPositions = bossCamp.area.exit.relativePositions.map((relPos) => relPos.toPoint());
-		new BarrierFactory(this, collision.physicGroups.areas).produce(bossExitPositions);
+		new BarrierFactory(this, collision.PhysicsGroups.areas).produce(bossExitPositions);
 
 		//Setup Pathfinding
 		let exits = new CampExits(areas.exits, order);
@@ -165,9 +165,9 @@ export class Gameplay extends Phaser.Scene {
 							new CircleFactory(
 								this,
 								campID,
-								collision.physicGroups.pairs[campID],
+								collision.PhysicsGroups.pairs[campID],
 								enemies,
-								collision.physicGroups.pairs[campID].weaponGroup
+								collision.PhysicsGroups.pairs[campID].weaponGroup
 							),
 							enemies,
 							(pair[0] as Building).spawnUnit
@@ -184,8 +184,8 @@ export class Gameplay extends Phaser.Scene {
 		let playerExit = exits.getExitFor(CampSetup.playerCampID).toPoint();
 		let player = Player.withChainWeapon(
 			this,
-			collision.physicGroups.player,
-			collision.physicGroups.playerWeapon,
+			collision.PhysicsGroups.player,
+			collision.PhysicsGroups.playerWeapon,
 			playerExit.x,
 			playerExit.y
 		);
@@ -198,23 +198,23 @@ export class Gameplay extends Phaser.Scene {
 				this,
 				CampSetup.playerCampID,
 				{
-					physicsGroup: collision.physicGroups.player,
-					weaponGroup: collision.physicGroups.playerWeapon,
+					physicsGroup: collision.PhysicsGroups.player,
+					weaponGroup: collision.PhysicsGroups.playerWeapon,
 				},
 				enemies,
-				{ Big: collision.physicGroups.playerFriendsWeapons, Small: null, Normal: null }
+				{ Big: collision.PhysicsGroups.playerFriendsWeapons, Small: null, Normal: null }
 			)
 		).friends;
 
 		//Setup MouseMovement Modes
 		//TODO: shooter pool should respect healer placments
-		this.cgaa.shooterPool = collision.physicGroups.shooters;
-		this.cgaa.healerPool = collision.physicGroups.healers;
+		this.cgaa.shooterPool = collision.PhysicsGroups.shooters;
+		this.cgaa.healerPool = collision.PhysicsGroups.healers;
 		let towerSpawnObj = new TowerSpawnObj(gameMap.getSpawnableDict(), enemies);
 
 		//Depending on start-money can spawn or not
-		let healerSpawner = Spawner.createHealerSpawner(this, collision.physicGroups.healers, towerSpawnObj);
-		let shooterSpawner = Spawner.createShooterSpawner(this, collision.physicGroups.shooters, towerSpawnObj);
+		let healerSpawner = Spawner.createHealerSpawner(this, collision.PhysicsGroups.healers, towerSpawnObj);
+		let shooterSpawner = Spawner.createShooterSpawner(this, collision.PhysicsGroups.shooters, towerSpawnObj);
 		shooterSpawner.canSpawn = true;
 
 		this.cgaa.interactionCollection = new UnitCollection(

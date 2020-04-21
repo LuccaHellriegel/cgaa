@@ -1,4 +1,4 @@
-export interface HealthBarConfig {
+interface HealthBarConfig {
 	scene;
 	healthWidth;
 	healthLength;
@@ -89,5 +89,15 @@ export class HealthBar {
 
 	destroy() {
 		this.bar.destroy();
+	}
+
+	enable(x, y) {
+		this.bar.setActive(true).setVisible(true);
+		this.move(x, y);
+	}
+
+	disable() {
+		this.bar.setActive(false).setVisible(false);
+		this.value = this.defaultValue;
 	}
 }

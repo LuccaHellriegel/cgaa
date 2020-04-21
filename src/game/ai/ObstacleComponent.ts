@@ -1,5 +1,6 @@
 import { DangerousCircle } from "../unit/DangerousCircle";
 import { AIComponent, CircleControl } from "./CircleControl";
+import { weaponHeights } from "../weapon/chain/data";
 
 export class ObstacleComponent implements AIComponent {
 	recursing = false;
@@ -11,9 +12,9 @@ export class ObstacleComponent implements AIComponent {
 			this.childComponent.tick();
 		} else {
 			this.circleControl.turnTo(this.circleControl.obstacle);
-			let [inReach, dist] = this.circleControl.moveTo(
+			let [inReach] = this.circleControl.moveTo(
 				this.circleControl.obstacle,
-				this.circle.weapon.polygonArr[this.circle.weapon.polygonArr.length - 1].height + 15
+				weaponHeights[this.circle.type].frame2 + 15
 			);
 			if (!inReach || !this.circleControl.obstacle.scene) {
 				this.circleControl.obstacle = null;

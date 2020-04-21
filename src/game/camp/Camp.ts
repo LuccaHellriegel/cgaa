@@ -25,7 +25,7 @@ export interface CampLike {
 	area: Area;
 }
 
-export interface BuildingSpawnPair {
+interface BuildingSpawnPair {
 	building: Building;
 	spawnPos: RelPos[];
 }
@@ -41,7 +41,7 @@ export class Camp implements CampLike {
 	}
 
 	createBuildings(factory: BuildingFactory, spawnUnits: string[]) {
-		this.buildingSetup.pairs.forEach(pair => {
+		this.buildingSetup.pairs.forEach((pair) => {
 			let building = factory.produce(pair.building, this.id, spawnUnits.pop());
 			this.buildings.push(building);
 			this.buildingSpawnPairs.push({ building, spawnPos: pair.spawnPos });
@@ -66,9 +66,9 @@ export class Camp implements CampLike {
 
 	createBuildingSpawnableDictsPerBuilding(): any[][] {
 		let result = [];
-		this.buildingSpawnPairs.forEach(pair => {
+		this.buildingSpawnPairs.forEach((pair) => {
 			let arr = [];
-			pair.spawnPos.forEach(pos => {
+			pair.spawnPos.forEach((pos) => {
 				let point = pos.toPoint();
 				arr.push([point, EnvSetup.walkableSymbol]);
 			});

@@ -27,10 +27,10 @@ export class Healers extends Towers {
 			key: "healer",
 			active: false,
 			visible: false,
-			classType: Healer
+			classType: Healer,
 		});
 
-		this.getChildren().forEach(child => (child as Phaser.Physics.Arcade.Sprite).disableBody());
+		this.getChildren().forEach((child) => (child as Phaser.Physics.Arcade.Sprite).disableBody());
 	}
 
 	placeTower(x, y) {
@@ -72,8 +72,8 @@ export class Healer extends Tower {
 	}
 
 	healUnits() {
-		this.pools.forEach(pool =>
-			pool.getActiveUnits().forEach(unit => {
+		this.pools.forEach((pool) =>
+			pool.getActiveUnits().forEach((unit) => {
 				if (this.inDistance(unit)) {
 					unit.heal(TowerSetup.singleHealAmount);
 				}

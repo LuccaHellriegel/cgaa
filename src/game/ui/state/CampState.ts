@@ -54,70 +54,69 @@ export class CampState {
 		this.textObj = sceneToUse.add.text(x - 18, y - 25, "", {
 			font: "50px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 	}
 
 	reset() {
 		let killlistArgs = [
 			EventSetup.questAccecptedEvent,
-			campID => {
+			(campID) => {
 				if (campID === this.campID) {
 					this.onKillist = true;
 					this.redraw();
 				}
-			}
+			},
 		];
 		let rerouteArgs = [
 			EventSetup.partialReroutingEvent + this.campID,
-			targetCampID => {
-				console.log(targetCampID, CampSetup.colorDict[targetCampID]);
+			(targetCampID) => {
 				this.ambushTargetHex = CampSetup.colorDict[targetCampID];
 				this.isRerouted = true;
 				this.redraw();
-			}
+			},
 		];
 		let startWaveArgs = [
 			EventSetup.startWaveEvent,
-			campID => {
+			(campID) => {
 				if (campID === this.campID) {
 					this.redraw();
 					this.drawAmbush();
 				}
-			}
+			},
 		];
 		let endWaveArgs = [
 			EventSetup.endWaveEvent,
-			campID => {
+			(campID) => {
 				if (campID === this.campID) this.redraw();
-			}
+			},
 		];
 		let destroyedArgs = [
 			EventSetup.campDestroyEvent,
-			campID => {
+			(campID) => {
 				if (campID === this.campID) {
 					this.redraw();
 					this.drawDestroyed();
 					let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs];
-					args.forEach(arg => {
+					args.forEach((arg) => {
 						let [event, callback] = arg;
 						this.sceneToListen.events.removeListener(event as string, callback as Function);
 					});
 				}
-			}
+			},
 		];
 		let cooperationArgs = [
 			EventSetup.cooperationEvent,
-			campID => {
+			(campID) => {
 				if (campID === this.campID) {
 					this.hasCooperation = true;
 					this.redraw();
 				}
-			}
+			},
 		];
 
 		let args = [killlistArgs, startWaveArgs, endWaveArgs, rerouteArgs, cooperationArgs];
-		args.forEach(arg => {
+		args.forEach((arg) => {
 			let [event, callback] = arg;
 			this.sceneToListen.events.removeListener(event as string, callback as Function);
 		});

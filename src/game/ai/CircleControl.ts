@@ -1,12 +1,5 @@
 import { DangerousCircle } from "../unit/DangerousCircle";
 
-export class CircleState {
-	static idle = "idle";
-	static guard = "guard";
-	static ambush = "ambush";
-	static obstacle = "obstacle";
-}
-
 export interface AIComponent {
 	childComponent: AIComponent;
 	tick();

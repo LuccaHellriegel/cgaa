@@ -13,22 +13,21 @@ export class CampRouting {
 	}
 
 	private allowKingRouting() {
-		console.log("herere");
-		CampSetup.ordinaryCampIDs.forEach(id => {
+		CampSetup.ordinaryCampIDs.forEach((id) => {
 			this.rerouteQueues[id].push(CampSetup.bossCampID);
 		});
 	}
 
 	private initRoutings() {
 		//All camps start by attacking the player
-		CampSetup.ordinaryCampIDs.forEach(id => {
+		CampSetup.ordinaryCampIDs.forEach((id) => {
 			this.routings[id] = CampSetup.playerCampID;
 		});
 	}
 
 	private initRerouteQueues(rivalries) {
-		CampSetup.ordinaryCampIDs.forEach(id => {
-			this.rerouteQueues[id] = CampSetup.ordinaryCampIDs.filter(otherID => {
+		CampSetup.ordinaryCampIDs.forEach((id) => {
+			this.rerouteQueues[id] = CampSetup.ordinaryCampIDs.filter((otherID) => {
 				return otherID !== id && otherID !== rivalries.getRival(id);
 			});
 		});

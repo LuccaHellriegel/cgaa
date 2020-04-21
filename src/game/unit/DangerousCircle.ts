@@ -1,4 +1,3 @@
-import { Circle } from "./Circle";
 import { damageable, poolable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CircleControl } from "../ai/CircleControl";
@@ -6,12 +5,25 @@ import { Point } from "../base/types";
 import { EnemySize } from "./CircleFactory";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampID } from "../setup/CampSetup";
-import { ChainWeapon } from "../weapon/ChainWeapon";
+import { ChainWeapon } from "../weapon/chain/weapon";
+import { setupCircle } from "../base/circle";
+import { UnitSetup } from "../setup/UnitSetup";
+import { weaponHeights } from "../weapon/chain/data";
+import { listenToAnim } from "../base/anim-listen";
+import { unitAnims, initUnitAnims } from "../base/anim-play";
 
-export class DangerousCircle extends Circle implements damageable, poolable {
+export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements damageable, poolable, unitAnims {
 	healthbar: HealthBar;
 	pathArr: Point[];
 	stateHandler: CircleControl;
+	weapon: ChainWeapon;
+	unitType: string;
+	id: string;
+	scene: Gameplay;
+	campID: CampID;
+
+	playIdle: Function;
+	playDamage: Function;
 
 	constructor(
 		scene: Gameplay,
@@ -25,7 +37,18 @@ export class DangerousCircle extends Circle implements damageable, poolable {
 		healthbar: HealthBar,
 		public velo: number
 	) {
-		super(scene, x, y, texture, campID, weapon, physicsGroup);
+		super(scene, x, y, texture);
+		this.id = "_" + Math.random().toString(36).substr(2, 9);
+
+		initUnitAnims(this);
+		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
+
+		scene.add.existing(this);
+		physicsGroup.add(this);
+		setupCircle(this);
+		this.campID = campID;
+		this.unitType = "circle";
+		this.weapon = weapon;
 		this.healthbar = healthbar;
 		this.stateHandler = new CircleControl(this);
 
@@ -37,8 +60,16 @@ export class DangerousCircle extends Circle implements damageable, poolable {
 		if (this.healthbar.decrease(amount)) {
 			this.poolDestroy();
 		} else {
-			super.damage(amount);
+			this.playDamage();
 		}
+	}
+
+	heal(amount: number) {
+		this.healthbar.increase(amount);
+	}
+
+	attack() {
+		this.weapon.attack();
 	}
 
 	destroy() {
@@ -47,32 +78,48 @@ export class DangerousCircle extends Circle implements damageable, poolable {
 		this.healthbar.bar.destroy();
 	}
 
-	poolDestroy() {
+	disable() {
 		this.scene.events.emit("inactive-" + this.id, this.id);
 		this.disableBody(true, true);
 		this.setPosition(-1000, -1000);
-		this.healthbar.bar.setActive(false).setVisible(false);
-		this.healthbar.value = this.healthbar.defaultValue;
+	}
 
-		//Weapon should not be reused until I finish implementing the circle pool
-		this.weapon.disableBody(false, true);
+	enable(x, y) {
+		this.enableBody(true, x, y, true, true);
+		this.stateHandler.lastPositions.push({ x, y });
+	}
+
+	poolDestroy() {
+		this.disable();
+		this.healthbar.disable();
+		this.weapon.disable();
 	}
 
 	poolActivate(x, y) {
-		this.enableBody(true, x, y, true, true);
-		this.healthbar.bar.setActive(true).setVisible(true);
-		this.healthbar.move(x, y);
-		this.weapon.enableBody(true, x, y, true, true);
-		this.stateHandler.lastPositions.push({ x, y });
+		this.enable(x, y);
+		this.healthbar.enable(x, y);
+		this.weapon.enable(x, y - UnitSetup.sizeDict[this.type] - weaponHeights[this.type].frame2 / 2);
+	}
+
+	setVelocityX(velo) {
+		this.weapon.setVelocityX(velo);
+		return super.setVelocityX(velo);
+	}
+
+	setVelocityY(velo) {
+		this.weapon.setVelocityY(velo);
+		return super.setVelocityY(velo);
+	}
+
+	setVelocity(x, y) {
+		this.weapon.setVelocity(x, y);
+		return super.setVelocity(x, y);
 	}
 
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
+		this.weapon.setRotationAroundOwner();
 		this.healthbar.move(this.x, this.y);
 		this.stateHandler.tick();
-	}
-
-	heal(amount: number) {
-		this.healthbar.increase(amount);
 	}
 }

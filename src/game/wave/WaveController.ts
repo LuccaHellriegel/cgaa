@@ -24,7 +24,7 @@ export class WaveController {
 				callback: () => {
 					this.spawnWave();
 				},
-				repeat: 0
+				repeat: 0,
 			});
 		}
 	}

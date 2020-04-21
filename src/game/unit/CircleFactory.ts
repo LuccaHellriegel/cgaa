@@ -1,6 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Enemies } from "./Enemies";
-import { ChainWeapon, ChainWeapons } from "../weapon/ChainWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { King } from "./King";
 import { DangerousCircle } from "./DangerousCircle";
@@ -9,6 +8,10 @@ import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CirclePhysics } from "../base/types";
+import { ChainWeapon } from "../weapon/chain/weapon";
+import { ChainWeapons } from "../weapon/chain/group";
+import { UnitSetup } from "../setup/UnitSetup";
+import { weaponHeights } from "../weapon/chain/data";
 
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
@@ -48,11 +51,11 @@ export class CircleFactory {
 	}
 
 	private createWeapon(x: number, y: number, size: EnemySize) {
-		return this.weaponPools[size].placeWeapon(x, y);
+		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
 	}
 
 	private afterCreate(circle) {
-		circle.weapon.owner = circle;
+		circle.weapon.setOwner(circle);
 		circle.camp = this.campID;
 		this.scene.children.bringToTop(circle.healthbar.bar);
 		this.enemies.addEnemy(circle);
@@ -155,11 +158,11 @@ export class CircleFactory {
 
 		let circle = new InteractionCircle(
 			this.scene,
-			this.x,
-			this.y,
+			x,
+			y,
 			this.campID + "InteractionCircle",
 			this.campID as CampID,
-			this.createWeapon(this.x, this.y, size),
+			this.createWeapon(x, y, size),
 			this.physicsGroup,
 			size as EnemySize,
 			healthbar

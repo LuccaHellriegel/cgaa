@@ -1,69 +1,60 @@
 import { shapeWord, Polygon } from "./Polygon";
 
 export class CirclePolygon extends Polygon {
-  r: number;
+	r: number;
 
-  constructor(x, y, radius) {
-    super(x, y, [
-      {
-        x: x,
-        y: y
-      }
-    ]);
-    this.type = shapeWord.circle;
-    this.r = radius;
-  }
+	constructor(x, y, radius) {
+		super(x, y, [
+			{
+				x: x,
+				y: y,
+			},
+		]);
+		this.type = shapeWord.circle;
+		this.r = radius;
+	}
 
-  createUnrotatedPoints() {
-    return this.points;
-  }
+	createUnrotatedPoints() {
+		return this.points;
+	}
 
-  setPosition(x, y) {
-    this.points = [
-      {
-        x: x,
-        y: y
-      }
-    ];
-    this.x = x;
-    this.y = y;
-  }
+	calculateCenterPoint() {
+		return [this.points[0].x, this.points[0].y];
+	}
 
-  getDistance(x1, y1, x2, y2) {
-    var xs = x2 - x1,
-      ys = y2 - y1;
+	setPosition(x, y) {
+		this.points = [
+			{
+				x: x,
+				y: y,
+			},
+		];
+		this.x = x;
+		this.y = y;
+	}
 
-    xs *= xs;
-    ys *= ys;
+	getDistance(x1, y1, x2, y2) {
+		var xs = x2 - x1,
+			ys = y2 - y1;
 
-    return Math.sqrt(xs + ys);
-  }
+		xs *= xs;
+		ys *= ys;
 
-  checkForCollisonWithOtherCircle(otherCircle) {
-    let distBetweenCircleCenters = this.getDistance(
-      this.x,
-      this.y,
-      otherCircle.x,
-      otherCircle.y
-    );
-    return distBetweenCircleCenters < this.r + otherCircle.r;
-  }
+		return Math.sqrt(xs + ys);
+	}
 
-  // toSATFormat(){
-  //       return new SAT.Circle(new SAT.Vector(this.x,this.y), this.r);
-  // }
+	checkForCollisonWithOtherCircle(otherCircle) {
+		let distBetweenCircleCenters = this.getDistance(this.x, this.y, otherCircle.x, otherCircle.y);
+		return distBetweenCircleCenters < this.r + otherCircle.r;
+	}
 
-  getLowestHighestY() {
-    let lowestY = this.y - this.r;
-    let highestY = this.y + this.r;
-    return { lowestY, highestY };
-  }
+	getLowestHighestY() {
+		let lowestY = this.y - this.r;
+		let highestY = this.y + this.r;
+		return { lowestY, highestY };
+	}
 
-  draw(graphics, offset) {
-    graphics.fillCircle(
-      this.points[0].x + offset,
-      this.points[0].y + offset,
-      this.r
-    );
-  }
+	draw(graphics, offset) {
+		graphics.fillCircle(this.points[0].x + offset, this.points[0].y + offset, this.r);
+	}
 }
