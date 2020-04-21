@@ -12,18 +12,17 @@ export function weaponGeomsToPhysicsCircles(
 ) {
 	let geoms = weaponGeoms[unitSize];
 	let result: PhysicsGeoms = {
-		frame1: { bigChain: circleChainToPhysicsChain(scene, geoms.frame1.bigChain, parent, weaponGroup, 1) },
+		frame1: { topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame1.bigChain, parent, weaponGroup, 1) },
 		frame2: {
-			bigChain: circleChainToPhysicsChain(scene, geoms.frame2.bigChain, parent, weaponGroup, 2),
-			smallChain: circleChainToPhysicsChain(scene, geoms.frame2.smallChain, parent, weaponGroup, 2),
+			topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame2.bigChain, parent, weaponGroup, 2),
 		},
 	};
 
 	// top physics circle should overlap arrow and the top circle of the big chain
 	let { height, width } = unitArrowHeadConfig[unitSize];
 	let { distArrowAndChain } = weaponDists[unitSize];
-	setTopCircleToIncludeArrow(result.frame1.bigChain[0], height, width, distArrowAndChain);
-	setTopCircleToIncludeArrow(result.frame2.bigChain[0], height, width, distArrowAndChain);
+	setTopCircleToIncludeArrow(result.frame1.topCircle, height, width, distArrowAndChain);
+	setTopCircleToIncludeArrow(result.frame2.topCircle, height, width, distArrowAndChain);
 
 	return result;
 }
@@ -42,33 +41,28 @@ function setTopCircleToIncludeArrow(
 		.setCircle(arrowWidth / 2);
 }
 
-function circleChainToPhysicsChain(
+function circleChainToPhysicsTopCircle(
 	scene: Phaser.Scene,
 	chain: CircleChain,
 	parent: ChainWeapon,
 	weaponGroup: Phaser.Physics.Arcade.Group,
 	frame: number
 ) {
-	let points = chain.points;
+	let point = chain.points[0];
 	let radius = chain.radius;
-	let result = [];
+	let result = scene.physics.add
+		.sprite(point.x, point.y, "")
+		.setVisible(false)
+		.setActive(false)
+		// to get correct circle position, we need to first change default size then set circle
+		// (weird internal repositioning)
+		.setSize(radius * 2, radius * 2)
+		.setCircle(radius)
+		.setImmovable(true)
+		.setData("weapon", parent)
+		.setData("frame", frame);
 
-	for (let point of points)
-		result.push(
-			scene.physics.add
-				.sprite(point.x, point.y, "")
-				.setVisible(false)
-				.setActive(false)
-				// to get correct circle position, we need to first change default size then set circle
-				// (weird internal repositioning)
-				.setSize(radius * 2, radius * 2)
-				.setCircle(radius)
-				.setImmovable(true)
-				.setData("weapon", parent)
-				.setData("frame", frame)
-		);
-
-	weaponGroup.addMultiple(result);
+	weaponGroup.add(result);
 
 	return result;
 }

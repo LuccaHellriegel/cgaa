@@ -1,7 +1,7 @@
 import { EnemySize } from "../../unit/CircleFactory";
 import { weaponGeoms, weaponHeights } from "./data";
 import { PhysicsGeoms } from "./types";
-import { movePointsPhaser, rotatePointsPhaser } from "../../base/geometry";
+import { movePointPhaser, rotatePointPhaser } from "../../base/geometry";
 import { weaponGeomsToPhysicsCircles } from "./physics";
 import { unitArrowHeadConfig } from "./const";
 import { UnitSetup } from "../../setup/UnitSetup";
@@ -37,11 +37,10 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 		// so we just need to adjust y to the fact that x,y is the middle of the frame
 		let diffX = this.x - bottomCircleOfGeom.x;
 		let diffY = this.y - bottomCircleOfGeom.y - radius + weaponHeights[unitSize].frame2 / 2;
-		movePointsPhaser(this.physicsGeoms.frame2.bigChain, diffX, diffY);
-		movePointsPhaser(this.physicsGeoms.frame2.smallChain, diffX, diffY);
+		movePointPhaser(this.physicsGeoms.frame2.topCircle, diffX, diffY);
 
 		// we align the second frame, then the offset between the frame geoms
-		movePointsPhaser(this.physicsGeoms.frame1.bigChain, diffX + unitArrowHeadConfig[unitSize].width, diffY);
+		movePointPhaser(this.physicsGeoms.frame1.topCircle, diffX + unitArrowHeadConfig[unitSize].width, diffY);
 
 		this.setRotation = this.setRotationCombined;
 		this.setPosition = this.setPositionCombined;
@@ -90,18 +89,16 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 	setRotationCombined(radians) {
 		// setRotation starts always at 0, rotate around starts at the last value
 		// so we need to only rotate the difference
-		rotatePointsPhaser(this.physicsGeoms.frame1.bigChain, radians - this.rotation, this.x, this.y);
-		rotatePointsPhaser(this.physicsGeoms.frame2.bigChain, radians - this.rotation, this.x, this.y);
-		rotatePointsPhaser(this.physicsGeoms.frame2.smallChain, radians - this.rotation, this.x, this.y);
+		rotatePointPhaser(this.physicsGeoms.frame1.topCircle, radians - this.rotation, this.x, this.y);
+		rotatePointPhaser(this.physicsGeoms.frame2.topCircle, radians - this.rotation, this.x, this.y);
 		return super.setRotation(radians);
 	}
 
 	setPhysicsPosition(x, y) {
 		let diffX = x - this.x;
 		let diffY = y - this.y;
-		movePointsPhaser(this.physicsGeoms.frame1.bigChain, diffX, diffY);
-		movePointsPhaser(this.physicsGeoms.frame2.bigChain, diffX, diffY);
-		movePointsPhaser(this.physicsGeoms.frame2.smallChain, diffX, diffY);
+		movePointPhaser(this.physicsGeoms.frame1.topCircle, diffX, diffY);
+		movePointPhaser(this.physicsGeoms.frame2.topCircle, diffX, diffY);
 	}
 
 	setPositionCombined(x, y, z, w) {
@@ -122,25 +119,22 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	setVelocityX(velo) {
-		for (let obj of this.physicsGeoms.frame1.bigChain) obj.setVelocityX(velo);
-		for (let obj of this.physicsGeoms.frame2.bigChain) obj.setVelocityX(velo);
-		for (let obj of this.physicsGeoms.frame2.smallChain) obj.setVelocityX(velo);
+		this.physicsGeoms.frame1.topCircle.setVelocityX(velo);
+		this.physicsGeoms.frame2.topCircle.setVelocityX(velo);
 		return super.setVelocityX(velo);
 	}
 
 	setVelocityY(velo) {
-		for (let obj of this.physicsGeoms.frame1.bigChain) obj.setVelocityY(velo);
-		for (let obj of this.physicsGeoms.frame2.bigChain) obj.setVelocityY(velo);
-		for (let obj of this.physicsGeoms.frame2.smallChain) obj.setVelocityY(velo);
+		this.physicsGeoms.frame1.topCircle.setVelocityY(velo);
+		this.physicsGeoms.frame2.topCircle.setVelocityY(velo);
 		return super.setVelocityY(velo);
 	}
 
 	enable(x, y) {
 		this.setPosition(x, y);
 		this.enableBody(false, 0, 0, true, true);
-		for (let obj of this.physicsGeoms.frame1.bigChain) obj.enableBody(false, 0, 0, false, false);
-		for (let obj of this.physicsGeoms.frame2.bigChain) obj.enableBody(false, 0, 0, false, false);
-		for (let obj of this.physicsGeoms.frame2.smallChain) obj.enableBody(false, 0, 0, false, false);
+		this.physicsGeoms.frame1.topCircle.enableBody(false, 0, 0, false, false);
+		this.physicsGeoms.frame2.topCircle.enableBody(false, 0, 0, false, false);
 	}
 
 	disable() {
@@ -151,8 +145,7 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 
 		this.disableBody(false, true);
 		// all the objs are already not visible or activated
-		for (let obj of this.physicsGeoms.frame1.bigChain) obj.disableBody();
-		for (let obj of this.physicsGeoms.frame2.bigChain) obj.disableBody();
-		for (let obj of this.physicsGeoms.frame2.smallChain) obj.disableBody();
+		this.physicsGeoms.frame1.topCircle.disableBody();
+		this.physicsGeoms.frame2.topCircle.disableBody();
 	}
 }

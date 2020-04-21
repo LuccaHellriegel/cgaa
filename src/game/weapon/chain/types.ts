@@ -67,6 +67,6 @@ export type WeaponGeoms = {
 export type AllWeaponGeoms = { [key in EnemySize]: WeaponGeoms };
 
 export type PhysicsGeoms = {
-	frame1: { bigChain: Phaser.Physics.Arcade.Sprite[] };
-	frame2: { bigChain: Phaser.Physics.Arcade.Sprite[]; smallChain: Phaser.Physics.Arcade.Sprite[] };
+	frame1: { topCircle: Phaser.Physics.Arcade.Sprite };
+	frame2: { topCircle: Phaser.Physics.Arcade.Sprite };
 };
