@@ -1,4 +1,5 @@
-import { physicsGroups, addCombinatorialCollider } from "./Collision";
+import { addCombinatorialCollider } from "./combinatorial";
+import { physicsGroups } from "./groups";
 import { Gameplay } from "../../scenes/Gameplay";
 
 export function addBasicCollision(scene: Gameplay, physicsGroups: physicsGroups) {

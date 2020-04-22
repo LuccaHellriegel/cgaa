@@ -1,6 +1,7 @@
 import { UnitSetup } from "../../setup/UnitSetup";
 import { TowerSetup } from "../../setup/TowerSetup";
 import { Shooter } from "./Shooter";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
 	constructor(scene) {
@@ -13,7 +14,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
 			key: "bullet",
 			active: false,
 			visible: false,
-			classType: Bullet
+			classType: Bullet,
 		});
 	}
 
@@ -28,6 +29,7 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite {
 	goalY: number;
 	amount: number = TowerSetup.bulletDamage;
 	owner: Shooter;
+	scene: Gameplay;
 
 	constructor(scene, x, y) {
 		super(scene, x, y, "bullet");
