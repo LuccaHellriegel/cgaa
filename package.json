@@ -18,8 +18,7 @@
 	"dependencies": {
 		"@babel/runtime": "^7.7.4",
 		"easystarjs": "^0.4.3",
-		"phaser": "^3.20.1",
-		"polygon-collision": "0.0.1"
+		"phaser": "^3.20.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.7.4",
@@ -29,14 +28,9 @@
 		"@types/mocha": "^5.2.7",
 		"chai": "^4.2.0",
 		"chai-arrays": "^2.0.0",
-		"coderoad": "^1.0.10",
-		"cssnano": "^4.1.10",
-		"dependency-cruiser": "^5.4.0",
 		"mocha": "^6.2.2",
 		"ts-mockito": "^2.5.0",
 		"ts-node": "^8.5.2",
-		"tslint": "^5.20.1",
-		"tslint-sonarts": "^1.9.0",
 		"typescript": "^3.7.2"
 	}
 }
