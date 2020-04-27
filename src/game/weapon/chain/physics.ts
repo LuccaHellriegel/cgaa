@@ -4,17 +4,12 @@ import { CircleChain, PhysicsGeoms } from "./types";
 import { unitArrowHeadConfig } from "./const";
 import { ChainWeapon } from "./weapon";
 
-export function weaponGeomsToPhysicsCircles(
-	scene: Phaser.Scene,
-	unitSize: EnemySize,
-	parent: ChainWeapon,
-	weaponGroup: Phaser.Physics.Arcade.Group
-) {
+export function weaponGeomsToPhysicsCircles(scene: Phaser.Scene, unitSize: EnemySize, parent: ChainWeapon) {
 	let geoms = weaponGeoms[unitSize];
 	let result: PhysicsGeoms = {
-		frame1: { topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame1.bigChain, parent, weaponGroup, 1) },
+		frame1: { topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame1.bigChain, parent, 1) },
 		frame2: {
-			topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame2.bigChain, parent, weaponGroup, 2),
+			topCircle: circleChainToPhysicsTopCircle(scene, geoms.frame2.bigChain, parent, 2),
 		},
 	};
 
@@ -41,13 +36,7 @@ function setTopCircleToIncludeArrow(
 		.setCircle(arrowWidth / 2);
 }
 
-function circleChainToPhysicsTopCircle(
-	scene: Phaser.Scene,
-	chain: CircleChain,
-	parent: ChainWeapon,
-	weaponGroup: Phaser.Physics.Arcade.Group,
-	frame: number
-) {
+function circleChainToPhysicsTopCircle(scene: Phaser.Scene, chain: CircleChain, parent: ChainWeapon, frame: number) {
 	let point = chain.points[0];
 	let radius = chain.radius;
 	let result = scene.physics.add
@@ -61,8 +50,6 @@ function circleChainToPhysicsTopCircle(
 		.setImmovable(true)
 		.setData("weapon", parent)
 		.setData("frame", frame);
-
-	weaponGroup.add(result);
 
 	return result;
 }

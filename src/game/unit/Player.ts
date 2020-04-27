@@ -22,13 +22,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 	playIdle: Function;
 	playDamage: Function;
 
-	constructor(
-		scene: Gameplay,
-		x: number,
-		y: number,
-		private weapon: ChainWeapon,
-		physicsGroup: Phaser.Physics.Arcade.Group
-	) {
+	constructor(scene: Gameplay, x: number, y: number, private weapon: ChainWeapon) {
 		super(scene, x, y, playerTextureName);
 
 		this.id = "_" + Math.random().toString(36).substr(2, 9);
@@ -40,10 +34,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
 
 		scene.add.existing(this);
-		physicsGroup.add(this);
 
 		this.radius = this.scene.textures.get(playerTextureName).get(0).halfHeight;
-		this.setCircle(this.radius);
+		//	this.setCircle(this.radius);
+
+		this.weaponPhysics = weapon.circle;
 
 		this.type = "Normal";
 		this.stateHandler = { spotted: null, obstacle: null };
@@ -77,10 +72,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		this.weapon.setRotationAroundOwner();
 	}
 
-	static withChainWeapon(scene: Phaser.Scene, playerPhysicsGroup, group: ChainWeapons, x, y) {
+	static withChainWeapon(scene: Phaser.Scene, x, y) {
 		//TODO: might clash with the fact that all groups now are sizespecific
-		let weapon = group.placeWeapon(x, y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2);
-		let circle = new Player(scene, x, y, weapon, playerPhysicsGroup);
+
+		let weapon = new ChainWeapon(
+			scene,
+			x,
+			y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2,
+			"NormalchainWeapon"
+		);
+		weapon.init("Normal", x, y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2, 40);
+		let circle = new Player(scene, x, y, weapon);
 		weapon.setOwner(circle);
 
 		// weapon.amount = 40;

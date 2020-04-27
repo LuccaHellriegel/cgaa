@@ -1,51 +1,24 @@
 import { EventSetup } from "../setup/EventSetup";
-import { addCombinatorialOverlap } from "./combinatorial";
-import { physicsGroups } from "./groups";
-import { ChainWeapons } from "../weapon/chain/group";
 
-export function addWeaponOverlap(scene, physicsGroups: physicsGroups) {
-	addCombinatorialOverlap(scene, createWeaponArr(physicsGroups), doDamage, tryDamage);
-}
+export function initWeaponGroupPair(scene: Phaser.Scene) {
+	const weapons = scene.physics.add.group();
+	const enemies = scene.physics.add.group();
+	const staticEnemies = scene.physics.add.staticGroup();
 
-function createWeaponArr(physicsGroups: physicsGroups) {
-	let result = [];
+	scene.physics.add.overlap(weapons, enemies, doDamage, tryDamage);
+	scene.physics.add.overlap(weapons, staticEnemies, doDamage, tryDamage);
 
-	let enemyGroups = [...Object.values(physicsGroups.buildings), ...Object.values(physicsGroups.enemies)];
-	let playerWeaponVsEnemyUnits = [[physicsGroups.playerWeapon.weaponGroup], enemyGroups];
-	result.push(playerWeaponVsEnemyUnits);
-
-	let allWeaponGroups = [];
-	for (let enemyWeapon of Object.values(physicsGroups.enemyWeapons)) {
-		allWeaponGroups = allWeaponGroups.concat(
-			Object.values(enemyWeapon).map((enemyWeapon) => (enemyWeapon as ChainWeapons).weaponGroup)
-		);
-	}
-	let enemyWeaponsVsPlayerUnits = [
-		allWeaponGroups,
-		[physicsGroups.player, physicsGroups.shooters, physicsGroups.healers],
-	];
-	result.push(enemyWeaponsVsPlayerUnits);
-
-	let enemyWeaponsVsOtherUnits = [];
-	let campIDs = Object.keys(physicsGroups.enemyWeapons);
-	// this is so nested because we have three types per camp
-	for (let campID of campIDs) {
-		let curEnemyWeapon = physicsGroups.enemyWeapons[campID];
-		let curGroups = Object.values(curEnemyWeapon).map((enemyWeapon) => (enemyWeapon as ChainWeapons).weaponGroup);
-		let otherIDs = campIDs.filter((id) => id !== campID);
-		let otherEnemyWeapons = otherIDs.map((id) => physicsGroups.enemyWeapons[id]);
-		let otherGroups = [];
-		for (let enemyWeapon of otherEnemyWeapons) {
-			otherGroups = otherGroups.concat(
-				Object.values(enemyWeapon).map((enemyWeapon) => (enemyWeapon as ChainWeapons).weaponGroup)
-			);
-		}
-
-		enemyWeaponsVsOtherUnits.push([curGroups, otherGroups]);
-	}
-	result.push(...enemyWeaponsVsOtherUnits);
-
-	return result;
+	return {
+		addToWeapon: function (newWeapon: Phaser.GameObjects.GameObject) {
+			weapons.add(newWeapon);
+		},
+		addToEnemy: function (unit: Phaser.GameObjects.GameObject) {
+			enemies.add(unit);
+		},
+		addToStaticEnemy: function (unit: Phaser.GameObjects.GameObject) {
+			staticEnemies.add(unit);
+		},
+	};
 }
 
 function tryDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {

@@ -1,15 +1,20 @@
-import { Gameplay } from "../../scenes/Gameplay";
 import { Bullet } from "../tower/shooter/Bullet";
 import { DangerousCircle } from "../unit/DangerousCircle";
 import { EventSetup } from "../setup/EventSetup";
-import { physicsGroups } from "./groups";
 
-export function addBulletCollision(scene: Gameplay, physicsGroups: physicsGroups) {
-	let bulletGroup = physicsGroups.bulletGroup;
-	let enemyGroups = [...Object.values(physicsGroups.buildings), ...Object.values(physicsGroups.enemies)];
-	enemyGroups.forEach((group) => {
-		scene.physics.add.collider(bulletGroup, group as Phaser.Physics.Arcade.Group, collision);
-	});
+export function initBulletGroupPair(scene: Phaser.Scene) {
+	const bullets = scene.physics.add.staticGroup();
+	const enemies = scene.physics.add.group();
+	scene.physics.add.collider(bullets, enemies, collision);
+
+	return {
+		addToBullets: function (bullet: Phaser.GameObjects.GameObject) {
+			bullets.add(bullet);
+		},
+		addToEnemies: function (enemy: Phaser.GameObjects.GameObject) {
+			enemies.add(enemy);
+		},
+	};
 }
 
 function collision(bullet: Bullet, enemy: DangerousCircle) {

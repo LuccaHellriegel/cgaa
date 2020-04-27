@@ -25,7 +25,6 @@ export class InteractionCircle extends Phaser.Physics.Arcade.Sprite implements d
 		texture: string,
 		campID: CampID,
 		weapon: ChainWeapon,
-		physicsGroup: Phaser.Physics.Arcade.Group,
 		size: EnemySize,
 		healthbar: HealthBar
 	) {
@@ -36,15 +35,16 @@ export class InteractionCircle extends Phaser.Physics.Arcade.Sprite implements d
 		listenToAnim(this, { animComplete: true, damageComplete: this.damageFinished.bind(this) });
 
 		scene.add.existing(this);
-		physicsGroup.add(this);
-		setupCircle(this);
 
 		this.campID = campID;
 		this.unitType = "circle";
 		this.weapon = weapon;
 		this.healthbar = healthbar;
-		this.setImmovable(true);
-		this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
+
+		this.weaponPhysics = weapon.circle;
+
+		//this.setImmovable(true);
+		//this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
 
 		//Needed for gaining souls
 		this.type = size;
@@ -67,11 +67,5 @@ export class InteractionCircle extends Phaser.Physics.Arcade.Sprite implements d
 		super.destroy();
 		this.healthbar.bar.destroy();
 		this.weapon.destroy();
-	}
-
-	preUpdate(time, delta) {
-		super.preUpdate(time, delta);
-		this.weapon.setRotationAroundOwner(this.rotation);
-		this.healthbar.move(this.x, this.y);
 	}
 }

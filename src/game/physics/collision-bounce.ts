@@ -1,37 +1,21 @@
-import { Gameplay } from "../../scenes/Gameplay";
 import { Cooperation } from "../state/Cooperation";
 import { CampID } from "../setup/CampSetup";
-import { addCombinatorialCollider } from "./combinatorial";
-import { physicsGroups } from "./groups";
 
-export function addBounceCollision(scene: Gameplay, physicsGroups: physicsGroups, cooperation: Cooperation) {
-	addCombinatorialCollider(
-		scene,
-		createBounceCombinatorialArr(physicsGroups),
-		(unit, obj) => {
-			bounceCallback(unit, obj, cooperation);
+export function initBounceGroupPair(scene: Phaser.Scene, cooperation: Cooperation) {
+	const units = scene.physics.add.staticGroup();
+	const obstacles = scene.physics.add.group();
+	scene.physics.add.collider(units, obstacles, (unit, obj) => {
+		bounceCallback(unit, obj, cooperation);
+	});
+
+	return {
+		addToUnits: function (unit: Phaser.GameObjects.GameObject) {
+			units.add(unit);
 		},
-		null
-	);
-}
-
-function createBounceCombinatorialArr(physicsGroups) {
-	let result = [];
-	result.push([
-		[...Object.values(physicsGroups.enemies)],
-		[physicsGroups.player, physicsGroups.shooters, physicsGroups.healers, ...Object.values(physicsGroups.buildings)],
-	]);
-	result.push(
-		...Object.keys(physicsGroups.enemies).map((campID) => {
-			return [
-				[physicsGroups.enemies[campID]],
-				Object.keys(physicsGroups.enemies)
-					.filter((secondCampID) => secondCampID !== campID)
-					.map((secondCampID) => physicsGroups.enemies[secondCampID]),
-			];
-		})
-	);
-	return result;
+		addToObstacles: function (obstacle: Phaser.GameObjects.GameObject) {
+			obstacles.add(obstacle);
+		},
+	};
 }
 
 function bounceCallback(unit, obj, cooperation: Cooperation) {

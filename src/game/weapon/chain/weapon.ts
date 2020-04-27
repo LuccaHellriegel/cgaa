@@ -14,6 +14,7 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 	attacking = false;
 	alreadyAttacked = [];
 	amount: number;
+	circle: Phaser.Physics.Arcade.Sprite;
 
 	constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
 		super(scene, x, y, texture);
@@ -21,13 +22,13 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 		this.setSize(1, 1);
 	}
 
-	init(unitSize: EnemySize, x: number, y: number, amount: number, weaponGroup: Phaser.Physics.Arcade.Group) {
+	init(unitSize: EnemySize, x: number, y: number, amount: number) {
 		this.enableBody(false, 0, 0, true, true);
 		this.setPosition(x, y);
 
 		this.amount = amount;
 
-		this.physicsGeoms = weaponGeomsToPhysicsCircles(this.scene, unitSize, this, weaponGroup);
+		this.physicsGeoms = weaponGeomsToPhysicsCircles(this.scene, unitSize, this);
 		let geoms = weaponGeoms[unitSize];
 		let smallChain = geoms.frame2.smallChain;
 		let points = smallChain.points;
@@ -38,6 +39,8 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 		let diffX = this.x - bottomCircleOfGeom.x;
 		let diffY = this.y - bottomCircleOfGeom.y - radius + weaponHeights[unitSize].frame2 / 2;
 		movePointPhaser(this.physicsGeoms.frame2.topCircle, diffX, diffY);
+
+		this.circle = this.physicsGeoms.frame2.topCircle;
 
 		// we align the second frame, then the offset between the frame geoms
 		movePointPhaser(this.physicsGeoms.frame1.topCircle, diffX + unitArrowHeadConfig[unitSize].width, diffY);

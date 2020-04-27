@@ -1,10 +1,14 @@
 import { BossBarrier } from "../env/BossBarrier";
-import { PhaserStaticFactory } from "../base/PhaserStaticFactory";
 import { Point } from "../base/types";
-export class BarrierFactory extends PhaserStaticFactory {
+import { Gameplay } from "../../scenes/Gameplay";
+export class BarrierFactory {
+	constructor(protected scene: Gameplay, private addEnv: Function) {}
+
 	produce(positions: Point[]) {
-		positions.forEach(pos => {
-			new BossBarrier(this.scene, pos.x, pos.y, this.physicsGroup);
+		positions.forEach((pos) => {
+			let barrier = new BossBarrier(this.scene, pos.x, pos.y);
+			this.addEnv(barrier);
+			return barrier;
 		});
 	}
 }

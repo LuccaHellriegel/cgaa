@@ -7,7 +7,6 @@ import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
-import { CirclePhysics } from "../base/types";
 import { ChainWeapon } from "../weapon/chain/weapon";
 import { ChainWeapons } from "../weapon/chain/group";
 import { UnitSetup } from "../setup/UnitSetup";
@@ -36,25 +35,25 @@ export interface EnemyConfig extends CircleConfig {
 }
 
 export class CircleFactory {
-	physicsGroup: Phaser.Physics.Arcade.Group;
 	x = 0;
 	y = 0;
 
 	constructor(
 		private scene: Gameplay,
 		private campID: string,
-		private circlePhysics: CirclePhysics,
+		private addUnit: Function,
 		private enemies: Enemies,
 		private weaponPools: { [key in EnemySize]: ChainWeapons }
-	) {
-		this.physicsGroup = this.circlePhysics.physicsGroup;
-	}
+	) {}
 
 	private createWeapon(x: number, y: number, size: EnemySize) {
+		console.log(this.weaponPools);
 		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
 	}
 
 	private afterCreate(circle) {
+		this.addUnit(circle);
+
 		circle.weapon.setOwner(circle);
 		circle.camp = this.campID;
 		this.scene.children.bringToTop(circle.healthbar.bar);
@@ -74,7 +73,6 @@ export class CircleFactory {
 			"kingCircle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -97,7 +95,6 @@ export class CircleFactory {
 			"bossCircle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -118,7 +115,6 @@ export class CircleFactory {
 			this.campID + size + "Circle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -140,7 +136,6 @@ export class CircleFactory {
 			this.campID + size + "Circle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -163,7 +158,6 @@ export class CircleFactory {
 			this.campID + "InteractionCircle",
 			this.campID as CampID,
 			this.createWeapon(x, y, size),
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar
 		);

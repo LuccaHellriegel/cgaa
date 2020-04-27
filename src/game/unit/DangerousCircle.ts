@@ -32,7 +32,6 @@ export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements dam
 		texture: string,
 		campID: CampID,
 		weapon: ChainWeapon,
-		physicsGroup: Phaser.Physics.Arcade.Group,
 		size: EnemySize,
 		healthbar: HealthBar,
 		public velo: number
@@ -44,11 +43,14 @@ export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements dam
 		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
 
 		scene.add.existing(this);
-		physicsGroup.add(this);
-		setupCircle(this);
 		this.campID = campID;
 		this.unitType = "circle";
 		this.weapon = weapon;
+
+		this.weaponPhysics = weapon.circle;
+
+		// setupCircle(this)
+
 		this.healthbar = healthbar;
 		this.stateHandler = new CircleControl(this);
 
