@@ -2,7 +2,7 @@
 
 A PhaserJS-based blend of 2D action and tower defense with charming programmer art.
 
-![Logo](./page/images/Logo.svg)
+![Logo](./page/images/Logo.png)
 
 ![Fight](./page/images/fight.gif)
 
@@ -22,7 +22,7 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ## Game Webpage
 
-[CGAA Webpage](https://luccahellriegel.github.io/cgaa/page/game.html)
+[CGAA Webpage](https://luccahellriegel.github.io/cgaa/page)
 
 - more infos
 - development documentation (mostly retrospective/opinions on first six months of development)
