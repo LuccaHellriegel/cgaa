@@ -1,11 +1,10 @@
-import { Circle } from "./Circle";
 import { Point } from "../base/types";
 
 export class Enemies {
 	private idDict = {};
 	constructor() {}
 
-	set(id: string, enemy: Circle) {
+	set(id: string, enemy) {
 		this.idDict[id] = enemy;
 	}
 
@@ -31,6 +30,6 @@ export class Enemies {
 	}
 
 	destroyEnemies(ids) {
-		ids.forEach(id => this.idDict[id].destroy());
+		ids.forEach((id) => this.idDict[id].destroy());
 	}
 }

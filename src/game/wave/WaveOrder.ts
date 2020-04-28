@@ -1,14 +1,14 @@
-import { CampID } from "../setup/CampSetup";
+import { CampID, CampSetup } from "../setup/CampSetup";
 import { CampsState } from "../state/CampsState";
 import { Util } from "../base/Util";
-import { OrdinaryOrder } from "../state/OrdinaryOrder";
+import { RandomOrder } from "../base/RandomOrder";
 
-export class WaveOrder extends OrdinaryOrder {
+export class WaveOrder extends RandomOrder {
 	order: CampID[];
 	index = 0;
 
 	constructor(private state: CampsState) {
-		super();
+		super(CampSetup.ordinaryCampIDs);
 	}
 
 	increment() {

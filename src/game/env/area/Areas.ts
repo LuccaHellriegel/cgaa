@@ -4,6 +4,7 @@ import { Area } from "./Area";
 import { Exit } from "./Exit";
 import { WallFactory } from "../wall/WallFactory";
 import { RelPos } from "../../base/RelPos";
+import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Areas {
 	arr: (Area | EmptyArea)[][];
@@ -11,19 +12,21 @@ export class Areas {
 	dims: MapDimensions;
 	exits: Exit[] = [];
 
-	constructor(factory: WallFactory) {
+	constructor(scene: Gameplay, addEnv) {
+		let factory = new WallFactory(scene, addEnv);
+
 		let dims: AreaDimensions = { sizeOfXAxis: EnvSetup.areaSize, sizeOfYAxis: EnvSetup.areaSize };
 
 		let layout = [
 			[0, 1, 1, 0],
 			[1, 0, 0, 1],
-			[0, 1, 1, 0]
+			[0, 1, 1, 0],
 		];
 
 		let exitSides: ExitSide[][] = [
 			["none", "down", "down", "none"],
 			["right", "none", "none", "left"],
-			["none", "up", "up", "none"]
+			["none", "up", "up", "none"],
 		];
 
 		let topLeftPositions = layout.map((row, rowIndex) => {
@@ -52,22 +55,22 @@ export class Areas {
 
 		this.dims = {
 			sizeOfXAxis: layout[0].length * EnvSetup.areaSize,
-			sizeOfYAxis: layout.length * EnvSetup.areaSize
+			sizeOfYAxis: layout.length * EnvSetup.areaSize,
 		};
 
-		this.arr.forEach(row =>
-			row.forEach(column => {
+		this.arr.forEach((row) =>
+			row.forEach((column) => {
 				if (column !== "empty") this.nonEmpty.push(column);
 			})
 		);
 	}
 
 	addTo(map: RelativeMap) {
-		this.nonEmpty.forEach(area => {
+		this.nonEmpty.forEach((area) => {
 			map = area.addTo(map);
 		});
 
-		this.exits.forEach(exit => {
+		this.exits.forEach((exit) => {
 			map = exit.addTo(map);
 		});
 		return map;

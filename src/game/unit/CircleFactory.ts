@@ -1,6 +1,5 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Enemies } from "./Enemies";
-import { ChainWeapon, ChainWeapons } from "../weapon/ChainWeapon";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { King } from "./King";
 import { DangerousCircle } from "./DangerousCircle";
@@ -8,7 +7,10 @@ import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
-import { CirclePhysics } from "../base/types";
+import { ChainWeapon } from "../weapon/chain/weapon";
+import { ChainWeapons } from "../weapon/chain/pool";
+import { UnitSetup } from "../setup/UnitSetup";
+import { weaponHeights } from "../weapon/chain/data";
 
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
@@ -33,26 +35,25 @@ export interface EnemyConfig extends CircleConfig {
 }
 
 export class CircleFactory {
-	physicsGroup: Phaser.Physics.Arcade.Group;
 	x = 0;
 	y = 0;
 
 	constructor(
 		private scene: Gameplay,
 		private campID: string,
-		private circlePhysics: CirclePhysics,
+		private addUnit: Function,
 		private enemies: Enemies,
 		private weaponPools: { [key in EnemySize]: ChainWeapons }
-	) {
-		this.physicsGroup = this.circlePhysics.physicsGroup;
-	}
+	) {}
 
 	private createWeapon(x: number, y: number, size: EnemySize) {
-		return this.weaponPools[size].placeWeapon(x, y);
+		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
 	}
 
 	private afterCreate(circle) {
-		circle.weapon.owner = circle;
+		this.addUnit(circle);
+
+		circle.weapon.setOwner(circle);
 		circle.camp = this.campID;
 		this.scene.children.bringToTop(circle.healthbar.bar);
 		this.enemies.addEnemy(circle);
@@ -71,7 +72,6 @@ export class CircleFactory {
 			"kingCircle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -94,7 +94,6 @@ export class CircleFactory {
 			"bossCircle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -115,7 +114,6 @@ export class CircleFactory {
 			this.campID + size + "Circle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -137,7 +135,6 @@ export class CircleFactory {
 			this.campID + size + "Circle",
 			this.campID as CampID,
 			weapon,
-			this.physicsGroup,
 			size as EnemySize,
 			healthbar,
 			veloConfigs[size]
@@ -155,16 +152,18 @@ export class CircleFactory {
 
 		let circle = new InteractionCircle(
 			this.scene,
-			this.x,
-			this.y,
+			x,
+			y,
 			this.campID + "InteractionCircle",
 			this.campID as CampID,
-			this.createWeapon(this.x, this.y, size),
-			this.physicsGroup,
+			this.createWeapon(x, y, size),
 			size as EnemySize,
 			healthbar
 		);
 		this.afterCreate(circle);
+
+		// was overwritten somewhere (I think when adding to the physics groups), so set it here
+		circle.setImmovable(true);
 
 		return circle;
 	}

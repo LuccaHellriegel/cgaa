@@ -4,7 +4,7 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { Point } from "../../base/types";
 
 export class WallSide extends Phaser.Physics.Arcade.Image {
-	constructor(scene: Gameplay, physicGroup: Phaser.Physics.Arcade.StaticGroup, partPositions: Point[]) {
+	constructor(scene: Gameplay, addEnv, partPositions: Point[]) {
 		let firstPositionX = partPositions[0].x;
 		let lastPositionX = partPositions[partPositions.length - 1].x;
 		let width = lastPositionX - firstPositionX + EnvSetup.gridPartSize;
@@ -21,10 +21,11 @@ export class WallSide extends Phaser.Physics.Arcade.Image {
 		);
 
 		scene.add.existing(this);
-		physicGroup.add(this);
+
+		addEnv(this);
 		this.setSize(width, height);
 
-		partPositions.forEach(partPosition => {
+		partPositions.forEach((partPosition) => {
 			new WallPart(scene, partPosition.x, partPosition.y);
 		});
 	}

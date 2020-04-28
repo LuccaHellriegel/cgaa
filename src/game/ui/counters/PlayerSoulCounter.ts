@@ -16,17 +16,17 @@ export class PlayerSoulCounter {
 		let decreaseEvent = "souls-spent";
 
 		this.startValue = 100;
-		this.startValue = 1000000;
+		//this.startValue = 1000000;
 
 		let graphics = sceneToUse.add.graphics({
 			fillStyle: {
-				color: 0x228b22
-			}
+				color: 0x228b22,
+			},
 		});
 		playerSoulCountGraphic.draw(graphics, 0);
 		this.playerCounterText = sceneToUse.add.text(x - 17, y - 12, this.startValue.toString(), {
 			font: "20px Verdana",
-			fill: "#ADFF2F"
+			fill: "#ADFF2F",
 		});
 
 		this.reset();
@@ -42,7 +42,7 @@ export class PlayerSoulCounter {
 	setupEventListeners(sceneToListen: Gameplay, increaseEvent, decreaseEvent) {
 		sceneToListen.events.on(
 			increaseEvent,
-			function(amount) {
+			function (amount) {
 				this.value += amount;
 				this.playerCounterText.setText(this.value.toString());
 				if (this.value >= TowerSetup.shooterCost) {
@@ -56,7 +56,7 @@ export class PlayerSoulCounter {
 		);
 		sceneToListen.events.on(
 			decreaseEvent,
-			function(amount) {
+			function (amount) {
 				if (this.value - amount <= 0) {
 					this.value = 0;
 				} else {

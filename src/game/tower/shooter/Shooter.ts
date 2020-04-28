@@ -4,8 +4,8 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { TowerSetup } from "../../setup/TowerSetup";
 
 export class Shooters extends Towers {
-	constructor(scene, private bullets: Bullets) {
-		super(scene);
+	constructor(scene, addTowerToPhysics, private bullets: Bullets) {
+		super(scene, addTowerToPhysics);
 
 		this.maxSize = TowerSetup.maxShooters;
 
@@ -14,14 +14,15 @@ export class Shooters extends Towers {
 			key: "shooter",
 			active: false,
 			visible: false,
-			classType: Shooter
+			classType: Shooter,
 		});
 
-		this.getChildren().forEach(child => (child as Phaser.Physics.Arcade.Sprite).disableBody());
+		this.getChildren().forEach((child) => (child as Phaser.Physics.Arcade.Sprite).disableBody());
 	}
 
 	placeTower(x, y) {
 		let shooter = this.getFirstDead(true);
+		this.addTowerToPhysics(shooter);
 		shooter.place(x, y, this.bullets);
 	}
 }
@@ -55,7 +56,7 @@ export class Shooter extends Tower {
 							this.fire(target);
 					},
 					callbackScope: this,
-					repeat: 0
+					repeat: 0,
 				});
 		}
 	}
@@ -68,6 +69,7 @@ export class Shooter extends Tower {
 	}
 
 	poolDestroy() {
+		this.setPosition(-1000, -1000);
 		this.disableBody(true, true);
 		this.healthbar.bar.setActive(false).setVisible(false);
 		this.healthbar.value = this.healthbar.defaultValue;

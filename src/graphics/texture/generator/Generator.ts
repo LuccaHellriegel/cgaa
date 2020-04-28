@@ -6,8 +6,8 @@ export abstract class Generator {
 	constructor(hexColor: number, scene: Gameplay) {
 		this.graphics = scene.add.graphics({
 			fillStyle: {
-				color: hexColor
-			}
+				color: hexColor,
+			},
 		});
 		this.scene = scene;
 	}

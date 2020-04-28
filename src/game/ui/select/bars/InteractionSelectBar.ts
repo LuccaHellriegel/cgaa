@@ -20,7 +20,7 @@ export class InteractionSelectBar extends SelectBar {
 		(unitRect.rects[1] as TextGUIElement).textObj.setStyle({
 			font: "18px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 		(unitRect.rects[1] as TextGUIElement).textObj.setPosition(
 			(unitRect.rects[1] as TextGUIElement).textObj.x - 5,
@@ -43,8 +43,6 @@ export class InteractionSelectBar extends SelectBar {
 	show() {
 		let interactedCampID = (this.selectionManager.selectedUnit as InteractionCircle).campID;
 		let hasCooperation = this.cooperation.hasCooperation(interactedCampID, CampSetup.playerCampID);
-
-		console.log(hasCooperation, this.cooperation.dict);
 
 		if (hasCooperation) {
 			this.updateClickableText("Switch\nTarget");

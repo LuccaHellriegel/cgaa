@@ -51,6 +51,8 @@ export class WavePopulator {
 				let enemy = this.enemyPool.pop() as DangerousCircle;
 				//Path is saved in logical order (A to B), needs to be reversed for pop()
 
+				//	enemy.stateHandler.setComponents([new GuardComponent(enemy, enemy.stateHandler)]);
+
 				enemy.stateHandler.setComponents([
 					new GuardComponent(enemy, enemy.stateHandler),
 					new AmbushComponent(
@@ -61,7 +63,7 @@ export class WavePopulator {
 						enemy,
 						enemy.stateHandler,
 						enemy.stateHandler
-					)
+					),
 				]);
 
 				enemyCircles.push(enemy);

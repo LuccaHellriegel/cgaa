@@ -4,30 +4,6 @@ import { CircleFactory } from "../unit/CircleFactory";
 import { Enemies } from "../unit/Enemies";
 import { Pool } from "./Pool";
 
-// export abstract class DangerousCircles extends Phaser.Physics.Arcade.StaticGroup {
-
-// 	abstract
-
-// 	constructor(scene, sizes) {
-// 		super(scene.physics.world, scene);
-
-// 		this.maxSize = TowerSetup.maxHealers;
-
-// 		this.createMultiple({
-// 			frameQuantity: TowerSetup.maxHealers / 2,
-// 			key: "healer",
-// 			active: false,
-// 			visible: false,
-// 			classType: Healer
-// 		});
-// 	}
-
-// 	placeTower(x, y) {
-// 		let healer = this.getFirstDead(true);
-// 		healer.place(x, y, [this.shooters, this]);
-// 	}
-// }
-
 export class DangerousCirclePool extends Pool {
 	constructor(
 		scene: Gameplay,

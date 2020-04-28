@@ -1,21 +1,48 @@
-import { Circle } from "./Circle";
-import { CirclePolygon } from "../polygons/CirclePolygon";
 import { UnitSetup } from "../setup/UnitSetup";
-import { ChainWeapon } from "../weapon/ChainWeapon";
-import { CampSetup } from "../setup/CampSetup";
-import { EventSetup } from "../setup/EventSetup";
+import { CampSetup, CampID } from "../setup/CampSetup";
 import { healable } from "../base/interfaces";
+import { Gameplay } from "../../scenes/Gameplay";
+import { listenToAnim } from "../base/anim-listen";
+import { ChainWeapon } from "../weapon/chain/weapon";
+import { weaponHeights } from "../weapon/chain/data";
+import { initUnitAnims, unitAnims } from "../base/anim-play";
+import { EventSetup } from "../setup/EventSetup";
 
 const playerTextureName = "blueNormalCircle";
 
-export class Player extends Circle implements healable {
+export class Player extends Phaser.Physics.Arcade.Sprite implements healable, unitAnims {
+	unitType: string;
+	id: string;
+	scene: Gameplay;
+	campID: CampID;
+	radius: number;
 	stateHandler: { spotted: any; obstacle: any };
 
-	constructor(scene, physicsGroup, weapon, playerX, playerY) {
-		super(scene, playerX, playerY, playerTextureName, CampSetup.playerCampID, weapon, physicsGroup);
+	playIdle: Function;
+	playDamage: Function;
+
+	constructor(scene: Gameplay, x: number, y: number, private weapon: ChainWeapon) {
+		super(scene, x, y, playerTextureName);
+
+		this.id = "_" + Math.random().toString(36).substr(2, 9);
+		this.campID = CampSetup.playerCampID;
+		this.weapon = weapon;
 		this.unitType = "player";
 
-		this.stateHandler = { spotted: null, obstacle: null };
+		initUnitAnims(this);
+		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
+
+		scene.add.existing(this);
+
+		this.radius = this.scene.textures.get(playerTextureName).get(0).halfHeight;
+		scene.physics.add.existing(this);
+		this.setCircle(this.radius);
+		this.weaponPhysics = weapon.circle;
+
+		this.type = "Normal";
+
+		// move back is needed for bounce
+		this.stateHandler = { spotted: null, obstacle: null, moveBack: () => {} };
 	}
 
 	setVelocityX(velo) {
@@ -28,21 +55,37 @@ export class Player extends Circle implements healable {
 		return super.setVelocityY(velo);
 	}
 
-	heal(amount: number) {
+	heal(amount) {
 		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 
-	static withChainWeapon(scene, playerPhysicsGroup, playerWeaponPhysicsGroup, playerX, playerY) {
-		let weapon = new ChainWeapon(scene, playerX, playerY, "NormalchainWeapon");
-		playerWeaponPhysicsGroup.add(weapon);
+	attack() {
+		this.weapon.attack();
+	}
 
-		scene.add.existing(weapon);
-		weapon.place(playerX, playerY, UnitSetup.sizeDict["Normal"], "Normal");
-		let circle = new Player(scene, playerPhysicsGroup, weapon, playerX, playerY);
-		weapon.owner = circle;
+	damage(amount) {
+		this.scene.events.emit(EventSetup.partialDamage + this.unitType, amount);
+	}
 
-		weapon.amount = 40;
+	preUpdate(time, delta) {
+		super.preUpdate(time, delta);
+		// we dont need to set rotation by hand because we do it every frame here
+		this.weapon.setRotationAroundOwner();
+	}
+
+	static withChainWeapon(scene: Phaser.Scene, x, y) {
+		let weapon = new ChainWeapon(
+			scene,
+			x,
+			y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2,
+			"NormalchainWeapon"
+		);
+		weapon.init("Normal", x, y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2, 40);
+		let circle = new Player(scene, x, y, weapon);
+		weapon.setOwner(circle);
+
 		//weapon.amount = 40000;
+
 		return circle;
 	}
 }

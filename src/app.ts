@@ -1,8 +1,18 @@
 import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
+import { Develop } from "./scenes/Develop";
 
-export function createGameConfig() {
+const devMode = false;
+const debugMode = devMode || false;
+
+function createGameConfig() {
+	let scene;
+	if (devMode) {
+		scene = [Develop];
+	} else {
+		scene = [Gameplay, HUD];
+	}
 	return {
 		type: Phaser.WEBGL,
 		canvas: document.getElementById("game") as HTMLCanvasElement,
@@ -11,13 +21,13 @@ export function createGameConfig() {
 		physics: {
 			default: "arcade",
 			arcade: {
-				debug: true
-			}
+				debug: debugMode,
+			},
 		},
 		scale: {
-			autoCenter: Phaser.Scale.CENTER_BOTH
+			autoCenter: Phaser.Scale.CENTER_BOTH,
 		},
-		scene: [Gameplay, HUD]
+		scene,
 	};
 }
 

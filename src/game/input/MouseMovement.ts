@@ -12,9 +12,10 @@ export class MouseMovement {
 	}
 
 	private rotatePlayerTowardsMouseMovement(newX, newY) {
-		let rotation = Phaser.Math.Angle.Between(this.player.x, this.player.y, newX, newY);
 		let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
-		this.player.setRotation(rotation + correctionForPhasersMinus90DegreeTopPostion);
+		let rotation =
+			Phaser.Math.Angle.Between(this.player.x, this.player.y, newX, newY) + correctionForPhasersMinus90DegreeTopPostion;
+		this.player.setRotation(rotation);
 	}
 
 	private move(pointer) {
@@ -22,7 +23,6 @@ export class MouseMovement {
 		let y = pointer.y + this.scene.cameras.main.scrollY;
 
 		this.rotatePlayerTowardsMouseMovement(x, y);
-
 		if (this.selectorRect.active || !this.selectorRect.visible) {
 			this.selectorRect.setPosition(x, y);
 		}

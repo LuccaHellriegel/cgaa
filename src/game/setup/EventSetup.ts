@@ -14,11 +14,10 @@ export class EventSetup {
 		Healer: 200,
 		Big: 100,
 		Normal: 60,
-		Small: 40
+		Small: 40,
 	};
 
 	static gainSouls(scene: Phaser.Scene, type) {
-		console.log(type);
 		scene.events.emit("souls-gained", this.soulsDict[type]);
 	}
 

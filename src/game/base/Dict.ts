@@ -1,10 +1,10 @@
 import { Point } from "./types";
 import { RelPos } from "./RelPos";
 
-export abstract class Dict {
+abstract class Dict {
 	dict = {};
 	constructor(obj: any[][]) {
-		obj.forEach(vals => this.set(vals[0], vals[1]));
+		obj.forEach((vals) => this.set(vals[0], vals[1]));
 	}
 	protected abstract toID(idparams): string;
 	abstract get(idParams);
@@ -29,24 +29,6 @@ export class RealDict extends Dict {
 	}
 }
 
-export class RelativeDict extends Dict {
-	protected toID(pos: RelPos) {
-		return pos.column + " " + pos.row;
-	}
-	get(pos: RelPos) {
-		return this.dict[this.toID(pos)];
-	}
-	set(pos: RelPos, value) {
-		this.dict[this.toID(pos)] = value;
-	}
-
-	static fromDict(dict) {
-		let relative = new RelativeDict([]);
-		relative.dict = dict;
-		return relative;
-	}
-}
-
 export class UnitDict extends Dict {
 	protected toID(_: any): string {
 		throw new Error("Method should not be used.");
@@ -60,6 +42,6 @@ export class UnitDict extends Dict {
 	}
 
 	destroy() {
-		Object.values(this.dict).forEach(val => val.destroy());
+		Object.values(this.dict).forEach((val) => val.destroy());
 	}
 }

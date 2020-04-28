@@ -2,15 +2,15 @@ import { HUD } from "../../scenes/HUD";
 import { SelectableGUIElement, GUIElement, selectable } from "./select/SelectBar";
 import { TextGUIElement } from "./select/TextGUIElement";
 import { ClickableImageRect } from "./DoubleRect";
-export class CompositeRect implements SelectableGUIElement {
+class CompositeRect implements SelectableGUIElement {
 	selected = false;
 
 	constructor(protected sele: selectable, public rects: GUIElement[]) {}
 	show() {
-		this.rects.forEach(rect => rect.show());
+		this.rects.forEach((rect) => rect.show());
 	}
 	hide() {
-		this.rects.forEach(rect => rect.hide());
+		this.rects.forEach((rect) => rect.hide());
 	}
 	select() {
 		this.selected = true;
@@ -38,18 +38,12 @@ export class UnitCompositeRect extends CompositeRect {
 		let titleEle = new TextGUIElement(sceneToUse, title[0].toUpperCase() + title.slice(1), x - 29, y - 30, {
 			font: "20px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 		super(unitRect, [unitRect, titleEle]);
 	}
 
 	setInteractive(event, func) {
 		(this.sele as ClickableImageRect).setInteractive(event, func);
-	}
-}
-
-export class UnitCompositeRectWithCounter extends UnitCompositeRect {
-	constructor(sceneToUse: HUD, title: string, x, y) {
-		super(sceneToUse, title, x, y);
 	}
 }

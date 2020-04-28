@@ -4,9 +4,9 @@ import { RelPos } from "../base/RelPos";
 import { Gameplay } from "../../scenes/Gameplay";
 
 export class BuildingFactory {
-	constructor(private scene: Gameplay, private physicsGroup) {}
+	constructor(private scene: Gameplay, private addBuilding) {}
 	produce(pos: RelPos, id: CampID, spawnUnit: string) {
 		let point = pos.toPoint();
-		return new Building(this.scene, point.x, point.y, this.physicsGroup, spawnUnit, id);
+		return new Building(this.scene, point.x, point.y, this.addBuilding, spawnUnit, id);
 	}
 }
