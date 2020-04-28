@@ -2,7 +2,7 @@
 
 A PhaserJS-based blend of 2D action and tower defense with charming programmer art.
 
-![Logo](./page/images/Logo.svg)
+![Logo](./page/images/Logo.png)
 
 ![Fight](./page/images/fight.gif)
 
