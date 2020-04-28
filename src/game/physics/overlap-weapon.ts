@@ -23,30 +23,31 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
 
 function tryDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
 	let weapon = circle.getData("weapon");
-	// only the physics circles that correspond to the current frame can do damage
-	return (
-		weapon.attacking && weapon.frame.name === circle.getData("frame") && !weapon.alreadyAttacked.includes(enemy.id)
-	);
+	return weapon.attacking && !weapon.alreadyAttacked.includes(enemy.id);
 }
 
 function doDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
 	let weapon = circle.getData("weapon");
-	let damage = weapon.amount;
 	let weaponOwner = weapon.owner;
-	let enemyStateHandler = enemy.stateHandler;
 
-	//Need this, otherwise all animation frames do damage
-	weapon.alreadyAttacked.push(enemy.id);
+	// need to have an eye if this is a good tradeoff vs having more groups
+	if (weaponOwner.campID !== enemy.campID) {
+		let damage = weapon.amount;
+		let enemyStateHandler = enemy.stateHandler;
 
-	if (weaponOwner.unitType === "player") {
-		//Gain souls if player kill (otherwise too much money)
-		if (damage >= enemy.healthbar.value) EventSetup.gainSouls(weapon.scene, enemy.type);
-	}
+		//Need this, otherwise all animation frames do damage
+		weapon.alreadyAttacked.push(enemy.id);
 
-	enemy.damage(damage);
+		if (weaponOwner.unitType === "player") {
+			//Gain souls if player kill (otherwise too much money)
+			if (damage >= enemy.healthbar.value) EventSetup.gainSouls(weapon.scene, enemy.type);
+		}
 
-	if (enemyStateHandler) {
-		enemyStateHandler.spotted = weaponOwner;
-		enemyStateHandler.obstacle = weaponOwner;
+		enemy.damage(damage);
+
+		if (enemyStateHandler) {
+			enemyStateHandler.spotted = weaponOwner;
+			enemyStateHandler.obstacle = weaponOwner;
+		}
 	}
 }

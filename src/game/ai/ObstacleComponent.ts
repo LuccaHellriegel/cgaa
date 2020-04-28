@@ -21,7 +21,7 @@ export class ObstacleComponent implements AIComponent {
 				this.circleControl.spotted = null;
 				this.circle.setVelocity(0, 0);
 				this.parent.recursionFinished();
-			} else if (inReach) {
+			} else if (inReach && !this.circle.weapon.anims.isPlaying) {
 				this.circle.attack();
 			}
 		}
