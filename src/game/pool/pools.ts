@@ -1,16 +1,16 @@
 import { CampSetup } from "../setup/CampSetup";
 import { UnitSetup } from "../setup/UnitSetup";
-import { ChainWeapons } from "../weapon/chain/group";
+import { ChainWeapons } from "../weapon/chain/pool";
 import { Bullets } from "../tower/shooter/Bullet";
 import { Shooters } from "../tower/shooter/Shooter";
 import { Healers } from "../tower/healer/Healer";
 
-export function initPools(scene: Phaser.Scene) {
+export function initPools(scene: Phaser.Scene, addTowerToPhysics, addBulletToPhysics, player) {
 	let friendWeapons = new ChainWeapons(scene, "Big", 9);
 	let bossWeapons = new ChainWeapons(scene, "Big", 30);
-	let bullets = new Bullets(scene);
-	let shooters = new Shooters(scene, bullets);
-	let healers = new Healers(scene, shooters);
+	let bullets = new Bullets(scene, addBulletToPhysics);
+	let shooters = new Shooters(scene, addTowerToPhysics, bullets);
+	let healers = new Healers(scene, addTowerToPhysics, shooters, player);
 	let weapons = {};
 	for (let campID of CampSetup.ordinaryCampIDs) {
 		weapons[campID] = {};

@@ -4,7 +4,7 @@ import { Shooter } from "./Shooter";
 import { Gameplay } from "../../../scenes/Gameplay";
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
-	constructor(scene) {
+	constructor(scene, private addBulletToPhysics) {
 		super(scene.physics.world, scene);
 
 		this.maxSize = TowerSetup.maxShooters * TowerSetup.maxBullets;
@@ -20,6 +20,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group {
 
 	fireBullet(x, y, goalX, goalY, shooter: Shooter) {
 		let bullet = this.getFirstDead(true);
+		this.addBulletToPhysics(bullet);
 		bullet.shoot(x, y, goalX, goalY, shooter);
 	}
 }

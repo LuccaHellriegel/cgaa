@@ -17,8 +17,8 @@ export class HollowRectPoylgon extends RectPolygon {
 }
 
 export class Healers extends Towers {
-	constructor(scene, private shooters: Shooters) {
-		super(scene);
+	constructor(scene, addTowerToPhysics, private shooters: Shooters, private player) {
+		super(scene, addTowerToPhysics);
 
 		this.maxSize = TowerSetup.maxHealers;
 
@@ -35,6 +35,8 @@ export class Healers extends Towers {
 
 	placeTower(x, y) {
 		let healer = this.getFirstDead(true);
+		this.addTowerToPhysics(healer);
+		healer.setPlayer(this.player);
 		healer.place(x, y, [this.shooters, this]);
 	}
 }
@@ -44,12 +46,17 @@ export class Healer extends Tower {
 	graphics: Phaser.GameObjects.Graphics;
 	auraPolygon: HollowRectPoylgon;
 	pools: Towers[];
+	player: any;
 
 	constructor(scene: Gameplay, x, y) {
 		super(scene, x, y, "healer");
 		this.graphics = scene.add.graphics({});
 		this.auraPolygon = new HollowRectPoylgon(x, y, TowerSetup.towerDistance, TowerSetup.towerDistance);
 		this.type = "Healer";
+	}
+
+	setPlayer(player) {
+		this.player = player;
 	}
 
 	place(x, y, pools) {
@@ -79,7 +86,7 @@ export class Healer extends Tower {
 				}
 			})
 		);
-		// if (this.inDistance(this.player)) this.player.heal(TowerSetup.singleHealAmount);
+		if (this.inDistance(this.player)) this.player.heal(TowerSetup.singleHealAmount);
 	}
 
 	deactivate() {

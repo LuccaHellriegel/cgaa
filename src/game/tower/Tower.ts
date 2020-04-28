@@ -1,12 +1,11 @@
 import { damageable, healable } from "../base/interfaces";
 import { poolable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
-import { Gameplay } from "../../scenes/Gameplay";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CampID } from "../setup/CampSetup";
 
 export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
-	constructor(scene) {
+	constructor(scene, protected addTowerToPhysics: Function) {
 		super(scene.physics.world, scene);
 	}
 
@@ -30,6 +29,7 @@ export abstract class Tower extends Phaser.Physics.Arcade.Image implements damag
 	constructor(scene: Phaser.Scene, x, y, texture) {
 		super(scene, x, y, texture);
 		this.campID = "blue";
+		scene.physics.add.existing(this);
 	}
 
 	abstract damage(amount: number);

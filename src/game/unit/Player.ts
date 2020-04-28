@@ -5,7 +5,6 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { listenToAnim } from "../base/anim-listen";
 import { ChainWeapon } from "../weapon/chain/weapon";
 import { weaponHeights } from "../weapon/chain/data";
-import { ChainWeapons } from "../weapon/chain/group";
 import { initUnitAnims, unitAnims } from "../base/anim-play";
 import { EventSetup } from "../setup/EventSetup";
 
@@ -36,12 +35,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		scene.add.existing(this);
 
 		this.radius = this.scene.textures.get(playerTextureName).get(0).halfHeight;
-		//	this.setCircle(this.radius);
-
+		scene.physics.add.existing(this);
+		this.setCircle(this.radius);
 		this.weaponPhysics = weapon.circle;
 
 		this.type = "Normal";
-		this.stateHandler = { spotted: null, obstacle: null };
+
+		// move back is needed for bounce
+		this.stateHandler = { spotted: null, obstacle: null, moveBack: () => {} };
 	}
 
 	setVelocityX(velo) {
@@ -54,8 +55,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		return super.setVelocityY(velo);
 	}
 
-	heal() {
-		//this.scene.events.emit(EventSetup.healPlayer, amount);
+	heal(amount) {
+		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 
 	attack() {
@@ -73,8 +74,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 	}
 
 	static withChainWeapon(scene: Phaser.Scene, x, y) {
-		//TODO: might clash with the fact that all groups now are sizespecific
-
 		let weapon = new ChainWeapon(
 			scene,
 			x,
@@ -85,7 +84,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		let circle = new Player(scene, x, y, weapon);
 		weapon.setOwner(circle);
 
-		// weapon.amount = 40;
 		//weapon.amount = 40000;
 
 		return circle;

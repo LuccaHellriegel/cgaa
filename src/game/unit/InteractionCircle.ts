@@ -42,9 +42,8 @@ export class InteractionCircle extends Phaser.Physics.Arcade.Sprite implements d
 		this.healthbar = healthbar;
 
 		this.weaponPhysics = weapon.circle;
-
-		//this.setImmovable(true);
-		//this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
+		scene.physics.add.existing(this);
+		this.setSize(EnvSetup.gridPartSize, EnvSetup.gridPartSize);
 
 		//Needed for gaining souls
 		this.type = size;

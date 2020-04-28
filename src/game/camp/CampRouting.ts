@@ -1,6 +1,6 @@
 import { CampSetup } from "../setup/CampSetup";
 import { EventSetup } from "../setup/EventSetup";
-import { Rivalries } from "../state/Rivalries";
+import { Rivalries } from "../state/rivalries";
 
 export class CampRouting {
 	private routings = {};

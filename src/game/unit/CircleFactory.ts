@@ -8,7 +8,7 @@ import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { ChainWeapon } from "../weapon/chain/weapon";
-import { ChainWeapons } from "../weapon/chain/group";
+import { ChainWeapons } from "../weapon/chain/pool";
 import { UnitSetup } from "../setup/UnitSetup";
 import { weaponHeights } from "../weapon/chain/data";
 
@@ -47,7 +47,6 @@ export class CircleFactory {
 	) {}
 
 	private createWeapon(x: number, y: number, size: EnemySize) {
-		console.log(this.weaponPools);
 		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
 	}
 
@@ -162,6 +161,9 @@ export class CircleFactory {
 			healthbar
 		);
 		this.afterCreate(circle);
+
+		// was overwritten somewhere (I think when adding to the physics groups), so set it here
+		circle.setImmovable(true);
 
 		return circle;
 	}

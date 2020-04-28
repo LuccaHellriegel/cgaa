@@ -15,16 +15,12 @@ export class ChainWeapons extends Phaser.Physics.Arcade.Group {
 	}
 
 	placeWeapon(x, y) {
-		//console.log("Pre" + this.children.size);
 		let weapon: ChainWeapon = this.getFirstDead(true);
-		//console.log("Post" + this.children.size);
 
 		if (weapon.initialized) {
-			console.log("enable");
 			weapon.enable(x, y);
 		} else {
 			weapon.init(this.ownerSizeName, x, y, unitAmountConfig[this.ownerSizeName].amount);
-			console.log("init");
 		}
 		return weapon;
 	}

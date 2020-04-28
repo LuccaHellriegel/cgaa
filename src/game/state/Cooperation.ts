@@ -2,7 +2,7 @@ import { Quests } from "./Quests";
 import { CampRouting } from "../camp/CampRouting";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { InteractionCircle } from "../unit/InteractionCircle";
-import { Rivalries } from "./Rivalries";
+import { Rivalries } from "./rivalries";
 import { Gameplay } from "../../scenes/Gameplay";
 import { EventSetup } from "../setup/EventSetup";
 
@@ -40,7 +40,7 @@ export class Cooperation {
 	activateCooperation(campID: CampID) {
 		(this.dict[campID] as Set<CampID>).add(CampSetup.playerCampID);
 
-		Object.keys(this.dict).forEach(key => {
+		Object.keys(this.dict).forEach((key) => {
 			let set: Set<CampID> = this.dict[key];
 			if (set.has(CampSetup.playerCampID)) set.add(campID);
 		});

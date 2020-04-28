@@ -24,7 +24,7 @@ import { TowerSetup } from "../game/setup/TowerSetup";
 import { Cooperation } from "../game/state/Cooperation";
 import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
-import { Rivalries } from "../game/state/Rivalries";
+import { Rivalries, initRivalries } from "../game/state/rivalries";
 import { UnitCollection } from "../game/base/UnitCollection";
 import { BuildingFactory } from "../game/building/BuildingFactory";
 import { BossCamp } from "../game/camp/BossCamp";
@@ -107,18 +107,20 @@ export class Gameplay extends Phaser.Scene {
 		this.gameState();
 		this.gamePhysics();
 		this.gameEnv();
+		this.gamePlayer();
 		this.gameCamps();
 		this.gamePlayerState();
 		this.gameOrientation();
 		this.gameBoss();
 		this.gamePathfinding();
 		this.gameWaves();
-		this.gamePlayer();
+		this.gamePlayerCamp();
+		this.gamePlayerInput();
 	}
 
 	gameState() {
 		//Setup minimal Game State for collision handling
-		this.cgaa.rivalries = new Rivalries();
+		this.cgaa.rivalries = initRivalries();
 		this.cgaa.router = new CampRouting(this.events, this.cgaa.rivalries);
 		this.cgaa.cooperation = new Cooperation(this, this.cgaa.router, this.cgaa.rivalries);
 	}
@@ -134,11 +136,64 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
 	}
 
-	gameCamps() {
-		this.cgaa.pools = initPools(this);
-
-		this.cgaa.enemies = new Enemies();
+	gamePlayer() {
 		this.cgaa.order = new CampOrder();
+		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
+
+		//Setup Player
+		let playerExit = this.cgaa.exits.getExitFor(CampSetup.playerCampID).toPoint();
+		let player = Player.withChainWeapon(this, playerExit.x, playerExit.y);
+		this.cgaa.collision.addUnit(player);
+		this.cgaa.player = player;
+
+		// this needs player, so it happens here...
+		// not happy with the coupling
+		this.cgaa.pools = initPools(this, this.cgaa.collision.addTower, this.cgaa.collision.addBullet, this.cgaa.player);
+	}
+
+	gamePlayerCamp() {
+		this.cameras.main.startFollow(this.cgaa.player);
+		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
+		this.cgaa.friends = new PlayerFriends(
+			this.cgaa.orientation.middleOfPlayerArea.toPoint(),
+			new CircleFactory(this, CampSetup.playerCampID, this.cgaa.collision.addUnit, this.cgaa.enemies, {
+				Big: this.cgaa.pools.friendWeapons,
+				Small: null,
+				Normal: null,
+			})
+		).friends;
+
+		//TODO: shooter pool should respect healer placments
+		this.cgaa.shooterPool = this.cgaa.pools.shooters;
+		this.cgaa.healerPool = this.cgaa.pools.healers;
+	}
+
+	gamePlayerInput() {
+		//Setup MouseMovement Modes
+
+		let towerSpawnObj = new TowerSpawnObj(this.cgaa.gameMap.getSpawnableDict(), this.cgaa.enemies);
+
+		//Depending on start-money can spawn or not
+		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.pools.healers, towerSpawnObj);
+		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.pools.shooters, towerSpawnObj);
+		shooterSpawner.canSpawn = true;
+
+		this.cgaa.interactionCollection = new UnitCollection(
+			this.cgaa.camps.ordinary.map((camp) => {
+				return camp.interactionUnit;
+			})
+		);
+
+		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
+		let healerMode = new TowerModus(healerSpawner, this.cgaa.selectorRect, TowerSetup.maxHealers);
+		let shooterMode = new TowerModus(shooterSpawner, this.cgaa.selectorRect, TowerSetup.maxShooters);
+		this.cgaa.build = new BuildManager(this, healerMode, shooterMode);
+
+		new MouseMovement(this, this.cgaa.player, this.cgaa.selectorRect);
+	}
+
+	gameCamps() {
+		this.cgaa.enemies = new Enemies();
 		this.cgaa.camps = new Camps(this.cgaa.order, this.cgaa.areas, this.cgaa.gameMap);
 		this.cgaa.gameMap.updateWith(this.cgaa.camps);
 		this.cgaa.camps.ordinary.forEach((camp) => {
@@ -188,7 +243,6 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	gameBoss() {
-		console.log(this.cgaa.pools.bossWeapons);
 		let bossFactory = new CircleFactory(this, CampSetup.bossCampID, this.cgaa.collision.addUnit, this.cgaa.enemies, {
 			Big: this.cgaa.pools.bossWeapons,
 			Small: null,
@@ -212,7 +266,6 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	gamePathfinding() {
-		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
 		let configs = PathConfig.createConfigs(this.cgaa.orientation, this.cgaa.exits, this.cgaa.camps.arr);
 		let paths = new Paths(
 			this.cgaa.orientation,
@@ -252,48 +305,6 @@ export class Gameplay extends Phaser.Scene {
 					);
 				});
 		});
-	}
-
-	gamePlayer() {
-		//Setup Player
-		let playerExit = this.cgaa.exits.getExitFor(CampSetup.playerCampID).toPoint();
-		let player = Player.withChainWeapon(this, playerExit.x, playerExit.y);
-		this.cgaa.collision.addUnit(player);
-		this.cgaa.player = player;
-		this.cameras.main.startFollow(player);
-		this.cgaa.movement = new Movement(new WASD(this), player);
-		this.cgaa.friends = new PlayerFriends(
-			this.cgaa.orientation.middleOfPlayerArea.toPoint(),
-			new CircleFactory(this, CampSetup.playerCampID, this.cgaa.collision.addUnit, this.cgaa.enemies, {
-				Big: this.cgaa.pools.friendWeapons,
-				Small: null,
-				Normal: null,
-			})
-		).friends;
-
-		//Setup MouseMovement Modes
-		//TODO: shooter pool should respect healer placments
-		this.cgaa.shooterPool = this.cgaa.pools.shooters;
-		this.cgaa.healerPool = this.cgaa.pools.healers;
-		let towerSpawnObj = new TowerSpawnObj(this.cgaa.gameMap.getSpawnableDict(), this.cgaa.enemies);
-
-		//Depending on start-money can spawn or not
-		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.pools.healers, towerSpawnObj);
-		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.pools.shooters, towerSpawnObj);
-		shooterSpawner.canSpawn = true;
-
-		this.cgaa.interactionCollection = new UnitCollection(
-			this.cgaa.camps.ordinary.map((camp) => {
-				return camp.interactionUnit;
-			})
-		);
-
-		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
-		let healerMode = new TowerModus(healerSpawner, this.cgaa.selectorRect, TowerSetup.maxHealers);
-		let shooterMode = new TowerModus(shooterSpawner, this.cgaa.selectorRect, TowerSetup.maxShooters);
-		this.cgaa.build = new BuildManager(this, healerMode, shooterMode);
-
-		new MouseMovement(this, player, this.cgaa.selectorRect);
 	}
 
 	startWaves() {

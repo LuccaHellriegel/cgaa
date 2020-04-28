@@ -1,65 +1,64 @@
 import { initCollision } from "../game/physics/physics";
-import { Rivalries } from "../game/state/Rivalries";
+import { initRivalries } from "../game/state/rivalries";
 import { CampRouting } from "../game/camp/CampRouting";
 import { Cooperation } from "../game/state/Cooperation";
 import { initPools } from "../game/pool/pools";
+import { Player } from "../game/unit/Player";
+import { Movement } from "../game/input/Movement";
+import { WASD } from "../game/input/WASD";
+import { weaponTextures } from "../game/weapon/chain/texture";
+import { generateTextures } from "../graphics/texture/texture";
+import { createAnims } from "../graphics/animation/animation";
+import { SelectorRect } from "../game/modi/SelectorRect";
+import { MouseMovement } from "../game/input/MouseMovement";
+import { DangerousCircle } from "../game/unit/DangerousCircle";
+import { ChainWeapon } from "../game/weapon/chain/weapon";
+import { CircleFactory } from "../game/unit/CircleFactory";
+import { Enemies } from "../game/unit/Enemies";
+import { GuardComponent } from "../game/ai/GuardComponent";
 
 export class Develop extends Phaser.Scene {
+	movement: any;
+	selectorRect: SelectorRect;
 	constructor() {
 		super("Develop");
 	}
 
 	preload() {
-		// weaponTextures(this);
-		// generateTextures(this);
-		// createAnims(this.anims);
-		// this.add.circle(0, 0, 5, 0xfffff);
+		weaponTextures(this);
+		generateTextures(this);
+		createAnims(this.anims);
+		//this.add.circle(0, 0, 5, 0xfffff);
 	}
 
 	create() {
-		let rivalries = new Rivalries();
+		let rivalries = initRivalries();
 		let router = new CampRouting(this.events, rivalries);
 		let cooperation = new Cooperation(this, router, rivalries);
-		initCollision(this, cooperation);
-		initPools(this);
-		//oneGroup(this);
-		// let physicsGroups = addCollision(this, cooperation);
-		// this.cameras.main.centerOn(0, 50);
-		// this.player = Player.withChainWeapon(
-		// 	this,
-		// 	this.physics.add.group(),
-		// 	new ChainWeapons(this, "Normal", 20, this.physics.add.group()),
-		// 	200,
-		// 	400
-		// );
-		// this.movement = new Movement(new WASD(this), this.player);
-		// this.cameras.main.startFollow(this.player);
-		// let selectorRect = new SelectorRect(this, 0, 0);
-		// new MouseMovement(this, this.player, selectorRect);
-		//this.input.on("pointerdown", this.player.weapon.attack.bind(this.player.weapon));
-		// for (let index = 0; index < 10; index++) {
-		// 	let weapon = (physicsGroups.enemyWeapons[CampSetup.bossCampID]["Big"] as ChainWeapons).placeWeapon(
-		// 		100,
-		// 		100 - UnitSetup.sizeDict["Big"] - weaponHeights["Big"].frame2 / 2
-		// 	);
-		// 	let circle = new DangerousCircle(
-		// 		this,
-		// 		100 + index * 100,
-		// 		100,
-		// 		"orangeBigCircle",
-		// 		"orange",
-		// 		weapon,
-		// 		physicsGroups.enemies[CampSetup.bossCampID],
-		// 		"Big",
-		// 		HealthBarFactory.createDangerousCircleHealthBar(this, 100, 100, "Big"),
-		// 		10
-		// 	);
-		// 	circle.stateHandler.setComponents([new GuardComponent(circle, circle.stateHandler)]);
-		// 	weapon.setOwner(circle);
-		// }
+		let collision = initCollision(this, cooperation);
+		let player = Player.withChainWeapon(this, 0, 0);
+		collision.addUnit(player);
+		this.cameras.main.startFollow(player);
+		this.movement = new Movement(new WASD(this), player);
+
+		this.selectorRect = new SelectorRect(this, 0, 0);
+
+		new MouseMovement(this, player, this.selectorRect);
+
+		let pools = initPools(this);
+		let factory = new CircleFactory(this, "yellow", collision.addUnit, new Enemies(), pools.weapons["yellow"]);
+		let enemy = factory.createEnemy("Big");
+		enemy.stateHandler.setComponents([new GuardComponent(enemy, enemy.stateHandler)]);
+		// enemy.preUpdate = function (time, delta) {
+		// 	this.weapon.setRotationAroundOwner();
+		// 	this.healthbar.move(this.x, this.y);
+		// }.bind(enemy);
+		enemy.setPosition(100, 0);
+
+		this.input.on("pointerdown", player.attack.bind(player));
 	}
 
 	update() {
-		//this.movement.update();
+		this.movement.update();
 	}
 }

@@ -48,8 +48,8 @@ export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements dam
 		this.weapon = weapon;
 
 		this.weaponPhysics = weapon.circle;
-
-		// setupCircle(this)
+		scene.physics.add.existing(this);
+		setupCircle(this);
 
 		this.healthbar = healthbar;
 		this.stateHandler = new CircleControl(this);
