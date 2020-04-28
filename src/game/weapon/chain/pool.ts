@@ -16,12 +16,13 @@ export class ChainWeapons extends Phaser.Physics.Arcade.Group {
 
 	placeWeapon(x, y) {
 		let weapon: ChainWeapon = this.getFirstDead(true);
+		weapon.init(this.ownerSizeName, x, y, unitAmountConfig[this.ownerSizeName].amount);
 
-		if (weapon.initialized) {
-			weapon.enable(x, y);
-		} else {
-			weapon.init(this.ownerSizeName, x, y, unitAmountConfig[this.ownerSizeName].amount);
-		}
+		// new weapons are missing textures?
+		// if (weapon.initialized) {
+		// 	weapon.enable(x, y);
+		// } else {
+		// }
 		return weapon;
 	}
 }
