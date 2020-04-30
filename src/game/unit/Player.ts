@@ -7,42 +7,37 @@ import { ChainWeapon } from "../weapon/chain/weapon";
 import { weaponHeights } from "../weapon/chain/data";
 import { initUnitAnims, unitAnims } from "../base/anim-play";
 import { EventSetup } from "../setup/EventSetup";
+import { addID } from "../base/data";
+import { addToScene, setupCircleBody } from "../base/phaser";
 
 const playerTextureName = "blueNormalCircle";
 
 export class Player extends Phaser.Physics.Arcade.Sprite implements healable, unitAnims {
-	unitType: string;
+	unitType: string = "player";
+	type = "Normal";
+	campID: CampID = CampSetup.playerCampID;
+	// move back is needed for bounce
+	stateHandler = { spotted: null, obstacle: null, moveBack: () => {} };
+
 	id: string;
 	scene: Gameplay;
-	campID: CampID;
-	radius: number;
-	stateHandler: { spotted: any; obstacle: any };
 
 	playIdle: Function;
 	playDamage: Function;
+	weaponPhysics: Phaser.Physics.Arcade.Sprite;
+	attack: any;
 
 	constructor(scene: Gameplay, x: number, y: number, private weapon: ChainWeapon) {
 		super(scene, x, y, playerTextureName);
 
-		this.id = "_" + Math.random().toString(36).substr(2, 9);
-		this.campID = CampSetup.playerCampID;
-		this.weapon = weapon;
-		this.unitType = "player";
-
+		addID(this);
+		addToScene(this, scene);
 		initUnitAnims(this);
 		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
+		setupCircleBody(this);
 
-		scene.add.existing(this);
-
-		this.radius = this.scene.textures.get(playerTextureName).get(0).halfHeight;
-		scene.physics.add.existing(this);
-		this.setCircle(this.radius);
 		this.weaponPhysics = weapon.circle;
-
-		this.type = "Normal";
-
-		// move back is needed for bounce
-		this.stateHandler = { spotted: null, obstacle: null, moveBack: () => {} };
+		this.attack = this.weapon.attack.bind(this.weapon);
 	}
 
 	setVelocityX(velo) {
@@ -59,11 +54,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		this.scene.events.emit(EventSetup.healPlayer, amount);
 	}
 
-	attack() {
-		this.weapon.attack();
-	}
-
 	damage(amount) {
+		this.playDamage();
 		this.scene.events.emit(EventSetup.partialDamage + this.unitType, amount);
 	}
 

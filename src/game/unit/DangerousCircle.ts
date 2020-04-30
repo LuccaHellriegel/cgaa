@@ -1,4 +1,4 @@
-import { damageable, poolable } from "../base/interfaces";
+import { poolable } from "../base/interfaces";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { CircleControl } from "../ai/CircleControl";
 import { Point } from "../base/types";
@@ -6,24 +6,17 @@ import { EnemySize } from "./CircleFactory";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampID } from "../setup/CampSetup";
 import { ChainWeapon } from "../weapon/chain/weapon";
-import { setupCircle } from "../base/circle";
 import { UnitSetup } from "../setup/UnitSetup";
 import { weaponHeights } from "../weapon/chain/data";
-import { listenToAnim } from "../base/anim-listen";
-import { unitAnims, initUnitAnims } from "../base/anim-play";
+import { unitAnims } from "../base/anim-play";
+import { setupCircleBody } from "../base/phaser";
+import { CircleUnit } from "./CircleUnit";
 
-export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements damageable, poolable, unitAnims {
-	healthbar: HealthBar;
+export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
 	pathArr: Point[];
-	stateHandler: CircleControl;
-	weapon: ChainWeapon;
-	unitType: string;
-	id: string;
-	scene: Gameplay;
-	campID: CampID;
+	stateHandler: CircleControl = new CircleControl(this);
 
-	playIdle: Function;
-	playDamage: Function;
+	attack: Function;
 
 	constructor(
 		scene: Gameplay,
@@ -36,48 +29,13 @@ export class DangerousCircle extends Phaser.Physics.Arcade.Sprite implements dam
 		healthbar: HealthBar,
 		public velo: number
 	) {
-		super(scene, x, y, texture);
-		this.id = "_" + Math.random().toString(36).substr(2, 9);
-
-		initUnitAnims(this);
-		listenToAnim(this, { animComplete: true, damageComplete: this.playIdle.bind(this) });
-
-		scene.add.existing(this);
-		this.campID = campID;
-		this.unitType = "circle";
-		this.weapon = weapon;
-
-		this.weaponPhysics = weapon.circle;
-		scene.physics.add.existing(this);
-		setupCircle(this);
-
-		this.healthbar = healthbar;
-		this.stateHandler = new CircleControl(this);
-
-		//Needed for gaining souls
-		this.type = size;
-	}
-
-	damage(amount) {
-		if (this.healthbar.decrease(amount)) {
-			this.poolDestroy();
-		} else {
-			this.playDamage();
-		}
+		super(scene, x, y, texture, campID, weapon, size, healthbar);
+		setupCircleBody(this);
+		this.attack = this.weapon.attack.bind(this.weapon);
 	}
 
 	heal(amount: number) {
 		this.healthbar.increase(amount);
-	}
-
-	attack() {
-		this.weapon.attack();
-	}
-
-	destroy() {
-		super.destroy();
-		this.weapon.destroy();
-		this.healthbar.bar.destroy();
 	}
 
 	disable() {

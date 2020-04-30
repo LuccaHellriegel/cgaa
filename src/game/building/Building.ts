@@ -4,6 +4,8 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { HealthBarFactory } from "../ui/healthbar/HealthBarFactory";
 import { CampID } from "../setup/CampSetup";
 import { EventSetup } from "../setup/EventSetup";
+import { addToScene } from "../base/phaser";
+import { addID } from "../base/data";
 
 export class Building extends Phaser.Physics.Arcade.Image implements damageable {
 	id: string;
@@ -11,20 +13,22 @@ export class Building extends Phaser.Physics.Arcade.Image implements damageable 
 	healthbar: HealthBar;
 	scene: Gameplay;
 
-	constructor(scene: Gameplay, x, y, addBuilding, public spawnUnit, public campID: CampID) {
-		super(scene, x, y, campID + spawnUnit + "Building");
-		scene.add.existing(this);
+	constructor(scene: Gameplay, x, y, addBuildingToPhysics, public spawnUnit, public campID: CampID) {
+		super(scene, x, y, Building.buildingTexture(campID, spawnUnit));
+		addBuildingToPhysics(this);
+		addToScene(this, scene);
+		addID(this);
 
-		addBuilding(this);
+		this.setImmovable(true);
 
 		this.healthbar = HealthBarFactory.createBuildingHealthBar(scene, x, y);
 
 		//Needed for gaining souls
 		this.type = spawnUnit;
+	}
 
-		this.id = "_" + Math.random().toString(36).substr(2, 9);
-
-		this.setImmovable(true);
+	static buildingTexture(campID, spawnUnit) {
+		return campID + spawnUnit + "Building";
 	}
 
 	damage(amount: number) {

@@ -54,7 +54,6 @@ export class CircleFactory {
 		this.addUnit(circle);
 
 		circle.weapon.setOwner(circle);
-		circle.camp = this.campID;
 		this.scene.children.bringToTop(circle.healthbar.bar);
 		this.enemies.addEnemy(circle);
 	}
