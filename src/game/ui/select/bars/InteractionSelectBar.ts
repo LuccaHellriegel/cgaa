@@ -8,10 +8,12 @@ import { SelectionManager } from "../SelectionManager";
 import { InteractionCircle } from "../../../unit/InteractionCircle";
 import { CampSetup } from "../../../setup/CampSetup";
 import { TextGUIElement } from "../TextGUIElement";
+import { Quests } from "../../../state/Quests";
 export class InteractionSelectBar extends SelectBar {
 	cooperation: Cooperation;
 	selectionManager: SelectionManager;
-	constructor(sceneToUse: HUD, x, y, cooperation: Cooperation, selectionManager: SelectionManager) {
+	quests: Quests;
+	constructor(sceneToUse: HUD, x, y, cooperation: Cooperation, selectionManager: SelectionManager, quests: Quests) {
 		let baseRect = new Rect(sceneToUse, x, y, 180, 80, 0xd3d3d3);
 
 		let textRect = new ClickableTextRect(sceneToUse, x - 50, y, 60, 60, 0xffffff, "Accept\nQuest");
@@ -31,6 +33,7 @@ export class InteractionSelectBar extends SelectBar {
 
 		this.cooperation = cooperation;
 		this.selectionManager = selectionManager;
+		this.quests = quests;
 
 		//TODO: oh man
 		((this.contentElements[1] as UnitCompositeRect).rects[0] as ClickableImageRect).image.setScale(1, 1);
@@ -46,7 +49,7 @@ export class InteractionSelectBar extends SelectBar {
 
 		if (hasCooperation) {
 			this.updateClickableText("Switch\nTarget");
-		} else if (this.cooperation.quests.hasAccepted(interactedCampID)) {
+		} else if (this.quests.hasAccepted(interactedCampID)) {
 			this.updateClickableText("Check\nQuest");
 		} else {
 			this.updateClickableText("Accept\nQuest");

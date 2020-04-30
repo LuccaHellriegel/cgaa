@@ -22,6 +22,7 @@ import { InteractionSelectBar } from "../game/ui/select/bars/InteractionSelectBa
 import { Cooperation } from "../game/state/Cooperation";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { Popup } from "../game/ui/Popup";
+import { Interaction } from "../game/state/Interaction";
 
 let screenWidth = 1280;
 let screenLength = 720;
@@ -135,12 +136,13 @@ export class HUD extends Phaser.Scene {
 			0 + 180,
 			0 + 30 + 5 + 5,
 			this.ourGame.cgaa.cooperation,
-			selectionManager
+			selectionManager,
+			this.ourGame.cgaa.quests
 		);
 		let selectBars = new SelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
 		let questFunc = function () {
 			if (selectionManager.selectedUnit) {
-				(this.ourGame.cgaa.cooperation as Cooperation).interactWithCircle(selectionManager.selectedUnit);
+				(this.ourGame.cgaa.interaction as Interaction).interactWithCircle(selectionManager.selectedUnit);
 				selectBars.hide();
 			}
 		}.bind(this);

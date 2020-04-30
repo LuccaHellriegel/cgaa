@@ -7,11 +7,13 @@ import { Quest } from "./Quest";
 export class Quests {
 	private questDict = {};
 
-	constructor(scene: Gameplay, rivalries: Rivalries, essentialDict) {
+	constructor(private scene: Gameplay, private rivalries: Rivalries) {}
+
+	createStartQuests(essentialDict) {
 		CampSetup.ordinaryCampIDs.forEach((id) => {
-			let rivalID = rivalries.getRival(id);
+			let rivalID = this.rivalries.getRival(id);
 			let killCollection = new UnitCollection(essentialDict[rivalID]);
-			let quest = new Quest(scene, killCollection, id, rivalID);
+			let quest = new Quest(this.scene, killCollection, id, rivalID);
 			this.questDict[id] = quest;
 		});
 	}

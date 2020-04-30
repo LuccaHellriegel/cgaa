@@ -33,7 +33,7 @@ import { CampSetup } from "../game/setup/CampSetup";
 import { WavePopulator } from "../game/populator/WavePopulator";
 import { EnemySpawnObj } from "../game/spawn/EnemySpawnObj";
 import { PathAssigner } from "../game/path/PathAssigner";
-import { CampsState } from "../game/state/CampsState";
+import { CampsState } from "../game/camp/CampsState";
 import { WaveController } from "../game/wave/WaveController";
 import { WaveOrder } from "../game/wave/WaveOrder";
 import { Building } from "../game/building/Building";
@@ -49,6 +49,7 @@ import { DangerousCircle } from "../game/unit/DangerousCircle";
 import { Shooters } from "../game/tower/shooter/Shooter";
 import { Healers } from "../game/tower/healer/Healer";
 import { initPools } from "../game/pool/pools";
+import { Interaction } from "../game/state/Interaction";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -63,7 +64,6 @@ export class Gameplay extends Phaser.Scene {
 
 			addBullet: Function;
 		};
-		rivalries: Rivalries;
 		router: CampRouting;
 		cooperation: Cooperation;
 		areas: Areas;
@@ -92,6 +92,8 @@ export class Gameplay extends Phaser.Scene {
 			friendWeapons;
 			bossWeapons;
 		};
+		quests;
+		interaction: Interaction;
 	} = {};
 
 	constructor() {
@@ -109,7 +111,7 @@ export class Gameplay extends Phaser.Scene {
 		this.gameEnv();
 		this.gamePlayer();
 		this.gameCamps();
-		this.gamePlayerState();
+		this.gameInitQuests();
 		this.gameOrientation();
 		this.gameBoss();
 		this.gamePathfinding();
@@ -119,10 +121,11 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	gameState() {
-		//Setup minimal Game State for collision handling
-		this.cgaa.rivalries = initRivalries();
-		this.cgaa.router = new CampRouting(this.events, this.cgaa.rivalries);
-		this.cgaa.cooperation = new Cooperation(this, this.cgaa.router, this.cgaa.rivalries);
+		let rivalries = initRivalries();
+		this.cgaa.router = new CampRouting(this.events, rivalries);
+		this.cgaa.quests = new Quests(this, rivalries);
+		this.cgaa.cooperation = new Cooperation(this);
+		this.cgaa.interaction = new Interaction(this.cgaa.router, rivalries, this.cgaa.quests, this.cgaa.cooperation);
 	}
 
 	gamePhysics() {
@@ -222,14 +225,14 @@ export class Gameplay extends Phaser.Scene {
 		});
 	}
 
-	gamePlayerState() {
+	gameInitQuests() {
+		// make map with camp: buildings+diplomat
 		let essentialDict = this.cgaa.camps.ordinary.reduce((prev, cur) => {
 			prev[cur.id] = (cur.buildings as any[]).concat(cur.interactionUnit);
 			return prev;
 		}, {});
 
-		let quests = new Quests(this, this.cgaa.rivalries, essentialDict);
-		this.cgaa.cooperation.setQuests(quests);
+		this.cgaa.quests.createStartQuests(essentialDict);
 	}
 
 	gameOrientation() {
