@@ -71,7 +71,6 @@ export class Shooter extends Tower {
 	poolDestroy() {
 		this.setPosition(-1000, -1000);
 		this.disableBody(true, true);
-		this.healthbar.bar.setActive(false).setVisible(false);
-		this.healthbar.value = this.healthbar.defaultValue;
+		this.healthbar.disable();
 	}
 }

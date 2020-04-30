@@ -19,9 +19,9 @@ export function initBulletGroupPair(scene: Phaser.Scene) {
 
 function collision(bullet: Bullet, enemy: DangerousCircle) {
 	let damage = bullet.amount;
-	let enemyKilled = damage >= enemy.healthbar.value;
+	let enemyKilled = damage >= enemy.healthbar.health.current;
 	if (enemyKilled) {
-		damage = enemy.healthbar.value;
+		damage = enemy.healthbar.health.current;
 		EventSetup.gainSouls(bullet.scene, enemy.type);
 	}
 	enemy.damage(damage);

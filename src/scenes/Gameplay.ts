@@ -22,9 +22,7 @@ import { Spawner } from "../game/pool/Spawner";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { Cooperation } from "../game/state/Cooperation";
-import { Quests } from "../game/state/Quests";
 import { CampRouting } from "../game/camp/CampRouting";
-import { Rivalries, initRivalries } from "../game/state/rivalries";
 import { UnitCollection } from "../game/base/UnitCollection";
 import { BuildingFactory } from "../game/building/BuildingFactory";
 import { BossCamp } from "../game/camp/BossCamp";
@@ -50,6 +48,7 @@ import { Shooters } from "../game/tower/shooter/Shooter";
 import { Healers } from "../game/tower/healer/Healer";
 import { initPools } from "../game/pool/pools";
 import { Interaction } from "../game/state/Interaction";
+import { initStartState } from "../game/state/state";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -64,8 +63,6 @@ export class Gameplay extends Phaser.Scene {
 
 			addBullet: Function;
 		};
-		router: CampRouting;
-		cooperation: Cooperation;
 		areas: Areas;
 		gameMap: GameMap;
 		enemies: Enemies;
@@ -92,9 +89,10 @@ export class Gameplay extends Phaser.Scene {
 			friendWeapons;
 			bossWeapons;
 		};
-		quests;
 		interaction: Interaction;
 	} = {};
+
+	cgaaState;
 
 	constructor() {
 		super("Gameplay");
@@ -106,8 +104,10 @@ export class Gameplay extends Phaser.Scene {
 
 		createAnims(this.anims);
 
-		this.gameState();
-		this.gamePhysics();
+		this.cgaaState = initStartState(this);
+		//Setup Physics and Sight
+		this.cgaa.collision = initCollision(this, this.cgaaState.cooperation);
+
 		this.gameEnv();
 		this.gamePlayer();
 		this.gameCamps();
@@ -118,31 +118,25 @@ export class Gameplay extends Phaser.Scene {
 		this.gameWaves();
 		this.gamePlayerCamp();
 		this.gamePlayerInput();
-	}
 
-	gameState() {
-		let rivalries = initRivalries();
-		this.cgaa.router = new CampRouting(this.events, rivalries);
-		this.cgaa.quests = new Quests(this, rivalries);
-		this.cgaa.cooperation = new Cooperation(this);
-		this.cgaa.interaction = new Interaction(this.cgaa.router, rivalries, this.cgaa.quests, this.cgaa.cooperation);
-	}
-
-	gamePhysics() {
-		//Setup Physics and Sight
-		this.cgaa.collision = initCollision(this, this.cgaa.cooperation);
+		this.cgaa.interaction = new Interaction(
+			this.cgaaState.router,
+			this.cgaaState.rivalries,
+			this.cgaaState.quests,
+			this.cgaaState.cooperation
+		);
 	}
 
 	gameEnv() {
 		//Setup Environment
 		this.cgaa.areas = new Areas(this, this.cgaa.collision.addEnv);
 		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
+
+		this.cgaa.order = new CampOrder();
+		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
 	}
 
 	gamePlayer() {
-		this.cgaa.order = new CampOrder();
-		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
-
 		//Setup Player
 		let playerExit = this.cgaa.exits.getExitFor(CampSetup.playerCampID).toPoint();
 		let player = Player.withChainWeapon(this, playerExit.x, playerExit.y);
@@ -157,16 +151,23 @@ export class Gameplay extends Phaser.Scene {
 	gamePlayerCamp() {
 		this.cameras.main.startFollow(this.cgaa.player);
 		this.cgaa.movement = new Movement(new WASD(this), this.cgaa.player);
-		this.cgaa.friends = new PlayerFriends(
-			this.cgaa.orientation.middleOfPlayerArea.toPoint(),
-			new CircleFactory(this, CampSetup.playerCampID, this.cgaa.collision.addUnit, this.cgaa.enemies, {
-				Big: this.cgaa.pools.friendWeapons,
-				Small: null,
-				Normal: null,
-			})
-		).friends;
 
-		//TODO: shooter pool should respect healer placments
+		let playerCampMiddlePoint = this.cgaa.orientation.middleOfPlayerArea.toPoint();
+		let friendPools = {
+			Big: this.cgaa.pools.friendWeapons,
+			Small: null,
+			Normal: null,
+		};
+		let friendFactory = new CircleFactory(
+			this,
+			CampSetup.playerCampID,
+			this.cgaa.collision.addUnit,
+			this.cgaa.enemies,
+			friendPools
+		);
+		this.cgaa.friends = new PlayerFriends(playerCampMiddlePoint, friendFactory).friends;
+
+		//TODO: shooter pool should respect healer placements
 		this.cgaa.shooterPool = this.cgaa.pools.shooters;
 		this.cgaa.healerPool = this.cgaa.pools.healers;
 	}
@@ -232,7 +233,7 @@ export class Gameplay extends Phaser.Scene {
 			return prev;
 		}, {});
 
-		this.cgaa.quests.createStartQuests(essentialDict);
+		this.cgaaState.quests.createStartQuests(essentialDict);
 	}
 
 	gameOrientation() {
@@ -274,7 +275,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.orientation,
 			PathFactory.produce(new PathCalculator(this.cgaa.gameMap.map), configs)
 		);
-		this.cgaa.assigner = new PathAssigner(paths, this.cgaa.router);
+		this.cgaa.assigner = new PathAssigner(paths, this.cgaaState.router);
 	}
 
 	gameWaves() {

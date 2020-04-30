@@ -1,3 +1,5 @@
+import { Health } from "../../../api/status/Health";
+
 interface HealthBarConfig {
 	scene;
 	healthWidth;
@@ -9,20 +11,19 @@ interface HealthBarConfig {
 
 export class HealthBar {
 	bar: Phaser.GameObjects.Graphics;
-	value: number;
 	healthWidth: number;
 	healthLength: number;
 	p: number;
 	posCorrectionX: number;
 	posCorrectionY: number;
-	defaultValue: any;
+	health: Health;
 
 	constructor(public x: number, public y: number, config: HealthBarConfig) {
-		this.bar = new Phaser.GameObjects.Graphics(config.scene);
+		this.bar = (config.scene as Phaser.Scene).add.graphics();
 
 		let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } = config;
 
-		this.defaultValue = value;
+		this.health = new Health(value);
 
 		this.healthWidth = healthWidth;
 		this.healthLength = healthLength;
@@ -33,28 +34,21 @@ export class HealthBar {
 
 		this.move(x, y);
 		this.reset();
-		config.scene.add.existing(this.bar);
 	}
 
 	reset() {
-		this.value = this.defaultValue;
+		this.health.reset();
 		this.draw();
 	}
 
 	decrease(amount) {
-		this.value -= amount;
-		if (this.value < 0) {
-			this.value = 0;
-		}
+		let result = this.health.decrease(amount);
 		this.draw();
-		return this.value === 0;
+		return result;
 	}
 
 	increase(amount) {
-		this.value += amount;
-		if (this.value > this.defaultValue) {
-			this.value = this.defaultValue;
-		}
+		this.health.increase(amount);
 		this.draw();
 	}
 
@@ -66,12 +60,12 @@ export class HealthBar {
 	drawHealth() {
 		this.bar.fillStyle(0xffffff);
 		this.bar.fillRect(this.x + 2, this.y + 2, this.healthWidth, this.healthLength);
-		if (this.value < 30) {
+		if (this.health.current < 30) {
 			this.bar.fillStyle(0xff0000);
 		} else {
 			this.bar.fillStyle(0x00ff00);
 		}
-		let d = Math.floor(this.p * this.value);
+		let d = Math.floor(this.p * this.health.current);
 		this.bar.fillRect(this.x + 2, this.y + 2, d, this.healthLength);
 	}
 
@@ -98,6 +92,6 @@ export class HealthBar {
 
 	disable() {
 		this.bar.setActive(false).setVisible(false);
-		this.value = this.defaultValue;
+		this.health.reset();
 	}
 }

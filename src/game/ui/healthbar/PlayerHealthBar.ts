@@ -6,12 +6,6 @@ export class PlayerHealthBar extends HealthBar {
 		this.move(this.calculatehealthBarXWrtScreen(), this.calculatehealthBarYWrtScreen());
 	}
 
-	increase(amount) {
-		let realAmount = this.value == 100 ? 0 : Math.min(100 - this.value, amount);
-		this.value += realAmount;
-		this.draw();
-	}
-
 	private calculatehealthBarXWrtScreen() {
 		let screenWidth = 1280;
 		let healthBarWidth = 200;

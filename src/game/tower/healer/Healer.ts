@@ -104,8 +104,7 @@ export class Healer extends Tower {
 
 	poolDestroy() {
 		this.disableBody(true, true);
-		this.healthbar.bar.setActive(false).setVisible(false);
-		this.healthbar.value = this.healthbar.defaultValue;
+		this.healthbar.disable();
 		this.deactivate();
 		this.graphics.clear();
 	}
