@@ -5,7 +5,7 @@ import { WaveSetup } from "../setup/WaveSetup";
 import { RelPos } from "../base/RelPos";
 import { Wave } from "../wave/Wave";
 import { CampID } from "../setup/CampSetup";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "../camp/CampsState";
 import { EventSetup } from "../setup/EventSetup";
 import { AmbushComponent } from "../ai/AmbushComponent";
 import { GuardComponent } from "../ai/GuardComponent";

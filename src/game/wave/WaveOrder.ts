@@ -1,5 +1,5 @@
 import { CampID, CampSetup } from "../setup/CampSetup";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "../camp/CampsState";
 import { Util } from "../base/Util";
 import { RandomOrder } from "../base/RandomOrder";
 

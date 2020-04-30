@@ -14,7 +14,7 @@ import { RealDict } from "../base/Dict";
 import { RelPos } from "../base/RelPos";
 import { CircleFactory } from "../unit/CircleFactory";
 import { InteractionCircle } from "../unit/InteractionCircle";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "./CampsState";
 import { UnitSetup } from "../setup/UnitSetup";
 import { Pool } from "../pool/Pool";
 import { DangerousCirclePool } from "../pool/CirclePool";

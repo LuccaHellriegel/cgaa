@@ -1,5 +1,5 @@
 import { DangerousCircle } from "../unit/DangerousCircle";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "../camp/CampsState";
 import { CampID } from "../setup/CampSetup";
 
 export class Wave {
@@ -15,7 +15,7 @@ export class Wave {
 	}
 
 	private destroy() {
-		this.enemyCircles.forEach(circle => circle.destroy());
+		this.enemyCircles.forEach((circle) => circle.destroy());
 	}
 
 	private spawnEnemy() {
@@ -36,7 +36,7 @@ export class Wave {
 			callback: () => {
 				this.spawnEnemy();
 			},
-			repeat: 0
+			repeat: 0,
 		});
 	}
 }

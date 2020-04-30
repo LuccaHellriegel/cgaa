@@ -9,7 +9,7 @@ import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { BarrierFactory } from "./BarrierFactory";
 import { GameMap } from "../env/GameMap";
 import { RealAreaSpawnableDict } from "../env/SpawnableDict";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "./CampsState";
 import { BossSetup } from "../setup/BossSetup";
 import { BossPool } from "../pool/CirclePool";
 
@@ -19,13 +19,13 @@ export class BossCamp implements CampLike {
 
 	createBarriers(factory: BarrierFactory) {
 		let relPositions = this.area.exit.relativePositions
-			.map(relPos => relPos.toPoint())
-			.map(point => {
+			.map((relPos) => relPos.toPoint())
+			.map((point) => {
 				let realTopLeft = this.area.topLeft.toPoint();
 
 				return {
 					x: point.x + realTopLeft.x - EnvSetup.halfGridPartSize,
-					y: point.y + realTopLeft.y - EnvSetup.halfGridPartSize
+					y: point.y + realTopLeft.y - EnvSetup.halfGridPartSize,
 				};
 			});
 		factory.produce(relPositions);

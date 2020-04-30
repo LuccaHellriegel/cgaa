@@ -3,7 +3,7 @@ import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { UnitSetup } from "../setup/UnitSetup";
 import { GuardComponent } from "../ai/GuardComponent";
 import { CampSetup, CampID } from "../setup/CampSetup";
-import { CampsState } from "../state/CampsState";
+import { CampsState } from "../camp/CampsState";
 import { DangerousCirclePool } from "../pool/CirclePool";
 import { DangerousCircle } from "../unit/DangerousCircle";
 
@@ -37,7 +37,7 @@ export class CampPopulator {
 			callback: () => {
 				this.startPopulating();
 			},
-			repeat: 0
+			repeat: 0,
 		});
 	}
 
@@ -57,7 +57,7 @@ export class CampPopulator {
 				callback: () => {
 					this.spawnEnemy(leftToSpawn);
 				},
-				repeat: 0
+				repeat: 0,
 			});
 		}
 	}
