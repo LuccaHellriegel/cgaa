@@ -1,32 +1,40 @@
-import { Gameplay } from "../../scenes/Gameplay";
 import { UnitCollection } from "../base/UnitCollection";
-import { Rivalries } from "./rivalries";
 import { CampSetup } from "../setup/CampSetup";
 import { Quest } from "./Quest";
 
+export const newQuestEvent = "new-quest-created";
+
+type AddArr = [string, any];
+
 export class Quests {
-	private questDict = {};
+	collection = {};
 
-	constructor(private scene: Gameplay, private rivalries: Rivalries) {}
+	constructor() {}
 
-	createStartQuests(essentialDict) {
+	add([id, element]: AddArr) {
+		this.collection[id] = element;
+	}
+
+	static createStartQuests(essentialDict, scene, rivalries) {
+		let questArr = [];
 		CampSetup.ordinaryCampIDs.forEach((id) => {
-			let rivalID = this.rivalries.getRival(id);
+			let rivalID = rivalries.getRival(id);
 			let killCollection = new UnitCollection(essentialDict[rivalID]);
-			let quest = new Quest(this.scene, killCollection, id, rivalID);
-			this.questDict[id] = quest;
+			let quest = new Quest(scene, killCollection, id, rivalID);
+			questArr.push([id, quest]);
 		});
+		return questArr;
 	}
 
 	isDone(campID) {
-		return this.questDict[campID].isDone();
+		return this.collection[campID].isDone();
 	}
 
 	hasAccepted(campID) {
-		return this.questDict[campID].hasAccepted();
+		return this.collection[campID].hasAccepted();
 	}
 
 	accept(campID) {
-		this.questDict[campID].accept();
+		this.collection[campID].accept();
 	}
 }

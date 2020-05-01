@@ -50,6 +50,10 @@ export class CircleFactory {
 		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
 	}
 
+	private createHealthBar(scene, x, y, size) {
+		return HealthBarFactory.createDangerousCircleHealthBar(scene, x, y, size);
+	}
+
 	private afterCreate(circle) {
 		this.addUnit(circle);
 
@@ -62,8 +66,6 @@ export class CircleFactory {
 		let size: EnemySize = "Big";
 		let weapon = this.createWeapon(this.x, this.y, size);
 
-		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, this.x, this.y, size);
-
 		let circle = new King(
 			this.scene,
 			this.x,
@@ -72,7 +74,7 @@ export class CircleFactory {
 			this.campID as CampID,
 			weapon,
 			size as EnemySize,
-			healthbar,
+			this.createHealthBar(this.scene, this.x, this.y, size),
 			veloConfigs[size]
 		);
 		this.afterCreate(circle);
@@ -84,8 +86,6 @@ export class CircleFactory {
 		let size: EnemySize = "Big";
 		let weapon = this.createWeapon(this.x, this.y, size);
 
-		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, this.x, this.y, size);
-
 		let circle = new DangerousCircle(
 			this.scene,
 			this.x,
@@ -94,7 +94,7 @@ export class CircleFactory {
 			this.campID as CampID,
 			weapon,
 			size as EnemySize,
-			healthbar,
+			this.createHealthBar(this.scene, this.x, this.y, size),
 			veloConfigs[size]
 		);
 		this.afterCreate(circle);
@@ -104,8 +104,6 @@ export class CircleFactory {
 
 	createEnemy(size: EnemySize) {
 		let weapon = this.createWeapon(this.x, this.y, size);
-		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, this.x, this.y, size);
-
 		let circle = new DangerousCircle(
 			this.scene,
 			this.x,
@@ -114,7 +112,7 @@ export class CircleFactory {
 			this.campID as CampID,
 			weapon,
 			size as EnemySize,
-			healthbar,
+			this.createHealthBar(this.scene, this.x, this.y, size),
 			veloConfigs[size]
 		);
 		this.afterCreate(circle);
@@ -125,8 +123,6 @@ export class CircleFactory {
 	createFriend(size: EnemySize) {
 		let weapon = this.createWeapon(this.x, this.y, size);
 
-		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, this.x, this.y, size);
-
 		let circle = new PlayerFriend(
 			this.scene,
 			this.x,
@@ -135,7 +131,7 @@ export class CircleFactory {
 			this.campID as CampID,
 			weapon,
 			size as EnemySize,
-			healthbar,
+			this.createHealthBar(this.scene, this.x, this.y, size),
 			veloConfigs[size]
 		);
 		this.afterCreate(circle);
@@ -147,7 +143,6 @@ export class CircleFactory {
 		let { x, y } = config;
 
 		let size: EnemySize = "Normal";
-		let healthbar = HealthBarFactory.createDangerousCircleHealthBar(this.scene, x, y, size);
 
 		let circle = new InteractionCircle(
 			this.scene,
@@ -157,7 +152,7 @@ export class CircleFactory {
 			this.campID as CampID,
 			this.createWeapon(x, y, size),
 			size as EnemySize,
-			healthbar
+			this.createHealthBar(this.scene, x, y, size)
 		);
 		this.afterCreate(circle);
 

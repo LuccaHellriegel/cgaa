@@ -1,4 +1,4 @@
-import { Health } from "../../../api/status/Health";
+import { Health } from "../../../engine/status/Health";
 
 interface HealthBarConfig {
 	scene;
@@ -60,6 +60,8 @@ export class HealthBar {
 	drawHealth() {
 		this.bar.fillStyle(0xffffff);
 		this.bar.fillRect(this.x + 2, this.y + 2, this.healthWidth, this.healthLength);
+
+		// draw red part
 		if (this.health.current < 30) {
 			this.bar.fillStyle(0xff0000);
 		} else {

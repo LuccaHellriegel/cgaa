@@ -49,6 +49,7 @@ import { Healers } from "../game/tower/healer/Healer";
 import { initPools } from "../game/pool/pools";
 import { Interaction } from "../game/state/Interaction";
 import { initStartState } from "../game/state/state";
+import { Quests } from "../game/state/Quests";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -233,7 +234,11 @@ export class Gameplay extends Phaser.Scene {
 			return prev;
 		}, {});
 
-		this.cgaaState.quests.createStartQuests(essentialDict);
+		let quests = Quests.createStartQuests(essentialDict, this, this.cgaaState.rivalries);
+
+		quests.forEach((questArr) => {
+			this.cgaaState.quests.add(questArr);
+		});
 	}
 
 	gameOrientation() {
