@@ -47,9 +47,9 @@ import { DangerousCircle } from "../game/unit/DangerousCircle";
 import { Shooters } from "../game/tower/shooter/Shooter";
 import { Healers } from "../game/tower/healer/Healer";
 import { initPools } from "../game/pool/pools";
-import { Interaction } from "../game/state/Interaction";
 import { initStartState } from "../game/state/state";
 import { Quests } from "../game/state/Quests";
+import { InteractionCircle } from "../game/unit/InteractionCircle";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -90,7 +90,7 @@ export class Gameplay extends Phaser.Scene {
 			friendWeapons;
 			bossWeapons;
 		};
-		interaction: Interaction;
+		interaction: Function;
 	} = {};
 
 	cgaaState;
@@ -120,12 +120,28 @@ export class Gameplay extends Phaser.Scene {
 		this.gamePlayerCamp();
 		this.gamePlayerInput();
 
-		this.cgaa.interaction = new Interaction(
-			this.cgaaState.router,
-			this.cgaaState.rivalries,
-			this.cgaaState.quests,
-			this.cgaaState.cooperation
-		);
+		this.cgaa.interaction = function interactWithCircle(interactCircle: InteractionCircle) {
+			let id = interactCircle.campID;
+			//Can not accept quests from rivals
+			if (!this.cgaaState.quests.get(this.cgaaState.rivalries.getRival(id)).isActiveOrSuccess()) {
+				if (!interactCircle.quest.isActiveOrSuccess()) interactCircle.quest.setActive();
+				if (interactCircle.quest.isSuccess()) {
+					// check if id has cooperation with player, because id would need to be rerouted
+					if (this.cgaaState.cooperation.hasCooperation(id, CampSetup.playerCampID)) {
+						this.cgaaState.router.reroute(id);
+					} else {
+						this.cgaaState.cooperation.activateCooperation(id);
+					}
+				}
+			}
+		}.bind(this);
+
+		// this.cgaa.interaction = new Interaction(
+		// 	this.cgaaState.router,
+		// 	this.cgaaState.rivalries,
+		// 	this.cgaaState.quests,
+		// 	this.cgaaState.cooperation
+		// );
 	}
 
 	gameEnv() {
@@ -228,16 +244,10 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	gameInitQuests() {
-		// make map with camp: buildings+diplomat
-		let essentialDict = this.cgaa.camps.ordinary.reduce((prev, cur) => {
-			prev[cur.id] = (cur.buildings as any[]).concat(cur.interactionUnit);
-			return prev;
-		}, {});
+		this.cgaaState.quests.createStartQuests(this, this.cgaaState.rivalries);
 
-		let quests = Quests.createStartQuests(essentialDict, this, this.cgaaState.rivalries);
-
-		quests.forEach((questArr) => {
-			this.cgaaState.quests.add(questArr);
+		this.cgaa.camps.ordinary.forEach((camp) => {
+			camp.interactionUnit.setQuest(this.cgaaState.quests.get(camp.id));
 		});
 	}
 

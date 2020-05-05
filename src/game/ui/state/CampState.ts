@@ -60,7 +60,7 @@ export class CampState {
 
 	reset() {
 		let killlistArgs = [
-			EventSetup.questAccecptedEvent,
+			EventSetup.questAcceptedEvent,
 			(campID) => {
 				if (campID === this.campID) {
 					this.onKillist = true;

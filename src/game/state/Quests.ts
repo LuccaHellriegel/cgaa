@@ -1,40 +1,25 @@
-import { UnitCollection } from "../base/UnitCollection";
 import { CampSetup } from "../setup/CampSetup";
-import { Quest } from "./Quest";
+import { EventSetup } from "../setup/EventSetup";
+import { Quest } from "../../engine/quest/Quest";
 
-export const newQuestEvent = "new-quest-created";
-
-type AddArr = [string, any];
-
-export class Quests {
-	collection = {};
-
-	constructor() {}
-
-	add([id, element]: AddArr) {
-		this.collection[id] = element;
-	}
-
-	static createStartQuests(essentialDict, scene, rivalries) {
-		let questArr = [];
+export class Quests extends Map {
+	createStartQuests(scene, rivalries) {
 		CampSetup.ordinaryCampIDs.forEach((id) => {
 			let rivalID = rivalries.getRival(id);
-			let killCollection = new UnitCollection(essentialDict[rivalID]);
-			let quest = new Quest(scene, killCollection, id, rivalID);
-			questArr.push([id, quest]);
+			let amountToKill = CampSetup.numbOfDiplomats + CampSetup.numbOfBuildings;
+			let quest = Quest.killQuest(
+				scene,
+				rivalries,
+				this,
+				id,
+				scene.events,
+				EventSetup.unitKilledEvent,
+				rivalID,
+				amountToKill,
+				EventSetup.essentialUnitsKilled,
+				rivalID
+			);
+			this.set(id, quest);
 		});
-		return questArr;
-	}
-
-	isDone(campID) {
-		return this.collection[campID].isDone();
-	}
-
-	hasAccepted(campID) {
-		return this.collection[campID].hasAccepted();
-	}
-
-	accept(campID) {
-		this.collection[campID].accept();
 	}
 }

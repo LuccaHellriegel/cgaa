@@ -38,6 +38,7 @@ export class Building extends Phaser.Physics.Arcade.Image implements damageable 
 	}
 
 	destroy() {
+		this.scene.events.emit(EventSetup.unitKilledEvent, this.campID);
 		EventSetup.destroyBuilding(this.scene, this.campID, this.id);
 		super.destroy();
 		this.healthbar.destroy();

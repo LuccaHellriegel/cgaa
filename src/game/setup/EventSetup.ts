@@ -69,7 +69,7 @@ export class EventSetup {
 		scene.events.emit(this.endWaveEvent, campID);
 	}
 
-	static questAccecptedEvent = "quest-accepted";
+	static questAcceptedEvent = "quest-accepted";
 
 	static towerBuildEvent = "tower-build";
 
@@ -80,4 +80,7 @@ export class EventSetup {
 
 	static canBuildHealer = "can-build-healer";
 	static cannotBuildHealer = "can-not-build-healer";
+
+	static unitKilledEvent = "unit-killed";
+	static essentialUnitsKilled = "essential-units-killed";
 }

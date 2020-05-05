@@ -39,7 +39,7 @@ export class CircleFactory {
 	y = 0;
 
 	constructor(
-		private scene: Gameplay,
+		public scene: Gameplay,
 		private campID: string,
 		private addUnit: Function,
 		private enemies: Enemies,
