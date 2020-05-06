@@ -1,15 +1,13 @@
-import { Enabler } from "../pool/Enabler";
 import { Gameplay } from "../../scenes/Gameplay";
 import { SelectorRect } from "../ui/SelectorRect";
 import { EventSetup } from "../setup/EventSetup";
 import { TowerSetup } from "../setup/TowerSetup";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { Grid } from "../base/Grid";
-import { enableable } from "../base/interfaces";
 import { Towers } from "./Tower";
 import { ClickModes } from "../../engine/ui/modes/ClickModes";
 
-export class Spawner implements enableable {
+export class Spawner {
 	canSpawn = false;
 	clickModes: ClickModes;
 
@@ -17,10 +15,12 @@ export class Spawner implements enableable {
 		public scene: Gameplay,
 		public pool: Towers,
 		private spawnObj,
-		enabler: Enabler,
+		enableEvent: string,
+		disableEvent: string,
 		private cost: number
 	) {
-		enabler.listenWith(this);
+		scene.events.on(enableEvent, this.enable.bind(this));
+		scene.events.on(disableEvent, this.disable.bind(this));
 	}
 
 	enable() {
@@ -67,7 +67,8 @@ export class Spawner implements enableable {
 			scene,
 			shooterPool,
 			towerSpawnObj,
-			new Enabler(scene, EventSetup.canBuildShooter, EventSetup.cannotBuildShooter),
+			EventSetup.canBuildShooter,
+			EventSetup.cannotBuildShooter,
 			TowerSetup.shooterCost
 		);
 	}
@@ -77,7 +78,8 @@ export class Spawner implements enableable {
 			scene,
 			healerPool,
 			towerSpawnObj,
-			new Enabler(scene, EventSetup.canBuildHealer, EventSetup.cannotBuildHealer),
+			EventSetup.canBuildHealer,
+			EventSetup.cannotBuildHealer,
 			TowerSetup.healerCost
 		);
 	}

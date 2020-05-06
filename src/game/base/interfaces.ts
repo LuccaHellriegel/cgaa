@@ -16,8 +16,3 @@ export interface healable {
 	heal(amount: number);
 	id: string;
 }
-
-export interface enableable {
-	disable();
-	enable();
-}

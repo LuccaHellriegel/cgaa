@@ -1,5 +1,4 @@
 import { RectGenerator } from "./generator/RectGenerator";
-import { PathMarkingGenerator } from "./generator/PathMarkingGenerator";
 import { EnvSetup } from "../../game/setup/EnvSetup";
 
 export function generateEnvironment(scene) {
@@ -12,6 +11,4 @@ export function generateEnvironment(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
-
-	new PathMarkingGenerator(scene);
 }

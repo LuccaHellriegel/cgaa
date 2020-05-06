@@ -1,4 +1,3 @@
-import { CirclePolygon } from "../polygons/CirclePolygon";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { RectPolygon } from "../polygons/RectPolygon";
@@ -12,12 +11,11 @@ const circleCorrection = -5;
 export class CampState {
 	graphics: Phaser.GameObjects.Graphics;
 	background: RectPolygon;
-	foreground: CirclePolygon;
-	redCircle: CirclePolygon;
+	redCircle: Phaser.GameObjects.Arc;
 	sideArrow: ArrowHeadPolygon;
 	sideCross: SymmetricCrossPolygon;
 	targetBackground: RectPolygon;
-	targetForeground: CirclePolygon;
+	targetForeground: Phaser.GameObjects.Arc;
 	onKillist = false;
 	isRerouted = false;
 	hasCooperation = false;
@@ -37,9 +35,9 @@ export class CampState {
 		this.graphics = sceneToUse.add.graphics({});
 
 		this.background = new RectPolygon(x, y, 2 * halfSize, 2 * halfSize);
-		this.foreground = new CirclePolygon(x, y, halfSize + circleCorrection);
 
-		this.redCircle = new CirclePolygon(x, y, halfSize + circleCorrection + 4);
+		this.redCircle = sceneToUse.add.circle(x, y, halfSize + circleCorrection + 4, 0xb20000).setVisible(false);
+		sceneToUse.add.circle(x, y, halfSize + circleCorrection, this.foregroundHexColor);
 
 		this.sideArrow = new ArrowHeadPolygon(x - 2 * halfSize - 10, y, 1.5 * halfSize, 2 * halfSize);
 		this.sideArrow.rotate(Phaser.Math.DegToRad(-90));
@@ -48,7 +46,7 @@ export class CampState {
 		this.sideCross.rotate(Phaser.Math.DegToRad(45));
 
 		this.targetBackground = new RectPolygon(x - 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
-		this.targetForeground = new CirclePolygon(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
+		this.targetForeground = sceneToUse.add.circle(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 		this.reset();
 
 		this.textObj = sceneToUse.add.text(x - 18, y - 25, "", {
@@ -145,8 +143,7 @@ export class CampState {
 		this.graphics.fillStyle(this.backgroundHexColor);
 		this.targetBackground.draw(this.graphics, 0);
 
-		this.graphics.fillStyle(this.ambushTargetHex);
-		this.targetForeground.draw(this.graphics, 0);
+		this.targetForeground.setFillStyle(this.ambushTargetHex);
 
 		this.graphics.fillStyle(this.foregroundHexColor);
 		this.sideArrow.draw(this.graphics, 0);
@@ -162,13 +159,7 @@ export class CampState {
 		this.graphics.fillStyle(this.backgroundHexColor);
 		this.background.draw(this.graphics, 0);
 
-		if (this.onKillist) {
-			this.graphics.fillStyle(0xb20000);
-			this.redCircle.draw(this.graphics, 0);
-		}
-
-		this.graphics.fillStyle(this.foregroundHexColor);
-		this.foreground.draw(this.graphics, 0);
+		if (this.onKillist) this.redCircle.setVisible(true);
 
 		if (this.isRerouted) this.drawAmbushTarget();
 
