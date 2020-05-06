@@ -21,9 +21,6 @@ import { SelectorRect } from "../game/modi/SelectorRect";
 import { Spawner } from "../game/pool/Spawner";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
-import { Cooperation } from "../game/state/Cooperation";
-import { CampRouting } from "../game/camp/CampRouting";
-import { UnitCollection } from "../game/base/UnitCollection";
 import { BuildingFactory } from "../game/building/BuildingFactory";
 import { BossCamp } from "../game/camp/BossCamp";
 import { BossSetup } from "../game/setup/BossSetup";
@@ -39,7 +36,7 @@ import { TowerModus } from "../game/modi/TowerModus";
 import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
 import { BarrierFactory } from "../game/camp/BarrierFactory";
 import { PlayerFriends } from "../game/unit/PlayerFriends";
-import { BuildManager } from "../game/ui/select/BuildManager";
+import { BuildManager } from "../game/ui/build/BuildManager";
 import { weaponTextures } from "../game/weapon/chain/texture";
 import { GuardComponent } from "../game/ai/GuardComponent";
 import { initCollision } from "../game/physics/physics";
@@ -47,9 +44,11 @@ import { DangerousCircle } from "../game/unit/DangerousCircle";
 import { Shooters } from "../game/tower/shooter/Shooter";
 import { Healers } from "../game/tower/healer/Healer";
 import { initPools } from "../game/pool/pools";
-import { initStartState } from "../game/state/state";
-import { Quests } from "../game/state/Quests";
 import { InteractionCircle } from "../game/unit/InteractionCircle";
+import { Quest } from "../engine/quest/Quest";
+import { EventSetup } from "../game/setup/EventSetup";
+import { CGAAData } from "../game/state/CGAAData";
+import { ClickModes } from "../engine/ui/modes/ClickModes";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -79,7 +78,6 @@ export class Gameplay extends Phaser.Scene {
 		friends: DangerousCircle[];
 		shooterPool: Shooters;
 		healerPool: Healers;
-		interactionCollection: UnitCollection;
 		selectorRect: SelectorRect;
 		build: BuildManager;
 		pools: {
@@ -91,9 +89,10 @@ export class Gameplay extends Phaser.Scene {
 			bossWeapons;
 		};
 		interaction: Function;
+		spawners: Spawner[];
 	} = {};
 
-	cgaaState;
+	cgaaData: CGAAData;
 
 	constructor() {
 		super("Gameplay");
@@ -104,11 +103,8 @@ export class Gameplay extends Phaser.Scene {
 		weaponTextures(this);
 
 		createAnims(this.anims);
-
-		this.cgaaState = initStartState(this);
-		//Setup Physics and Sight
-		this.cgaa.collision = initCollision(this, this.cgaaState.cooperation);
-
+		this.cgaaData = new CGAAData(this);
+		this.cgaa.collision = initCollision(this, this.cgaaData.cooperation);
 		this.gameEnv();
 		this.gamePlayer();
 		this.gameCamps();
@@ -123,25 +119,18 @@ export class Gameplay extends Phaser.Scene {
 		this.cgaa.interaction = function interactWithCircle(interactCircle: InteractionCircle) {
 			let id = interactCircle.campID;
 			//Can not accept quests from rivals
-			if (!this.cgaaState.quests.get(this.cgaaState.rivalries.getRival(id)).isActiveOrSuccess()) {
+			if (!this.cgaaData.quests.get(this.cgaaData.rivalries.getRival(id)).isActiveOrSuccess()) {
 				if (!interactCircle.quest.isActiveOrSuccess()) interactCircle.quest.setActive();
 				if (interactCircle.quest.isSuccess()) {
 					// check if id has cooperation with player, because id would need to be rerouted
-					if (this.cgaaState.cooperation.hasCooperation(id, CampSetup.playerCampID)) {
-						this.cgaaState.router.reroute(id);
+					if (this.cgaaData.cooperation.hasCooperation(id, CampSetup.playerCampID)) {
+						this.cgaaData.router.reroute(id);
 					} else {
-						this.cgaaState.cooperation.activateCooperation(id);
+						this.cgaaData.cooperation.activateCooperation(id, CampSetup.playerCampID);
 					}
 				}
 			}
 		}.bind(this);
-
-		// this.cgaa.interaction = new Interaction(
-		// 	this.cgaaState.router,
-		// 	this.cgaaState.rivalries,
-		// 	this.cgaaState.quests,
-		// 	this.cgaaState.cooperation
-		// );
 	}
 
 	gameEnv() {
@@ -197,13 +186,8 @@ export class Gameplay extends Phaser.Scene {
 		//Depending on start-money can spawn or not
 		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.pools.healers, towerSpawnObj);
 		let shooterSpawner = Spawner.createShooterSpawner(this, this.cgaa.pools.shooters, towerSpawnObj);
+		this.cgaa.spawners = [healerSpawner, shooterSpawner];
 		shooterSpawner.canSpawn = true;
-
-		this.cgaa.interactionCollection = new UnitCollection(
-			this.cgaa.camps.ordinary.map((camp) => {
-				return camp.interactionUnit;
-			})
-		);
 
 		this.cgaa.selectorRect = new SelectorRect(this, 0, 0);
 		let healerMode = new TowerModus(healerSpawner, this.cgaa.selectorRect, TowerSetup.maxHealers);
@@ -244,10 +228,26 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	gameInitQuests() {
-		this.cgaaState.quests.createStartQuests(this, this.cgaaState.rivalries);
+		CampSetup.ordinaryCampIDs.forEach((id) => {
+			let rivalID = this.cgaaData.rivalries.getRival(id);
+			let amountToKill = CampSetup.numbOfDiplomats + CampSetup.numbOfBuildings;
+			let quest = Quest.killQuest(
+				this,
+				this.cgaaData.rivalries,
+				this.cgaaData.quests,
+				id,
+				this.events,
+				EventSetup.unitKilledEvent,
+				rivalID,
+				amountToKill,
+				EventSetup.essentialUnitsKilled,
+				rivalID
+			);
+			this.cgaaData.quests.set(id, quest);
+		});
 
 		this.cgaa.camps.ordinary.forEach((camp) => {
-			camp.interactionUnit.setQuest(this.cgaaState.quests.get(camp.id));
+			camp.interactionUnit.setQuest(this.cgaaData.quests.get(camp.id));
 		});
 	}
 
@@ -290,7 +290,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.orientation,
 			PathFactory.produce(new PathCalculator(this.cgaa.gameMap.map), configs)
 		);
-		this.cgaa.assigner = new PathAssigner(paths, this.cgaaState.router);
+		this.cgaa.assigner = new PathAssigner(paths, this.cgaaData.router);
 	}
 
 	gameWaves() {
@@ -326,6 +326,15 @@ export class Gameplay extends Phaser.Scene {
 		});
 	}
 
+	setModes(modes: ClickModes) {
+		this.cgaa.camps.ordinary.forEach((camp) => {
+			modes.addTo(camp.interactionUnit);
+		});
+		this.cgaa.spawners.forEach((spawner) => {
+			spawner.setModes(modes);
+		});
+	}
+
 	startWaves() {
 		new WaveController(this, this.cgaa.waveOrder);
 	}
@@ -333,4 +342,6 @@ export class Gameplay extends Phaser.Scene {
 	update() {
 		this.cgaa.movement.update();
 	}
+
+	create() {}
 }

@@ -4,7 +4,7 @@ import { TowerSetup } from "../../setup/TowerSetup";
 import { RectPolygon } from "../../polygons/RectPolygon";
 import { Shooters } from "../shooter/Shooter";
 
-export class HollowRectPoylgon extends RectPolygon {
+class HollowRectPoylgon extends RectPolygon {
 	draw(graphics, offset) {
 		graphics.beginPath();
 		graphics.moveTo(this.points[0].x + offset, this.points[0].y + offset);
@@ -38,6 +38,7 @@ export class Healers extends Towers {
 		this.addTowerToPhysics(healer);
 		healer.setPlayer(this.player);
 		healer.place(x, y, [this.shooters, this]);
+		return healer;
 	}
 }
 

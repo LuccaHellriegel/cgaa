@@ -1,11 +1,11 @@
-import { CirclePolygon } from "../../polygons/CirclePolygon";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { CampSetup, CampID } from "../../setup/CampSetup";
-import { RectPolygon } from "../../polygons/RectPolygon";
-import { ArrowHeadPolygon } from "../../polygons/ArrowHeadPolygon";
-import { SymmetricCrossPolygon } from "../../polygons/SymmetricCrossPolygon";
-import { HUD } from "../../../scenes/HUD";
-import { EventSetup } from "../../setup/EventSetup";
+import { CirclePolygon } from "../polygons/CirclePolygon";
+import { Gameplay } from "../../scenes/Gameplay";
+import { CampSetup, CampID } from "../setup/CampSetup";
+import { RectPolygon } from "../polygons/RectPolygon";
+import { ArrowHeadPolygon } from "../polygons/ArrowHeadPolygon";
+import { SymmetricCrossPolygon } from "../polygons/SymmetricCrossPolygon";
+import { HUD } from "../../scenes/HUD";
+import { EventSetup } from "../setup/EventSetup";
 
 const circleCorrection = -5;
 

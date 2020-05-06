@@ -1,10 +1,13 @@
 import { EventSetup } from "../setup/EventSetup";
 import { CircleUnit } from "./CircleUnit";
 import { Quest } from "../../engine/quest/Quest";
+import { IClickableElement } from "../../engine/ui/modes/IClickableElement";
+import { MouseOver } from "../../engine/ui/MouseOver";
 
-export class InteractionCircle extends CircleUnit {
+export class InteractionCircle extends CircleUnit implements IClickableElement {
 	stateHandler = { spotted: null, obstacle: null };
 	quest: Quest;
+	mouseOver;
 
 	destroy() {
 		this.scene.events.emit(EventSetup.unitKilledEvent, this.campID);
@@ -14,5 +17,11 @@ export class InteractionCircle extends CircleUnit {
 
 	setQuest(quest: Quest) {
 		this.quest = quest;
+	}
+
+	makeClickable(onClickCallback: Function) {
+		this.setInteractive();
+		this.on("pointerdown", onClickCallback);
+		new MouseOver(this, this);
 	}
 }

@@ -2,9 +2,8 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { Util } from "../base/Util";
 import { poolable } from "../base/interfaces";
 import { UnitDict } from "../base/Dict";
-import { ActiveElementCollection } from "../ui/select/Selector";
 
-export abstract class Pool implements ActiveElementCollection {
+export abstract class Pool {
 	activeIDArr: string[] = [];
 	inactiveIDArr: string[] = [];
 
@@ -23,7 +22,7 @@ export abstract class Pool implements ActiveElementCollection {
 	private listenForInactiveUnits() {
 		let keys = Object.keys(this.unitDict.dict);
 		for (const key of keys) {
-			this.scene.events.on("inactive-" + key, id => {
+			this.scene.events.on("inactive-" + key, (id) => {
 				Util.removeEle(id, this.activeIDArr);
 				this.inactiveIDArr.push(id);
 			});
@@ -53,10 +52,6 @@ export abstract class Pool implements ActiveElementCollection {
 	}
 
 	getActiveUnits() {
-		return this.activeIDArr.map(id => this.unitDict.get(id));
-	}
-
-	getActiveElements() {
-		return this.getActiveUnits();
+		return this.activeIDArr.map((id) => this.unitDict.get(id));
 	}
 }

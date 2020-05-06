@@ -1,18 +1,19 @@
-import { ClickableTextRect, ClickableImageRect } from "../../DoubleRect";
 import { HUD } from "../../../../scenes/HUD";
-import { Rect } from "../../Rect";
-import { SelectBar } from "../SelectBar";
-import { UnitCompositeRect } from "../../CompositeRect";
-import { Cooperation } from "../../../state/Cooperation";
+import { Rect } from "../../rect/Rect";
+import { SelectBar } from "./SelectBar";
+import { UnitCompositeRect } from "../../rect/UnitCompositeRect";
 import { SelectionManager } from "../SelectionManager";
 import { InteractionCircle } from "../../../unit/InteractionCircle";
 import { CampSetup } from "../../../setup/CampSetup";
-import { TextGUIElement } from "../TextGUIElement";
-import { Quests } from "../../../state/Quests";
+import { TextGUIElement } from "../../TextGUIElement";
+import { Quest } from "../../../../engine/quest/Quest";
+import { Quests } from "../../../../engine/quest/Quests";
+import { Cooperation } from "../../../../engine/Cooperation";
+import { ClickableTextRect, ClickableImageRect } from "../../rect/DoubleRect";
 export class InteractionSelectBar extends SelectBar {
 	cooperation: Cooperation;
 	selectionManager: SelectionManager;
-	quests: Quests;
+	quests;
 	constructor(sceneToUse: HUD, x, y, cooperation: Cooperation, selectionManager: SelectionManager, quests: Quests) {
 		let baseRect = new Rect(sceneToUse, x, y, 180, 80, 0xd3d3d3);
 
@@ -46,10 +47,11 @@ export class InteractionSelectBar extends SelectBar {
 	show() {
 		let interactedCampID = (this.selectionManager.selectedUnit as InteractionCircle).campID;
 		let hasCooperation = this.cooperation.hasCooperation(interactedCampID, CampSetup.playerCampID);
+		let quest: Quest = this.quests.get(interactedCampID);
 
 		if (hasCooperation) {
 			this.updateClickableText("Switch\nTarget");
-		} else if (this.quests.get(interactedCampID).isActive()) {
+		} else if (quest.isActiveOrSuccess()) {
 			this.updateClickableText("Check\nQuest");
 		} else {
 			this.updateClickableText("Accept\nQuest");

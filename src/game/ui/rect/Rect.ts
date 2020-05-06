@@ -1,6 +1,6 @@
-import { HUD } from "../../scenes/HUD";
-import { RectPolygon } from "../polygons/RectPolygon";
-import { GUIElement } from "./select/SelectBar";
+import { HUD } from "../../../scenes/HUD";
+import { RectPolygon } from "../../polygons/RectPolygon";
+import { GUIElement } from "../select/bars/SelectBar";
 
 export class Rect implements GUIElement {
 	polygon: RectPolygon;

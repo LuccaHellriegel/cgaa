@@ -9,7 +9,3 @@ export function movePointPhaser(point: Phaser.GameObjects.Image, diffX: number, 
 export function rotatePointsPhaser(points: Phaser.GameObjects.Image[], rotation, x, y) {
 	for (let point of points) Phaser.Math.RotateAround(point, x, y, rotation);
 }
-
-export function rotatePointPhaser(point: Phaser.GameObjects.Image, rotation, x, y) {
-	Phaser.Math.RotateAround(point, x, y, rotation);
-}

@@ -1,10 +1,12 @@
-import { Player } from "../../unit/Player";
-import { SelectionManager } from "./SelectionManager";
-import { BuildBar } from "./BuildBar";
-import { ClickableImageRect } from "../DoubleRect";
-import { SelectorRect } from "../../modi/SelectorRect";
-import { BuildManager } from "./BuildManager";
-import { State } from "./State";
+import { Player } from "../unit/Player";
+import { SelectionManager } from "./select/SelectionManager";
+import { BuildBar } from "./build/BuildBar";
+import { SelectorRect } from "../modi/SelectorRect";
+import { BuildManager } from "./build/BuildManager";
+import { ClickableImageRect } from "./rect/DoubleRect";
+
+type State = "build" | "attack" | "select";
+
 export class UIState {
 	private state: State = "attack";
 	constructor(
@@ -16,7 +18,11 @@ export class UIState {
 		private buildBar: BuildBar
 	) {}
 	down() {
-		if (!this.uiElements.reduce((prev, ele) => prev || ele.mouseOver, false)) {
+		const mouseOverUI = this.uiElements.reduce((prev, ele) => prev || ele.mouseOver, false);
+		const mouseOverUnit = this.select.selectedUnit && this.select.selectedUnit.mouseOver;
+		if (!mouseOverUI) {
+			if (!mouseOverUnit) this.selectorRect.turnOff();
+
 			if (this.state === "build") {
 				if (this.build.build()) {
 					this.selectorRect.turnOff();
@@ -24,9 +30,7 @@ export class UIState {
 					this.buildBar.show();
 					this.default();
 				}
-			} else if (this.state === "select") {
-				this.select.down();
-			} else {
+			} else if (this.state === "attack") {
 				this.player.attack();
 			}
 		}
@@ -37,6 +41,7 @@ export class UIState {
 	setState(state: State) {
 		this.state = state;
 	}
+
 	toggle() {
 		//Attack is off state, select is default on state
 		if (this.state === "attack") {

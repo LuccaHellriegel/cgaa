@@ -1,5 +1,5 @@
-import { Cooperation } from "../state/Cooperation";
 import { CampID } from "../setup/CampSetup";
+import { Cooperation } from "../../engine/Cooperation";
 
 export function initBounceGroupPair(scene: Phaser.Scene, cooperation: Cooperation) {
 	const units = scene.physics.add.staticGroup();
@@ -22,7 +22,7 @@ function bounceCallback(unit, obj, cooperation: Cooperation) {
 	if (unit.campID === obj.campID) {
 		unit.stateHandler.moveBack();
 	} else {
-		let cooperationSet = cooperation.dict[unit.campID] as Set<CampID>;
+		let cooperationSet = cooperation.get(unit.campID);
 		if (!cooperationSet.has(obj.campID)) {
 			unit.stateHandler.obstacle = obj;
 		}

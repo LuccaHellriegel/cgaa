@@ -3,9 +3,9 @@ import { initBulletGroupPair } from "./collision-bullet";
 import { initBounceGroupPair } from "./collision-bounce";
 import { initWeaponGroupPair } from "./overlap-weapon";
 import { initNonMovingGroupPair } from "./collision-basic";
-import { Cooperation } from "../state/Cooperation";
 import { CampSetup, CampID } from "../setup/CampSetup";
 import { initSightGroupPair } from "./overlap-sight";
+import { Cooperation } from "../../engine/Cooperation";
 
 export function initCollision(scene: Gameplay, cooperation: Cooperation) {
 	const collisionPair = initNonMovingGroupPair(scene);

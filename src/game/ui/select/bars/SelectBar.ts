@@ -1,5 +1,3 @@
-import { Point } from "../../base/types";
-
 export interface GUIElement {
 	x?: number;
 	y?: number;
@@ -15,8 +13,6 @@ export interface selectable {
 
 export interface SelectableGUIElement extends GUIElement, selectable {}
 
-export type Arrangement = Point[];
-
 export abstract class SelectBar implements GUIElement {
 	x: number;
 	y: number;
@@ -30,13 +26,13 @@ export abstract class SelectBar implements GUIElement {
 	show() {
 		this.isOn = true;
 		this.baseElement.show();
-		this.contentElements.forEach(ele => ele.show());
+		this.contentElements.forEach((ele) => ele.show());
 	}
 
 	hide() {
 		this.isOn = false;
 		this.baseElement.hide();
-		this.contentElements.forEach(ele => ele.hide());
+		this.contentElements.forEach((ele) => ele.hide());
 	}
 
 	move(x: number, y: number) {
@@ -47,7 +43,7 @@ export abstract class SelectBar implements GUIElement {
 		this.x = x;
 		this.y = y;
 
-		this.contentElements.forEach(ele => {
+		this.contentElements.forEach((ele) => {
 			let newX = ele.x + diffX;
 			let newY = ele.y + diffY;
 			ele.move(newX, newY);

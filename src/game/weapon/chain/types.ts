@@ -8,7 +8,7 @@ export type WeaponRadius = {
 	};
 };
 
-export type WeaponDists = {
+type WeaponDists = {
 	distArrowAndChain: number;
 	distBetweenBigCircles: number;
 	distBetweenBigAndSmallChain: number;
@@ -19,7 +19,7 @@ export type AllWeaponDists = {
 	[key in EnemySize]: WeaponDists;
 };
 
-export type WeaponHeight = {
+type WeaponHeight = {
 	frame0: number;
 	frame1: number;
 	frame2: number;
@@ -49,14 +49,12 @@ export type ArrowConfig = {
 	height: number;
 };
 
-export type ArrowHead = Point[];
+type ArrowHead = Point[];
 
 export type CircleChain = {
 	radius: number;
 	points: Point[];
 };
-
-export type WeaponGeom = { arrow: ArrowHead; bigChain?: CircleChain; smallChain?: CircleChain };
 
 export type WeaponGeoms = {
 	frame0: { arrow: ArrowHead };
@@ -65,8 +63,3 @@ export type WeaponGeoms = {
 };
 
 export type AllWeaponGeoms = { [key in EnemySize]: WeaponGeoms };
-
-export type PhysicsGeoms = {
-	frame1: { topCircle: Phaser.Physics.Arcade.Sprite };
-	frame2: { topCircle: Phaser.Physics.Arcade.Sprite };
-};

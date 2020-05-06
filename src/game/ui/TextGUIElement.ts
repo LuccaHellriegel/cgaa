@@ -1,5 +1,5 @@
-import { HUD } from "../../../scenes/HUD";
-import { GUIElement } from "./SelectBar";
+import { HUD } from "../../scenes/HUD";
+import { GUIElement } from "./select/bars/SelectBar";
 export class TextGUIElement implements GUIElement {
 	textObj: Phaser.GameObjects.Text;
 	constructor(sceneToUse: HUD, private text: string, x, y, textOptions) {

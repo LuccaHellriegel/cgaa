@@ -1,17 +1,14 @@
-import { notifyWithVal, ObserverWrapper, subscribable } from "./Observer";
-import { Gameplay } from "../../scenes/Gameplay";
-import { EventSetup } from "../setup/EventSetup";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { subscribable, notifyWithVal, ObserverWrapper } from "../Observer";
+import { EventSetup } from "../../setup/EventSetup";
 
-abstract class SubsCounterGUI {
+export class FriendCounter {
 	count;
 	constructor(protected scene: Gameplay, subs: subscribable[], protected guiElement: notifyWithVal) {
 		this.count = subs.length;
 		new ObserverWrapper(subs, "destroy", this.decrement.bind(this));
 	}
 
-	abstract decrement();
-}
-export class FriendCounter extends SubsCounterGUI {
 	decrement() {
 		this.count--;
 		this.guiElement.notify(this.count);

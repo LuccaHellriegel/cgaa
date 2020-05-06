@@ -1,6 +1,6 @@
-import { notifyWithVal } from "./Observer";
-import { Gameplay } from "../../scenes/Gameplay";
-import { EventSetup } from "../setup/EventSetup";
+import { notifyWithVal } from "../Observer";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { EventSetup } from "../../setup/EventSetup";
 export class TowerCounter {
 	count = 0;
 	constructor(private type: string, protected scene: Gameplay, protected guiElement: notifyWithVal) {

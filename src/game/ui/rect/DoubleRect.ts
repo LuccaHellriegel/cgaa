@@ -1,6 +1,8 @@
-import { HUD } from "../../scenes/HUD";
-import { RectPolygon } from "../polygons/RectPolygon";
-import { SelectableGUIElement } from "./select/SelectBar";
+import { SelectableGUIElement } from "../select/bars/SelectBar";
+import { RectPolygon } from "../../polygons/RectPolygon";
+import { HUD } from "../../../scenes/HUD";
+import { MouseOver } from "../../../engine/ui/MouseOver";
+
 class DoubleRect implements SelectableGUIElement {
 	polygon: RectPolygon;
 	graphics: Phaser.GameObjects.Graphics;
@@ -87,17 +89,7 @@ export class ClickableTextRect extends TextRect {
 			fill: "#000000",
 			fontWeight: "bold",
 		});
-		this.graphics.once("pointerover", this.pointerOver.bind(this));
-	}
-
-	pointerOver() {
-		this.mouseOver = true;
-		this.graphics.once("pointerout", this.pointerOut.bind(this));
-	}
-
-	pointerOut() {
-		this.mouseOver = false;
-		this.graphics.once("pointerover", this.pointerOver.bind(this));
+		new MouseOver(this, this.graphics);
 	}
 
 	setInteractive(event, func) {
@@ -144,17 +136,7 @@ export class ClickableImageRect extends ImageRect {
 	constructor(sceneToUse: HUD, x: number, y: number, width: number, height: number, hexColor: number, texture: string) {
 		super(sceneToUse, x, y, width, height, hexColor, texture);
 		this.image.setInteractive();
-		this.image.once("pointerover", this.pointerOver.bind(this));
-	}
-
-	pointerOver() {
-		this.mouseOver = true;
-		this.image.once("pointerout", this.pointerOut.bind(this));
-	}
-
-	pointerOut() {
-		this.mouseOver = false;
-		this.image.once("pointerover", this.pointerOver.bind(this));
+		new MouseOver(this, this.image);
 	}
 
 	setInteractive(event, func) {

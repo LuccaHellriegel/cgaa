@@ -1,8 +1,8 @@
 import { Gameplay } from "../../scenes/Gameplay";
-import { Cooperation } from "../state/Cooperation";
 import { ChainWeapon } from "../weapon/chain/weapon";
 import { DangerousCircle } from "../unit/DangerousCircle";
 import { Shooter } from "../tower/shooter/Shooter";
+import { Cooperation } from "../../engine/Cooperation";
 
 export function initSightGroupPair(scene: Gameplay, cooperation: Cooperation) {
 	const weapons = scene.physics.add.staticGroup();

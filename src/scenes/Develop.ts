@@ -1,7 +1,5 @@
 import { initCollision } from "../game/physics/physics";
-import { initRivalries } from "../game/state/rivalries";
 import { CampRouting } from "../game/camp/CampRouting";
-import { Cooperation } from "../game/state/Cooperation";
 import { initPools } from "../game/pool/pools";
 import { Player } from "../game/unit/Player";
 import { Movement } from "../game/input/Movement";

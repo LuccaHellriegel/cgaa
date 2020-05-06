@@ -2,7 +2,7 @@ import { IEventHandler } from "../events/IEventHandler";
 import { DecrementCountListener } from "../events/DecrementCountListener";
 import { EventSetup } from "../../game/setup/EventSetup";
 
-export enum QuestState {
+enum QuestState {
 	success,
 	failure,
 	active,
@@ -51,7 +51,7 @@ export class Quest {
 	) {
 		const quest = new Quest(
 			() => {
-				return !quests.hasBeenAccepted(rivalries.getRival(id));
+				return !quests.get(rivalries.getRival(id)).isActiveOrSuccess();
 			},
 			() => {
 				let rivalID = rivalries.getRival(id);

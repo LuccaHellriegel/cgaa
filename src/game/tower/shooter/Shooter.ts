@@ -24,6 +24,7 @@ export class Shooters extends Towers {
 		let shooter = this.getFirstDead(true);
 		this.addTowerToPhysics(shooter);
 		shooter.place(x, y, this.bullets);
+		return shooter;
 	}
 }
 

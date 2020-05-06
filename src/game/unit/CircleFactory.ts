@@ -6,8 +6,6 @@ import { DangerousCircle } from "./DangerousCircle";
 import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
-import { HealthBar } from "../ui/healthbar/HealthBar";
-import { ChainWeapon } from "../weapon/chain/weapon";
 import { ChainWeapons } from "../weapon/chain/pool";
 import { UnitSetup } from "../setup/UnitSetup";
 import { weaponHeights } from "../weapon/chain/data";
@@ -15,24 +13,6 @@ import { weaponHeights } from "../weapon/chain/data";
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
 export type EnemySize = "Small" | "Normal" | "Big";
-
-export type WeaponTypes = "chain";
-
-export class CircleConfig {
-	scene: Gameplay;
-	campID: CampID;
-	x: number;
-	y: number;
-	weapon: ChainWeapon;
-	physicsGroup: Phaser.Physics.Arcade.Group;
-	polygon: any;
-	texture: string;
-	radius: number;
-}
-export interface EnemyConfig extends CircleConfig {
-	size: EnemySize;
-	healthbar: HealthBar;
-}
 
 export class CircleFactory {
 	x = 0;

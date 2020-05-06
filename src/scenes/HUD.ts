@@ -1,26 +1,25 @@
 import { PlayerHealthBar } from "../game/ui/healthbar/PlayerHealthBar";
 import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../game/ui/counters/PlayerSoulCounter";
-import { CampState } from "../game/ui/state/CampState";
+import { CampState } from "../game/ui/CampState";
 import { CampSetup } from "../game/setup/CampSetup";
 import { EventSetup } from "../game/setup/EventSetup";
-import { CounterRect } from "../game/ui/CounterRect";
-import { FriendCounter } from "../game/ui/FriendCounter";
-import { TowerCounter } from "../game/ui/TowerCounter";
+import { CounterRect } from "../game/ui/rect/CounterRect";
+import { TowerCounter } from "../game/ui/counters/TowerCounter";
 import { TowerSelectBar } from "../game/ui/select/bars/TowerSelectBar";
-import { BuildBar, PureCounter } from "../game/ui/select/BuildBar";
-import { SellManager } from "../game/ui/select/SellManager";
+import { BuildBar, PureCounter } from "../game/ui/build/BuildBar";
 import { SelectionManager } from "../game/ui/select/SelectionManager";
-import { ClosestSelector, ActiveElementCollection } from "../game/ui/select/Selector";
-import { SelectBars } from "../game/ui/select/SelectBars";
 import { SelectorRect } from "../game/modi/SelectorRect";
-import { ImageRect, ClickableImageRect } from "../game/ui/DoubleRect";
-import { Inputs } from "../game/ui/select/State";
-import { UIState } from "../game/ui/select/UIState";
-import { BuildManager } from "../game/ui/select/BuildManager";
+import { Inputs } from "../game/ui/Inputs";
+import { UIState } from "../game/ui/UIState";
+import { BuildManager } from "../game/ui/build/BuildManager";
 import { InteractionSelectBar } from "../game/ui/select/bars/InteractionSelectBar";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { Popup } from "../game/ui/Popup";
+
+import GameOver from "../assets/game-over-sprite.png";
+import { ClickableImageRect, ImageRect } from "../game/ui/rect/DoubleRect";
+import { FriendCounter } from "../game/ui/counters/FriendCounter";
 
 let screenWidth = 1280;
 let screenLength = 720;
@@ -60,7 +59,9 @@ export class HUD extends Phaser.Scene {
 
 	lose() {
 		if (!this.won) {
-			Popup.losePopup(this, screenWidth / 2, screenLength / 2 - 150);
+			this.add.sprite(screenWidth / 2, screenLength / 2, "game-over").play("game-over-anim");
+
+			//Popup.losePopup(this, screenWidth / 2, screenLength / 2 - 150);
 			this.ourGame.input.once("pointerdown", this.restartCGAA.bind(this));
 		}
 	}
@@ -88,7 +89,25 @@ export class HUD extends Phaser.Scene {
 		// new Phaser.Game(createGameConfig());
 	}
 
+	preload() {
+		this.load.spritesheet("game-over", GameOver, {
+			frameWidth: 960,
+			frameHeight: 540,
+			endFrame: 30,
+		});
+	}
+
+	gameOverSprite;
+
 	create() {
+		var config = {
+			key: "game-over-anim",
+			frames: this.anims.generateFrameNumbers("game-over", { start: 0, end: 30 }),
+			frameRate: 10,
+			repeat: 0,
+		};
+		this.anims.create(config);
+
 		this.playerHealthBar = new PlayerHealthBar(this);
 		this.ourGame = this.scene.get("Gameplay") as Gameplay;
 		this.playerSoulCounter = new PlayerSoulCounter(
@@ -106,7 +125,6 @@ export class HUD extends Phaser.Scene {
 
 		let x;
 		let y;
-
 		this.ourGame.cgaa.waveOrder.order.forEach((color, index) => {
 			x = 1280 - halfSize - 5;
 			y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
@@ -117,47 +135,40 @@ export class HUD extends Phaser.Scene {
 		//Waves should start after CampState is initialized, otherwise first Wave is not recognized
 		this.ourGame.startWaves();
 
-		//TODO
-		//new Tutorial(this, this.ourGame.cgaa.inputs, 0 + halfSize + 5, y + 300);
-
-		let sellManager = new SellManager(this.ourGame);
-		let activeColls: ActiveElementCollection[] = [
-			this.ourGame.cgaa.shooterPool,
-			this.ourGame.cgaa.healerPool,
-			this.ourGame.cgaa.interactionCollection,
-		];
-		let selectionManager = new SelectionManager(new ClosestSelector(activeColls), this.ourGame.cgaa.selectorRect);
+		let selectionManager = new SelectionManager(this.ourGame.cgaa.selectorRect);
 		let healerSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5 + 5, "healer");
 		let shooterSelectBar = new TowerSelectBar(this, 0 + 180, 0 + 30 + 5 + 5, "shooter");
 		let interactionSelectBar = new InteractionSelectBar(
 			this,
 			0 + 180,
 			0 + 30 + 5 + 5,
-			this.ourGame.cgaaState.cooperation,
+			this.ourGame.cgaaData.cooperation,
 			selectionManager,
-			this.ourGame.cgaaState.quests
+			this.ourGame.cgaaData.quests
 		);
-		let selectBars = new SelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
+		let selectBars = [healerSelectBar, shooterSelectBar, interactionSelectBar];
 		let questFunc = function () {
 			if (selectionManager.selectedUnit) {
 				this.ourGame.cgaa.interaction(selectionManager.selectedUnit);
-				selectBars.hide();
+				selectBars.forEach((bar) => bar.hide());
 			}
 		}.bind(this);
 		(interactionSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", questFunc);
 
 		let sellFunc = function () {
 			if (selectionManager.selectedUnit) {
-				sellManager.sell(selectionManager.selectedUnit);
-				selectBars.hide();
+				selectionManager.selectedUnit.poolDestroy();
+				EventSetup.gainSouls(this.scene, selectionManager.selectedUnit.type);
+				this.scene.events.emit(EventSetup.towerSoldEvent, selectionManager.selectedUnit.type);
+				selectBars.forEach((bar) => bar.hide());
 				this.ourGame.cgaa.selectorRect.turnOff();
 			}
 		}.bind(this);
 		(healerSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 		(shooterSelectBar.contentElements[0] as ClickableImageRect).setInteractive("pointerdown", sellFunc);
 
-		selectionManager.setSelectBars(selectBars);
-		selectBars.hide();
+		selectionManager.setSelectBars(healerSelectBar, shooterSelectBar, interactionSelectBar);
+		selectBars.forEach((bar) => bar.hide());
 
 		let shooterCounter = new PureCounter(this, 0, 0, "", "/" + TowerSetup.maxShooters);
 		let healerCounter = new PureCounter(this, 0, 0, "", "/" + TowerSetup.maxHealers);
@@ -181,13 +192,15 @@ export class HUD extends Phaser.Scene {
 		);
 		this.ourGame.input.on("pointerdown", state.down.bind(state));
 
-		new Inputs(
+		const modes = Inputs.do(
 			this.ourGame,
 			state,
 			buildBar,
 			[healerSelectBar, shooterSelectBar, interactionSelectBar],
-			this.ourGame.cgaa.selectorRect
+			this.ourGame.cgaa.selectorRect,
+			selectionManager
 		);
+		this.ourGame.setModes(modes);
 
 		(buildBar.contentElements[0] as ClickableImageRect).setInteractive(
 			"pointerdown",

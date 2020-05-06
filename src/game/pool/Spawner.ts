@@ -7,9 +7,11 @@ import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { Grid } from "../base/Grid";
 import { enableable } from "../base/interfaces";
 import { Towers } from "../tower/Tower";
+import { ClickModes } from "../../engine/ui/modes/ClickModes";
 
 export class Spawner implements enableable {
 	canSpawn = false;
+	clickModes: ClickModes;
 
 	private constructor(
 		public scene: Gameplay,
@@ -29,6 +31,10 @@ export class Spawner implements enableable {
 		this.canSpawn = false;
 	}
 
+	setModes(clickModes: ClickModes) {
+		this.clickModes = clickModes;
+	}
+
 	spawn(selectorRect: SelectorRect) {
 		if (!this.canSpawn) {
 			selectorRect.anims.play("invalid-shooter-pos");
@@ -43,7 +49,7 @@ export class Spawner implements enableable {
 			y = snappedXY.newY;
 			if (this.spawnObj.evaluatePoint({ x, y })) {
 				EventSetup.spendSouls(this.scene, this.cost);
-				this.pool.placeTower(x, y);
+				this.clickModes.addTo(this.pool.placeTower(x, y));
 			} else {
 				selectorRect.anims.play("invalid-shooter-pos");
 				return false;

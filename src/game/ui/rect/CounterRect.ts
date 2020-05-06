@@ -1,5 +1,5 @@
-import { HUD } from "../../scenes/HUD";
-import { notifyWithVal } from "./Observer";
+import { HUD } from "../../../scenes/HUD";
+import { notifyWithVal } from "../Observer";
 import { Rect } from "./Rect";
 export class CounterRect extends Rect implements notifyWithVal {
 	textObj: Phaser.GameObjects.Text;
@@ -17,7 +17,7 @@ export class CounterRect extends Rect implements notifyWithVal {
 		this.textObj = this.sceneToUse.add.text(this.x - 120, this.y - 22, prefixText + this.count + postfixText, {
 			font: "38px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 	}
 	notify(val: number) {

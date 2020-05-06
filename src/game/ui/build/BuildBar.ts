@@ -1,9 +1,10 @@
 import { HUD } from "../../../scenes/HUD";
-import { Rect } from "../Rect";
-import { SelectBar, GUIElement } from "./SelectBar";
-import { UnitCompositeRect } from "../CompositeRect";
-import { TextGUIElement } from "./TextGUIElement";
+import { Rect } from "../rect/Rect";
+import { UnitCompositeRect } from "../rect/UnitCompositeRect";
 import { notifyWithVal } from "../Observer";
+import { SelectBar, GUIElement } from "../select/bars/SelectBar";
+import { TextGUIElement } from "../TextGUIElement";
+
 export class BuildBar extends SelectBar {
 	textEle: TextGUIElement;
 	constructor(sceneToUse: HUD, x, y, shooterCounter: PureCounter, healerCounter: PureCounter) {
@@ -26,7 +27,7 @@ export class BuildBar extends SelectBar {
 		this.textEle = new TextGUIElement(sceneToUse, "Build", x - 30, y - 35, {
 			font: "20px Verdana ",
 			fill: "#000000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 
 		this.textEle.hide();
@@ -56,7 +57,7 @@ export class PureCounter implements notifyWithVal, GUIElement {
 		this.textObj = sceneToUse.add.text(this.x, this.y, prefixText + this.count + postfixText, {
 			font: "25px Verdana ",
 			fill: "#cc0000",
-			fontWeight: "bold"
+			fontWeight: "bold",
 		});
 	}
 
