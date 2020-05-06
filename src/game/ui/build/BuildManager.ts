@@ -1,4 +1,4 @@
-import { TowerModus } from "../../modi/TowerModus";
+import { TowerModus } from "../../tower/TowerModus";
 import { Gameplay } from "../../../scenes/Gameplay";
 import { EventSetup } from "../../setup/EventSetup";
 export class BuildManager {

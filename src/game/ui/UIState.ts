@@ -1,7 +1,7 @@
 import { Player } from "../unit/Player";
 import { SelectionManager } from "./select/SelectionManager";
 import { BuildBar } from "./build/BuildBar";
-import { SelectorRect } from "../modi/SelectorRect";
+import { SelectorRect } from "./SelectorRect";
 import { BuildManager } from "./build/BuildManager";
 import { ClickableImageRect } from "./rect/DoubleRect";
 

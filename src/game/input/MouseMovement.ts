@@ -1,6 +1,6 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { Player } from "../unit/Player";
-import { SelectorRect } from "../modi/SelectorRect";
+import { SelectorRect } from "../ui/SelectorRect";
 
 export class MouseMovement {
 	constructor(private scene: Gameplay, private player: Player, private selectorRect: SelectorRect) {

@@ -9,7 +9,7 @@ import { TowerCounter } from "../game/ui/counters/TowerCounter";
 import { TowerSelectBar } from "../game/ui/select/bars/TowerSelectBar";
 import { BuildBar, PureCounter } from "../game/ui/build/BuildBar";
 import { SelectionManager } from "../game/ui/select/SelectionManager";
-import { SelectorRect } from "../game/modi/SelectorRect";
+import { SelectorRect } from "../game/ui/SelectorRect";
 import { Inputs } from "../game/ui/Inputs";
 import { UIState } from "../game/ui/UIState";
 import { BuildManager } from "../game/ui/build/BuildManager";

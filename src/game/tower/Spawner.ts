@@ -1,12 +1,12 @@
-import { Enabler } from "./Enabler";
+import { Enabler } from "../pool/Enabler";
 import { Gameplay } from "../../scenes/Gameplay";
-import { SelectorRect } from "../modi/SelectorRect";
+import { SelectorRect } from "../ui/SelectorRect";
 import { EventSetup } from "../setup/EventSetup";
 import { TowerSetup } from "../setup/TowerSetup";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { Grid } from "../base/Grid";
 import { enableable } from "../base/interfaces";
-import { Towers } from "../tower/Tower";
+import { Towers } from "./Tower";
 import { ClickModes } from "../../engine/ui/modes/ClickModes";
 
 export class Spawner implements enableable {

@@ -1,8 +1,8 @@
-import { Tower, Towers } from "../Tower";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { TowerSetup } from "../../setup/TowerSetup";
-import { RectPolygon } from "../../polygons/RectPolygon";
-import { Shooters } from "../shooter/Shooter";
+import { Tower, Towers } from "./Tower";
+import { Gameplay } from "../../scenes/Gameplay";
+import { TowerSetup } from "../setup/TowerSetup";
+import { RectPolygon } from "../polygons/RectPolygon";
+import { Shooters } from "./Shooter";
 
 class HollowRectPoylgon extends RectPolygon {
 	draw(graphics, offset) {

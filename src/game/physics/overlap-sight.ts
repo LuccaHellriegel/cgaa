@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { ChainWeapon } from "../weapon/chain/weapon";
 import { DangerousCircle } from "../unit/DangerousCircle";
-import { Shooter } from "../tower/shooter/Shooter";
+import { Shooter } from "../tower/Shooter";
 import { Cooperation } from "../../engine/Cooperation";
 
 export function initSightGroupPair(scene: Gameplay, cooperation: Cooperation) {

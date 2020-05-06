@@ -1,5 +1,5 @@
-import { Spawner } from "../pool/Spawner";
-import { SelectorRect } from "./SelectorRect";
+import { Spawner } from "./Spawner";
+import { SelectorRect } from "../ui/SelectorRect";
 import { EnvSetup } from "../setup/EnvSetup";
 
 export class TowerModus {

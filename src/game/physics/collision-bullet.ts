@@ -1,4 +1,4 @@
-import { Bullet } from "../tower/shooter/Bullet";
+import { Bullet } from "../tower/Bullet";
 import { DangerousCircle } from "../unit/DangerousCircle";
 import { EventSetup } from "../setup/EventSetup";
 

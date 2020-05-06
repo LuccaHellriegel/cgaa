@@ -1,9 +1,9 @@
 import { CampSetup } from "../setup/CampSetup";
 import { UnitSetup } from "../setup/UnitSetup";
 import { ChainWeapons } from "../weapon/chain/pool";
-import { Bullets } from "../tower/shooter/Bullet";
-import { Shooters } from "../tower/shooter/Shooter";
-import { Healers } from "../tower/healer/Healer";
+import { Bullets } from "../tower/Bullet";
+import { Shooters } from "../tower/Shooter";
+import { Healers } from "../tower/Healer";
 
 export function initPools(scene: Phaser.Scene, addTowerToPhysics, addBulletToPhysics, player) {
 	let friendWeapons = new ChainWeapons(scene, "Big", 9);

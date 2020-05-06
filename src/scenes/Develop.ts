@@ -7,7 +7,7 @@ import { WASD } from "../game/input/WASD";
 import { weaponTextures } from "../game/weapon/chain/texture";
 import { generateTextures } from "../graphics/texture/texture";
 import { createAnims } from "../graphics/animation/animation";
-import { SelectorRect } from "../game/modi/SelectorRect";
+import { SelectorRect } from "../game/ui/SelectorRect";
 import { MouseMovement } from "../game/input/MouseMovement";
 import { DangerousCircle } from "../game/unit/DangerousCircle";
 import { ChainWeapon } from "../game/weapon/chain/weapon";

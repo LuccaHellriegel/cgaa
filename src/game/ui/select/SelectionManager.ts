@@ -1,6 +1,6 @@
-import { Shooter } from "../../tower/shooter/Shooter";
-import { Healer } from "../../tower/healer/Healer";
-import { SelectorRect } from "../../modi/SelectorRect";
+import { Shooter } from "../../tower/Shooter";
+import { Healer } from "../../tower/Healer";
+import { SelectorRect } from "../SelectorRect";
 import { TowerSelectBar } from "./bars/TowerSelectBar";
 import { InteractionSelectBar } from "./bars/InteractionSelectBar";
 export class SelectionManager {

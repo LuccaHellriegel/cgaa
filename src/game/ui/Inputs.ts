@@ -1,7 +1,7 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { BuildBar } from "./build/BuildBar";
 import { TowerSelectBar } from "./select/bars/TowerSelectBar";
-import { SelectorRect } from "../modi/SelectorRect";
+import { SelectorRect } from "./SelectorRect";
 import { UIState } from "./UIState";
 import { ClickModes } from "../../engine/ui/modes/ClickModes";
 import { IMode, IModes } from "../../engine/ui/modes/IMode";
