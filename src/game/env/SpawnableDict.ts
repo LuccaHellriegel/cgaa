@@ -1,8 +1,8 @@
 import { RealDict } from "../base/Dict";
-import { Area } from "./area/Area";
 import { GameMap } from "./GameMap";
 import { RelPos } from "../base/RelPos";
 import { EnvSetup } from "../setup/EnvSetup";
+import { Area } from "./environment";
 
 export class RealAreaSpawnableDict extends RealDict {
 	constructor(area: Area, gameMap: GameMap) {

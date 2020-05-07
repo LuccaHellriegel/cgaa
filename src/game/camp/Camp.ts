@@ -1,5 +1,4 @@
 import { CampID, CampSetup } from "../setup/CampSetup";
-import { Area } from "../env/area/Area";
 import { RandomBuildingPositions } from "../building/RandomBuildingPositions";
 import { GameMap } from "../env/GameMap";
 import { Building } from "../building/Building";
@@ -18,6 +17,7 @@ import { CampsState } from "./CampsState";
 import { UnitSetup } from "../setup/UnitSetup";
 import { Pool } from "../pool/Pool";
 import { DangerousCirclePool } from "../pool/CirclePool";
+import { Area } from "../env/environment";
 
 export interface CampLike {
 	populate(scene: Gameplay, pool: Pool, enemies: Enemies, campsState: CampsState);

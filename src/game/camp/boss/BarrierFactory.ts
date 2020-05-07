@@ -1,6 +1,6 @@
-import { BossBarrier } from "../env/BossBarrier";
-import { Point } from "../base/types";
-import { Gameplay } from "../../scenes/Gameplay";
+import { BossBarrier } from "./BossBarrier";
+import { Point } from "../../base/types";
+import { Gameplay } from "../../../scenes/Gameplay";
 export class BarrierFactory {
 	constructor(protected scene: Gameplay, private addEnv: Function) {}
 

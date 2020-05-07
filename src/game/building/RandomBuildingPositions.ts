@@ -1,7 +1,7 @@
-import { Area } from "../env/area/Area";
 import { EnvSetup } from "../setup/EnvSetup";
 import { RelPos } from "../base/RelPos";
 import { RelativeMap } from "../env/types";
+import { Area } from "../env/environment";
 
 export class RandomBuildingPositions {
 	positions: RelPos[] = [];
@@ -29,7 +29,7 @@ export class RandomBuildingPositions {
 				this.positions = [];
 			}
 		}
-		this.positions.forEach(pos => {
+		this.positions.forEach((pos) => {
 			let spawnPos = this.getAllPositionsAroundBuildingExclusive(pos.column, pos.row);
 			this.spawnPos.push(...spawnPos);
 			this.pairs.push({ building: pos, spawnPos });

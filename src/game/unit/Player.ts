@@ -3,12 +3,11 @@ import { CampSetup, CampID } from "../setup/CampSetup";
 import { healable } from "../base/interfaces";
 import { Gameplay } from "../../scenes/Gameplay";
 import { listenToAnim } from "../base/anim-listen";
-import { ChainWeapon } from "../weapon/chain/weapon";
-import { weaponHeights } from "../weapon/chain/data";
 import { initUnitAnims, unitAnims } from "../base/anim-play";
 import { EventSetup } from "../setup/EventSetup";
 import { addID } from "../base/data";
 import { addToScene, setupCircleBody } from "../base/phaser";
+import { ChainWeapon, weaponHeights } from "../weapon/chain-weapon";
 
 const playerTextureName = "blueNormalCircle";
 

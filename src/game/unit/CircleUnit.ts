@@ -1,13 +1,13 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { damageable } from "../base/interfaces";
 import { CampID } from "../setup/CampSetup";
-import { ChainWeapon } from "../weapon/chain/weapon";
 import { EnemySize } from "./CircleFactory";
 import { HealthBar } from "../ui/healthbar/HealthBar";
 import { addID } from "../base/data";
 import { addToScene } from "../base/phaser";
 import { initUnitAnims } from "../base/anim-play";
 import { listenToAnim } from "../base/anim-listen";
+import { ChainWeapon } from "../weapon/chain-weapon";
 
 export class CircleUnit extends Phaser.Physics.Arcade.Sprite implements damageable {
 	unitType: string;

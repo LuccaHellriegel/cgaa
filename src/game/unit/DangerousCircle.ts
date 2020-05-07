@@ -5,12 +5,11 @@ import { Point } from "../base/types";
 import { EnemySize } from "./CircleFactory";
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampID } from "../setup/CampSetup";
-import { ChainWeapon } from "../weapon/chain/weapon";
 import { UnitSetup } from "../setup/UnitSetup";
-import { weaponHeights } from "../weapon/chain/data";
 import { unitAnims } from "../base/anim-play";
 import { setupCircleBody } from "../base/phaser";
 import { CircleUnit } from "./CircleUnit";
+import { ChainWeapon, weaponHeights } from "../weapon/chain-weapon";
 
 export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
 	pathArr: Point[];

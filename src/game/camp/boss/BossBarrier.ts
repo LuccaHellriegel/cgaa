@@ -1,5 +1,5 @@
-import { Gameplay } from "../../scenes/Gameplay";
-import { EventSetup } from "../setup/EventSetup";
+import { Gameplay } from "../../../scenes/Gameplay";
+import { EventSetup } from "../../setup/EventSetup";
 
 export class BossBarrier extends Phaser.Physics.Arcade.Image {
 	constructor(scene: Gameplay, x, y) {

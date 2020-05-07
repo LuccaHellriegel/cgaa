@@ -6,9 +6,8 @@ import { DangerousCircle } from "./DangerousCircle";
 import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle";
 import { CampID } from "../setup/CampSetup";
-import { ChainWeapons } from "../weapon/chain/pool";
 import { UnitSetup } from "../setup/UnitSetup";
-import { weaponHeights } from "../weapon/chain/data";
+import { ChainWeapons, weaponHeights } from "../weapon/chain-weapon";
 
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 

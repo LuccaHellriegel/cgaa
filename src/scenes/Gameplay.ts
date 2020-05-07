@@ -2,7 +2,6 @@ import { generateTextures } from "../graphics/texture/texture";
 import { createAnims } from "../graphics/animation/animation";
 import { Paths } from "../game/path/Paths";
 import { Orientation } from "../game/path/Orientation";
-import { Areas } from "../game/env/area/Areas";
 import { CampOrder } from "../game/camp/CampOrder";
 import { Camps } from "../game/camp/Camps";
 import { GameMap } from "../game/env/GameMap";
@@ -22,7 +21,7 @@ import { Spawner } from "../game/tower/Spawner";
 import { TowerSpawnObj } from "../game/spawn/TowerSpawnObj";
 import { TowerSetup } from "../game/setup/TowerSetup";
 import { BuildingFactory } from "../game/building/BuildingFactory";
-import { BossCamp } from "../game/camp/BossCamp";
+import { BossCamp } from "../game/camp/boss/BossCamp";
 import { BossSetup } from "../game/setup/BossSetup";
 import { CampSetup } from "../game/setup/CampSetup";
 import { WavePopulator } from "../game/populator/WavePopulator";
@@ -34,11 +33,9 @@ import { WaveOrder } from "../game/wave/WaveOrder";
 import { Building } from "../game/building/Building";
 import { TowerModus } from "../game/tower/TowerModus";
 import { DangerousCirclePool, BossPool } from "../game/pool/CirclePool";
-import { BarrierFactory } from "../game/camp/BarrierFactory";
+import { BarrierFactory } from "../game/camp/boss/BarrierFactory";
 import { PlayerFriends } from "../game/unit/PlayerFriends";
 import { BuildManager } from "../game/ui/build/BuildManager";
-import { weaponTextures } from "../game/weapon/chain/texture";
-import { GuardComponent } from "../game/ai/GuardComponent";
 import { initCollision } from "../game/physics/physics";
 import { DangerousCircle } from "../game/unit/DangerousCircle";
 import { Shooters } from "../game/tower/Shooter";
@@ -49,8 +46,9 @@ import { Quest } from "../engine/quest/Quest";
 import { EventSetup } from "../game/setup/EventSetup";
 import { CGAAData } from "../game/state/CGAAData";
 import { ClickModes } from "../engine/ui/modes/ClickModes";
-import { Layout } from "../game/env/area/Layout";
 import { WallFactory } from "../game/env/wall/WallFactory";
+import { Areas, CommonWaypoint, Layout } from "../game/env/environment";
+import { weaponTextures } from "../game/weapon/chain-weapon";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -92,6 +90,7 @@ export class Gameplay extends Phaser.Scene {
 		};
 		interaction: Function;
 		spawners: Spawner[];
+		commonWaypoint: CommonWaypoint;
 	} = {};
 
 	cgaaData: CGAAData;
@@ -137,7 +136,9 @@ export class Gameplay extends Phaser.Scene {
 
 	gameEnv() {
 		//Setup Environment
-		this.cgaa.areas = new Areas(new WallFactory(this, this.cgaa.collision.addEnv), Layout.layout1());
+		const layout = Layout.layout1();
+		this.cgaa.commonWaypoint = new CommonWaypoint(layout, "middle");
+		this.cgaa.areas = new Areas(new WallFactory(this, this.cgaa.collision.addEnv), layout);
 		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
 
 		this.cgaa.order = new CampOrder();
@@ -261,6 +262,7 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.camps.boss.area.getMiddle(),
 			this.cgaa.camps
 		);
+		this.cgaa.orientation.setCommonWaypoint(this.cgaa.commonWaypoint);
 	}
 
 	gameBoss() {
@@ -276,19 +278,18 @@ export class Gameplay extends Phaser.Scene {
 			this.cgaa.enemies,
 			this.cgaa.campsState
 		);
-		let king = bossFactory.createKing();
-		king.stateHandler.setComponents([new GuardComponent(king, king.stateHandler)]);
-
-		let point = this.cgaa.orientation.middleOfBossArea.toPoint();
-		king.setPosition(point.x, point.y);
-
-		let bossExitPositions = bossCamp.area.exit.relativePositions.map((relPos) => relPos.toPoint());
-		new BarrierFactory(this, this.cgaa.collision.addEnv).produce(bossExitPositions);
+		bossCamp.positionKing(bossFactory, this.cgaa.orientation.middleOfBossArea.toPoint());
+		bossCamp.placeBarriers(new BarrierFactory(this, this.cgaa.collision.addEnv));
 	}
 
 	gamePathfinding() {
-		let configs = PathConfig.createConfigs(this.cgaa.orientation, this.cgaa.exits, this.cgaa.camps.arr);
-		let paths = new Paths(
+		const configs = PathConfig.createConfigs(
+			this.cgaa.orientation,
+			this.cgaa.orientation.commonWaypoint,
+			this.cgaa.exits,
+			this.cgaa.camps.arr
+		);
+		const paths = new Paths(
 			this.cgaa.orientation,
 			PathFactory.produce(new PathCalculator(this.cgaa.gameMap.map), configs)
 		);
