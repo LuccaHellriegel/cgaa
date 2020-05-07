@@ -49,6 +49,8 @@ import { Quest } from "../engine/quest/Quest";
 import { EventSetup } from "../game/setup/EventSetup";
 import { CGAAData } from "../game/state/CGAAData";
 import { ClickModes } from "../engine/ui/modes/ClickModes";
+import { Layout } from "../game/env/area/Layout";
+import { WallFactory } from "../game/env/wall/WallFactory";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -135,7 +137,7 @@ export class Gameplay extends Phaser.Scene {
 
 	gameEnv() {
 		//Setup Environment
-		this.cgaa.areas = new Areas(this, this.cgaa.collision.addEnv);
+		this.cgaa.areas = new Areas(new WallFactory(this, this.cgaa.collision.addEnv), Layout.layout1());
 		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
 
 		this.cgaa.order = new CampOrder();

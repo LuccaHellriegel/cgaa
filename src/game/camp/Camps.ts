@@ -12,13 +12,13 @@ export class Camps {
 
 	constructor(public order: CampOrder, public areas: Areas, gameMap: GameMap) {
 		order.order.forEach((id, index) => {
-			let camp = new Camp(id, areas.nonEmpty[index], gameMap);
+			let camp = new Camp(id, areas.areaArr[index], gameMap);
 			if (id === CampSetup.playerCampID) this.player = camp;
 			if (id === CampSetup.bossCampID) this.boss = camp;
 			this.arr.push(camp);
 		});
 
-		this.ordinary = this.arr.filter(camp => CampSetup.ordinaryCampIDs.includes(camp.id));
+		this.ordinary = this.arr.filter((camp) => CampSetup.ordinaryCampIDs.includes(camp.id));
 	}
 
 	get(campID: CampID) {

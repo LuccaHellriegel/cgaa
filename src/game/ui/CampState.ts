@@ -42,6 +42,11 @@ export class CampState {
 		this.sideArrow = new ArrowHeadPolygon(x - 2 * halfSize - 10, y, 1.5 * halfSize, 2 * halfSize);
 		this.sideArrow.rotate(Phaser.Math.DegToRad(-90));
 
+		// sceneToUse.add
+		// 	.graphics({ fillStyle: { color: this.backgroundHexColor } })
+		// 	.fillPoints(SymmetricCrossPolygon.points(x - 2 * halfSize - 10, y, 2 * halfSize, 0.4 * halfSize))
+		// 	.setRotation(Phaser.Math.DegToRad(45));
+
 		this.sideCross = new SymmetricCrossPolygon(x - 2 * halfSize - 10, y, 2 * halfSize, 0.4 * halfSize);
 		this.sideCross.rotate(Phaser.Math.DegToRad(45));
 
