@@ -1,5 +1,4 @@
 import { Point } from "./types";
-import { RelPos } from "./RelPos";
 
 abstract class Dict {
 	dict = {};

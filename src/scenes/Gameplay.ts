@@ -4,7 +4,6 @@ import { Paths } from "../game/path/Paths";
 import { Orientation } from "../game/path/Orientation";
 import { CampOrder } from "../game/camp/CampOrder";
 import { Camps } from "../game/camp/Camps";
-import { GameMap } from "../game/env/GameMap";
 import { CampExits } from "../game/camp/CampExits";
 import { PathFactory } from "../game/path/PathFactory";
 import { PathCalculator } from "../game/path/PathCalculator";
@@ -46,9 +45,10 @@ import { Quest } from "../engine/quest/Quest";
 import { EventSetup } from "../game/setup/EventSetup";
 import { CGAAData } from "../game/state/CGAAData";
 import { ClickModes } from "../engine/ui/modes/ClickModes";
-import { WallFactory } from "../game/env/wall/WallFactory";
-import { Areas, CommonWaypoint, Layout } from "../game/env/environment";
+import { Areas, CommonWaypoint, Layout, GameMap, middleOf2DArray } from "../game/env/environment";
 import { weaponTextures } from "../game/weapon/chain-weapon";
+import { EnvSetup } from "../game/setup/EnvSetup";
+import { RealDict } from "../game/base/Dict";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: {
@@ -137,9 +137,9 @@ export class Gameplay extends Phaser.Scene {
 	gameEnv() {
 		//Setup Environment
 		const layout = Layout.layout1();
-		this.cgaa.commonWaypoint = new CommonWaypoint(layout, "middle");
-		this.cgaa.areas = new Areas(new WallFactory(this, this.cgaa.collision.addEnv), layout);
-		this.cgaa.gameMap = new GameMap(this.cgaa.areas);
+		this.cgaa.areas = new Areas(layout, this, this.cgaa.collision.addEnv);
+		this.cgaa.gameMap = new GameMap(this.cgaa.areas, layout);
+		this.cgaa.commonWaypoint = new CommonWaypoint(layout, this.cgaa.gameMap.map, "middle");
 
 		this.cgaa.order = new CampOrder();
 		this.cgaa.exits = new CampExits(this.cgaa.areas.exits, this.cgaa.order);
@@ -184,7 +184,10 @@ export class Gameplay extends Phaser.Scene {
 	gamePlayerInput() {
 		//Setup MouseMovement Modes
 
-		let towerSpawnObj = new TowerSpawnObj(this.cgaa.gameMap.getSpawnableDict(), this.cgaa.enemies);
+		let towerSpawnObj = new TowerSpawnObj(
+			new RealDict(this.cgaa.gameMap.spawnPos.map((pos) => [pos.toPoint(), EnvSetup.walkableSymbol])),
+			this.cgaa.enemies
+		);
 
 		//Depending on start-money can spawn or not
 		let healerSpawner = Spawner.createHealerSpawner(this, this.cgaa.pools.healers, towerSpawnObj);
@@ -203,7 +206,7 @@ export class Gameplay extends Phaser.Scene {
 	gameCamps() {
 		this.cgaa.enemies = new Enemies();
 		this.cgaa.camps = new Camps(this.cgaa.order, this.cgaa.areas, this.cgaa.gameMap);
-		this.cgaa.gameMap.updateWith(this.cgaa.camps);
+		this.cgaa.gameMap.updateWith(this.cgaa.camps.ordinary);
 		this.cgaa.camps.ordinary.forEach((camp) => {
 			camp.createBuildings(new BuildingFactory(this, this.cgaa.collision.addBuilding), [...UnitSetup.circleSizeNames]);
 		});
@@ -257,7 +260,7 @@ export class Gameplay extends Phaser.Scene {
 	gameOrientation() {
 		//Setup Orientation
 		this.cgaa.orientation = new Orientation(
-			this.cgaa.gameMap.getMiddle(),
+			middleOf2DArray(this.cgaa.gameMap.map),
 			this.cgaa.camps.player.area.getMiddle(),
 			this.cgaa.camps.boss.area.getMiddle(),
 			this.cgaa.camps

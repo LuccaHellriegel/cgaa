@@ -1,26 +1,71 @@
 import { Gameplay } from "../../scenes/Gameplay";
 import { CampSetup, CampID } from "../setup/CampSetup";
-import { RectPolygon } from "../polygons/RectPolygon";
 import { ArrowHeadPolygon } from "../polygons/ArrowHeadPolygon";
 import { SymmetricCrossPolygon } from "../polygons/SymmetricCrossPolygon";
 import { HUD } from "../../scenes/HUD";
 import { EventSetup } from "../setup/EventSetup";
+import { IEventHandler } from "../../engine/events/IEventHandler";
+
+interface UIElement {
+	setVisible(bool): this;
+	setActive(bool): this;
+}
+
+type StateConfig = {
+	event: string;
+	elementConfigs: { element: UIElement; func: Function }[];
+};
+
+function UIStateToggle(configs: []) {
+	const activateDict = {};
+	const deactivateDict = {};
+
+	for (const config of configs) {
+		const events: string[] = config[0];
+		const elementsToActivate: UIElement[] = config[1];
+		const elementsToDeactivate: UIElement[] = config[2];
+
+		for (const event of events) {
+			if (!activateDict[event]) activateDict[event] = [];
+			activateDict[event] = (activateDict[event] as UIElement[]).concat(elementsToActivate);
+
+			if (!deactivateDict[event]) deactivateDict[event] = [];
+			deactivateDict[event] = (deactivateDict[event] as UIElement[]).concat(elementsToDeactivate);
+		}
+	}
+
+	return {
+		send(event: string) {
+			for (const element of activateDict[event]) (element as UIElement).setActive(true).setVisible(true);
+			for (const element of deactivateDict[event]) (element as UIElement).setActive(false).setVisible(false);
+		},
+	};
+}
+
+function UIPhaserEventToggle(handler: IEventHandler, events: string[], stateToggle: { send(event: string) }) {
+	for (const event of events)
+		handler.on(event, () => {
+			stateToggle.send(event);
+		});
+}
 
 const circleCorrection = -5;
 
 export class CampState {
 	graphics: Phaser.GameObjects.Graphics;
-	background: RectPolygon;
+	background: Phaser.GameObjects.Rectangle;
 	redCircle: Phaser.GameObjects.Arc;
 	sideArrow: ArrowHeadPolygon;
 	sideCross: SymmetricCrossPolygon;
-	targetBackground: RectPolygon;
+	targetBackground: Phaser.GameObjects.Rectangle;
 	targetForeground: Phaser.GameObjects.Arc;
+
+	ambushTargetHex;
+	textObj: Phaser.GameObjects.Text;
+
 	onKillist = false;
 	isRerouted = false;
 	hasCooperation = false;
-	ambushTargetHex;
-	textObj: Phaser.GameObjects.Text;
 
 	constructor(
 		sceneToUse: HUD,
@@ -34,10 +79,23 @@ export class CampState {
 	) {
 		this.graphics = sceneToUse.add.graphics({});
 
-		this.background = new RectPolygon(x, y, 2 * halfSize, 2 * halfSize);
+		this.background = sceneToUse.add.rectangle(x, y, 2 * halfSize, 2 * halfSize, this.backgroundHexColor);
 
 		this.redCircle = sceneToUse.add.circle(x, y, halfSize + circleCorrection + 4, 0xb20000).setVisible(false);
 		sceneToUse.add.circle(x, y, halfSize + circleCorrection, this.foregroundHexColor);
+
+		this.textObj = sceneToUse.add
+			.text(x - 18, y - 25, "C", {
+				font: "50px Verdana ",
+				fill: "#000000",
+				fontWeight: "bold",
+			})
+			.setVisible(false);
+
+		this.targetBackground = sceneToUse.add
+			.rectangle(x - 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize, this.backgroundHexColor)
+			.setVisible(false);
+		this.targetForeground = sceneToUse.add.circle(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 
 		this.sideArrow = new ArrowHeadPolygon(x - 2 * halfSize - 10, y, 1.5 * halfSize, 2 * halfSize);
 		this.sideArrow.rotate(Phaser.Math.DegToRad(-90));
@@ -50,15 +108,7 @@ export class CampState {
 		this.sideCross = new SymmetricCrossPolygon(x - 2 * halfSize - 10, y, 2 * halfSize, 0.4 * halfSize);
 		this.sideCross.rotate(Phaser.Math.DegToRad(45));
 
-		this.targetBackground = new RectPolygon(x - 2 * (2 * halfSize + 10), y, 2 * halfSize, 2 * halfSize);
-		this.targetForeground = sceneToUse.add.circle(x - 2 * (2 * halfSize + 10), y, halfSize + circleCorrection);
 		this.reset();
-
-		this.textObj = sceneToUse.add.text(x - 18, y - 25, "", {
-			font: "50px Verdana ",
-			fill: "#000000",
-			fontWeight: "bold",
-		});
 	}
 
 	reset() {
@@ -146,7 +196,7 @@ export class CampState {
 
 	private drawAmbushTarget() {
 		this.graphics.fillStyle(this.backgroundHexColor);
-		this.targetBackground.draw(this.graphics, 0);
+		this.targetBackground.setVisible(true);
 
 		this.targetForeground.setFillStyle(this.ambushTargetHex);
 
@@ -162,7 +212,6 @@ export class CampState {
 	redraw() {
 		this.graphics.clear();
 		this.graphics.fillStyle(this.backgroundHexColor);
-		this.background.draw(this.graphics, 0);
 
 		if (this.onKillist) this.redCircle.setVisible(true);
 

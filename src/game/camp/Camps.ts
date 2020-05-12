@@ -1,8 +1,7 @@
 import { CampOrder } from "./CampOrder";
 import { Camp } from "./Camp";
-import { GameMap } from "../env/GameMap";
 import { CampSetup, CampID } from "../setup/CampSetup";
-import { Areas } from "../env/environment";
+import { Areas, GameMap } from "../env/environment";
 
 export class Camps {
 	arr: Camp[] = [];

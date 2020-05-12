@@ -6,15 +6,13 @@ import { Gameplay } from "../../../scenes/Gameplay";
 import { CampPopulator } from "../../populator/CampPopulator";
 import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
 import { BarrierFactory } from "./BarrierFactory";
-import { GameMap } from "../../env/GameMap";
-import { RealAreaSpawnableDict } from "../../env/SpawnableDict";
 import { CampsState } from "../CampsState";
 import { BossSetup } from "../../setup/BossSetup";
 import { BossPool } from "../../pool/CirclePool";
 import { CircleFactory } from "../../unit/CircleFactory";
 import { GuardComponent } from "../../ai/GuardComponent";
 import { Point } from "../../base/types";
-import { Area } from "../../env/environment";
+import { Area, GameMap, areaRealSpawnDict } from "../../env/environment";
 
 export class BossCamp implements CampLike {
 	id = CampSetup.bossCampID;
@@ -39,7 +37,7 @@ export class BossCamp implements CampLike {
 			CampSetup.bossCampID,
 			scene,
 			pool,
-			new EnemySpawnObj(new RealAreaSpawnableDict(this.area, this.gameMap), enemies),
+			new EnemySpawnObj(areaRealSpawnDict(this.area.topLeft, this.area.dims, this.gameMap.spawnPos), enemies),
 			BossSetup.maxBossCampPopulation,
 			campsState
 		);

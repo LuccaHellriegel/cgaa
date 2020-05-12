@@ -1,6 +1,6 @@
 import { IEventHandler } from "../events/IEventHandler";
 
-export interface IMouseOver {
+interface IMouseOver {
 	mouseOver: boolean;
 }
 

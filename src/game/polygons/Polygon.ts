@@ -1,20 +1,11 @@
 import { Point } from "../base/types";
 
-export let shapeWord = {
-	line: "line",
-	point: "point",
-	circle: "circle",
-	polygon: "polygon"
-};
-
 export class Polygon {
-	type: string;
 	x: number;
 	y: number;
 	points: Point[];
 
 	constructor(x, y, points) {
-		this.type = shapeWord.polygon;
 		this.x = x;
 		this.y = y;
 		this.points = points;
@@ -22,7 +13,7 @@ export class Polygon {
 
 	pointsToArr() {
 		let pointsArr: number[][] = [];
-		this.points.forEach(point => {
+		this.points.forEach((point) => {
 			pointsArr.push([point.x, point.y]);
 		});
 		return pointsArr;
@@ -30,8 +21,8 @@ export class Polygon {
 
 	calculateCenterPoint() {
 		let pointsArr = this.pointsToArr();
-		var x = pointsArr.map(x => x[0]);
-		var y = pointsArr.map(x => x[1]);
+		var x = pointsArr.map((x) => x[0]);
+		var y = pointsArr.map((x) => x[1]);
 		var cx = (Math.min(...x) + Math.max(...x)) / 2;
 		var cy = (Math.min(...y) + Math.max(...y)) / 2;
 		return [cx, cy];
@@ -55,7 +46,7 @@ export class Polygon {
 	rotatePoints(rotation, centerX, centerY) {
 		let originalPoints = this.createUnrotatedPoints();
 		let newPoints: Point[] = [];
-		originalPoints.forEach(point => {
+		originalPoints.forEach((point) => {
 			let x1 = point.x - centerX;
 			let y1 = point.y - centerY;
 
@@ -70,7 +61,7 @@ export class Polygon {
 
 			newPoints.push({
 				x: x,
-				y: y
+				y: y,
 			});
 		});
 		this.points = newPoints;
@@ -90,26 +81,26 @@ export class Polygon {
 	getLowestHighestY() {
 		let lowestY = Infinity;
 		let highestY = -Infinity;
-		this.points.forEach(point => {
+		this.points.forEach((point) => {
 			if (point.y < lowestY) lowestY = point.y;
 			if (point.y > highestY) highestY = point.y;
 		});
 		return {
 			lowestY,
-			highestY
+			highestY,
 		};
 	}
 
 	getLowestHighestX() {
 		let lowestX = Infinity;
 		let highestX = -Infinity;
-		this.points.forEach(point => {
+		this.points.forEach((point) => {
 			if (point.x < lowestX) lowestX = point.x;
 			if (point.x > highestX) highestX = point.x;
 		});
 		return {
 			lowestX,
-			highestX
+			highestX,
 		};
 	}
 

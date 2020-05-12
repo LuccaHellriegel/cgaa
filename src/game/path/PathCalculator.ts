@@ -1,8 +1,8 @@
 import EasyStar from "easystarjs";
-import { RelativeMap } from "../env/types";
 import { Point } from "../base/types";
 import { RelPos } from "../base/RelPos";
 import { EnvSetup } from "../setup/EnvSetup";
+import { RelativeMap } from "../env/environment";
 
 export class PathCalculator {
 	private easyStar;
@@ -14,14 +14,16 @@ export class PathCalculator {
 	}
 	private callback(path) {
 		if (path === null) {
-			throw "Path was not found. " +
+			throw (
+				"Path was not found. " +
 				this.tempStart.column +
 				" " +
 				this.tempStart.row +
 				" " +
 				this.tempGoal.column +
 				" " +
-				this.tempGoal.row;
+				this.tempGoal.row
+			);
 		} else {
 			this.tempArr = path;
 		}

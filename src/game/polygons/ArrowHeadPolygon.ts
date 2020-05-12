@@ -4,7 +4,6 @@ import { Point } from "../base/types";
 export class ArrowHeadPolygon extends Polygon {
 	width: number;
 	height: number;
-	type: string;
 	x: number;
 	y: number;
 	points: Point[];

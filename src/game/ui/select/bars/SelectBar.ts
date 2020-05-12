@@ -6,7 +6,7 @@ export interface GUIElement {
 	move?(x: number, y: number);
 }
 
-export interface selectable {
+interface selectable {
 	select();
 	deselect();
 }
