@@ -29,6 +29,10 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 - tutorial
 - trailer (only for humorous people)
 
+## Architecture
+
+I strife for a layered architecture, where dependencies only go downward and the general execution order of the main functions is upwards. 
+
 ## License
 
 MIT. See [LICENSE](./LICENSE) file.
