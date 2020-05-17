@@ -15,7 +15,7 @@ function generatePlayerUnits(scene) {
 	new CircleGenerator(0x6495ed, scene, "blueCircle", UnitSetup.normalCircleRadius);
 	new BlockadeGenerator(scene);
 
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x013220,
 		"healer",
@@ -24,7 +24,7 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x013220,
 		"sellhealer",
@@ -33,7 +33,7 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x013220,
 		"upgradehealer",
@@ -43,7 +43,7 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize
 	);
 
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x6495ed,
 		"shooter",
@@ -52,7 +52,7 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x6495ed,
 		"sellshooter",
@@ -61,7 +61,7 @@ function generatePlayerUnits(scene) {
 		EnvSetup.gridPartSize,
 		EnvSetup.gridPartSize
 	);
-	new RectGenerator(
+	RectGenerator(
 		scene,
 		0x6495ed,
 		"upgradeshooter",
