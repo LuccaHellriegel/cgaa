@@ -1,25 +1,19 @@
 import { RelPos } from "../0_GameBase/engine/RelPos";
 import { WallSide, Exit, GameMap } from "../0_GameBase/types";
+import { splitArr } from "../0_GameBase/engine/array";
+import { equal2DPositions } from "../0_GameBase/engine/navigation";
 
 function splitRelPosArrAtGaps(positions: RelPos[]): RelPos[][] {
-	let splitArrs = [[positions[0]]];
-	let splitArrsIndex = 0;
-	let lastPos = positions[0];
-	for (let posIndex = 1; posIndex < positions.length; posIndex++) {
-		const pos = positions[posIndex];
+	const tester = (lastPos, curPos) => {
 		// 1 or 0 means the positions are next to each other/ the same
 		const distanceInOneDirectionDetected =
-			(Math.abs(lastPos.column - pos.column) > 1 && Math.abs(lastPos.row - pos.row) == 0) ||
-			(Math.abs(lastPos.row - pos.row) > 1 && Math.abs(lastPos.column - pos.column) == 0);
-		// switch to next arr
-		if (distanceInOneDirectionDetected) {
-			splitArrsIndex++;
-			splitArrs.push([]);
-		}
-		splitArrs[splitArrsIndex].push(pos);
-		lastPos = pos;
-	}
-	return splitArrs;
+			(Math.abs(lastPos.column - curPos.column) > 1 && Math.abs(lastPos.row - curPos.row) == 0) ||
+			(Math.abs(lastPos.row - curPos.row) > 1 && Math.abs(lastPos.column - curPos.column) == 0);
+
+		return distanceInOneDirectionDetected;
+	};
+
+	return splitArr(positions, tester);
 }
 
 export function splitUpWallSidesAtExits(wallSides: WallSide[], exits: Exit[]) {
@@ -33,7 +27,7 @@ export function splitUpWallSidesAtExits(wallSides: WallSide[], exits: Exit[]) {
 		for (const wallPos of wallSide.positionsInMap) {
 			for (const exit of exits) {
 				for (const pos of exit.positionsInMap) {
-					if (wallPos.column == pos.column && wallPos.row == pos.row) {
+					if (equal2DPositions(wallPos, pos)) {
 						// assumes just a single overlap is possible
 						overlap = true;
 						overlapExit = exit;
@@ -46,7 +40,7 @@ export function splitUpWallSidesAtExits(wallSides: WallSide[], exits: Exit[]) {
 			for (const wallPos of wallSide.positionsInMap) {
 				let posOverlaps = false;
 				for (const pos of overlapExit.positionsInMap) {
-					if (wallPos.column == pos.column && wallPos.row == pos.row) {
+					if (equal2DPositions(wallPos, pos)) {
 						posOverlaps = true;
 					}
 				}

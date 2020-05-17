@@ -11,6 +11,7 @@ import {
 import { splitUpWallSidesAtExits, addWallSidesToGameMap } from "./3_GameData/wall";
 import { randomBuildingPositions, addBuildingPositionsToGameMap } from "./3_GameData/building";
 import { BuildingPosition, Camp, CGAAData, GameMap, WallSide } from "./0_GameBase/types";
+import { equal2DPositions } from "./0_GameBase/engine/navigation";
 
 type Exit = {
 	areaInLayout: RelPos;
@@ -29,10 +30,7 @@ function mapExitsToCamps(exits: Exit[], campAreas: CampArea[]) {
 		// multiple exits are possible, so need to add all
 		const temp = { ...campArea, exitPositionsInMap: [] };
 		for (const exit of exits) {
-			if (
-				exit.areaInLayout.row == campArea.areaInLayout.row &&
-				exit.areaInLayout.column == campArea.areaInLayout.column
-			) {
+			if (equal2DPositions(exit.areaInLayout, campArea.areaInLayout)) {
 				temp.exitPositionsInMap.push({ positionsInMap: exit.positionsInMap });
 			}
 		}
@@ -52,7 +50,7 @@ function mapBuildingPositionsToCamps(
 		// multiple buildings are possible, so need to add all
 		const temp = { ...campObj, buildingPositionsInMap: [] };
 		for (const pos of buildingPositions) {
-			if (pos.areaInLayout.row == campObj.areaInLayout.row && pos.areaInLayout.column == campObj.areaInLayout.column) {
+			if (equal2DPositions(pos.areaInLayout, campObj.areaInLayout)) {
 				temp.buildingPositionsInMap.push({ positionInMap: pos.positionInMap, spawnPos: pos.spawnPos });
 			}
 		}
@@ -97,17 +95,18 @@ export function GameData(config: CGAAData): Data {
 	addBuildingPositionsToGameMap(gameMap, buildingPositions, config.mapBuildingSymbol);
 
 	const campAreas: CampArea[] = randomMapCampIDsToAreas(config.campIDs, config.areaLayout, config.areaSymbol);
+	const enrichCampData = (campData) => {
+		return {
+			...campData,
+			areaSize: config.areaSize,
+			areaMapMiddle: mapAreaTopLeftToMapMiddle(
+				layoutAreaToMapTopLeft(campData.areaInLayout, config.areaSize),
+				config.areaSize
+			),
+		};
+	};
 	const campArr: Camp[] = mapBuildingPositionsToCamps(buildingPositions, mapExitsToCamps(exits, campAreas)).map(
-		(obj) => {
-			return {
-				...obj,
-				areaSize: config.areaSize,
-				areaMapMiddle: mapAreaTopLeftToMapMiddle(
-					layoutAreaToMapTopLeft(obj.areaInLayout, config.areaSize),
-					config.areaSize
-				),
-			};
-		}
+		enrichCampData
 	);
 	const camps = new Map();
 	for (const camp of campArr) {

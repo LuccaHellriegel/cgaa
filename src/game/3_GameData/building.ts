@@ -1,20 +1,19 @@
 import { layoutAreaToMapTopLeft, mapAreaTopLeftToMapMiddle, filterRelPosInsideArea } from "./layout";
 import { RelPos } from "../0_GameBase/engine/RelPos";
 import { GameMap, BuildingPosition } from "../0_GameBase/types";
+import { posAround2DPosition, posAround2DPositionRelPos, equal2DPositions } from "../0_GameBase/engine/navigation";
+import { array2DApplyConcat } from "../0_GameBase/engine/array";
 
 function getAllBuildingRelevantPositions(column, row) {
-	let positions: number[][] = [];
-	let rows = [row - 1, row, row + 1];
-	for (let index = 0, length = rows.length; index < length; index++) {
-		positions.push([column - 3, rows[index]]);
-		positions.push([column - 2, rows[index]]);
-		positions.push([column - 1, rows[index]]);
-		positions.push([column, rows[index]]);
-		positions.push([column + 1, rows[index]]);
-		positions.push([column + 2, rows[index]]);
-		positions.push([column + 3, rows[index]]);
-	}
-	return positions;
+	// includes all the positions where a new building center point should not be
+	const posShape = [
+		[1, 1, 1, 1, 1, 1, 1],
+		[1, 1, 1, 0, 1, 1, 1],
+		[1, 1, 1, 1, 1, 1, 1],
+	];
+	return posAround2DPosition(row, column, posShape)
+		.map((pos) => [pos.column, pos.row])
+		.concat([[column, row]]);
 }
 
 function updateObj(column, row, obj, mapBuildingSymbol: number) {
@@ -43,7 +42,7 @@ function getRandomSpawnPosition(middle: RelPos, obj, keys, mapDefaultSymbol: num
 
 	//Building not allowed in middle for pathfinding
 	let pos = IDToIntArr(key);
-	if (pos.row === middle.row && pos.column === middle.column) return false;
+	if (equal2DPositions(pos, middle)) return false;
 	//Building not allowed to overlap middle for pathfinding
 	if (pos.row === middle.row && pos.column === middle.column - 1) return false;
 	if (pos.row === middle.row && pos.column === middle.column + 1) return false;
@@ -53,32 +52,23 @@ function getRandomSpawnPosition(middle: RelPos, obj, keys, mapDefaultSymbol: num
 
 function spawnPosForBuilding(column, row) {
 	// all pos around the building, constraints are ensured by random pos algo
-	let positions: RelPos[] = [];
-	let rows = [row - 1, row + 1];
-	for (let index = 0, length = rows.length; index < length; index++) {
-		positions.push(new RelPos(rows[index], column - 2));
-		positions.push(new RelPos(rows[index], column - 1));
-		positions.push(new RelPos(rows[index], column));
-		positions.push(new RelPos(rows[index], column + 1));
-		positions.push(new RelPos(rows[index], column + 2));
-	}
-	positions.push(new RelPos(row, column - 2));
-	positions.push(new RelPos(row, column + 2));
-
-	return positions;
+	const posShape = [
+		[1, 1, 1, 1, 1],
+		[1, 2, 0, 2, 1],
+		[1, 1, 1, 1, 1],
+	];
+	return posAround2DPositionRelPos(row, column, posShape);
 }
 
 function positionsAroundBuldingInclusive(row, column) {
-	let positions: number[][] = [];
-	let rows = [row - 1, row, row + 1];
-	for (let index = 0, length = rows.length; index < length; index++) {
-		positions.push([column - 2, rows[index]]);
-		positions.push([column - 1, rows[index]]);
-		positions.push([column, rows[index]]);
-		positions.push([column + 1, rows[index]]);
-		positions.push([column + 2, rows[index]]);
-	}
-	return positions;
+	const posShape = [
+		[1, 1, 1, 1, 1],
+		[1, 1, 0, 1, 1],
+		[1, 1, 1, 1, 1],
+	];
+	return posAround2DPosition(row, column, posShape)
+		.map((pos) => [pos.column, pos.row])
+		.concat([[column, row]]);
 }
 
 function mapHasSpaceForBuilding(map: GameMap, row, column, mapDefaultSymbol: number) {
@@ -86,6 +76,7 @@ function mapHasSpaceForBuilding(map: GameMap, row, column, mapDefaultSymbol: num
 	for (let index = 0, positionLength = positionArr.length; index < positionLength; index++) {
 		let column = positionArr[index][0];
 		let row = positionArr[index][1];
+
 		if (!(map[row][column] === mapDefaultSymbol)) return false;
 	}
 	return true;
@@ -98,9 +89,9 @@ function buildingSpawnDict(
 	map: GameMap,
 	mapDefaultSymbol: number
 ) {
-	const buildingSpawnPos = filterRelPosInsideArea(areaMapTopLeft, areaSize, mapSpawnPos).filter((pos) =>
-		mapHasSpaceForBuilding(map, pos.row, pos.column, mapDefaultSymbol)
-	);
+	const buildingSpawnPos = filterRelPosInsideArea(areaMapTopLeft, areaSize, mapSpawnPos).filter((pos) => {
+		return mapHasSpaceForBuilding(map, pos.row, pos.column, mapDefaultSymbol);
+	});
 	const dict = {};
 	buildingSpawnPos.forEach((pos) => (dict[pos.column + " " + pos.row] = mapDefaultSymbol));
 	return dict;
@@ -154,26 +145,23 @@ export function randomBuildingPositions(
 	mapDefaultSymbol: number,
 	mapBuildingSymbol: number
 ) {
-	let result: BuildingPosition[] = [];
-
-	for (let row = 0; row < areaLayout.length; row++) {
-		for (let column = 0; column < areaLayout[0].length; column++) {
-			if (areaLayout[row][column] == areaSymbol)
-				result = result.concat(
-					randomAreaBuildingPositions(
-						new RelPos(row, column),
-						areaSize,
-						buildingsPerCamp,
-						mapSpawnPos,
-						gameMap,
-						mapDefaultSymbol,
-						mapBuildingSymbol
-					)
-				);
+	const apply = (value, row, column) => {
+		if (value == areaSymbol) {
+			return randomAreaBuildingPositions(
+				new RelPos(row, column),
+				areaSize,
+				buildingsPerCamp,
+				mapSpawnPos,
+				gameMap,
+				mapDefaultSymbol,
+				mapBuildingSymbol
+			);
+		} else {
+			return null;
 		}
-	}
+	};
 
-	return result;
+	return array2DApplyConcat(areaLayout, apply);
 }
 
 export function addBuildingPositionsToGameMap(

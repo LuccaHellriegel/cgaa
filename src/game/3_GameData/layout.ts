@@ -3,6 +3,8 @@ import { RelPos } from "../0_GameBase/engine/RelPos";
 import { randomizeArr } from "../0_GameBase/engine/random";
 import { EnvSetup } from "../0_GameBase/setup/EnvSetup";
 import { WallSide, ExitSide, Exit, GameMap } from "../0_GameBase/types";
+import { array2DApply, array2DApplyConcat } from "../0_GameBase/engine/array";
+import { posAround2DPosition } from "../0_GameBase/engine/navigation";
 
 function areaLayoutToMapDimensions(areaLayout: any[][], areaSize: number) {
 	return { xAxis: areaLayout[0].length * areaSize, yAxis: areaLayout.length * areaSize };
@@ -67,18 +69,16 @@ function layoutAreaToWallSides(area: RelPos, areaSize: number): WallSide[] {
 }
 
 export function areaLayoutToWallSides(areaLayout: (0 | 1)[][], areaSize: number): WallSide[] {
-	let result: WallSide[] = [];
 	const areaSymbol = 1;
 
 	// Assumes all areas are the same size
-	for (let row = 0; row < areaLayout.length; row++) {
-		for (let column = 0; column < areaLayout[0].length; column++) {
-			if (areaLayout[row][column] == areaSymbol)
-				result = result.concat(layoutAreaToWallSides(new RelPos(row, column), areaSize));
+	return array2DApplyConcat(areaLayout, (value, row, column) => {
+		if (value == areaSymbol) {
+			return layoutAreaToWallSides(new RelPos(row, column), areaSize);
+		} else {
+			return null;
 		}
-	}
-
-	return result;
+	});
 }
 
 function layoutExitToExitPositions(areaTopLeft: RelPos, exitSide: ExitSide, areaSize: number) {
@@ -175,64 +175,50 @@ export function filterRelPosInsideArea(areaMapTopLeft: RelPos, areaSize: number,
 	return pos.filter((pos) => isInsideMapArea(pos, areaMapTopLeft, areaSize));
 }
 
-function filterTransform2DArray(array: GameMap, tester, transformCallback) {
-	const arr: RelPos[] = [];
-	for (let row = 0; row < array.length; row++) {
-		for (let column = 0; column < array[0].length; column++) {
-			const isAllowed = tester(array[row][column], row, column);
-			if (isAllowed) {
-				arr.push(transformCallback(row, column));
-			}
+export function mapSpawnablePos(map: GameMap, mapDefaultValue, exits: Exit[]) {
+	const forbiddenShape = [
+		[1, 1, 1],
+		[1, 0, 1],
+		[1, 1, 1],
+	];
+
+	let posAroundExit = [];
+	for (const exit of exits) {
+		for (const pos of exit.positionsInMap) {
+			posAroundExit = posAroundExit.concat(posAround2DPosition(pos.row, pos.column, forbiddenShape));
 		}
 	}
-	return arr;
-}
 
-export function mapSpawnablePos(map: GameMap, mapDefaultValue, exits: Exit[]) {
-	return filterTransform2DArray(
-		map,
-		(value, row, column) => {
-			if (value !== mapDefaultValue) return false;
-			for (const exit of exits) {
-				for (const pos of exit.positionsInMap) {
-					if (pos.row == row && column == pos.column) {
-						return false;
-					}
+	const tester = (value, row, column) => {
+		if (value !== mapDefaultValue) return false;
 
-					//around exit
-					if (pos.row - 1 == row && column == pos.column) {
-						return false;
-					}
+		for (const pos of posAroundExit) {
+			if (pos.column === column && pos.row === row) return false;
+		}
 
-					if (pos.row == row && column == pos.column - 1) {
-						return false;
-					}
+		return true;
+	};
 
-					if (pos.row + 1 == row && column == pos.column) {
-						return false;
-					}
-
-					if (pos.row == row && column == pos.column + 1) {
-						return false;
-					}
-				}
-			}
-			return true;
-		},
-		(row, column) => new RelPos(row, column)
-	);
+	return array2DApply(map, (value, row, column) => {
+		if (tester(value, row, column)) {
+			return new RelPos(row, column);
+		} else {
+			return null;
+		}
+	});
 }
 
 export function randomMapCampIDsToAreas(campIDs: string[], areaLayout: any[][], areaSymbol): CampArea[] {
 	const result: CampArea[] = [];
 
 	// assumes there are enough areas for the ids
-	const areas: RelPos[] = [];
-	for (let row = 0; row < areaLayout.length; row++) {
-		for (let column = 0; column < areaLayout[0].length; column++) {
-			if (areaLayout[row][column] == areaSymbol) areas.push(new RelPos(row, column));
+	const areas: RelPos[] = array2DApply(areaLayout, (value, row, column) => {
+		if (value == areaSymbol) {
+			return new RelPos(row, column);
+		} else {
+			return null;
 		}
-	}
+	});
 
 	const randomOrder = randomizeArr(campIDs);
 	for (const campID of randomOrder) {
