@@ -3,6 +3,7 @@ import { Gameplay } from "../../scenes/Gameplay";
 export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Gameplay, x, y) {
 		super(scene, x, y, "selectorRect");
+		this.setFrame(2);
 		this.setupSceneInteraction();
 		this.setupAnims();
 		this.setupEvents();
@@ -23,14 +24,14 @@ export class SelectorRect extends Phaser.Physics.Arcade.Sprite {
 	private setupAnims() {
 		this.on(
 			"animationcomplete",
-			function(anim, frame) {
+			function (anim, frame) {
 				this.emit("animationcomplete_" + anim.key, anim, frame);
 			},
 			this
 		);
 		this.on(
 			"animationcomplete_invalid-shooter-pos",
-			function() {
+			function () {
 				this.anims.play("idle-" + this.texture.key);
 			},
 			this

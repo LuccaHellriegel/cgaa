@@ -13,6 +13,11 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 - graphics are all created in-game
 - now mainly used to explore interesting facets of Game Dev (but it should still be fun for a few rounds)
 
+### Known Issues
+
+- performance degradation after 10 minutes (so better finish the game before then ;))
+- object pooling breaks down after 10 minutes too
+
 ## Play Version 0.1 here
 
 [CGAA](https://luccahellriegel.github.io/cgaa/page/game.html)
@@ -31,7 +36,7 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ## Architecture
 
-I strife for a layered architecture, where dependencies only go downward and the general execution order of the main functions is upwards. 
+I strife for a layered architecture, where dependencies only go downward and the general execution order of the main functions is upwards.
 
 ## License
 

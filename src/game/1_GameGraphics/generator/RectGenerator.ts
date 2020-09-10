@@ -1,11 +1,10 @@
 import { Gameplay } from "../../../scenes/Gameplay";
+import { texture } from "../../0_GameBase/engine/phaser";
 
-export function RectGenerator(scene: Gameplay, hexColor, textureName, centerX, centerY, width, height) {
-	const graphics = scene.add.graphics({
-		fillStyle: {
-			color: hexColor,
-		},
-	});
-	graphics.fillRect(centerX - width / 2, centerY - height / 2, width, height);
-	graphics.generateTexture(textureName, width, height);
+export function RectGenerator(scene: Gameplay, hexColor, name, centerX, centerY, width, height) {
+	const draw = (graphics) => {
+		graphics.fillStyle(hexColor);
+		graphics.fillRect(centerX - width / 2, centerY - height / 2, width, height);
+	};
+	texture({ scene, name, width, height }, { before: draw });
 }
