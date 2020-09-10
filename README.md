@@ -32,8 +32,8 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ## Known Issues
 
-- reload on loss / win necessary
-- performance degradation after 10 minutes (so better finish the game before then ;))
+- reload on lose / win necessary
+- performance degradation after 10 minutes (so better win the game before then ;))
 - object pooling breaks down after 10 minutes too
 - sometimes the king vanishes after too much time too (reload helps)
 - visual glitches and weird UX are to be expected as this is a prototype and my very first from-scratch game
