@@ -15,9 +15,9 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ### Learn to play!
 
-- Tutorial (not everything in the prototype is self-explanatory sadly!): [Tutorial Page](https://luccahellriegel.github.io/cgaa/page/tutorial.html)
-- Watch a playthrough (spoiler!):
-  - [Playthrough Video by me](https://www.youtube.com/watch?v=Wgb_iVdO6x0&feature=youtu.be)
+- Tutorial (not everything in the prototype is self-explanatory!): [Tutorial Page](https://luccahellriegel.github.io/cgaa/page/tutorial.html)
+- Watch gameplay (spoiler!):
+  - [Playthrough video by me](https://www.youtube.com/watch?v=Wgb_iVdO6x0&feature=youtu.be)
   - with glitches / Missing-King bug
 
 ## Game Webpage
