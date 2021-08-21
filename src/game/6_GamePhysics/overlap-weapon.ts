@@ -1,4 +1,5 @@
 import { EventSetup } from "../0_GameBase/setup/EventSetup";
+import { HealthBar } from "../4_GameUnit/healthbar/HealthBar";
 
 export function initWeaponGroupPair(scene: Phaser.Scene) {
 	const weapons = scene.physics.add.group();
@@ -40,7 +41,7 @@ function doDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
 
 		if (weaponOwner.unitType === "player") {
 			//Gain souls if player kill (otherwise too much money)
-			if (damage >= enemy.healthbar.value) EventSetup.gainSouls(weapon.scene, enemy.type);
+			if (damage >= (enemy.healthbar as HealthBar).health.current) EventSetup.gainSouls(weapon.scene, enemy.type);
 		}
 
 		enemy.damage(damage);

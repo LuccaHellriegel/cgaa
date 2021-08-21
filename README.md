@@ -6,7 +6,20 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ![Fight](./page/images/fight.gif)
 
-## Play Version 0.1 here!
+
+## Project History
+
+- started dev in the context of a Game Design course at university (first six month)
+- many experiments with program structure and style
+- graphics are all created in-game
+- now mainly used to explore interesting facets of Game Dev (but it should still be fun for a few rounds)
+
+### Known Issues
+
+- performance degradation after 10 minutes (so better finish the game before then ;))
+- object pooling breaks down after 10 minutes too
+
+## Play Version 0.1 here
 
 [CGAA](https://luccahellriegel.github.io/cgaa/page/game.html)
 
