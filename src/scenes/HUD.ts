@@ -59,9 +59,9 @@ export class HUD extends Phaser.Scene {
 
 	lose() {
 		if (!this.won) {
-			this.add.sprite(screenWidth / 2, screenLength / 2, "game-over").play("game-over-anim");
+			//this.add.sprite(screenWidth / 2, screenLength / 2, "game-over").play("game-over-anim");
 
-			//Popup.losePopup(this, screenWidth / 2, screenLength / 2 - 150);
+			Popup.losePopup(this, screenWidth / 2, screenLength / 2 - 150);
 			this.ourGame.input.once("pointerdown", this.restartCGAA.bind(this));
 		}
 	}
