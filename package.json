@@ -16,23 +16,23 @@
 	"author": "Lucca Hellriegel",
 	"license": "",
 	"dependencies": {
-		"@babel/runtime": "^7.9.6",
-		"easystarjs": "^0.4.3",
-		"phaser": "^3.23.0"
+		"@babel/runtime": "^7.12.5",
+		"easystarjs": "^0.4.4",
+		"phaser": "^3.51.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.9.6",
-		"@babel/plugin-transform-runtime": "^7.9.6",
-		"@babel/preset-env": "^7.9.6",
-		"@types/chai": "^4.2.11",
+		"@babel/core": "^7.12.10",
+		"@babel/plugin-transform-runtime": "^7.12.10",
+		"@babel/preset-env": "^7.12.11",
+		"@types/chai": "^4.2.14",
 		"@types/mocha": "^5.2.7",
 		"chai": "^4.2.0",
-		"chai-arrays": "^2.0.0",
+		"chai-arrays": "^2.2.0",
 		"cssnano": "^4.1.10",
-		"dependency-cruiser": "^9.2.0",
+		"dependency-cruiser": "^9.21.6",
 		"mocha": "^6.2.3",
-		"ts-mockito": "^2.5.0",
-		"ts-node": "^8.10.1",
-		"typescript": "^3.9.2"
+		"ts-mockito": "^2.6.1",
+		"ts-node": "^8.10.2",
+		"typescript": "^3.9.7"
 	}
 }

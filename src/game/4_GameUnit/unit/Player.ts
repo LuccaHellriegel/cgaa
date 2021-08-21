@@ -76,7 +76,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 		let circle = new Player(scene, x, y, weapon);
 		weapon.setOwner(circle);
 
-		//weapon.amount = 40000;
+		//DEV: weapon.amount = 40000;
 
 		return circle;
 	}
