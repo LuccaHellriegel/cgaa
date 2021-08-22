@@ -1,16 +1,16 @@
-import { CircleUnit } from "./CircleUnit";
-import { ChainWeapon } from "../weapon/ChainWeapon";
-import { weaponHeights } from "../../0_GameBase/weapon/chain-weapon-data";
-import { poolable } from "../../0_GameBase/engine/interfaces";
-import { unitAnims } from "../../0_GameBase/engine/anim-play";
-import { Point } from "../../0_GameBase/engine/types-geom";
-import { CircleControl } from "../ai/CircleControl";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
-import { EnemySize } from "./CircleFactory";
+import { unitAnims } from "../game/0_GameBase/engine/anim-play";
+import { poolable } from "../game/0_GameBase/engine/interfaces";
+import { setupCircleBody } from "../game/0_GameBase/engine/phaser";
+import { Point } from "../game/0_GameBase/engine/types-geom";
+import { CampID } from "../game/0_GameBase/setup/CampSetup";
+import { UnitSetup } from "../game/0_GameBase/setup/UnitSetup";
+import { CircleControl } from "../game/4_GameUnit/ai/CircleControl";
 import { HealthBar } from "../healthbar/HealthBar";
-import { setupCircleBody } from "../../0_GameBase/engine/phaser";
-import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
+import { Gameplay } from "../scenes/Gameplay";
+import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
+import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { EnemySize } from "./CircleFactory";
+import { CircleUnit } from "./CircleUnit";
 
 export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
 	pathArr: Point[];

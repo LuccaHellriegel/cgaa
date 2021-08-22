@@ -1,5 +1,5 @@
-import { Bullet } from "../4_GameUnit/tower/Bullet";
-import { DangerousCircle } from "../4_GameUnit/unit/DangerousCircle";
+import { Bullet } from "../../towers/Shooter/Bullet";
+import { DangerousCircle } from "../../units/DangerousCircle";
 import { EventSetup } from "../0_GameBase/setup/EventSetup";
 
 export function initBulletGroupPair(scene: Phaser.Scene) {

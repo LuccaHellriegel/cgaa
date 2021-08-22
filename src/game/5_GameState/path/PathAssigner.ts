@@ -1,7 +1,7 @@
 import { Paths } from "./Paths";
 import { Path } from "./Path";
 import { CampRouting } from "../state/CampRouting";
-import { DangerousCircle } from "../../4_GameUnit/unit/DangerousCircle";
+import { DangerousCircle } from "../../4_GameUnit/units/DangerousCircle";
 import { RelPos } from "../../0_GameBase/engine/RelPos";
 import { CampID } from "../../0_GameBase/setup/CampSetup";
 

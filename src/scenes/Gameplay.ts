@@ -1,4 +1,4 @@
-import { InteractionCircle } from "../game/4_GameUnit/unit/InteractionCircle";
+import { InteractionCircle } from "../game/4_GameUnit/units/InteractionCircle";
 import { CampSetup } from "../game/0_GameBase/setup/CampSetup";
 import { ClickModes } from "../game/0_GameBase/engine/ui/modes/ClickModes";
 import { CGAA, GameStart } from "../game/8_GameStart";

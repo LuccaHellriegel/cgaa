@@ -1,5 +1,5 @@
 import { EventSetup } from "../0_GameBase/setup/EventSetup";
-import { HealthBar } from "../4_GameUnit/healthbar/HealthBar";
+import { HealthBar } from "../../healthbar/HealthBar";
 
 export function initWeaponGroupPair(scene: Phaser.Scene) {
 	const weapons = scene.physics.add.group();

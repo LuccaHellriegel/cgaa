@@ -1,12 +1,12 @@
-import { GuardComponent } from "../../4_GameUnit/ai/GuardComponent";
-import { PlayerFriend } from "../../4_GameUnit/unit/PlayerFriend";
+import { CircleFactory, EnemySize } from "../../../units/CircleFactory";
+import { Enemies } from "../../../units/Enemies";
+import { PlayerFriend } from "../../../units/PlayerFriend";
 import { Point } from "../../0_GameBase/engine/types-geom";
-import { CircleFactory, EnemySize } from "../../4_GameUnit/unit/CircleFactory";
+import { CampSetup } from "../../0_GameBase/setup/CampSetup";
 import { EnvSetup } from "../../0_GameBase/setup/EnvSetup";
+import { GuardComponent } from "../../4_GameUnit/ai/GuardComponent";
 import { FinalState } from "../../8_GameStart";
 import { Pools } from "../pool/pools";
-import { Enemies } from "../../4_GameUnit/unit/Enemies";
-import { CampSetup } from "../../0_GameBase/setup/CampSetup";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money

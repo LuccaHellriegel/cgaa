@@ -1,5 +1,5 @@
-import { unitAmountConfig } from "../../0_GameBase/weapon/chain-weapon-base";
-import { ChainWeapon } from "../../4_GameUnit/weapon/ChainWeapon";
+import { unitAmountConfig } from "./chain-weapon-base";
+import { ChainWeapon } from "./ChainWeapon";
 // POOL
 export class ChainWeapons extends Phaser.Physics.Arcade.Group {
 	constructor(scene, private ownerSizeName, amount) {

@@ -1,7 +1,7 @@
-import { ChainWeapons } from "./ChainWeapons";
-import { Bullets } from "../../4_GameUnit/tower/Bullet";
-import { Shooters } from "../../4_GameUnit/tower/Shooter";
-import { Healers } from "../../4_GameUnit/tower/Healer";
+import { ChainWeapons } from "../../../weapons/ChainWeapon/ChainWeapons";
+import { Bullets } from "../../../towers/Shooter/Bullet";
+import { Shooters } from "../../../towers/Shooter/Shooter";
+import { Healers } from "../../../towers/Healer/Healer";
 import { CampSetup } from "../../0_GameBase/setup/CampSetup";
 import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
 

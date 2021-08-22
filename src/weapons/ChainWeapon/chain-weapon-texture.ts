@@ -1,13 +1,7 @@
-import { EnemySize } from "../4_GameUnit/unit/CircleFactory";
-import {
-	cirlceSizeNames,
-	unitArrowHeadConfig,
-	ArrowConfig,
-	WeaponGeoms,
-	chainWeaponColor,
-} from "../0_GameBase/weapon/chain-weapon-base";
-import { weaponHeights } from "../0_GameBase/weapon/chain-weapon-data";
-import { weaponGeoms } from "../0_GameBase/weapon/chain-weapon-geom";
+import { EnemySize } from "../../game/4_GameUnit/units/CircleFactory";
+import { cirlceSizeNames, unitArrowHeadConfig, ArrowConfig, WeaponGeoms, chainWeaponColor } from "./chain-weapon-base";
+import { weaponHeights } from "./chain-weapon-data";
+import { weaponGeoms } from "./chain-weapon-geom";
 
 // DRAW
 function drawChainWeapon(graphics: Phaser.GameObjects.Graphics, geoms: WeaponGeoms) {

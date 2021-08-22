@@ -1,6 +1,6 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { CircleFactory } from "../../4_GameUnit/unit/CircleFactory";
-import { Enemies } from "../../4_GameUnit/unit/Enemies";
+import { CircleFactory } from "../../4_GameUnit/units/CircleFactory";
+import { Enemies } from "../../4_GameUnit/units/Enemies";
 import { Pool } from "./Pool";
 import { poolable } from "../../0_GameBase/engine/interfaces";
 

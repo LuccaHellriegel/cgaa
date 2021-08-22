@@ -1,11 +1,11 @@
-import { damageable } from "../../0_GameBase/engine/interfaces";
+import { damageable } from "../game/0_GameBase/engine/interfaces";
 import { HealthBar } from "../healthbar/HealthBar";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
-import { addToScene } from "../../0_GameBase/engine/phaser";
-import { addID } from "../../0_GameBase/engine/data";
-import { HealthBarFactory } from "../healthbar/HealthBarFactory";
-import { EventSetup } from "../../0_GameBase/setup/EventSetup";
+import { Gameplay } from "../scenes/Gameplay";
+import { CampID } from "../game/0_GameBase/setup/CampSetup";
+import { addToScene } from "../game/0_GameBase/engine/phaser";
+import { addID } from "../game/0_GameBase/engine/data";
+import { EventSetup } from "../game/0_GameBase/setup/EventSetup";
+import { BuildingSetup } from "../game/0_GameBase/setup/BuildingSetup";
 
 export class Building extends Phaser.Physics.Arcade.Image implements damageable {
 	id: string;
@@ -21,7 +21,14 @@ export class Building extends Phaser.Physics.Arcade.Image implements damageable 
 
 		this.setImmovable(true);
 
-		this.healthbar = HealthBarFactory.createBuildingHealthBar(scene, x, y);
+		this.healthbar = new HealthBar(x - 25, y - BuildingSetup.halfBuildingHeight, {
+			posCorrectionX: 0,
+			posCorrectionY: 0,
+			healthWidth: 46,
+			healthLength: 12,
+			value: 100,
+			scene: scene,
+		});
 
 		//Needed for gaining souls
 		this.type = spawnUnit;

@@ -1,5 +1,5 @@
-import { EnemySize } from "../../4_GameUnit/unit/CircleFactory";
-import { Point } from "../engine/types-geom";
+import { EnemySize } from "../../game/4_GameUnit/units/CircleFactory";
+import { Point } from "../../game/0_GameBase/engine/types-geom";
 import {
 	cirlceSizeNames,
 	unitArrowHeadConfig,
@@ -80,9 +80,8 @@ function topDownWeaponGeomFrame2(
 	// basic chain-circle data
 	let { smallCircles, bigCircles } = weaponChainConfig;
 	let { bigRadius, smallRadius } = weaponRadius[unitSize];
-	let { distArrowAndChain, distBetweenBigCircles, distBetweenBigAndSmallChain, distBetweenSmallCircles } = weaponDists[
-		unitSize
-	];
+	let { distArrowAndChain, distBetweenBigCircles, distBetweenBigAndSmallChain, distBetweenSmallCircles } =
+		weaponDists[unitSize];
 	// weapon geometry is aligned on x-axis, so any x = x
 	let arrowCenterX = topLeft.x + width / 2;
 	let arrowCenterY = topLeft.y + height / 2;

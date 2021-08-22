@@ -1,7 +1,7 @@
 import { Shooter } from "./Shooter";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { TowerSetup } from "../../0_GameBase/setup/TowerSetup";
-import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
+import { Gameplay } from "../../scenes/Gameplay";
+import { TowerSetup } from "../../game/0_GameBase/setup/TowerSetup";
+import { UnitSetup } from "../../game/0_GameBase/setup/UnitSetup";
 
 export class Bullets extends Phaser.Physics.Arcade.Group {
 	constructor(scene, private addBulletToPhysics) {

@@ -1,4 +1,4 @@
-import { HealthBar } from "../../4_GameUnit/healthbar/HealthBar";
+import { HealthBar } from "../../../healthbar/HealthBar";
 
 export interface damageable {
 	damage(amount: number);

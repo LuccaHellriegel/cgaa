@@ -1,13 +1,9 @@
 import { CampMap } from "../../3_GameData";
-import { BuildingFactory } from "../../4_GameUnit/building/BuildingFactory";
 import { Physics } from "../../6_GamePhysics";
 import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
-import { Building } from "../../4_GameUnit/building/Building";
+import { Building } from "../../../buildings/Building";
 import { CampID, CampSetup } from "../../0_GameBase/setup/CampSetup";
 import { arrayMiddle } from "../../0_GameBase/engine/array";
-import { InteractionCircle } from "../../4_GameUnit/unit/InteractionCircle";
-import { CircleFactory } from "../../4_GameUnit/unit/CircleFactory";
-import { Enemies } from "../../4_GameUnit/unit/Enemies";
 import { CampPopulator } from "./CampPopulator";
 import { CampsState } from "./CampsState";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
@@ -19,13 +15,31 @@ import { DangerousCirclePool } from "../pool/CirclePool";
 import { Pools } from "../pool/pools";
 import { Camp } from "../../0_GameBase/types";
 import { FinalState } from "../../8_GameStart";
+import { CircleFactory } from "../../../units/CircleFactory";
+import { Enemies } from "../../../units/Enemies";
+import { InteractionCircle } from "../../../units/InteractionCircle";
+import { Gameplay } from "../../../scenes/Gameplay";
 
-function createBuildings(camp: Camp, factory: BuildingFactory, spawnUnits: string[]) {
+function createBuildings(
+	camp: Camp,
+	scene: Gameplay,
+	addBuildingToPhysics: (building: Building) => void,
+	spawnUnits: string[]
+) {
 	const result: Building[] = [];
 	const spawnUnitStrings = [...spawnUnits];
 
 	for (const buildingPos of camp.buildingPositionsInMap) {
-		const building = factory.produce(buildingPos.positionInMap, camp.id as CampID, spawnUnitStrings.pop());
+		let point = buildingPos.positionInMap.toPoint();
+		const building = new Building(
+			scene,
+			point.x,
+			point.y,
+			addBuildingToPhysics,
+			spawnUnitStrings.pop(),
+			camp.id as CampID
+		);
+
 		result.push(building);
 	}
 	return result;
@@ -46,9 +60,7 @@ export function campsStaticUnits(scene, campMap: CampMap, physics: Physics, enem
 	const result = [];
 	for (const camp of camps) {
 		if (CampSetup.ordinaryCampIDs.includes(camp.id as CampID)) {
-			const buildings = createBuildings(camp, new BuildingFactory(scene, physics.addBuilding), [
-				...UnitSetup.circleSizeNames,
-			]);
+			const buildings = createBuildings(camp, scene, physics.addBuilding, [...UnitSetup.circleSizeNames]);
 			const diplomats = createDiplomats(
 				camp,
 				new CircleFactory(scene, camp.id as CampID, physics.addUnit, enemies, weaponPools[camp.id])

@@ -1,5 +1,5 @@
 import { CampID } from "../../0_GameBase/setup/CampSetup";
-import { DangerousCircle } from "../../4_GameUnit/unit/DangerousCircle";
+import { DangerousCircle } from "../../4_GameUnit/units/DangerousCircle";
 import { CampsState } from "../camp/CampsState";
 
 export class Wave {

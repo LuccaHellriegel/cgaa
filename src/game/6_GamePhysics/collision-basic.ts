@@ -8,7 +8,7 @@ export function initNonMovingGroupPair(scene: Phaser.Scene) {
 			nonmoving.add(nonMoving);
 		},
 		addToUnits: function (unit: Phaser.GameObjects.GameObject) {
-			//units.add(unit);
+			units.add(unit);
 		},
 	};
 }

@@ -1,16 +1,22 @@
-import { ChainWeapons } from "../../8_GameStart/pool/ChainWeapons";
-import { weaponHeights } from "../../0_GameBase/weapon/chain-weapon-data";
-import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { Enemies } from "./Enemies";
-import { HealthBarFactory } from "../healthbar/HealthBarFactory";
-import { King } from "./King";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
 import { DangerousCircle } from "./DangerousCircle";
 import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle";
+import { CampID } from "../game/0_GameBase/setup/CampSetup";
+import { UnitSetup } from "../game/0_GameBase/setup/UnitSetup";
+import { HealthBar } from "../healthbar/HealthBar";
+import { Gameplay } from "../scenes/Gameplay";
+import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
+import { ChainWeapons } from "../weapons/ChainWeapon/ChainWeapons";
+import { Enemies } from "./Enemies";
+import { King } from "./King";
 
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
+
+const healthBarDangerousCircleFactoryConfigs = {
+	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
+	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
+	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 51, healthLength: 17, value: 200, scene: null },
+};
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
@@ -31,7 +37,7 @@ export class CircleFactory {
 	}
 
 	private createHealthBar(scene, x, y, size) {
-		return HealthBarFactory.createDangerousCircleHealthBar(scene, x, y, size);
+		return new HealthBar(x, y, { ...healthBarDangerousCircleFactoryConfigs[size], scene });
 	}
 
 	private afterCreate(circle) {

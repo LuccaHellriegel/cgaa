@@ -1,4 +1,4 @@
-import { HealthBar } from "../4_GameUnit/healthbar/HealthBar";
+import { HealthBar } from "../../healthbar/HealthBar";
 
 export class PlayerHealthBar extends HealthBar {
 	constructor(scene) {

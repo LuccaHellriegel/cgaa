@@ -6,7 +6,7 @@ import { CampID } from "../../0_GameBase/setup/CampSetup";
 import { DangerousCirclePool } from "../pool/CirclePool";
 import { CampsState } from "../camp/CampsState";
 import { EventSetup } from "../../0_GameBase/setup/EventSetup";
-import { DangerousCircle } from "../../4_GameUnit/unit/DangerousCircle";
+import { DangerousCircle } from "../../4_GameUnit/units/DangerousCircle";
 import { GuardComponent } from "../../4_GameUnit/ai/GuardComponent";
 import { AmbushComponent } from "../../4_GameUnit/ai/AmbushComponent";
 import { RelPos } from "../../0_GameBase/engine/RelPos";

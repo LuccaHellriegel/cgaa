@@ -10,7 +10,7 @@ export function array2DFind(arr: any[][], test) {
 	}
 }
 
-export function array2DFunc(arr: any[][], func) {
+function array2DFunc(arr: any[][], func) {
 	for (let row = 0; row < arr.length; row++) {
 		for (let column = 0; column < arr[0].length; column++) {
 			func(arr[row][column], row, column);
@@ -58,10 +58,4 @@ export function splitArr(arr: any[], tester: (lastElement, currentElement) => bo
 		lastElement = currentElement;
 	}
 	return splitArrs;
-}
-
-export function array2DSetValue(arr: any[][], positions: { row: number; column: number }[], value) {
-	for (const pos of positions) {
-		arr[pos.row][pos.column] = value;
-	}
 }

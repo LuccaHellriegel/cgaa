@@ -1,5 +1,5 @@
 import { Gameplay } from "../../../scenes/Gameplay";
-import { Building } from "../../4_GameUnit/building/Building";
+import { Building } from "../../../buildings/Building";
 import { EventSetup } from "../../0_GameBase/setup/EventSetup";
 import { CampID } from "../../0_GameBase/setup/CampSetup";
 

@@ -1,7 +1,7 @@
 import { EnemySpawnObj } from "./EnemySpawnObj";
 import { RealDict } from "../../0_GameBase/engine/Dict";
-import { Enemies } from "../../4_GameUnit/unit/Enemies";
-import { Tower } from "../../4_GameUnit/tower/Tower";
+import { Enemies } from "../../4_GameUnit/units/Enemies";
+import { Tower } from "../../../towers/Tower";
 import { EnvSetup } from "../../0_GameBase/setup/EnvSetup";
 
 export class TowerSpawnObj extends EnemySpawnObj {

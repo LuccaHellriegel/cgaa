@@ -1,5 +1,5 @@
 import { RealDict } from "../../0_GameBase/engine/Dict";
-import { Enemies } from "../../4_GameUnit/unit/Enemies";
+import { Enemies } from "../../4_GameUnit/units/Enemies";
 import { EnvSetup } from "../../0_GameBase/setup/EnvSetup";
 import { Point } from "../../0_GameBase/engine/types-geom";
 

@@ -1,14 +1,14 @@
-import { ChainWeapon } from "../weapon/ChainWeapon";
-import { weaponHeights } from "../../0_GameBase/weapon/chain-weapon-data";
-import { healable } from "../../0_GameBase/engine/interfaces";
-import { unitAnims, initUnitAnims } from "../../0_GameBase/engine/anim-play";
-import { CampID, CampSetup } from "../../0_GameBase/setup/CampSetup";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { addID } from "../../0_GameBase/engine/data";
-import { addToScene, setupCircleBody } from "../../0_GameBase/engine/phaser";
-import { listenToAnim } from "../../0_GameBase/engine/anim-listen";
-import { EventSetup } from "../../0_GameBase/setup/EventSetup";
-import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
+import { listenToAnim } from "../game/0_GameBase/engine/anim-listen";
+import { unitAnims, initUnitAnims } from "../game/0_GameBase/engine/anim-play";
+import { addID } from "../game/0_GameBase/engine/data";
+import { healable } from "../game/0_GameBase/engine/interfaces";
+import { addToScene, setupCircleBody } from "../game/0_GameBase/engine/phaser";
+import { CampID, CampSetup } from "../game/0_GameBase/setup/CampSetup";
+import { EventSetup } from "../game/0_GameBase/setup/EventSetup";
+import { UnitSetup } from "../game/0_GameBase/setup/UnitSetup";
+import { Gameplay } from "../scenes/Gameplay";
+import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
+import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
 
 const playerTextureName = "blueNormalCircle";
 

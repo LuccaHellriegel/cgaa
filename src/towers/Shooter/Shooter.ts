@@ -1,7 +1,7 @@
 import { Bullets } from "./Bullet";
-import { Tower, Towers } from "./Tower";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { TowerSetup } from "../../0_GameBase/setup/TowerSetup";
+import { Tower, Towers } from "../Tower";
+import { Gameplay } from "../../scenes/Gameplay";
+import { TowerSetup } from "../../game/0_GameBase/setup/TowerSetup";
 
 export class Shooters extends Towers {
 	constructor(scene, addTowerToPhysics, private bullets: Bullets) {

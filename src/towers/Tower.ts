@@ -1,9 +1,8 @@
-import { damageable, poolable, healable } from "../../0_GameBase/engine/interfaces";
-import { IClickableElement } from "../../0_GameBase/engine/ui/modes/IClickableElement";
+import { damageable, poolable, healable } from "../game/0_GameBase/engine/interfaces";
+import { IClickableElement } from "../game/0_GameBase/engine/ui/modes/IClickableElement";
 import { HealthBar } from "../healthbar/HealthBar";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
-import { HealthBarFactory } from "../healthbar/HealthBarFactory";
-import { MouseOver } from "../../0_GameBase/engine/ui/MouseOver";
+import { CampID } from "../game/0_GameBase/setup/CampSetup";
+import { MouseOver } from "../game/0_GameBase/engine/ui/MouseOver";
 
 export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
 	constructor(scene, protected addTowerToPhysics: Function) {
@@ -18,8 +17,10 @@ export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
 }
 
 //TODO: make Tower that Spawns Units that walk to boss (? walking to dynamic positions might be to complicated)
-export abstract class Tower extends Phaser.Physics.Arcade.Image
-	implements damageable, poolable, healable, IClickableElement {
+export abstract class Tower
+	extends Phaser.Physics.Arcade.Image
+	implements damageable, poolable, healable, IClickableElement
+{
 	healthbar: HealthBar;
 	id: string;
 	campID: CampID;
@@ -36,7 +37,15 @@ export abstract class Tower extends Phaser.Physics.Arcade.Image
 	abstract poolDestroy();
 
 	place(x, y, _) {
-		if (!this.healthbar) this.healthbar = HealthBarFactory.createTowerHealthBar(this.scene, x, y);
+		if (!this.healthbar)
+			this.healthbar = new HealthBar(x, y, {
+				scene: this.scene,
+				posCorrectionX: -26,
+				posCorrectionY: -40,
+				healthWidth: 46,
+				healthLength: 12,
+				value: 100,
+			});
 		this.enableBody(true, x, y, true, true);
 		this.healthbar.bar.setActive(true).setVisible(true);
 		this.healthbar.move(x, y);

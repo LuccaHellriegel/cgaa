@@ -1,5 +1,5 @@
 import { WASD } from "./WASD";
-import { Player } from "../../4_GameUnit/unit/Player";
+import { Player } from "../../4_GameUnit/units/Player";
 
 const playerVelocity = 500;
 

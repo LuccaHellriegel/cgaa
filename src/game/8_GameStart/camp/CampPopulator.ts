@@ -4,7 +4,7 @@ import { CampID, CampSetup } from "../../0_GameBase/setup/CampSetup";
 import { DangerousCirclePool } from "../pool/CirclePool";
 import { CampsState } from "./CampsState";
 import { UnitSetup } from "../../0_GameBase/setup/UnitSetup";
-import { DangerousCircle } from "../../4_GameUnit/unit/DangerousCircle";
+import { DangerousCircle } from "../../4_GameUnit/units/DangerousCircle";
 import { GuardComponent } from "../../4_GameUnit/ai/GuardComponent";
 
 export class CampPopulator {

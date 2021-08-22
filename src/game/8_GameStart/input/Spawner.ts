@@ -1,6 +1,6 @@
 import { ClickModes } from "../../0_GameBase/engine/ui/modes/ClickModes";
 import { Gameplay } from "../../../scenes/Gameplay";
-import { Towers } from "../../4_GameUnit/tower/Tower";
+import { Towers } from "../../../towers/Tower";
 import { SelectorRect } from "../../7_GameUI/SelectorRect";
 import { EventSetup } from "../../0_GameBase/setup/EventSetup";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";

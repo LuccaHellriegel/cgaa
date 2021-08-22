@@ -7,7 +7,7 @@ import { ClickableTextRect, ClickableImageRect } from "../../rect/DoubleRect";
 import { Cooperation } from "../../../0_GameBase/engine/Cooperation";
 import { Quests } from "../../../0_GameBase/engine/quest/Quests";
 import { TextGUIElement } from "../../TextGUIElement";
-import { InteractionCircle } from "../../../4_GameUnit/unit/InteractionCircle";
+import { InteractionCircle } from "../../../4_GameUnit/units/InteractionCircle";
 import { CampSetup } from "../../../0_GameBase/setup/CampSetup";
 import { Quest } from "../../../0_GameBase/engine/quest/Quest";
 

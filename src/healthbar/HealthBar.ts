@@ -1,4 +1,4 @@
-import { Health } from "../../0_GameBase/engine/status/Health";
+import { Health } from "../game/0_GameBase/engine/status/Health";
 
 interface HealthBarConfig {
 	scene;

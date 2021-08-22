@@ -6,6 +6,7 @@ import { initNonMovingGroupPair } from "./6_GamePhysics/collision-basic";
 import { initSightGroupPair } from "./6_GamePhysics/overlap-sight";
 import { Cooperation } from "./0_GameBase/engine/Cooperation";
 import { CampSetup, CampID } from "./0_GameBase/setup/CampSetup";
+import { Building } from "../buildings/Building";
 
 interface Unit extends Phaser.GameObjects.GameObject {
 	campID: CampID;
@@ -15,7 +16,7 @@ interface Unit extends Phaser.GameObjects.GameObject {
 
 export type Physics = {
 	addEnv: Function;
-	addBuilding: Function;
+	addBuilding: (building: Building) => void;
 	addUnit: Function;
 	addTower: Function;
 	addBullet: Function;

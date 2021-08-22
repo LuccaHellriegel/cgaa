@@ -3,7 +3,7 @@ import { BuildBar } from "./build/BuildBar";
 import { SelectorRect } from "./SelectorRect";
 import { BuildManager } from "./build/BuildManager";
 import { ClickableImageRect } from "./rect/DoubleRect";
-import { Player } from "../4_GameUnit/unit/Player";
+import { Player } from "../4_GameUnit/units/Player";
 
 type State = "build" | "attack" | "select";
 

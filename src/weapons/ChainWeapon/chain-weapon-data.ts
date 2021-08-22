@@ -41,12 +41,8 @@ function weaponHeightPerSize() {
 	let result = {};
 	for (let unitSize of cirlceSizeNames) {
 		let { smallCircles, bigCircles } = unitCircleChainsConfig[unitSize];
-		let {
-			distArrowAndChain,
-			distBetweenBigAndSmallChain,
-			distBetweenBigCircles,
-			distBetweenSmallCircles,
-		} = weaponDists[unitSize];
+		let { distArrowAndChain, distBetweenBigAndSmallChain, distBetweenBigCircles, distBetweenSmallCircles } =
+			weaponDists[unitSize];
 		let { height } = unitArrowHeadConfig[unitSize];
 		let { bigRadius, smallRadius } = weaponRadius[unitSize];
 		let arrowPlusBigCircles = height / 2 + distArrowAndChain + distBetweenBigCircles * (bigCircles - 1) + bigRadius;

@@ -1,7 +1,7 @@
-import { createNonRepeatingAnim } from "./animationBase";
-import { UnitSetup } from "../0_GameBase/setup/UnitSetup";
+import { createNonRepeatingAnim } from "../../game/2_GameAnimation/animationBase";
+import { UnitSetup } from "../../game/0_GameBase/setup/UnitSetup";
 
-export function createWeaponAnims(anims) {
+export function createChainWeaponAnims(anims) {
 	let speedPerSize = {
 		Small: 20,
 		Normal: 8,

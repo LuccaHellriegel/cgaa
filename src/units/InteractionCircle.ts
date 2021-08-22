@@ -1,8 +1,8 @@
+import { Quest } from "../game/0_GameBase/engine/quest/Quest";
+import { IClickableElement } from "../game/0_GameBase/engine/ui/modes/IClickableElement";
+import { MouseOver } from "../game/0_GameBase/engine/ui/MouseOver";
+import { EventSetup } from "../game/0_GameBase/setup/EventSetup";
 import { CircleUnit } from "./CircleUnit";
-import { IClickableElement } from "../../0_GameBase/engine/ui/modes/IClickableElement";
-import { Quest } from "../../0_GameBase/engine/quest/Quest";
-import { EventSetup } from "../../0_GameBase/setup/EventSetup";
-import { MouseOver } from "../../0_GameBase/engine/ui/MouseOver";
 
 export class InteractionCircle extends CircleUnit implements IClickableElement {
 	stateHandler = { spotted: null, obstacle: null };

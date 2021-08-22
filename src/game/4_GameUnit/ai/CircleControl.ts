@@ -1,4 +1,4 @@
-import { DangerousCircle } from "../unit/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 export interface AIComponent {
 	childComponent: AIComponent;

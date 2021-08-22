@@ -1,13 +1,13 @@
-import { damageable } from "../../0_GameBase/engine/interfaces";
-import { Gameplay } from "../../../scenes/Gameplay";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
-import { ChainWeapon } from "../weapon/ChainWeapon";
-import { EnemySize } from "./CircleFactory";
+import { listenToAnim } from "../game/0_GameBase/engine/anim-listen";
+import { initUnitAnims } from "../game/0_GameBase/engine/anim-play";
+import { addID } from "../game/0_GameBase/engine/data";
+import { damageable } from "../game/0_GameBase/engine/interfaces";
+import { addToScene } from "../game/0_GameBase/engine/phaser";
+import { CampID } from "../game/0_GameBase/setup/CampSetup";
 import { HealthBar } from "../healthbar/HealthBar";
-import { addID } from "../../0_GameBase/engine/data";
-import { addToScene } from "../../0_GameBase/engine/phaser";
-import { initUnitAnims } from "../../0_GameBase/engine/anim-play";
-import { listenToAnim } from "../../0_GameBase/engine/anim-listen";
+import { Gameplay } from "../scenes/Gameplay";
+import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { EnemySize } from "./CircleFactory";
 
 export class CircleUnit extends Phaser.Physics.Arcade.Sprite implements damageable {
 	unitType: string;
