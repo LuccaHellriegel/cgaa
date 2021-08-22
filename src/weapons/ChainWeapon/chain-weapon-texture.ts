@@ -1,4 +1,4 @@
-import { EnemySize } from "../../game/4_GameUnit/units/CircleFactory";
+import { EnemySize } from "../../units/CircleFactory";
 import { cirlceSizeNames, unitArrowHeadConfig, ArrowConfig, WeaponGeoms, chainWeaponColor } from "./chain-weapon-base";
 import { weaponHeights } from "./chain-weapon-data";
 import { weaponGeoms } from "./chain-weapon-geom";

@@ -1,16 +1,18 @@
-import { InteractionCircle } from "../game/4_GameUnit/units/InteractionCircle";
-import { CampSetup } from "../game/0_GameBase/setup/CampSetup";
-import { ClickModes } from "../game/0_GameBase/engine/ui/modes/ClickModes";
-import { CGAA, GameStart } from "../game/8_GameStart";
-import { Movement } from "../game/8_GameStart/input/Movement";
-import { GameGraphics } from "../game/1_GameGraphics";
-import { GameAnimation } from "../game/2_GameAnimation";
-import { GameData } from "../game/3_GameData";
-import { EnvSetup } from "../game/0_GameBase/setup/EnvSetup";
-import { Layouts } from "../game/3_GameData/layout";
-import { GameState } from "../game/5_GameState";
-import { GamePhysics } from "../game/6_GamePhysics";
-import { CGAAData } from "../game/0_GameBase/types";
+import { GameData } from "../data/data";
+import { Layouts } from "../data/data-layout";
+import { ClickModes } from "../engine/ui/modes/ClickModes";
+import { state } from "../state/state";
+import { physics } from "../physics/physics";
+import { Movement } from "../player/input/Movement";
+import { Textures } from "../textures/textures";
+import { CGAAData } from "../types";
+import { InteractionCircle } from "../units/InteractionCircle/InteractionCircle";
+import { createShooterAnims } from "../towers/Shooter/shooter-anim";
+import { createCircleAnims } from "../units/circle-anim";
+import { createChainWeaponAnims } from "../weapons/ChainWeapon/chain-weapon-anim";
+import { CampSetup } from "../config/CampSetup";
+import { EnvSetup } from "../config/EnvSetup";
+import { CGAA, GameStart } from "../start";
 
 export class Gameplay extends Phaser.Scene {
 	cgaa: CGAA;
@@ -23,8 +25,10 @@ export class Gameplay extends Phaser.Scene {
 	}
 
 	preload() {
-		GameGraphics(this);
-		GameAnimation(this.anims);
+		Textures(this);
+		createChainWeaponAnims(this.anims);
+		createCircleAnims(this.anims);
+		createShooterAnims(this.anims);
 
 		const config: CGAAData = {
 			campIDs: CampSetup.campIDs,
@@ -42,13 +46,13 @@ export class Gameplay extends Phaser.Scene {
 
 		const gameData = GameData(config);
 
-		const gameState = GameState(this, gameData, (data) => {
+		const gameState = state(this, gameData, (data) => {
 			return data.gameMapMiddle;
 		});
 
-		const physics = GamePhysics(this, gameState.cooperation);
+		const physicsObj = physics(this, gameState.cooperation);
 
-		const cgaa = GameStart(this, { ...gameState, physics });
+		const cgaa = GameStart(this, { ...gameState, physics: physicsObj });
 		this.cgaa = cgaa;
 		this.cgaaMovement = cgaa.input.movement;
 		this.cgaaStartWaves = cgaa.startWaves;

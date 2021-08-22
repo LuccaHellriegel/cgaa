@@ -1,11 +1,11 @@
-import { damageable } from "../game/0_GameBase/engine/interfaces";
+import { damageable } from "../engine/interfaces";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
-import { CampID } from "../game/0_GameBase/setup/CampSetup";
-import { addToScene } from "../game/0_GameBase/engine/phaser";
-import { addID } from "../game/0_GameBase/engine/data";
-import { EventSetup } from "../game/0_GameBase/setup/EventSetup";
-import { BuildingSetup } from "../game/0_GameBase/setup/BuildingSetup";
+import { addToScene } from "../engine/phaser";
+import { addID } from "../engine/id";
+import { BuildingSetup } from "../config/BuildingSetup";
+import { CampID } from "../config/CampSetup";
+import { EventSetup } from "../config/EventSetup";
 
 export class Building extends Phaser.Physics.Arcade.Image implements damageable {
 	id: string;

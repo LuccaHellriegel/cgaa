@@ -1,10 +1,10 @@
-import { EnemySize } from "../../game/4_GameUnit/units/CircleFactory";
-import { movePointPhaser, rotatePointsPhaser, movePointsPhaser } from "../../game/0_GameBase/engine/geometry";
-import { listenToAnim } from "../../game/0_GameBase/engine/anim-listen";
-import { UnitSetup } from "../../game/0_GameBase/setup/UnitSetup";
 import { weaponGeoms } from "./chain-weapon-geom";
 import { weaponHeights, weaponDists } from "./chain-weapon-data";
 import { CircleChain, unitArrowHeadConfig } from "./chain-weapon-base";
+import { UnitSetup } from "../../config/UnitSetup";
+import { listenToAnim } from "../../engine/anim-listen";
+import { movePointPhaser, rotatePointsPhaser, movePointsPhaser } from "../../engine/geometry";
+import { EnemySize } from "../../units/CircleFactory";
 
 // PHYSICS
 function circleChainToPhysicsTopCircle(

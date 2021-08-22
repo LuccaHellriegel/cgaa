@@ -1,8 +1,8 @@
-import { damageable, poolable, healable } from "../game/0_GameBase/engine/interfaces";
-import { IClickableElement } from "../game/0_GameBase/engine/ui/modes/IClickableElement";
+import { damageable, poolable, healable } from "../engine/interfaces";
+import { IClickableElement } from "../engine/ui/modes/IClickableElement";
 import { HealthBar } from "../healthbar/HealthBar";
-import { CampID } from "../game/0_GameBase/setup/CampSetup";
-import { MouseOver } from "../game/0_GameBase/engine/ui/MouseOver";
+import { MouseOver } from "../engine/ui/MouseOver";
+import { CampID } from "../config/CampSetup";
 
 export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
 	constructor(scene, protected addTowerToPhysics: Function) {

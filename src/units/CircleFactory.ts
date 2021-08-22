@@ -1,14 +1,14 @@
-import { DangerousCircle } from "./DangerousCircle";
+import { DangerousCircle } from "./DangerousCircle/DangerousCircle";
 import { PlayerFriend } from "./PlayerFriend";
-import { InteractionCircle } from "./InteractionCircle";
-import { CampID } from "../game/0_GameBase/setup/CampSetup";
-import { UnitSetup } from "../game/0_GameBase/setup/UnitSetup";
+import { InteractionCircle } from "./InteractionCircle/InteractionCircle";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 import { ChainWeapons } from "../weapons/ChainWeapon/ChainWeapons";
 import { Enemies } from "./Enemies";
-import { King } from "./King";
+import { King } from "./King/King";
+import { UnitSetup } from "../config/UnitSetup";
+import { CampID } from "../config/CampSetup";
 
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 

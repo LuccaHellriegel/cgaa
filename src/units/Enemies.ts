@@ -1,4 +1,4 @@
-import { Point } from "../../0_GameBase/engine/types-geom";
+import { Point } from "../engine/types-geom";
 
 export class Enemies {
 	private idDict = {};

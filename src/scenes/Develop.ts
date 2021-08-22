@@ -1,16 +1,4 @@
-import { CGAA, GameStart } from "../game/8_GameStart";
-import { Movement } from "../game/8_GameStart/input/Movement";
-import { GameGraphics } from "../game/1_GameGraphics";
-import { GameAnimation } from "../game/2_GameAnimation";
-import { CGAAData } from "../game/0_GameBase/types";
-import { CampSetup } from "../game/0_GameBase/setup/CampSetup";
-import { EnvSetup } from "../game/0_GameBase/setup/EnvSetup";
-import { Layouts } from "../game/3_GameData/layout";
-import { GameData } from "../game/3_GameData";
-import { GameState } from "../game/5_GameState";
-import { GamePhysics } from "../game/6_GamePhysics";
-import { InteractionCircle } from "../game/4_GameUnit/units/InteractionCircle";
-import { ClickModes } from "../game/0_GameBase/engine/ui/modes/ClickModes";
+import { ClickModes } from "../engine/ui/modes/ClickModes";
 
 export class Develop extends Phaser.Scene {
 	// cgaa: CGAA;

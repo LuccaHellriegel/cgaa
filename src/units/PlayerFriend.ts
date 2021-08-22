@@ -1,5 +1,5 @@
-import { DangerousCircle } from "./DangerousCircle";
-import { subscribable, ObserverWrapper } from "../../7_GameUI/Observer";
+import { ObserverWrapper, subscribable } from "../ui/Observer";
+import { DangerousCircle } from "./DangerousCircle/DangerousCircle";
 export class PlayerFriend extends DangerousCircle implements subscribable {
 	observer: ObserverWrapper;
 	damage(amount) {

@@ -1,5 +1,5 @@
-import { EnemySize } from "../../game/4_GameUnit/units/CircleFactory";
-import { Point } from "../../game/0_GameBase/engine/types-geom";
+import { Point } from "../../engine/types-geom";
+import { EnemySize } from "../../units/CircleFactory";
 // TYPES
 export type WeaponRadius = {
 	[key in EnemySize]: {
