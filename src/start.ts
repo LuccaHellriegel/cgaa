@@ -119,7 +119,14 @@ function waveProducer(
 						new DangerousCirclePool(
 							scene,
 							8,
-							new CircleFactory(scene, building.campID, state.physics.addUnit, enemies, pools.weapons[building.campID]),
+							new CircleFactory(
+								scene,
+								building.campID,
+								building.mask,
+								state.physics.addUnit,
+								enemies,
+								pools.weapons[building.campID]
+							),
 							enemies,
 							building.spawnUnit
 						),

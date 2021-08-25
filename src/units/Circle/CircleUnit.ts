@@ -24,6 +24,7 @@ export class CircleUnit extends Phaser.Physics.Arcade.Sprite implements damageab
 		y: number,
 		texture: string,
 		public campID: CampID,
+		public campMask: number,
 		public weapon: ChainWeapon,
 		size: EnemySize,
 		public healthbar: HealthBar

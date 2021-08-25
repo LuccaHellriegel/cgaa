@@ -16,7 +16,14 @@ export function playerCamp(scene, realMiddlePos: Point, pools: Pools, state: Fin
 		Small: null,
 		Normal: null,
 	};
-	const friendFactory = new CircleFactory(scene, CampSetup.playerCampID, state.physics.addUnit, enemies, friendPools);
+	const friendFactory = new CircleFactory(
+		scene,
+		CampSetup.playerCampID,
+		CampSetup.playerCampMask,
+		state.physics.addUnit,
+		enemies,
+		friendPools
+	);
 
 	const friends: PlayerFriend[] = [];
 	const baseConfig = {

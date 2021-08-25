@@ -54,17 +54,23 @@ export function bossCamp(
 		exitPositions.positionsInMap
 			.map((pos) => pos.toPoint())
 			.forEach((pos) => {
-				let barrier = new BossBarrier(this.scene, pos.x, pos.y);
-				this.addEnv(barrier);
-				return barrier;
+				let barrier = new BossBarrier(scene, pos.x, pos.y);
+				state.physics.addEnv(barrier);
 			});
 	}
 
-	const bossFactory = new CircleFactory(scene, CampSetup.bossCampID, state.physics.addUnit, enemies, {
-		Big: pools.bossWeapons,
-		Small: null,
-		Normal: null,
-	});
+	const bossFactory = new CircleFactory(
+		scene,
+		CampSetup.bossCampID,
+		CampSetup.bossCampMask,
+		state.physics.addUnit,
+		enemies,
+		{
+			Big: pools.bossWeapons,
+			Small: null,
+			Normal: null,
+		}
+	);
 	positionKing(bossFactory, camp.areaMapMiddle.toPoint());
 	populate(
 		scene,

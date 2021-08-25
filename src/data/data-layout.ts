@@ -1,3 +1,4 @@
+import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { array2DApplyConcat, array2DApply } from "../engine/array";
 import { posAround2DPosition } from "../engine/navigation";
@@ -225,7 +226,11 @@ export function randomMapCampIDsToAreas(campIDs: string[], areaLayout: any[][], 
 	const randomOrder = randomizeArr(campIDs);
 	for (const campID of randomOrder) {
 		// mutability is contained inside function
-		result.push({ areaInLayout: areas.pop(), id: campID });
+		result.push({
+			areaInLayout: areas.pop(),
+			id: campID,
+			mask: CampSetup.campBitMasks[CampSetup.campIDs.indexOf(campID)],
+		});
 	}
 
 	return result;

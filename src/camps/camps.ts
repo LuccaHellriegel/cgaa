@@ -37,7 +37,8 @@ function createBuildings(
 			point.y,
 			addBuildingToPhysics,
 			spawnUnitStrings.pop(),
-			camp.id as CampID
+			camp.id as CampID,
+			camp.mask
 		);
 
 		result.push(building);
@@ -63,7 +64,7 @@ export function campsStaticUnits(scene, campMap: CampMap, physics: Physics, enem
 			const buildings = createBuildings(camp, scene, physics.addBuilding, [...UnitSetup.circleSizeNames]);
 			const diplomats = createDiplomats(
 				camp,
-				new CircleFactory(scene, camp.id as CampID, physics.addUnit, enemies, weaponPools[camp.id])
+				new CircleFactory(scene, camp.id as CampID, camp.mask, physics.addUnit, enemies, weaponPools[camp.id])
 			);
 			result.push({ buildings, diplomats });
 		}
@@ -121,7 +122,7 @@ export function populateCamps(
 				new DangerousCirclePool(
 					scene,
 					UnitSetup.campSize,
-					new CircleFactory(scene, camp.id, state.physics.addUnit, enemies, pools.weapons[camp.id]),
+					new CircleFactory(scene, camp.id, camp.mask, state.physics.addUnit, enemies, pools.weapons[camp.id]),
 					enemies,
 					"Big"
 				),

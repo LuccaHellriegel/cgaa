@@ -27,6 +27,7 @@ export class CircleFactory {
 	constructor(
 		public scene: Gameplay,
 		private campID: string,
+		private campMask: number,
 		private addUnit: Function,
 		private enemies: Enemies,
 		private weaponPools: { [key in EnemySize]: ChainWeapons }
@@ -58,6 +59,7 @@ export class CircleFactory {
 			this.y,
 			"kingCircle",
 			this.campID as CampID,
+			this.campMask,
 			weapon,
 			size as EnemySize,
 			this.createHealthBar(this.scene, this.x, this.y, size),
@@ -78,6 +80,7 @@ export class CircleFactory {
 			this.y,
 			"bossCircle",
 			this.campID as CampID,
+			this.campMask,
 			weapon,
 			size as EnemySize,
 			this.createHealthBar(this.scene, this.x, this.y, size),
@@ -96,6 +99,7 @@ export class CircleFactory {
 			this.y,
 			this.campID + size + "Circle",
 			this.campID as CampID,
+			this.campMask,
 			weapon,
 			size as EnemySize,
 			this.createHealthBar(this.scene, this.x, this.y, size),
@@ -115,6 +119,7 @@ export class CircleFactory {
 			this.y,
 			this.campID + size + "Circle",
 			this.campID as CampID,
+			this.campMask,
 			weapon,
 			size as EnemySize,
 			this.createHealthBar(this.scene, this.x, this.y, size),
@@ -136,6 +141,7 @@ export class CircleFactory {
 			y,
 			this.campID + "InteractionCircle",
 			this.campID as CampID,
+			this.campMask,
 			this.createWeapon(x, y, size),
 			size as EnemySize,
 			this.createHealthBar(this.scene, x, y, size)

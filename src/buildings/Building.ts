@@ -13,7 +13,15 @@ export class Building extends Phaser.Physics.Arcade.Image implements damageable 
 	healthbar: HealthBar;
 	scene: Gameplay;
 
-	constructor(scene: Gameplay, x, y, addBuildingToPhysics, public spawnUnit, public campID: CampID) {
+	constructor(
+		scene: Gameplay,
+		x,
+		y,
+		addBuildingToPhysics,
+		public spawnUnit,
+		public campID: CampID,
+		public campMask: number
+	) {
 		super(scene, x, y, Building.buildingTexture(campID, spawnUnit));
 		addBuildingToPhysics(this);
 		addToScene(this, scene);

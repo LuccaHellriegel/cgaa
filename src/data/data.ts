@@ -20,11 +20,17 @@ type Exit = {
 
 export type CampArea = {
 	id: string;
+	mask: number;
 	areaInLayout: RelPos;
 };
 
 function mapExitsToCamps(exits: Exit[], campAreas: CampArea[]) {
-	const result: { id: string; areaInLayout: RelPos; exitPositionsInMap: { positionsInMap: RelPos[] }[] }[] = [];
+	const result: {
+		id: string;
+		mask: number;
+		areaInLayout: RelPos;
+		exitPositionsInMap: { positionsInMap: RelPos[] }[];
+	}[] = [];
 
 	for (const campArea of campAreas) {
 		// multiple exits are possible, so need to add all
@@ -42,7 +48,7 @@ function mapExitsToCamps(exits: Exit[], campAreas: CampArea[]) {
 
 function mapBuildingPositionsToCamps(
 	buildingPositions: BuildingPosition[],
-	campObjs: { id: string; areaInLayout: RelPos; exitPositionsInMap: { positionsInMap: RelPos[] }[] }[]
+	campObjs: { id: string; mask: number; areaInLayout: RelPos; exitPositionsInMap: { positionsInMap: RelPos[] }[] }[]
 ) {
 	const result = [];
 

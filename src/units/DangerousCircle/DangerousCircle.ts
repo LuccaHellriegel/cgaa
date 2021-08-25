@@ -24,12 +24,13 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
 		y: number,
 		texture: string,
 		campID: CampID,
+		campMask: number,
 		weapon: ChainWeapon,
 		size: EnemySize,
 		healthbar: HealthBar,
 		public velo: number
 	) {
-		super(scene, x, y, texture, campID, weapon, size, healthbar);
+		super(scene, x, y, texture, campID, campMask, weapon, size, healthbar);
 		setupCircleBody(this);
 		this.attack = this.weapon.attack.bind(this.weapon);
 	}

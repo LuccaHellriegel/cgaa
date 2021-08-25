@@ -37,12 +37,8 @@ perf(
 			for (let index2 = 0; index2 < bitMasks.length; index2++) {
 				if (index != index2) {
 					const bitMask = bitMasks[index2];
-					let cooperationBit = cooperationBitArr[Math.log2(bitMask)];
 
 					cooperationBitArr[Math.log2(primaryBitMask)] |= bitMask;
-					while (cooperationBit >= 1) {
-						cooperationBitArr[Math.log2(primaryBitMask)];
-					}
 
 					for (let i = 0; i < cooperationBitArr.length; i++) {
 						const element = cooperationBitArr[i];
@@ -65,7 +61,7 @@ perf(
 		}
 	}
 );
-console.log(cooperationBitArr);
+// console.log(cooperationBitArr);
 
 let map = new Map();
 
@@ -93,7 +89,7 @@ perf(
 		for (let id of ids) map.set(id, new Set());
 	}
 );
-console.log(map.entries());
+// console.log(map.entries());
 
 perf(() => {
 	for (let index = 0; index < bitMasks.length; index++) {
