@@ -3,9 +3,9 @@ export class BitwiseCooperation {
 	private bitArr: Uint8Array;
 	private maskArray: number[] = [];
 
-	constructor(elementCount: number) {
-		this.bitArr = new Uint8Array(elementCount);
-		for (let index = 0; index < elementCount; index++) {
+	constructor(private ids: string[], private activateCallback: (id: string) => void) {
+		this.bitArr = new Uint8Array(ids.length);
+		for (let index = 0; index < ids.length; index++) {
 			// pow(2,index)
 			const mask = 1 << index;
 			this.bitArr[index] = mask;
@@ -29,6 +29,7 @@ export class BitwiseCooperation {
 				this.bitArr[index] |= toBeAdded;
 			}
 		}
+		this.activateCallback(this.ids[toBeAddedIndex]);
 	}
 
 	has(bitMask: number, primaryBitMask: number) {

@@ -1,7 +1,7 @@
 import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 import { Data } from "../data/data";
-import { Cooperation } from "../engine/Cooperation";
+import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 import { Quests } from "../engine/quest/Quests";
 import { RelPos } from "../engine/RelPos";
 import { PathAssigner } from "../path/PathAssigner";
@@ -13,7 +13,7 @@ import { CampRouting } from "./CampRouting";
 import { Rivalries } from "./Rivalries";
 
 export interface State extends Data {
-	cooperation: Cooperation;
+	cooperation: BitwiseCooperation;
 	rivalries: Rivalries;
 	router: CampRouting;
 	quests: Quests;
@@ -21,10 +21,9 @@ export interface State extends Data {
 }
 
 export function state(scene, gameData: Data, commonWaypoint: (gameData: Data) => RelPos): State {
-	const cooperation = new Cooperation((id) => {
+	const cooperation = new BitwiseCooperation(CampSetup.campIDs, (id) => {
 		scene.events.emit(EventSetup.cooperationEvent, id);
 	});
-	cooperation.init(CampSetup.campIDs);
 
 	const rivalries = new Rivalries(CampSetup.ordinaryCampIDs);
 	const router = new CampRouting(scene.events, rivalries);

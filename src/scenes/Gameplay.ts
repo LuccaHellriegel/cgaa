@@ -59,15 +59,16 @@ export class Gameplay extends Phaser.Scene {
 
 		this.cgaaInteraction = function interactWithCircle(interactCircle: InteractionCircle) {
 			let id = interactCircle.campID;
+			let mask = interactCircle.campMask;
 			//Can not accept quests from rivals
-			if (!this.cgaa.quests.get(this.cgaa.rivalries.getRival(id)).isActiveOrSuccess()) {
+			if (!cgaa.quests.get(cgaa.rivalries.getRival(id)).isActiveOrSuccess()) {
 				if (!interactCircle.quest.isActiveOrSuccess()) interactCircle.quest.setActive();
 				if (interactCircle.quest.isSuccess()) {
 					// check if id has cooperation with player, because id would need to be rerouted
-					if (this.cgaa.cooperation.hasCooperation(id, CampSetup.playerCampID)) {
-						this.cgaa.router.reroute(id);
+					if (cgaa.cooperation.has(mask, CampSetup.playerCampMask)) {
+						cgaa.router.reroute(id);
 					} else {
-						this.cgaa.cooperation.activateCooperation(id, CampSetup.playerCampID);
+						cgaa.cooperation.activate(mask, CampSetup.playerCampMask);
 					}
 				}
 			}

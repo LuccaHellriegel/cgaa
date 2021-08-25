@@ -85,8 +85,8 @@ export class CampState {
 		this.textObj = sceneToUse.add
 			.text(x - 18, y - 25, "C", {
 				font: "50px Verdana ",
-				fill: "#000000",
-				fontWeight: "bold",
+				color: "#000000",
+				fontStyle: "bold",
 			})
 			.setVisible(false);
 

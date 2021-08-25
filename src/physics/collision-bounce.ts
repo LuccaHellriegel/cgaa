@@ -1,6 +1,7 @@
+import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 import { Cooperation } from "../engine/Cooperation";
 
-export function initBounceGroupPair(scene: Phaser.Scene, cooperation: Cooperation) {
+export function initBounceGroupPair(scene: Phaser.Scene, cooperation: BitwiseCooperation) {
 	const units = scene.physics.add.staticGroup();
 	const obstacles = scene.physics.add.group();
 	scene.physics.add.collider(units, obstacles, (unit, obj) => {
@@ -17,12 +18,11 @@ export function initBounceGroupPair(scene: Phaser.Scene, cooperation: Cooperatio
 	};
 }
 
-function bounceCallback(unit, obj, cooperation: Cooperation) {
+function bounceCallback(unit, obj, cooperation: BitwiseCooperation) {
 	if (unit.campID === obj.campID) {
 		unit.stateHandler.moveBack();
 	} else {
-		let cooperationSet = cooperation.get(unit.campID);
-		if (!cooperationSet.has(obj.campID)) {
+		if (!cooperation.has(unit.campMask, obj.campMasp)) {
 			unit.stateHandler.obstacle = obj;
 		}
 	}

@@ -2,7 +2,7 @@ import { damageable, poolable, healable } from "../engine/interfaces";
 import { IClickableElement } from "../engine/ui/modes/IClickableElement";
 import { HealthBar } from "../healthbar/HealthBar";
 import { MouseOver } from "../engine/ui/MouseOver";
-import { CampID } from "../config/CampSetup";
+import { CampID, CampSetup } from "../config/CampSetup";
 
 export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
 	constructor(scene, protected addTowerToPhysics: Function) {
@@ -24,11 +24,13 @@ export abstract class Tower
 	healthbar: HealthBar;
 	id: string;
 	campID: CampID;
+	campMask: number;
 	mouseOver = false;
 
 	constructor(scene: Phaser.Scene, x, y, texture) {
 		super(scene, x, y, texture);
-		this.campID = "blue";
+		this.campID = CampSetup.playerCampID;
+		this.campMask = CampSetup.playerCampMask;
 		scene.physics.add.existing(this);
 	}
 

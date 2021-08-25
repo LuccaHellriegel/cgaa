@@ -16,6 +16,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements healable, un
 	unitType: string = "player";
 	type = "Normal";
 	campID: CampID = CampSetup.playerCampID;
+	campMask = CampSetup.playerCampMask;
 	// move back is needed for bounce
 	stateHandler = { spotted: null, obstacle: null, moveBack: () => {} };
 

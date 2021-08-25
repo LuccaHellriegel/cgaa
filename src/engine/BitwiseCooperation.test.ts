@@ -3,7 +3,7 @@ import { BitwiseCooperation } from "./BitwiseCooperation";
 test("bitmasks should be correctly produced", () => {
 	//GIVEN
 	const expectedMasks = [1, 2, 4, 8, 16, 32, 64, 128];
-	const cooperation = new BitwiseCooperation(8);
+	const cooperation = new BitwiseCooperation(new Array(8), () => {});
 
 	//WHEN
 	const actual = cooperation.masks();
@@ -14,7 +14,7 @@ test("bitmasks should be correctly produced", () => {
 
 test("empty cooperation should have self cooperation", () => {
 	//GIVEN
-	const cooperation = new BitwiseCooperation(8);
+	const cooperation = new BitwiseCooperation(new Array(8), () => {});
 	const masks = cooperation.masks();
 
 	//WHEN
@@ -26,7 +26,7 @@ test("empty cooperation should have self cooperation", () => {
 
 test("empty cooperation should have no not-self cooperation", () => {
 	//GIVEN
-	const cooperation = new BitwiseCooperation(8);
+	const cooperation = new BitwiseCooperation(new Array(8), () => {});
 	const masks = cooperation.masks();
 
 	//WHEN
@@ -45,14 +45,14 @@ test("empty cooperation should have no not-self cooperation", () => {
 
 test("activating a cooperation should lead to the cooperation being active", () => {
 	//GIVEN
-	const masks = new BitwiseCooperation(8).masks();
+	const masks = new BitwiseCooperation(new Array(8), () => {}).masks();
 
 	//WHEN
 	let actual = true;
 	for (let mask of masks) {
 		for (let otherMask of masks) {
 			if (mask !== otherMask) {
-				const cooperation = new BitwiseCooperation(8);
+				const cooperation = new BitwiseCooperation(new Array(8), () => {});
 				cooperation.activate(mask, otherMask);
 				actual &&= cooperation.has(mask, otherMask);
 			}
@@ -65,10 +65,10 @@ test("activating a cooperation should lead to the cooperation being active", () 
 
 test("activating 2 cooperations should lead to the cooperation spreading to already activated cooperations", () => {
 	//GIVEN
-	const masks = new BitwiseCooperation(8).masks();
+	const masks = new BitwiseCooperation(new Array(8), () => {}).masks();
 
 	for (let index = 0; index < masks.length; index++) {
-		const cooperation = new BitwiseCooperation(8);
+		const cooperation = new BitwiseCooperation(new Array(8), () => {});
 		const mask = masks[index];
 		const otherMask1 = masks[(index + 1) % masks.length];
 		const otherMask2 = masks[(index + 2) % masks.length];
@@ -86,10 +86,10 @@ test("activating 2 cooperations should lead to the cooperation spreading to alre
 
 test("activating 2 cooperations should not lead to the cooperation spreading to not already activated cooperations", () => {
 	//GIVEN
-	const masks = new BitwiseCooperation(8).masks();
+	const masks = new BitwiseCooperation(new Array(8), () => {}).masks();
 
 	for (let index = 0; index < masks.length; index++) {
-		const cooperation = new BitwiseCooperation(8);
+		const cooperation = new BitwiseCooperation(new Array(8), () => {});
 		const mask = masks[index];
 		const otherMask1 = masks[(index + 1) % masks.length];
 		const otherMask2 = masks[(index + 2) % masks.length];
@@ -113,10 +113,10 @@ test("activating 2 cooperations should not lead to the cooperation spreading to 
 
 test("activating 3 cooperations should lead to the cooperation spreading to already activated cooperations", () => {
 	//GIVEN
-	const masks = new BitwiseCooperation(8).masks();
+	const masks = new BitwiseCooperation(new Array(8), () => {}).masks();
 
 	for (let index = 0; index < masks.length; index++) {
-		const cooperation = new BitwiseCooperation(8);
+		const cooperation = new BitwiseCooperation(new Array(8), () => {});
 		const mask = masks[index];
 		const otherMask1 = masks[(index + 1) % masks.length];
 		const otherMask2 = masks[(index + 2) % masks.length];
@@ -140,10 +140,10 @@ test("activating 3 cooperations should lead to the cooperation spreading to alre
 
 test("activating 3 cooperations should not lead to the cooperation spreading not to already activated cooperations", () => {
 	//GIVEN
-	const masks = new BitwiseCooperation(8).masks();
+	const masks = new BitwiseCooperation(new Array(8), () => {}).masks();
 
 	for (let index = 0; index < masks.length; index++) {
-		const cooperation = new BitwiseCooperation(8);
+		const cooperation = new BitwiseCooperation(new Array(8), () => {});
 		const mask = masks[index];
 		const otherMask1 = masks[(index + 1) % masks.length];
 		const otherMask2 = masks[(index + 2) % masks.length];
@@ -171,7 +171,7 @@ test("activating 3 cooperations should not lead to the cooperation spreading not
 
 test("activating all cooperations should lead to all cooperations being activated", () => {
 	//GIVEN
-	const cooperation = new BitwiseCooperation(8);
+	const cooperation = new BitwiseCooperation(new Array(8), () => {});
 	const masks = cooperation.masks();
 
 	//WHEN

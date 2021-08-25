@@ -10,12 +10,20 @@ import { TextGUIElement } from "../../TextGUIElement";
 import { Quest } from "../../../engine/quest/Quest";
 import { CampSetup } from "../../../config/CampSetup";
 import { InteractionCircle } from "../../../units/InteractionCircle/InteractionCircle";
+import { BitwiseCooperation } from "../../../engine/BitwiseCooperation";
 
 export class InteractionSelectBar extends SelectBar {
-	cooperation: Cooperation;
+	cooperation: BitwiseCooperation;
 	selectionManager: SelectionManager;
 	quests;
-	constructor(sceneToUse: HUD, x, y, cooperation: Cooperation, selectionManager: SelectionManager, quests: Quests) {
+	constructor(
+		sceneToUse: HUD,
+		x,
+		y,
+		cooperation: BitwiseCooperation,
+		selectionManager: SelectionManager,
+		quests: Quests
+	) {
 		let baseRect = new Rect(sceneToUse, x, y, 180, 80, 0xd3d3d3);
 
 		let textRect = new ClickableTextRect(sceneToUse, x - 50, y, 60, 60, 0xffffff, "Accept\nQuest");
@@ -46,9 +54,10 @@ export class InteractionSelectBar extends SelectBar {
 	}
 
 	show() {
-		let interactedCampID = (this.selectionManager.selectedUnit as InteractionCircle).campID;
-		let hasCooperation = this.cooperation.hasCooperation(interactedCampID, CampSetup.playerCampID);
-		let quest: Quest = this.quests.get(interactedCampID);
+		let interactedCampMask = (this.selectionManager.selectedUnit as InteractionCircle).campMask;
+		let hasCooperation = this.cooperation.has(interactedCampMask, CampSetup.playerCampMask);
+		//TODO: switch quest to bitwise too?
+		let quest: Quest = this.quests.get((this.selectionManager.selectedUnit as InteractionCircle).campID);
 
 		if (hasCooperation) {
 			this.updateClickableText("Switch\nTarget");

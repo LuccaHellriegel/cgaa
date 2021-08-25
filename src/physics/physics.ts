@@ -4,9 +4,9 @@ import { initBounceGroupPair } from "./collision-bounce";
 import { initWeaponGroupPair } from "./overlap-weapon";
 import { initNonMovingGroupPair } from "./collision-basic";
 import { initSightGroupPair } from "./overlap-sight";
-import { Cooperation } from "../engine/Cooperation";
 import { Building } from "../buildings/Building";
 import { CampID, CampSetup } from "../config/CampSetup";
+import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 
 interface Unit extends Phaser.GameObjects.GameObject {
 	campID: CampID;
@@ -22,7 +22,7 @@ export type Physics = {
 	addBullet: Function;
 };
 
-export function physics(scene: Gameplay, cooperation: Cooperation): Physics {
+export function physics(scene: Gameplay, cooperation: BitwiseCooperation): Physics {
 	const collisionPair = initNonMovingGroupPair(scene);
 
 	// overlap between friendly units should be rare (because we reset the physics circle after attacking)
