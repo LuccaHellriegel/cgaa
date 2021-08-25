@@ -4,7 +4,7 @@
 		"allowJs": true,
 		"target": "es6",
 		"typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
-		"types": ["phaser", "mocha"],
+		"types": ["phaser", "jest"],
 		"allowSyntheticDefaultImports": true,
 		"lib": ["es6", "dom", "es2017"]
 	},

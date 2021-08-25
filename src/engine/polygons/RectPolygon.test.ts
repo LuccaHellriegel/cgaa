@@ -1,3 +1,5 @@
+test.todo("some test to be written in the future");
+
 // import { expect } from "chai";
 // import { RectPolygon } from "../../src/game/polygons/RectPolygon";
 // import { Point } from "../../src/game/base/types";

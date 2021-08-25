@@ -1,3 +1,5 @@
+test.todo("some test to be written in the future");
+
 // import { expect } from "chai";
 // import { ArrowHeadPolygon } from "../../src/game/polygons/ArrowHeadPolygon";
 
