@@ -1,5 +1,4 @@
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
-import { Cooperation } from "../engine/Cooperation";
 
 export function initBounceGroupPair(scene: Phaser.Scene, cooperation: BitwiseCooperation) {
 	const units = scene.physics.add.staticGroup();

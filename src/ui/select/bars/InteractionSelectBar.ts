@@ -4,7 +4,6 @@ import { SelectBar } from "./SelectBar";
 import { UnitCompositeRect } from "../../rect/UnitCompositeRect";
 import { SelectionManager } from "../SelectionManager";
 import { ClickableTextRect, ClickableImageRect } from "../../rect/DoubleRect";
-import { Cooperation } from "../../../engine/Cooperation";
 import { Quests } from "../../../engine/quest/Quests";
 import { TextGUIElement } from "../../TextGUIElement";
 import { Quest } from "../../../engine/quest/Quest";
