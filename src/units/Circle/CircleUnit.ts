@@ -45,8 +45,10 @@ export class CircleUnit extends Phaser.Physics.Arcade.Sprite implements damageab
 	damage(amount) {
 		if (this.healthbar.decrease(amount)) {
 			this.destroy();
+			return true;
 		} else {
 			this.playDamage();
+			return false;
 		}
 	}
 

@@ -1,6 +1,12 @@
 const { performance } = require("perf_hooks");
 
 const perf = (func, reps, prep) => {
+	//warm up
+	for (let index = 0; index < reps; index++) {
+		prep && prep();
+		func();
+	}
+
 	var zeit = 0;
 
 	for (let index = 0; index < reps; index++) {
@@ -13,18 +19,6 @@ const perf = (func, reps, prep) => {
 
 	console.log("Time: " + zeit / reps);
 };
-
-// perf(() => {
-// 	for (let index = 0; index < 100; index++) {
-// 		const res = 1 << index;
-// 	}
-// }, 10);
-
-// perf(() => {
-// 	for (let index = 0; index < 100; index++) {
-// 		const res = Math.pow(2, index);
-// 	}
-// }, 10);
 
 const ids = ["blue", "boss", "yellow", "orange", "green", "purple"];
 const bitMasks = ids.map((val, index) => 1 << index);
@@ -89,7 +83,6 @@ perf(
 		for (let id of ids) map.set(id, new Set());
 	}
 );
-// console.log(map.entries());
 
 perf(() => {
 	for (let index = 0; index < bitMasks.length; index++) {

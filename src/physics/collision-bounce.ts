@@ -18,11 +18,9 @@ export function initBounceGroupPair(scene: Phaser.Scene, cooperation: BitwiseCoo
 }
 
 function bounceCallback(unit, obj, cooperation: BitwiseCooperation) {
-	if (unit.campID === obj.campID) {
+	if (unit.campMask === obj.campMask) {
 		unit.stateHandler.moveBack();
-	} else {
-		if (!cooperation.has(unit.campMask, obj.campMasp)) {
-			unit.stateHandler.obstacle = obj;
-		}
+	} else if (!cooperation.has(unit.campMask, obj.campMask)) {
+		unit.stateHandler.obstacle = obj;
 	}
 }

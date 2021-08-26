@@ -1,12 +1,10 @@
-import { Health } from "../engine/status/Health";
-
 interface HealthBarConfig {
 	scene;
 	healthWidth;
 	healthLength;
 	posCorrectionX;
 	posCorrectionY;
-	value;
+	value: number;
 }
 
 export class HealthBar {
@@ -16,14 +14,16 @@ export class HealthBar {
 	p: number;
 	posCorrectionX: number;
 	posCorrectionY: number;
-	health: Health;
+	health: number;
+	healthDefault: number;
 
 	constructor(public x: number, public y: number, config: HealthBarConfig) {
 		this.bar = (config.scene as Phaser.Scene).add.graphics();
 
 		let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } = config;
 
-		this.health = new Health(value);
+		this.health = value;
+		this.healthDefault = value;
 
 		this.healthWidth = healthWidth;
 		this.healthLength = healthLength;
@@ -37,18 +37,18 @@ export class HealthBar {
 	}
 
 	reset() {
-		this.health.reset();
+		this.health = this.healthDefault;
 		this.draw();
 	}
 
 	decrease(amount) {
-		let result = this.health.decrease(amount);
+		this.health = Math.max(0, this.health - amount);
 		this.draw();
-		return result;
+		return this.health === 0;
 	}
 
 	increase(amount) {
-		this.health.increase(amount);
+		this.health = Math.min(this.healthDefault, this.health + amount);
 		this.draw();
 	}
 
@@ -62,12 +62,12 @@ export class HealthBar {
 		this.bar.fillRect(this.x + 2, this.y + 2, this.healthWidth, this.healthLength);
 
 		// draw red part
-		if (this.health.current < 30) {
+		if (this.health < 30) {
 			this.bar.fillStyle(0xff0000);
 		} else {
 			this.bar.fillStyle(0x00ff00);
 		}
-		let d = Math.floor(this.p * this.health.current);
+		let d = Math.floor(this.p * this.health);
 		this.bar.fillRect(this.x + 2, this.y + 2, d, this.healthLength);
 	}
 
@@ -94,6 +94,6 @@ export class HealthBar {
 
 	disable() {
 		this.bar.setActive(false).setVisible(false);
-		this.health.reset();
+		this.health = this.healthDefault;
 	}
 }

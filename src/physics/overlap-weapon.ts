@@ -41,7 +41,7 @@ function doDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
 
 		if (weaponOwner.unitType === "player") {
 			//Gain souls if player kill (otherwise too much money)
-			if (damage >= (enemy.healthbar as HealthBar).health.current) EventSetup.gainSouls(weapon.scene, enemy.type);
+			if (damage >= (enemy.healthbar as HealthBar).health) EventSetup.gainSouls(weapon.scene, enemy.type);
 		}
 
 		enemy.damage(damage);

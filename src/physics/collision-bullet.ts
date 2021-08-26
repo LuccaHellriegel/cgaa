@@ -18,13 +18,9 @@ export function initBulletGroupPair(scene: Phaser.Scene) {
 }
 
 function collision(bullet: Bullet, enemy: DangerousCircle) {
-	let damage = bullet.amount;
-	let enemyKilled = damage >= enemy.healthbar.health.current;
-	if (enemyKilled) {
-		damage = enemy.healthbar.health.current;
+	if (enemy.damage(bullet.amount)) {
 		EventSetup.gainSouls(bullet.scene, enemy.type);
 	}
-	enemy.damage(damage);
-	if (enemy instanceof DangerousCircle) enemy.stateHandler.spotted = bullet.owner;
+	if (enemy.stateHandler !== undefined) enemy.stateHandler.spotted = bullet.owner;
 	bullet.hitTarget();
 }
