@@ -58,7 +58,7 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 - graphics are all created in-game
 - now mainly used to explore interesting facets of Game Dev (but it should still be fun for a few rounds)
 
-## Architecture
+## Architecture (outdated)
 
 I strife for a layered architecture, where dependencies only go downward and the general execution order of the main functions is upwards.
 
