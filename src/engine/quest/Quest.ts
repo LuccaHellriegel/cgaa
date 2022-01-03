@@ -2,39 +2,53 @@ import { IEventHandler } from "../events/IEventHandler";
 import { DecrementCountListener } from "../events/DecrementCountListener";
 import { EventSetup } from "../../config/EventSetup";
 
-enum QuestState {
-	success,
-	failure,
-	active,
-	inactive,
-}
+const QUEST_INACTIVE = 0b00;
+const QUEST_ACTIVE = 0b001;
+const QUEST_SUCCESS = 0b010;
+const QUEST_FAILURE = 0b100;
+
+//@ts-ignore
+const maskCheck = (mask: number) => (state) => (state & mask) === mask;
+
+const inactive = maskCheck(QUEST_INACTIVE);
+const active = maskCheck(QUEST_ACTIVE);
+const success = maskCheck(QUEST_SUCCESS);
+const failure = maskCheck(QUEST_FAILURE);
 
 export class Quest {
-	state = QuestState.inactive;
+	state = QUEST_INACTIVE;
 
-	constructor(private allowedCheck: Function, private activeCallback: Function) {}
+	constructor(private allowed: Function, private activeCallback: Function) {}
 
-	isSuccess() {
-		return this.state == QuestState.success;
+	failure() {
+		return failure(this.state);
 	}
 
-	isActive() {
-		return this.state == QuestState.active;
+	inactive() {
+		return inactive(this.state);
 	}
 
-	isActiveOrSuccess() {
-		return this.isActive() || this.isSuccess();
+	success() {
+		return success(this.state);
+	}
+
+	active() {
+		return active(this.state);
+	}
+
+	activeOrSuccess() {
+		return active(this.state) || success(this.state);
 	}
 
 	setActive() {
-		if (this.allowedCheck()) {
-			this.state = QuestState.active;
+		if (this.allowed()) {
+			this.state = QUEST_ACTIVE;
 			this.activeCallback();
 		}
 	}
 
 	setSuccess() {
-		this.state = QuestState.success;
+		this.state = QUEST_SUCCESS;
 	}
 
 	static killQuest(
@@ -51,7 +65,7 @@ export class Quest {
 	) {
 		const quest = new Quest(
 			() => {
-				return !quests.get(rivalries.getRival(id)).isActiveOrSuccess();
+				return !quests.get(rivalries.getRival(id)).activeOrSuccess();
 			},
 			() => {
 				let rivalID = rivalries.getRival(id);

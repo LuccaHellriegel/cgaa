@@ -60,7 +60,7 @@ export class InteractionSelectBar extends SelectBar {
 
 		if (hasCooperation) {
 			this.updateClickableText("Switch\nTarget");
-		} else if (quest.isActiveOrSuccess()) {
+		} else if (quest.activeOrSuccess()) {
 			this.updateClickableText("Check\nQuest");
 		} else {
 			this.updateClickableText("Accept\nQuest");
