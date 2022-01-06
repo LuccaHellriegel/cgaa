@@ -24,10 +24,13 @@ const POSITION = [PLAYER_POSITION, { x: 100, y: 100 }];
 const RADIUS = [PLAYER_RADIUS, 50];
 
 const FRICTION_CONSTANT = 0.5;
+let collision = false;
 
-const clear = () => context.clearRect(0, 0, canvas.width, canvas.height);
+function clear() {
+	return context.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-const drawCircle = (x, y, radius) => {
+function drawCircle(context, x, y, radius) {
 	context.beginPath();
 	context.arc(x, y, radius, 0, 2 * Math.PI, false);
 	context.fillStyle = "green";
@@ -35,58 +38,60 @@ const drawCircle = (x, y, radius) => {
 	// context.lineWidth = 5;
 	context.strokeStyle = "#003300";
 	context.stroke();
-};
+}
 
-let collision = false;
-
-const draw = () => {
+function draw(context) {
 	for (let index = 0; index < VELOCITY.length; index++) {
 		const pos = POSITION[index];
 		const rad = RADIUS[index];
-		drawCircle(pos.x, pos.y, rad);
+		drawCircle(context, pos.x, pos.y, rad);
 	}
 
 	// drawCircle(100, 100, 50);
 	// collision = circleVsCircleCollision(player.position.x, player.position.y, player.radius, 100, 100, 50);
-};
+}
 
-const render = () => {
+function render() {
 	clear();
-	draw();
+	draw(context);
 	lastRender = window.performance.now();
-};
+}
 
-//TODO: convert to numbers for faster comparison?
-window.addEventListener("keydown", (event) => {
-	event.preventDefault();
-	keys[event.key] = true;
-});
-window.addEventListener("keyup", (event) => {
-	event.preventDefault();
-	keys[event.key] = false;
-});
+function recordKeyInput(keyMap) {
+	//TODO: convert to numbers for faster comparison?
+	window.addEventListener("keydown", (event) => {
+		event.preventDefault();
+		keyMap[event.key] = true;
+	});
+	window.addEventListener("keyup", (event) => {
+		event.preventDefault();
+		keyMap[event.key] = false;
+	});
+}
 
-const keysActive = (keyArr, positive, negative) => () => {
-	//"for" is usually faster than "some" or other chaining functions
-	for (let key of keyArr) {
-		if (keys[key]) return positive;
-	}
-	return negative;
-};
+function keysActive(keyArr, positive, negative) {
+	return () => {
+		//"for" is usually faster than "some" or other chaining functions
+		for (let key of keyArr) {
+			if (keys[key]) return positive;
+		}
+		return negative;
+	};
+}
 
 const isLeft = keysActive(["ArrowLeft", "a", "A"], -1, 0);
 const isRight = keysActive(["ArrowRight", "d", "D"], 1, 0);
 const isUp = keysActive(["ArrowUp", "w", "W"], -1, 0);
 const isDown = keysActive(["ArrowDown", "s", "S"], 1, 0);
 
-const circleVsCircleCollision = (x1, y1, radius1, x2, y2, radius2) => {
+function circleVsCircleCollision(x1, y1, radius1, x2, y2, radius2) {
 	var dx = x1 + radius1 - (x2 + radius2); // difference between right edges on x-axis
 	var dy = y1 + radius1 - (y2 + radius1); // difference between right edges on y-axis
 	var distance = Math.sqrt(dx * dx + dy * dy); //pythagoras
 	return distance < radius1 + radius2;
-};
+}
 
-const clamp = (val, min, max) => {
+function clamp(val, min, max) {
 	if (val < min) {
 		return min;
 	} else if (val > max) {
@@ -94,9 +99,9 @@ const clamp = (val, min, max) => {
 	} else {
 		return val;
 	}
-};
+}
 
-const move = (deltaTime) => {
+function move(deltaTime) {
 	for (let index = 0; index < VELOCITY.length; index++) {
 		const pos = POSITION[index];
 		const rad = RADIUS[index];
@@ -110,9 +115,11 @@ const move = (deltaTime) => {
 		pos.x = clamp(pos.x + velocity.x * deltaTime, 0 + rad, canvas.width - rad);
 		pos.y = clamp(pos.y + velocity.y * deltaTime, 0 + rad, canvas.height - rad);
 	}
-};
+}
 
-const cancel = () => window.cancelAnimationFrame(cancelMain);
+function cancel() {
+	return window.cancelAnimationFrame(cancelMain);
+}
 
 function queueUpdates(numTicks) {
 	for (let i = 0; i < numTicks; i++) {
@@ -121,8 +128,8 @@ function queueUpdates(numTicks) {
 	}
 }
 
-const main = (tFrame) => {
-	cancelMain = window.requestAnimationFrame(main);
+function game(tFrame) {
+	cancelMain = window.requestAnimationFrame(game);
 	const nextTick = lastTick + tickLength;
 	let numTicks = 0;
 
@@ -137,9 +144,23 @@ const main = (tFrame) => {
 
 	queueUpdates(numTicks);
 	render();
-};
+}
 
-main(window.performance.now());
+function setup() {
+	recordKeyInput(keys);
+}
+
+function start() {
+	setup();
+	game(window.performance.now());
+}
+
+start();
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
 
 const but = document.createElement("button");
 but.style.width = "50";
