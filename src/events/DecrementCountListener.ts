@@ -1,8 +1,8 @@
-import { IEventHandler } from "./IEventHandler";
+import { EventHandler } from "./EventHandler";
 
 export class DecrementCountListener {
   constructor(
-    private handler: IEventHandler,
+    private handler: EventHandler,
     private decrementEvent: string,
     private count: number,
     private payloadCheck: Function,

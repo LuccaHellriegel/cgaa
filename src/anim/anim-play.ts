@@ -7,8 +7,12 @@ export interface unitAnims {
 
 export function initUnitAnims(gameObject: unitAnims) {
   let idleAnim = "idle-" + gameObject.texture.key;
-  gameObject.playIdle = gameObject.anims.play(idleAnim).bind(gameObject);
+  gameObject.playIdle = function () {
+    gameObject.anims.play(idleAnim);
+  }.bind(gameObject);
 
   let damageAnim = "damage-" + gameObject.texture.key;
-  gameObject.playDamage = gameObject.anims.play(damageAnim).bind(gameObject);
+  gameObject.playDamage = function () {
+    gameObject.anims.play(damageAnim);
+  }.bind(gameObject);
 }

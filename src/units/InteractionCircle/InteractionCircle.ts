@@ -1,7 +1,7 @@
 import { EventSetup } from "../../config/EventSetup";
 import { Quest } from "../../engine/quest/Quest";
 import { IClickableElement } from "../../engine/ui/modes/IClickableElement";
-import { MouseOver } from "../../engine/ui/MouseOver";
+import { setupMouseOver } from "../../engine/ui/MouseOver";
 import { CircleUnit } from "../Circle/CircleUnit";
 
 export class InteractionCircle extends CircleUnit implements IClickableElement {
@@ -22,6 +22,6 @@ export class InteractionCircle extends CircleUnit implements IClickableElement {
   makeClickable(onClickCallback: Function) {
     this.setInteractive();
     this.on("pointerdown", onClickCallback);
-    new MouseOver(this, this);
+    setupMouseOver(this, this);
   }
 }

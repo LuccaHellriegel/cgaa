@@ -1,9 +1,9 @@
 import { Paths } from "./Paths";
 import { Path } from "./Path";
 import { CampRouting } from "../state/CampRouting";
-import { DangerousCircle } from "../../4_GameUnit/units/DangerousCircle";
-import { RelPos } from "../../../engine/RelPos";
-import { CampID } from "../../0_GameBase/setup/CampSetup";
+import { CampID } from "../config/CampSetup";
+import { RelPos } from "../engine/RelPos";
+import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
 
 export class PathAssigner {
   constructor(private paths: Paths, private router: CampRouting) {}

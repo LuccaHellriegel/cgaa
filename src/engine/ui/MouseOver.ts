@@ -1,21 +1,15 @@
-import { IEventHandler } from "../events/IEventHandler";
+import { EventHandler } from "../../events/EventHandler";
 
-interface IMouseOver {
-  mouseOver: boolean;
-}
-
-export class MouseOver {
-  constructor(private boolObj: IMouseOver, private eventObj: IEventHandler) {
-    eventObj.once("pointerover", this.pointerOver.bind(this));
-  }
-
-  pointerOver() {
-    this.boolObj.mouseOver = true;
-    this.eventObj.once("pointerout", this.pointerOut.bind(this));
-  }
-
-  pointerOut() {
-    this.boolObj.mouseOver = false;
-    this.eventObj.once("pointerover", this.pointerOver.bind(this));
-  }
-}
+export const setupMouseOver = (
+  boolObj: {
+    mouseOver: boolean;
+  },
+  eventObj: EventHandler
+) => {
+  eventObj.on("pointerover", () => {
+    boolObj.mouseOver = true;
+  });
+  eventObj.on("pointerout", () => {
+    boolObj.mouseOver = false;
+  });
+};

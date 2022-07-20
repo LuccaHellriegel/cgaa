@@ -1,61 +1,9 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { IEventHandler } from "../engine/events/IEventHandler";
 import { HUD } from "../scenes/HUD";
 import { CampID, CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 import { ArrowHeadPolygon } from "../engine/polygons/ArrowHeadPolygon";
 import { SymmetricCrossPolygon } from "../engine/polygons/SymmetricCrossPolygon";
-
-interface UIElement {
-  setVisible(bool): this;
-  setActive(bool): this;
-}
-
-type StateConfig = {
-  event: string;
-  elementConfigs: { element: UIElement; func: Function }[];
-};
-
-function UIStateToggle(configs: [], activateCallback, deactivateCallback) {
-  const activateDict = {};
-  const deactivateDict = {};
-
-  for (const config of configs) {
-    const events: string[] = config[0];
-    const elementsToActivate: UIElement[] = config[1];
-    const elementsToDeactivate: UIElement[] = config[2];
-
-    for (const event of events) {
-      if (!activateDict[event]) activateDict[event] = [];
-      activateDict[event] = (activateDict[event] as UIElement[]).concat(
-        elementsToActivate
-      );
-
-      if (!deactivateDict[event]) deactivateDict[event] = [];
-      deactivateDict[event] = (deactivateDict[event] as UIElement[]).concat(
-        elementsToDeactivate
-      );
-    }
-  }
-
-  return {
-    send(event: string) {
-      for (const element of activateDict[event]) activateCallback(element);
-      for (const element of deactivateDict[event]) deactivateCallback(element);
-    },
-  };
-}
-
-function UIPhaserEventToggle(
-  handler: IEventHandler,
-  events: string[],
-  stateToggle: { send(event: string) }
-) {
-  for (const event of events)
-    handler.on(event, () => {
-      stateToggle.send(event);
-    });
-}
 
 const circleCorrection = -5;
 

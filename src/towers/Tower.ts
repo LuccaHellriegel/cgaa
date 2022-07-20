@@ -1,7 +1,7 @@
 import { damageable, poolable, healable } from "../engine/interfaces";
 import { IClickableElement } from "../engine/ui/modes/IClickableElement";
 import { HealthBar } from "../healthbar/HealthBar";
-import { MouseOver } from "../engine/ui/MouseOver";
+import { setupMouseOver } from "../engine/ui/MouseOver";
 import { CampID, CampSetup } from "../config/CampSetup";
 
 export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
@@ -66,6 +66,6 @@ export abstract class Tower
   makeClickable(onClickCallback) {
     this.setInteractive();
     this.on("pointerdown", onClickCallback);
-    new MouseOver(this, this);
+    setupMouseOver(this, this);
   }
 }

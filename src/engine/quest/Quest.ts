@@ -1,5 +1,5 @@
-import { IEventHandler } from "../events/IEventHandler";
-import { DecrementCountListener } from "../events/DecrementCountListener";
+import { EventHandler } from "../../events/EventHandler";
+import { DecrementCountListener } from "../../events/DecrementCountListener";
 import { EventSetup } from "../../config/EventSetup";
 
 const QUEST_INACTIVE = 0b00;
@@ -56,7 +56,7 @@ export class Quest {
     rivalries,
     quests,
     id,
-    handler: IEventHandler,
+    handler: EventHandler,
     killEvent: string,
     killProperty: string,
     count: number,
@@ -72,6 +72,7 @@ export class Quest {
         scene.events.emit(EventSetup.questAcceptedEvent, rivalID);
       }
     );
+
     new DecrementCountListener(
       handler,
       killEvent,

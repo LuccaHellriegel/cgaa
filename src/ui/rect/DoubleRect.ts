@@ -1,7 +1,7 @@
 import { SelectableGUIElement } from "../select/bars/SelectBar";
 import { RectPolygon } from "../../engine/polygons/RectPolygon";
 import { HUD } from "../../scenes/HUD";
-import { MouseOver } from "../../engine/ui/MouseOver";
+import { setupMouseOver } from "../../engine/ui/MouseOver";
 
 class DoubleRect implements SelectableGUIElement {
   polygon: RectPolygon;
@@ -102,7 +102,7 @@ export class ClickableTextRect extends TextRect {
       fill: "#000000",
       fontWeight: "bold",
     });
-    new MouseOver(this, this.graphics);
+    setupMouseOver(this, this.graphics);
   }
 
   setInteractive(event, func) {
@@ -170,7 +170,7 @@ export class ClickableImageRect extends ImageRect {
   ) {
     super(sceneToUse, x, y, width, height, hexColor, texture);
     this.image.setInteractive();
-    new MouseOver(this, this.image);
+    setupMouseOver(this, this.image);
   }
 
   setInteractive(event, func) {
