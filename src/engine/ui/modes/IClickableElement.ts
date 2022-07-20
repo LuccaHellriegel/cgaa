@@ -1,3 +1,3 @@
 export interface IClickableElement {
-	makeClickable(onClickCallback: Function);
+  makeClickable(onClickCallback: Function);
 }

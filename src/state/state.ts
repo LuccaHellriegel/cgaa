@@ -13,27 +13,37 @@ import { CampRouting } from "./CampRouting";
 import { Rivalries } from "./Rivalries";
 
 export interface State extends Data {
-	cooperation: BitwiseCooperation;
-	rivalries: Rivalries;
-	router: CampRouting;
-	quests: Quests;
-	pathAssigner: PathAssigner;
+  cooperation: BitwiseCooperation;
+  rivalries: Rivalries;
+  router: CampRouting;
+  quests: Quests;
+  pathAssigner: PathAssigner;
 }
 
-export function state(scene, gameData: Data, commonWaypoint: (gameData: Data) => RelPos): State {
-	const cooperation = new BitwiseCooperation(CampSetup.campIDs, (id) => {
-		scene.events.emit(EventSetup.cooperationEvent, id);
-	});
+export function state(
+  scene,
+  gameData: Data,
+  commonWaypoint: (gameData: Data) => RelPos
+): State {
+  const cooperation = new BitwiseCooperation(CampSetup.campIDs, (id) => {
+    scene.events.emit(EventSetup.cooperationEvent, id);
+  });
 
-	const rivalries = new Rivalries(CampSetup.ordinaryCampIDs);
-	const router = new CampRouting(scene.events, rivalries);
+  const rivalries = new Rivalries(CampSetup.ordinaryCampIDs);
+  const router = new CampRouting(scene.events, rivalries);
 
-	const quests = new Quests();
+  const quests = new Quests();
 
-	const configs = PathConfig.createConfigs(commonWaypoint(gameData), gameData.camps);
-	const paths = new Paths(gameData.camps, PathFactory.produce(new PathCalculator(gameData.gameMap), configs));
-	const pathAssigner = new PathAssigner(paths, router);
+  const configs = PathConfig.createConfigs(
+    commonWaypoint(gameData),
+    gameData.camps
+  );
+  const paths = new Paths(
+    gameData.camps,
+    PathFactory.produce(new PathCalculator(gameData.gameMap), configs)
+  );
+  const pathAssigner = new PathAssigner(paths, router);
 
-	console.log(cooperation, rivalries, router, quests, pathAssigner);
-	return { ...gameData, cooperation, rivalries, router, quests, pathAssigner };
+  console.log(cooperation, rivalries, router, quests, pathAssigner);
+  return { ...gameData, cooperation, rivalries, router, quests, pathAssigner };
 }

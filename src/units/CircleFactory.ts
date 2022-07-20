@@ -13,144 +13,171 @@ import { CampID } from "../config/CampSetup";
 const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
 const healthBarDangerousCircleFactoryConfigs = {
-	Small: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 41, healthLength: 8, value: 40, scene: null },
-	Normal: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 46, healthLength: 12, value: 100, scene: null },
-	Big: { posCorrectionX: -26, posCorrectionY: -38, healthWidth: 51, healthLength: 17, value: 200, scene: null },
+  Small: {
+    posCorrectionX: -26,
+    posCorrectionY: -38,
+    healthWidth: 41,
+    healthLength: 8,
+    value: 40,
+    scene: null,
+  },
+  Normal: {
+    posCorrectionX: -26,
+    posCorrectionY: -38,
+    healthWidth: 46,
+    healthLength: 12,
+    value: 100,
+    scene: null,
+  },
+  Big: {
+    posCorrectionX: -26,
+    posCorrectionY: -38,
+    healthWidth: 51,
+    healthLength: 17,
+    value: 200,
+    scene: null,
+  },
 };
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
 export class CircleFactory {
-	x = 0;
-	y = 0;
+  x = 0;
+  y = 0;
 
-	constructor(
-		public scene: Gameplay,
-		private campID: string,
-		private campMask: number,
-		private addUnit: Function,
-		private enemies: Enemies,
-		private weaponPools: { [key in EnemySize]: ChainWeapons }
-	) {}
+  constructor(
+    public scene: Gameplay,
+    private campID: string,
+    private campMask: number,
+    private addUnit: Function,
+    private enemies: Enemies,
+    private weaponPools: { [key in EnemySize]: ChainWeapons }
+  ) {}
 
-	private createWeapon(x: number, y: number, size: EnemySize) {
-		return this.weaponPools[size].placeWeapon(x, y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2);
-	}
+  private createWeapon(x: number, y: number, size: EnemySize) {
+    return this.weaponPools[size].placeWeapon(
+      x,
+      y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2
+    );
+  }
 
-	private createHealthBar(scene, x, y, size) {
-		return new HealthBar(x, y, { ...healthBarDangerousCircleFactoryConfigs[size], scene });
-	}
+  private createHealthBar(scene, x, y, size) {
+    return new HealthBar(x, y, {
+      ...healthBarDangerousCircleFactoryConfigs[size],
+      scene,
+    });
+  }
 
-	private afterCreate(circle) {
-		this.addUnit(circle);
+  private afterCreate(circle) {
+    this.addUnit(circle);
 
-		circle.weapon.setOwner(circle);
-		this.scene.children.bringToTop(circle.healthbar.bar);
-		this.enemies.addEnemy(circle);
-	}
+    circle.weapon.setOwner(circle);
+    this.scene.children.bringToTop(circle.healthbar.bar);
+    this.enemies.addEnemy(circle);
+  }
 
-	createKing() {
-		let size: EnemySize = "Big";
-		let weapon = this.createWeapon(this.x, this.y, size);
+  createKing() {
+    let size: EnemySize = "Big";
+    let weapon = this.createWeapon(this.x, this.y, size);
 
-		let circle = new King(
-			this.scene,
-			this.x,
-			this.y,
-			"kingCircle",
-			this.campID as CampID,
-			this.campMask,
-			weapon,
-			size as EnemySize,
-			this.createHealthBar(this.scene, this.x, this.y, size),
-			veloConfigs[size]
-		);
-		this.afterCreate(circle);
+    let circle = new King(
+      this.scene,
+      this.x,
+      this.y,
+      "kingCircle",
+      this.campID as CampID,
+      this.campMask,
+      weapon,
+      size as EnemySize,
+      this.createHealthBar(this.scene, this.x, this.y, size),
+      veloConfigs[size]
+    );
+    this.afterCreate(circle);
 
-		return circle;
-	}
+    return circle;
+  }
 
-	createBoss() {
-		let size: EnemySize = "Big";
-		let weapon = this.createWeapon(this.x, this.y, size);
+  createBoss() {
+    let size: EnemySize = "Big";
+    let weapon = this.createWeapon(this.x, this.y, size);
 
-		let circle = new DangerousCircle(
-			this.scene,
-			this.x,
-			this.y,
-			"bossCircle",
-			this.campID as CampID,
-			this.campMask,
-			weapon,
-			size as EnemySize,
-			this.createHealthBar(this.scene, this.x, this.y, size),
-			veloConfigs[size]
-		);
-		this.afterCreate(circle);
+    let circle = new DangerousCircle(
+      this.scene,
+      this.x,
+      this.y,
+      "bossCircle",
+      this.campID as CampID,
+      this.campMask,
+      weapon,
+      size as EnemySize,
+      this.createHealthBar(this.scene, this.x, this.y, size),
+      veloConfigs[size]
+    );
+    this.afterCreate(circle);
 
-		return circle;
-	}
+    return circle;
+  }
 
-	createEnemy(size: EnemySize) {
-		let weapon = this.createWeapon(this.x, this.y, size);
-		let circle = new DangerousCircle(
-			this.scene,
-			this.x,
-			this.y,
-			this.campID + size + "Circle",
-			this.campID as CampID,
-			this.campMask,
-			weapon,
-			size as EnemySize,
-			this.createHealthBar(this.scene, this.x, this.y, size),
-			veloConfigs[size]
-		);
-		this.afterCreate(circle);
+  createEnemy(size: EnemySize) {
+    let weapon = this.createWeapon(this.x, this.y, size);
+    let circle = new DangerousCircle(
+      this.scene,
+      this.x,
+      this.y,
+      this.campID + size + "Circle",
+      this.campID as CampID,
+      this.campMask,
+      weapon,
+      size as EnemySize,
+      this.createHealthBar(this.scene, this.x, this.y, size),
+      veloConfigs[size]
+    );
+    this.afterCreate(circle);
 
-		return circle;
-	}
+    return circle;
+  }
 
-	createFriend(size: EnemySize) {
-		let weapon = this.createWeapon(this.x, this.y, size);
+  createFriend(size: EnemySize) {
+    let weapon = this.createWeapon(this.x, this.y, size);
 
-		let circle = new PlayerFriend(
-			this.scene,
-			this.x,
-			this.y,
-			this.campID + size + "Circle",
-			this.campID as CampID,
-			this.campMask,
-			weapon,
-			size as EnemySize,
-			this.createHealthBar(this.scene, this.x, this.y, size),
-			veloConfigs[size]
-		);
-		this.afterCreate(circle);
+    let circle = new PlayerFriend(
+      this.scene,
+      this.x,
+      this.y,
+      this.campID + size + "Circle",
+      this.campID as CampID,
+      this.campMask,
+      weapon,
+      size as EnemySize,
+      this.createHealthBar(this.scene, this.x, this.y, size),
+      veloConfigs[size]
+    );
+    this.afterCreate(circle);
 
-		return circle;
-	}
+    return circle;
+  }
 
-	createInteractionCircle(config) {
-		let { x, y } = config;
+  createInteractionCircle(config) {
+    let { x, y } = config;
 
-		let size: EnemySize = "Normal";
+    let size: EnemySize = "Normal";
 
-		let circle = new InteractionCircle(
-			this.scene,
-			x,
-			y,
-			this.campID + "InteractionCircle",
-			this.campID as CampID,
-			this.campMask,
-			this.createWeapon(x, y, size),
-			size as EnemySize,
-			this.createHealthBar(this.scene, x, y, size)
-		);
-		this.afterCreate(circle);
+    let circle = new InteractionCircle(
+      this.scene,
+      x,
+      y,
+      this.campID + "InteractionCircle",
+      this.campID as CampID,
+      this.campMask,
+      this.createWeapon(x, y, size),
+      size as EnemySize,
+      this.createHealthBar(this.scene, x, y, size)
+    );
+    this.afterCreate(circle);
 
-		// was overwritten somewhere (I think when adding to the physics groups), so set it here
-		circle.setImmovable(true);
+    // was overwritten somewhere (I think when adding to the physics groups), so set it here
+    circle.setImmovable(true);
 
-		return circle;
-	}
+    return circle;
+  }
 }

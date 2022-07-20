@@ -1,12 +1,12 @@
 export interface IMode {
-	execute(element);
-	enable();
-	disable();
+  execute(element);
+  enable();
+  disable();
 }
 
 export interface IModes {
-	activeMode: IMode;
-	modes: IMode[];
-	modesLength: number;
-	index: number;
+  activeMode: IMode;
+  modes: IMode[];
+  modesLength: number;
+  index: number;
 }

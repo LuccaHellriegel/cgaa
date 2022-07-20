@@ -1,12 +1,12 @@
 {
-	"compilerOptions": {
-		"outDir": "./tsbuild",
-		"allowJs": true,
-		"target": "es6",
-		"typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
-		"types": ["phaser", "jest"],
-		"allowSyntheticDefaultImports": true,
-		"lib": ["es6", "dom", "es2017"]
-	},
-	"include": ["src/**/*"]
+  "compilerOptions": {
+    "outDir": "./tsbuild",
+    "allowJs": true,
+    "target": "es6",
+    "typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
+    "types": ["phaser", "jest"],
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es6", "dom", "es2017"]
+  },
+  "include": ["src/**/*"]
 }

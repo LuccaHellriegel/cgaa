@@ -1,21 +1,21 @@
 import { IEventHandler } from "../events/IEventHandler";
 
 interface IMouseOver {
-	mouseOver: boolean;
+  mouseOver: boolean;
 }
 
 export class MouseOver {
-	constructor(private boolObj: IMouseOver, private eventObj: IEventHandler) {
-		eventObj.once("pointerover", this.pointerOver.bind(this));
-	}
+  constructor(private boolObj: IMouseOver, private eventObj: IEventHandler) {
+    eventObj.once("pointerover", this.pointerOver.bind(this));
+  }
 
-	pointerOver() {
-		this.boolObj.mouseOver = true;
-		this.eventObj.once("pointerout", this.pointerOut.bind(this));
-	}
+  pointerOver() {
+    this.boolObj.mouseOver = true;
+    this.eventObj.once("pointerout", this.pointerOut.bind(this));
+  }
 
-	pointerOut() {
-		this.boolObj.mouseOver = false;
-		this.eventObj.once("pointerover", this.pointerOver.bind(this));
-	}
+  pointerOut() {
+    this.boolObj.mouseOver = false;
+    this.eventObj.once("pointerover", this.pointerOver.bind(this));
+  }
 }

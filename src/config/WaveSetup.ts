@@ -1,16 +1,15 @@
 import { UnitSetup } from "./UnitSetup";
 
 export class WaveSetup {
-	private constructor() {}
+  private constructor() {}
 
-	static waveSize = 3;
+  static waveSize = 3;
 
-	static groupCompDict = {
-		Normal: [UnitSetup.smallCircleWithChain, UnitSetup.smallCircleWithChain],
-		Small: [UnitSetup.normalCircleWithChain, UnitSetup.normalCircleWithChain],
-		Big: [UnitSetup.bigCircleWithChain, UnitSetup.bigCircleWithChain]
-	};
+  static groupCompDict = {
+    Normal: [UnitSetup.smallCircleWithChain, UnitSetup.smallCircleWithChain],
+    Small: [UnitSetup.normalCircleWithChain, UnitSetup.normalCircleWithChain],
+    Big: [UnitSetup.bigCircleWithChain, UnitSetup.bigCircleWithChain],
+  };
 
-	static timeBetweenWaves = 15000;
-	//static timeBetweenWaves = 150;
+  static timeBetweenWaves = 15000;
 }

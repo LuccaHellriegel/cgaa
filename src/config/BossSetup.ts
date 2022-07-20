@@ -1,7 +1,7 @@
 export class BossSetup {
-	private constructor() {}
+  private constructor() {}
 
-	static maxBossCampPopulation = 10;
+  static maxBossCampPopulation = 10;
 
-	static bossGroupSize = 20;
+  static bossGroupSize = 20;
 }

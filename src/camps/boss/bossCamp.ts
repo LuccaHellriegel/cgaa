@@ -17,67 +17,73 @@ import { CampsState } from "../CampsState";
 import { BossBarrier } from "./BossBarrier";
 
 function populate(
-	scene: Gameplay,
-	camp: Camp,
-	pool: BossPool,
-	enemies: Enemies,
-	campsState: CampsState,
-	mapSpawnPos: RelPos[]
+  scene: Gameplay,
+  camp: Camp,
+  pool: BossPool,
+  enemies: Enemies,
+  campsState: CampsState,
+  mapSpawnPos: RelPos[]
 ) {
-	const spawnDict = areaRealSpawnDict(camp.areaInLayout, camp.areaSize, mapSpawnPos);
-	new CampPopulator(
-		CampSetup.bossCampID,
-		scene,
-		pool,
-		new EnemySpawnObj(spawnDict, enemies),
-		BossSetup.maxBossCampPopulation,
-		campsState
-	);
+  const spawnDict = areaRealSpawnDict(
+    camp.areaInLayout,
+    camp.areaSize,
+    mapSpawnPos
+  );
+  new CampPopulator(
+    CampSetup.bossCampID,
+    scene,
+    pool,
+    new EnemySpawnObj(spawnDict, enemies),
+    BossSetup.maxBossCampPopulation,
+    campsState
+  );
 }
 
 function positionKing(bossFactory: CircleFactory, kingPoint: Point) {
-	let king = bossFactory.createKing();
-	king.stateHandler.setComponents([new GuardComponent(king, king.stateHandler)]);
-	king.setPosition(kingPoint.x, kingPoint.y);
+  let king = bossFactory.createKing();
+  king.stateHandler.setComponents([
+    new GuardComponent(king, king.stateHandler),
+  ]);
+  king.setPosition(kingPoint.x, kingPoint.y);
 }
 
 export function bossCamp(
-	scene,
-	state: FinalState,
-	enemies: Enemies,
-	pools: Pools,
-	campsState: CampsState,
-	mapSpawnPos: RelPos[]
+  scene,
+  state: FinalState,
+  enemies: Enemies,
+  pools: Pools,
+  campsState: CampsState,
+  mapSpawnPos: RelPos[]
 ) {
-	const camp = state.camps.get(CampSetup.bossCampID);
-	for (const exitPositions of camp.exitPositionsInMap) {
-		exitPositions.positionsInMap
-			.map((pos) => pos.toPoint())
-			.forEach((pos) => {
-				let barrier = new BossBarrier(scene, pos.x, pos.y);
-				state.physics.addEnv(barrier);
-			});
-	}
+  const camp = state.camps.get(CampSetup.bossCampID);
+  for (const exitPositions of camp.exitPositionsInMap) {
+    exitPositions.positionsInMap
+      .map((pos) => pos.toPoint())
+      .forEach((pos) => {
+        let barrier = new BossBarrier(scene, pos.x, pos.y);
+        state.physics.addEnv(barrier);
+      });
+  }
 
-	const bossFactory = new CircleFactory(
-		scene,
-		CampSetup.bossCampID,
-		CampSetup.bossCampMask,
-		state.physics.addUnit,
-		enemies,
-		{
-			Big: pools.bossWeapons,
-			Small: null,
-			Normal: null,
-		}
-	);
-	positionKing(bossFactory, camp.areaMapMiddle.toPoint());
-	populate(
-		scene,
-		camp,
-		new BossPool(scene, BossSetup.bossGroupSize, bossFactory, enemies),
-		enemies,
-		campsState,
-		mapSpawnPos
-	);
+  const bossFactory = new CircleFactory(
+    scene,
+    CampSetup.bossCampID,
+    CampSetup.bossCampMask,
+    state.physics.addUnit,
+    enemies,
+    {
+      Big: pools.bossWeapons,
+      Small: null,
+      Normal: null,
+    }
+  );
+  positionKing(bossFactory, camp.areaMapMiddle.toPoint());
+  populate(
+    scene,
+    camp,
+    new BossPool(scene, BossSetup.bossGroupSize, bossFactory, enemies),
+    enemies,
+    campsState,
+    mapSpawnPos
+  );
 }

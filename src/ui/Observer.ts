@@ -1,19 +1,19 @@
 export interface subscribable {
-	subscribe(type: string, observer: ObserverWrapper);
+  subscribe(type: string, observer: ObserverWrapper);
 }
 
 export class ObserverWrapper {
-	constructor(subjects: subscribable[], type: string, private notifyFunc) {
-		subjects.forEach(sub => {
-			sub.subscribe(type, this);
-		});
-	}
+  constructor(subjects: subscribable[], type: string, private notifyFunc) {
+    subjects.forEach((sub) => {
+      sub.subscribe(type, this);
+    });
+  }
 
-	notify() {
-		this.notifyFunc();
-	}
+  notify() {
+    this.notifyFunc();
+  }
 }
 
 export interface notifyWithVal {
-	notify(val: any);
+  notify(val: any);
 }

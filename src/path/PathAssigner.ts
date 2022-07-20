@@ -6,10 +6,10 @@ import { RelPos } from "../../../engine/RelPos";
 import { CampID } from "../../0_GameBase/setup/CampSetup";
 
 export class PathAssigner {
-	constructor(private paths: Paths, private router: CampRouting) {}
+  constructor(private paths: Paths, private router: CampRouting) {}
 
-	assign(unit: DangerousCircle, relPos: RelPos): Path {
-		let otherCampID = this.router.getRouting(unit.campID);
-		return this.paths.getPathToCamp(relPos, otherCampID as CampID);
-	}
+  assign(unit: DangerousCircle, relPos: RelPos): Path {
+    let otherCampID = this.router.getRouting(unit.campID);
+    return this.paths.getPathToCamp(relPos, otherCampID as CampID);
+  }
 }

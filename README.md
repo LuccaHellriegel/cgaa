@@ -6,7 +6,6 @@ A PhaserJS-based blend of 2D action and tower defense with charming programmer a
 
 ![Fight](./page/images/fight.gif)
 
-
 ## Project History
 
 - started dev in the context of a Game Design course at university (first six month)

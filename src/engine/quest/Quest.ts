@@ -16,72 +16,72 @@ const success = maskCheck(QUEST_SUCCESS);
 const failure = maskCheck(QUEST_FAILURE);
 
 export class Quest {
-	state = QUEST_INACTIVE;
+  state = QUEST_INACTIVE;
 
-	constructor(private allowed: Function, private activeCallback: Function) {}
+  constructor(private allowed: Function, private activeCallback: Function) {}
 
-	failure() {
-		return failure(this.state);
-	}
+  failure() {
+    return failure(this.state);
+  }
 
-	inactive() {
-		return inactive(this.state);
-	}
+  inactive() {
+    return inactive(this.state);
+  }
 
-	success() {
-		return success(this.state);
-	}
+  success() {
+    return success(this.state);
+  }
 
-	active() {
-		return active(this.state);
-	}
+  active() {
+    return active(this.state);
+  }
 
-	activeOrSuccess() {
-		return active(this.state) || success(this.state);
-	}
+  activeOrSuccess() {
+    return active(this.state) || success(this.state);
+  }
 
-	setActive() {
-		if (this.allowed()) {
-			this.state = QUEST_ACTIVE;
-			this.activeCallback();
-		}
-	}
+  setActive() {
+    if (this.allowed()) {
+      this.state = QUEST_ACTIVE;
+      this.activeCallback();
+    }
+  }
 
-	setSuccess() {
-		this.state = QUEST_SUCCESS;
-	}
+  setSuccess() {
+    this.state = QUEST_SUCCESS;
+  }
 
-	static killQuest(
-		scene,
-		rivalries,
-		quests,
-		id,
-		handler: IEventHandler,
-		killEvent: string,
-		killProperty: string,
-		count: number,
-		successEvent: string,
-		successPayload: any
-	) {
-		const quest = new Quest(
-			() => {
-				return !quests.get(rivalries.getRival(id)).activeOrSuccess();
-			},
-			() => {
-				let rivalID = rivalries.getRival(id);
-				scene.events.emit(EventSetup.questAcceptedEvent, rivalID);
-			}
-		);
-		new DecrementCountListener(
-			handler,
-			killEvent,
-			count,
-			(killPayload) => killPayload === killProperty,
-			() => {
-				quest.setSuccess();
-				handler.emit(successEvent, successPayload);
-			}
-		);
-		return quest;
-	}
+  static killQuest(
+    scene,
+    rivalries,
+    quests,
+    id,
+    handler: IEventHandler,
+    killEvent: string,
+    killProperty: string,
+    count: number,
+    successEvent: string,
+    successPayload: any
+  ) {
+    const quest = new Quest(
+      () => {
+        return !quests.get(rivalries.getRival(id)).activeOrSuccess();
+      },
+      () => {
+        let rivalID = rivalries.getRival(id);
+        scene.events.emit(EventSetup.questAcceptedEvent, rivalID);
+      }
+    );
+    new DecrementCountListener(
+      handler,
+      killEvent,
+      count,
+      (killPayload) => killPayload === killProperty,
+      () => {
+        quest.setSuccess();
+        handler.emit(successEvent, successPayload);
+      }
+    );
+    return quest;
+  }
 }

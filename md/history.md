@@ -7,6 +7,7 @@ In other words: \
 The top 6 development time-sinks that might not be obvious from playing CGAA.
 
 ## Table of Contents <!-- omit in toc -->
+
 - [1. Frameworks versus Engines](#1-frameworks-versus-engines)
 - [2. Shapes, Graphics and Collision](#2-shapes-graphics-and-collision)
 - [3. Performance Optimization](#3-performance-optimization)
@@ -31,8 +32,22 @@ In CGAA the most important shape is the circle. For this and other basics shapes
 In the case of a circle texture, the frame-step would look like this:
 
 ```javascript
-this.scene.textures.list[this.title].add(1, 0, 0, 0, 2 * this.radius, 2 * this.radius);
-this.scene.textures.list[this.title].add(2, 0, 2 * this.radius, 0, 2 * this.radius, 2 * this.radius);
+this.scene.textures.list[this.title].add(
+  1,
+  0,
+  0,
+  0,
+  2 * this.radius,
+  2 * this.radius
+);
+this.scene.textures.list[this.title].add(
+  2,
+  0,
+  2 * this.radius,
+  0,
+  2 * this.radius,
+  2 * this.radius
+);
 ```
 
 This approach was very convenient, because it mostly avoided needing to ship additional assets, input-ouput problems from graphic programs or pixel errors. The hard part was finding the correct APIs and hardcoding the basic measurements for the shapes without an immediate visual feedback. \

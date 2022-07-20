@@ -15,80 +15,83 @@ import { EnvSetup } from "../config/EnvSetup";
 import { CGAA, GameStart } from "../start";
 
 export class Gameplay extends Phaser.Scene {
-	cgaa: CGAA;
-	cgaaInteraction: Function;
-	cgaaMovement: Movement;
-	cgaaStartWaves: Function;
+  cgaa: CGAA;
+  cgaaInteraction: Function;
+  cgaaMovement: Movement;
+  cgaaStartWaves: Function;
 
-	constructor() {
-		super("Gameplay");
-	}
+  constructor() {
+    super("Gameplay");
+  }
 
-	preload() {
-		Textures(this);
-		createChainWeaponAnims(this.anims);
-		createCircleAnims(this.anims);
-		createShooterAnims(this.anims);
+  preload() {
+    Textures(this);
+    createChainWeaponAnims(this.anims);
+    createCircleAnims(this.anims);
+    createShooterAnims(this.anims);
 
-		const config: CGAAData = {
-			campIDs: CampSetup.campIDs,
-			buildingsPerCamp: CampSetup.numbOfBuildings,
+    const config: CGAAData = {
+      campIDs: CampSetup.campIDs,
+      buildingsPerCamp: CampSetup.numbOfBuildings,
 
-			mapDefaultSymbol: EnvSetup.walkableSymbol,
-			mapWallSymbol: EnvSetup.wallSymbol,
-			mapBuildingSymbol: EnvSetup.buildingSymbol,
+      mapDefaultSymbol: EnvSetup.walkableSymbol,
+      mapWallSymbol: EnvSetup.wallSymbol,
+      mapBuildingSymbol: EnvSetup.buildingSymbol,
 
-			areaLayout: Layouts.areaPositions,
-			areaSymbol: 1,
-			areaSize: EnvSetup.areaSize,
-			exitLayout: Layouts.exitSides,
-		};
+      areaLayout: Layouts.areaPositions,
+      areaSymbol: 1,
+      areaSize: EnvSetup.areaSize,
+      exitLayout: Layouts.exitSides,
+    };
 
-		const gameData = GameData(config);
+    const gameData = GameData(config);
 
-		const gameState = state(this, gameData, (data) => {
-			return data.gameMapMiddle;
-		});
+    const gameState = state(this, gameData, (data) => {
+      return data.gameMapMiddle;
+    });
 
-		const physicsObj = physics(this, gameState.cooperation);
+    const physicsObj = physics(this, gameState.cooperation);
 
-		const cgaa = GameStart(this, { ...gameState, physics: physicsObj });
-		this.cgaa = cgaa;
-		this.cgaaMovement = cgaa.input.movement;
-		this.cgaaStartWaves = cgaa.startWaves;
+    const cgaa = GameStart(this, { ...gameState, physics: physicsObj });
+    this.cgaa = cgaa;
+    this.cgaaMovement = cgaa.input.movement;
+    this.cgaaStartWaves = cgaa.startWaves;
 
-		this.cgaaInteraction = function interactWithCircle(interactCircle: InteractionCircle) {
-			let id = interactCircle.campID;
-			let mask = interactCircle.campMask;
-			//Can not accept quests from rivals
-			if (!cgaa.quests.get(cgaa.rivalries.getRival(id)).activeOrSuccess()) {
-				if (!interactCircle.quest.activeOrSuccess()) interactCircle.quest.setActive();
-				if (interactCircle.quest.success()) {
-					// check if id has cooperation with player, because id would need to be rerouted
-					if (cgaa.cooperation.has(mask, CampSetup.playerCampMask)) {
-						cgaa.router.reroute(id);
-					} else {
-						cgaa.cooperation.activate(mask, CampSetup.playerCampMask);
-					}
-				}
-			}
-		}.bind(this);
-	}
+    this.cgaaInteraction = function interactWithCircle(
+      interactCircle: InteractionCircle
+    ) {
+      let id = interactCircle.campID;
+      let mask = interactCircle.campMask;
+      //Can not accept quests from rivals
+      if (!cgaa.quests.get(cgaa.rivalries.getRival(id)).activeOrSuccess()) {
+        if (!interactCircle.quest.activeOrSuccess())
+          interactCircle.quest.setActive();
+        if (interactCircle.quest.success()) {
+          // check if id has cooperation with player, because id would need to be rerouted
+          if (cgaa.cooperation.has(mask, CampSetup.playerCampMask)) {
+            cgaa.router.reroute(id);
+          } else {
+            cgaa.cooperation.activate(mask, CampSetup.playerCampMask);
+          }
+        }
+      }
+    }.bind(this);
+  }
 
-	setModes(modes: ClickModes) {
-		this.cgaa.diplomats.forEach((arr) =>
-			arr.forEach((diplomat) => {
-				modes.addTo(diplomat);
-			})
-		);
-		this.cgaa.input.spawners.forEach((spawner) => {
-			spawner.setModes(modes);
-		});
-	}
+  setModes(modes: ClickModes) {
+    this.cgaa.diplomats.forEach((arr) =>
+      arr.forEach((diplomat) => {
+        modes.addTo(diplomat);
+      })
+    );
+    this.cgaa.input.spawners.forEach((spawner) => {
+      spawner.setModes(modes);
+    });
+  }
 
-	update() {
-		this.cgaaMovement.update();
-	}
+  update() {
+    this.cgaaMovement.update();
+  }
 
-	create() {}
+  create() {}
 }

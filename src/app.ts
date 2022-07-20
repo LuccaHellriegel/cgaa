@@ -7,28 +7,28 @@ const devMode = false;
 const debugMode = devMode || false;
 
 function createGameConfig() {
-	let scene;
-	if (devMode) {
-		scene = [Develop];
-	} else {
-		scene = [Gameplay, HUD];
-	}
-	return {
-		type: Phaser.WEBGL,
-		canvas: document.getElementById("game") as HTMLCanvasElement,
-		width: 1280,
-		height: 720,
-		physics: {
-			default: "arcade",
-			arcade: {
-				debug: debugMode,
-			},
-		},
-		scale: {
-			autoCenter: Phaser.Scale.CENTER_BOTH,
-		},
-		scene,
-	};
+  let scene;
+  if (devMode) {
+    scene = [Develop];
+  } else {
+    scene = [Gameplay, HUD];
+  }
+  return {
+    type: Phaser.WEBGL,
+    canvas: document.getElementById("game") as HTMLCanvasElement,
+    width: 1280,
+    height: 720,
+    physics: {
+      default: "arcade",
+      arcade: {
+        debug: debugMode,
+      },
+    },
+    scale: {
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
+    scene,
+  };
 }
 
 new Phaser.Game(createGameConfig());
