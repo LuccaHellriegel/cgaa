@@ -3,7 +3,6 @@ import { Layouts } from "../data/data-layout";
 import { ClickModes } from "../engine/ui/modes/ClickModes";
 import { state } from "../state/state";
 import { physics } from "../physics/physics";
-import { Movement } from "../player/input/Movement";
 import { Textures } from "../textures/textures";
 import { CGAAData } from "../types";
 import { InteractionCircle } from "../units/InteractionCircle/InteractionCircle";
@@ -17,7 +16,7 @@ import { CGAA, GameStart } from "../start";
 export class Gameplay extends Phaser.Scene {
   cgaa: CGAA;
   cgaaInteraction: Function;
-  cgaaMovement: Movement;
+  cgaaMovement: () => void;
   cgaaStartWaves: Function;
 
   constructor() {
@@ -90,7 +89,7 @@ export class Gameplay extends Phaser.Scene {
   }
 
   update() {
-    this.cgaaMovement.update();
+    this.cgaaMovement();
   }
 
   create() {}

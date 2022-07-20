@@ -1,6 +1,6 @@
 import { EnvSetup } from "../../config/EnvSetup";
 import { TowerSetup } from "../../config/TowerSetup";
-import { RealDict } from "../../engine/Dict";
+import { RealDict } from "../../engine/RealDict";
 import { RelPos } from "../../engine/RelPos";
 import { Pools } from "../../pool/pools";
 import { TowerSpawnObj } from "../../spawn/TowerSpawnObj";
@@ -8,11 +8,9 @@ import { BuildManager } from "../../ui/build/BuildManager";
 import { SelectorRect } from "../../ui/SelectorRect";
 import { Enemies } from "../../units/Enemies";
 import { Player } from "../Player";
-import { MouseMovement } from "./MouseMovement";
-import { Movement } from "./Movement";
+import { setupPlayerMovement } from "./player-movement";
 import { Spawner } from "./Spawner";
 import { TowerModus } from "./TowerModus";
-import { WASD } from "./WASD";
 
 export function playerInput(
   scene,
@@ -54,15 +52,12 @@ export function playerInput(
   );
   const build = new BuildManager(scene, healerMode, shooterMode);
 
-  new MouseMovement(scene, player, selectorRect);
-
   scene.cameras.main.startFollow(player);
-  const movement = new Movement(new WASD(scene), player);
 
   return {
     spawners: [healerSpawner, shooterSpawner],
     selectorRect,
     build,
-    movement,
+    movement: setupPlayerMovement(scene, player, selectorRect),
   };
 }

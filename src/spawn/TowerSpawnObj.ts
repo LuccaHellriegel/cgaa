@@ -1,5 +1,5 @@
 import { EnemySpawnObj } from "./EnemySpawnObj";
-import { RealDict } from "../engine/Dict";
+import { RealDict } from "../engine/RealDict";
 import { EnvSetup } from "../config/EnvSetup";
 import { Tower } from "../towers/Tower";
 import { Enemies } from "../units/Enemies";

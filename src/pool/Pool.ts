@@ -1,4 +1,3 @@
-import { UnitDict } from "../engine/Dict";
 import { poolable } from "../engine/interfaces";
 import { Util } from "../engine/Util";
 import { Gameplay } from "../scenes/Gameplay";
@@ -6,14 +5,14 @@ import { Gameplay } from "../scenes/Gameplay";
 export abstract class Pool {
   activeIDArr: string[] = [];
   inactiveIDArr: string[] = [];
+  dict = new Map();
 
   constructor(
     protected scene: Gameplay,
     private numberOfUnits: number,
     protected unitGroup?:
       | Phaser.Physics.Arcade.StaticGroup
-      | Phaser.Physics.Arcade.Group,
-    protected unitDict = new UnitDict([])
+      | Phaser.Physics.Arcade.Group
   ) {}
 
   init() {
@@ -22,13 +21,12 @@ export abstract class Pool {
   }
 
   private listenForInactiveUnits() {
-    let keys = Object.keys(this.unitDict.dict);
-    for (const key of keys) {
+    this.dict.forEach((_, key) => {
       this.scene.events.on("inactive-" + key, (id) => {
         Util.removeEle(id, this.activeIDArr);
         this.inactiveIDArr.push(id);
       });
-    }
+    });
   }
 
   protected abstract createNewUnit(): poolable;
@@ -44,7 +42,7 @@ export abstract class Pool {
     for (let index = 0; index < this.numberOfUnits; index++) {
       const newUnit = this.createNewUnit();
       newUnit.poolDestroy();
-      this.unitDict.set(newUnit.id, newUnit);
+      this.dict.set(newUnit.id, newUnit);
       this.inactiveIDArr.push(newUnit.id);
     }
   }
@@ -55,10 +53,10 @@ export abstract class Pool {
     }
     const id = this.inactiveIDArr.pop();
     this.activeIDArr.push(id);
-    return this.unitDict.get(id);
+    return this.dict.get(id);
   }
 
   getActiveUnits() {
-    return this.activeIDArr.map((id) => this.unitDict.get(id));
+    return this.activeIDArr.map((id) => this.dict.get(id));
   }
 }

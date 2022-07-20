@@ -9,7 +9,7 @@ import {
   filterRelPosInsideArea,
 } from "../data/data-layout";
 import { arrayMiddle } from "../engine/array";
-import { RealDict } from "../engine/Dict";
+import { RealDict } from "../engine/RealDict";
 import { Camp } from "../types";
 import { CampPopulator } from "./CampPopulator";
 import { CampsState } from "./CampsState";

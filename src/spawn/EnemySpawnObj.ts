@@ -1,5 +1,5 @@
 import { EnvSetup } from "../config/EnvSetup";
-import { RealDict } from "../engine/Dict";
+import { RealDict } from "../engine/RealDict";
 import { Point } from "../engine/types-geom";
 import { Enemies } from "../units/Enemies";
 

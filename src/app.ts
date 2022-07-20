@@ -1,18 +1,12 @@
 import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
-import { Develop } from "./scenes/Develop";
 
 const devMode = false;
 const debugMode = devMode || false;
 
 function createGameConfig() {
-  let scene;
-  if (devMode) {
-    scene = [Develop];
-  } else {
-    scene = [Gameplay, HUD];
-  }
+  let scene = [Gameplay, HUD];
   return {
     type: Phaser.WEBGL,
     canvas: document.getElementById("game") as HTMLCanvasElement,

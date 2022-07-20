@@ -1,5 +1,5 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { texture } from "./phaser";
+import { texture } from "./generation";
 
 export function RectGenerator(
   scene: Gameplay,

@@ -9,7 +9,7 @@ import {
   emptyRectsDrawer,
   frameAdder,
   textureChain,
-} from "../engine/phaser";
+} from "../engine/generation";
 import { BossGenerator } from "../units/Boss/BossGenerator";
 import { CircleGenerator } from "../units/Circle/CircleGenerator";
 import { DiplomatSymbolGenerator } from "../units/DiplomatSymbolGenerator";

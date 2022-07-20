@@ -1,5 +1,5 @@
 import { Gameplay } from "../scenes/Gameplay";
-import { texture, circlesDrawer } from "../engine/phaser";
+import { texture, circlesDrawer } from "../engine/generation";
 
 export function DiplomatSymbolGenerator(scene: Gameplay, radius: number) {
   const name = "diplomat";

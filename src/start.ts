@@ -8,7 +8,7 @@ import { EnvSetup } from "./config/EnvSetup";
 import { EventSetup } from "./config/EventSetup";
 import { mapSpawnablePos } from "./data/data-layout";
 import { arrayMiddle } from "./engine/array";
-import { RealDict } from "./engine/Dict";
+import { RealDict } from "./engine/RealDict";
 import { Quest } from "./engine/quest/Quest";
 import { Quests } from "./engine/quest/Quests";
 import { RelPos } from "./engine/RelPos";
