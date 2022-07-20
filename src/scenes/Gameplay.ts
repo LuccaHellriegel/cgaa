@@ -16,8 +16,6 @@ import { CGAA, GameStart } from "../start";
 export class Gameplay extends Phaser.Scene {
   cgaa: CGAA;
   cgaaInteraction: Function;
-  cgaaMovement: () => void;
-  cgaaStartWaves: Function;
 
   constructor() {
     super("Gameplay");
@@ -53,8 +51,6 @@ export class Gameplay extends Phaser.Scene {
 
     const cgaa = GameStart(this, { ...gameState, physics: physicsObj });
     this.cgaa = cgaa;
-    this.cgaaMovement = cgaa.input.movement;
-    this.cgaaStartWaves = cgaa.startWaves;
 
     this.cgaaInteraction = function interactWithCircle(
       interactCircle: InteractionCircle
@@ -89,7 +85,7 @@ export class Gameplay extends Phaser.Scene {
   }
 
   update() {
-    this.cgaaMovement();
+    this.cgaa.input.move();
   }
 
   create() {}

@@ -58,6 +58,6 @@ export function playerInput(
     spawners: [healerSpawner, shooterSpawner],
     selectorRect,
     build,
-    movement: setupPlayerMovement(scene, player, selectorRect),
+    move: setupPlayerMovement(scene, player, selectorRect),
   };
 }

@@ -3,7 +3,7 @@ import { Gameplay } from "./Gameplay";
 import { PlayerSoulCounter } from "../ui/counters/PlayerSoulCounter";
 import { CampState } from "../ui/CampState";
 import { CounterRect } from "../ui/rect/CounterRect";
-import { TowerCounter } from "../ui/counters/TowerCounter";
+import { setupTowerCounter } from "../ui/counters/tower-counter";
 import { TowerSelectBar } from "../ui/select/bars/TowerSelectBar";
 import { BuildBar, PureCounter } from "../ui/build/BuildBar";
 import { SelectionManager } from "../ui/select/SelectionManager";
@@ -153,7 +153,7 @@ export class HUD extends Phaser.Scene {
     this.campStates = campStates;
 
     //Waves should start after CampState is initialized, otherwise first Wave is not recognized
-    this.ourGame.cgaaStartWaves();
+    this.ourGame.cgaa.startWaves();
 
     let selectionManager = new SelectionManager(
       this.ourGame.cgaa.input.selectorRect
@@ -240,8 +240,8 @@ export class HUD extends Phaser.Scene {
       healerCounter
     );
     buildBar.hide();
-    new TowerCounter("Shooter", this.ourGame, shooterCounter);
-    new TowerCounter("Healer", this.ourGame, healerCounter);
+    setupTowerCounter("Shooter", this.ourGame, shooterCounter);
+    setupTowerCounter("Healer", this.ourGame, healerCounter);
 
     let state = new UIState(
       this.ourGame.cgaa.input.build,

@@ -14,7 +14,6 @@ import { Quests } from "./engine/quest/Quests";
 import { RelPos } from "./engine/RelPos";
 import { Point } from "./engine/types-geom";
 import { Physics } from "./physics/physics";
-import { Movement } from "./player/input/Movement";
 import { playerInput } from "./player/input/playerInput";
 import { Spawner } from "./player/input/Spawner";
 import { Player } from "./player/Player";
@@ -166,7 +165,7 @@ export interface CGAA extends FinalState {
     spawners: Spawner[];
     selectorRect: SelectorRect;
     build: BuildManager;
-    movement: Movement;
+    move: () => void;
   };
   player: Player;
   friends: PlayerFriend[];
