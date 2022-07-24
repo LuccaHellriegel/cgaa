@@ -35,13 +35,14 @@ export class Popup {
         "If they die, all is lost!",
         "Defeat/Convince the Camps and kill the king!",
         "(Click to close)",
-      ]
-      // {
-      //   font: "25px Verdana ",
-      //   color: "#ffffff",
-      //   fontStyle: "bold",
-      // }
+      ],
+      {
+        font: "25px Verdana ",
+        color: "#ffffff",
+        fontStyle: "bold",
+      }
     );
+    textObj.setLineSpacing(0);
     new Popup(scene, x, y, width, height, textObj);
   }
 
