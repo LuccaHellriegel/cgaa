@@ -36,11 +36,12 @@ export class Popup {
         "Defeat/Convince the Camps and kill the king!",
         "(Click to close)",
       ],
-      {
-        font: "25px Verdana ",
-        fill: "#ffffff",
-        fontWeight: "bold",
-      }
+      { fontFamily: "Arial", color: "#00ff00" }
+      // {
+      //   font: "25px Verdana ",
+      //   fill: "#ffffff",
+      //   fontWeight: "bold",
+      // }
     );
     new Popup(scene, x, y, width, height, textObj);
   }
