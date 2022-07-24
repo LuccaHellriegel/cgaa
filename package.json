@@ -5,7 +5,7 @@
   "scripts": {
     "watch": "parcel watch game.html",
     "start": "parcel serve game.html",
-    "build": "parcel build game.html --public-url ./ --out-dir ./prod",
+    "build": "parcel build game.html --public-url ./ --dist-dir ./prod",
     "clean": "rm -v dist/*",
     "ts": "tsc",
     "test": "jest",
