@@ -1,5 +1,5 @@
 import { EventSetup } from "../../config/EventSetup";
-import { Quest } from "../../engine/quest/Quest";
+import { Quest } from "../../quests/Quest";
 import { IClickableElement } from "../../ui/modes/IClickableElement";
 import { setupMouseOver } from "../../ui/MouseOver";
 import { CircleUnit } from "../Circle/CircleUnit";

@@ -9,8 +9,8 @@ import { EventSetup } from "./config/EventSetup";
 import { mapSpawnablePos } from "./data/data-layout";
 import { arrayMiddle } from "./engine/array";
 import { RealDict } from "./engine/RealDict";
-import { Quest } from "./engine/quest/Quest";
-import { Quests } from "./engine/quest/Quests";
+import { Quest } from "./quests/Quest";
+import { Quests } from "./quests/Quests";
 import { RelPos } from "./engine/RelPos";
 import { Point } from "./engine/types-geom";
 import { Physics } from "./physics/physics";
@@ -32,6 +32,7 @@ import { PlayerFriend } from "./units/PlayerFriend";
 import { WaveController } from "./wave/WaveController";
 import { WaveOrder } from "./wave/WaveOrder";
 import { WavePopulator } from "./wave/WavePopulator";
+import { Scene } from "phaser";
 
 class WallSide extends Phaser.Physics.Arcade.Image {
   constructor(scene: Gameplay, x: number, y: number, width, height, addEnv) {
@@ -61,7 +62,7 @@ function addWallside(scene: Gameplay, addEnv, partPositions: Point[]) {
 }
 
 function initQuests(
-  scene,
+  scene: Scene,
   rivalries: Rivalries,
   quests: Quests,
   diplomats: InteractionCircle[][]
@@ -74,7 +75,6 @@ function initQuests(
       rivalries,
       quests,
       id,
-      scene.events,
       EventSetup.unitKilledEvent,
       rivalID,
       amountToKill,

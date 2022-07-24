@@ -2,7 +2,7 @@ import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { array2DApplyConcat, array2DApply } from "../engine/array";
 import { posAround2DPosition } from "../engine/navigation";
-import { randomizeArr } from "../engine/random";
+import { randomizeArr } from "../utils/random";
 import { RelPos } from "../engine/RelPos";
 import { WallSide, Exit, GameMap } from "../types";
 import { CampArea } from "./data";

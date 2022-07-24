@@ -2,7 +2,7 @@ import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 import { Data } from "../data/data";
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
-import { Quests } from "../engine/quest/Quests";
+import { Quests } from "../quests/Quests";
 import { RelPos } from "../engine/RelPos";
 import { PathAssigner } from "../path/PathAssigner";
 import { PathCalculator } from "../path/PathCalculator";

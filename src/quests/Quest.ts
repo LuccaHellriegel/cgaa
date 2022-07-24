@@ -1,14 +1,12 @@
-import { EventHandler } from "../../events/EventHandler";
-import { DecrementCountListener } from "../../events/DecrementCountListener";
-import { EventSetup } from "../../config/EventSetup";
+import { EventSetup } from "../config/EventSetup";
+import { Scene } from "phaser";
 
 const QUEST_INACTIVE = 0b00;
 const QUEST_ACTIVE = 0b001;
 const QUEST_SUCCESS = 0b010;
 const QUEST_FAILURE = 0b100;
 
-//@ts-ignore
-const maskCheck = (mask: number) => (state) => (state & mask) === mask;
+const maskCheck = (mask: number) => (state: number) => (state & mask) === mask;
 
 const inactive = maskCheck(QUEST_INACTIVE);
 const active = maskCheck(QUEST_ACTIVE);
@@ -52,11 +50,10 @@ export class Quest {
   }
 
   static killQuest(
-    scene,
+    scene: Scene,
     rivalries,
     quests,
     id,
-    handler: EventHandler,
     killEvent: string,
     killProperty: string,
     count: number,
@@ -73,16 +70,18 @@ export class Quest {
       }
     );
 
-    new DecrementCountListener(
-      handler,
-      killEvent,
-      count,
-      (killPayload) => killPayload === killProperty,
-      () => {
-        quest.setSuccess();
-        handler.emit(successEvent, successPayload);
+    const decrement = (payload?) => {
+      if (payload === killProperty) {
+        count--;
+        if (count == 0) {
+          scene.events.off(killEvent, decrement);
+          quest.setSuccess();
+          scene.events.emit(successEvent, successPayload);
+        }
       }
-    );
+    };
+    scene.events.on(killEvent, decrement);
+
     return quest;
   }
 }

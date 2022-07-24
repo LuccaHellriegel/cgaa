@@ -3,11 +3,6 @@ import { weaponHeights, weaponDists } from "./chain-weapon-data";
 import { CircleChain, unitArrowHeadConfig } from "./chain-weapon-base";
 import { UnitSetup } from "../../config/UnitSetup";
 import { listenToAnim } from "../../anim/anim-listen";
-import {
-  movePointPhaser,
-  rotatePointsPhaser,
-  movePointsPhaser,
-} from "../../engine/geometry";
 import { EnemySize } from "../../units/CircleFactory";
 
 // PHYSICS
@@ -118,13 +113,15 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
     this.circleFrame1.body.debugShowBody = false;
     this.circleFrame2.body.debugShowBody = false;
 
-    movePointPhaser(this.circleFrame2, diffX, diffY);
+    this.circleFrame2.setPosition(
+      this.circleFrame2.x + diffX,
+      this.circleFrame2.y + diffY
+    );
 
     // we align the second frame, then the offset between the frame geoms
-    movePointPhaser(
-      this.circleFrame1,
-      diffX + unitArrowHeadConfig[unitSize].width,
-      diffY
+    this.circleFrame1.setPosition(
+      this.circleFrame1.x + diffX + unitArrowHeadConfig[unitSize].width,
+      this.circleFrame1.y + diffY
     );
 
     this.setRotation = this.setRotationCombined;
@@ -192,23 +189,16 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
   setRotationCombined(radians) {
     // setRotation starts always at 0, rotate around starts at the last value
     // so we need to only rotate the difference
-    rotatePointsPhaser(
-      [this.circle, this.circleFrame1, this.circleFrame2],
-      radians - this.rotation,
-      this.x,
-      this.y
-    );
+    for (let point of [this.circle, this.circleFrame1, this.circleFrame2])
+      Phaser.Math.RotateAround(point, this.x, this.y, radians - this.rotation);
     return super.setRotation(radians);
   }
 
   setPhysicsPosition(x, y) {
     let diffX = x - this.x;
     let diffY = y - this.y;
-    movePointsPhaser(
-      [this.circle, this.circleFrame1, this.circleFrame2],
-      diffX,
-      diffY
-    );
+    for (let point of [this.circle, this.circleFrame1, this.circleFrame2])
+      point.setPosition(point.x + diffX, point.y + diffY);
   }
 
   setPositionCombined(x, y, z, w) {

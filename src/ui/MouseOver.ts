@@ -1,10 +1,8 @@
-import { EventHandler } from "../events/EventHandler";
-
 export const setupMouseOver = (
   boolObj: {
     mouseOver: boolean;
   },
-  eventObj: EventHandler
+  eventObj: Phaser.Events.EventEmitter
 ) => {
   eventObj.on("pointerover", () => {
     boolObj.mouseOver = true;
