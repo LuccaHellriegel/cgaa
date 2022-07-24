@@ -333,7 +333,7 @@ export function randomMapCampIDsToAreas(
     result.push({
       areaInLayout: areas.pop(),
       id: campID,
-      mask: CampSetup.campBitMasks[CampSetup.campIDs.indexOf(campID)],
+      campMask: CampSetup.campBitMasks[CampSetup.campIDs.indexOf(campID)],
     });
   }
 

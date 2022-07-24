@@ -7,6 +7,7 @@ export class BitwiseCooperation {
     private ids: string[],
     private activateCallback: (id: string) => void
   ) {
+    window.BitwiseCooperation = this;
     this.bitArr = new Uint8Array(ids.length);
     for (let index = 0; index < ids.length; index++) {
       // pow(2,index)

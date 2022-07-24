@@ -23,14 +23,14 @@ type Exit = {
 
 export type CampArea = {
   id: string;
-  mask: number;
+  campMask: number;
   areaInLayout: RelPos;
 };
 
 function mapExitsToCamps(exits: Exit[], campAreas: CampArea[]) {
   const result: {
     id: string;
-    mask: number;
+    campMask: number;
     areaInLayout: RelPos;
     exitPositionsInMap: { positionsInMap: RelPos[] }[];
   }[] = [];
@@ -53,7 +53,7 @@ function mapBuildingPositionsToCamps(
   buildingPositions: BuildingPosition[],
   campObjs: {
     id: string;
-    mask: number;
+    campMask: number;
     areaInLayout: RelPos;
     exitPositionsInMap: { positionsInMap: RelPos[] }[];
   }[]

@@ -52,7 +52,9 @@ export class CircleFactory {
     private addUnit: Function,
     private enemies: Enemies,
     private weaponPools: { [key in EnemySize]: ChainWeapons }
-  ) {}
+  ) {
+    console.log(campID, campMask);
+  }
 
   private createWeapon(x: number, y: number, size: EnemySize) {
     return this.weaponPools[size].placeWeapon(

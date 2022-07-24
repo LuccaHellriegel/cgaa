@@ -19,7 +19,7 @@ export type CGAAData = {
 
 export type Camp = {
   id: string;
-  mask: number;
+  campMask: number;
   areaInLayout: RelPos;
   areaSize: number;
   areaMapMiddle: RelPos;

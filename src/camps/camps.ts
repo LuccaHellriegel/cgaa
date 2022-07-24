@@ -41,7 +41,7 @@ function createBuildings(
       addBuildingToPhysics,
       spawnUnitStrings.pop(),
       camp.id as CampID,
-      camp.mask
+      camp.campMask
     );
 
     result.push(building);
@@ -82,7 +82,7 @@ export function campsStaticUnits(
         new CircleFactory(
           scene,
           camp.id as CampID,
-          camp.mask,
+          camp.campMask,
           physics.addUnit,
           enemies,
           weaponPools[camp.id]
@@ -159,7 +159,7 @@ export function populateCamps(
           new CircleFactory(
             scene,
             camp.id,
-            camp.mask,
+            camp.campMask,
             state.physics.addUnit,
             enemies,
             pools.weapons[camp.id]

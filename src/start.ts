@@ -130,7 +130,7 @@ function waveProducer(
               new CircleFactory(
                 scene,
                 building.campID,
-                building.mask,
+                building.campMask,
                 state.physics.addUnit,
                 enemies,
                 pools.weapons[building.campID]

@@ -39,7 +39,6 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
   }
 
   disable() {
-    console.log("Disabling DangerousCircle: " + this.id);
     this.scene.events.emit("inactive-" + this.id, this.id);
     this.disableBody(true, true);
     this.setPosition(-1000, -1000);
