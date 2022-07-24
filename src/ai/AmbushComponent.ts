@@ -1,7 +1,7 @@
 import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
 import { AIComponent, CircleControl } from "./CircleControl";
 import { ObstacleComponent } from "./ObstacleComponent";
-import { Point } from "../engine/types-geom";
+import { Point } from "../engine/Point";
 
 export class AmbushComponent implements AIComponent {
   private nextPos: Point;

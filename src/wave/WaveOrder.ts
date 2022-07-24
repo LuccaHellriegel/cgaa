@@ -1,7 +1,8 @@
 import { CampsState } from "../camps/CampsState";
-import { Util } from "../engine/Util";
-import { randomizeArr } from "../utils/random";
+
+import { randomizeArr } from "../utils/randomizeArr";
 import { CampID, CampSetup } from "../config/CampSetup";
+import { removeEle } from "../utils/removeEle";
 
 export class WaveOrder {
   order: CampID[];
@@ -27,7 +28,7 @@ export class WaveOrder {
     let id = this.order[this.index];
 
     while (!this.shouldHaveWave(id)) {
-      Util.removeEle(id, this.order);
+      removeEle(id, this.order);
       if (this.order.length === 0) return false;
       if (this.index > this.order.length - 1) this.index = 0;
       id = this.order[this.index];

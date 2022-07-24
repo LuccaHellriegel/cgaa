@@ -1,6 +1,7 @@
 import { poolable } from "../engine/interfaces";
-import { Util } from "../engine/Util";
+
 import { Gameplay } from "../scenes/Gameplay";
+import { removeEle } from "../utils/removeEle";
 
 export abstract class Pool {
   activeIDArr: string[] = [];
@@ -23,7 +24,7 @@ export abstract class Pool {
   private listenForInactiveUnits() {
     this.dict.forEach((_, key) => {
       this.scene.events.on("inactive-" + key, (id) => {
-        Util.removeEle(id, this.activeIDArr);
+        removeEle(id, this.activeIDArr);
         this.inactiveIDArr.push(id);
       });
     });

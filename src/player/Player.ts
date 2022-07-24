@@ -3,11 +3,12 @@ import { EventSetup } from "../config/EventSetup";
 import { UnitSetup } from "../config/UnitSetup";
 import { listenToAnim } from "../anim/anim-listen";
 import { unitAnims, initUnitAnims } from "../anim/anim-play";
-import { addID } from "../engine/id";
+
 import { healable } from "../engine/interfaces";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { nanoid } from "nanoid";
 
 const playerTextureName = "blueNormalCircle";
 
@@ -38,7 +39,7 @@ export class Player
   ) {
     super(scene, x, y, playerTextureName);
 
-    addID(this);
+    this.id = nanoid();
     scene.add.existing(this);
     scene.physics.add.existing(this);
     initUnitAnims(this);

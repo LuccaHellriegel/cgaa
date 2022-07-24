@@ -1,6 +1,6 @@
 import { EnvSetup } from "../config/EnvSetup";
 import { RealDict } from "../engine/RealDict";
-import { Point } from "../engine/types-geom";
+import { Point } from "../engine/Point";
 import { Enemies } from "../units/Enemies";
 
 export class EnemySpawnObj {

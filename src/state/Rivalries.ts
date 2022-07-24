@@ -1,4 +1,4 @@
-import { randomizeArr } from "../utils/random";
+import { randomizeArr } from "../utils/randomizeArr";
 
 export class Rivalries extends Map<string, string> {
   constructor(ids: string[]) {

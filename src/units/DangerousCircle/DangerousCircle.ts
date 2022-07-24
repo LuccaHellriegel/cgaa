@@ -1,6 +1,6 @@
 import { unitAnims } from "../../anim/anim-play";
 import { poolable } from "../../engine/interfaces";
-import { Point } from "../../engine/types-geom";
+import { Point } from "../../engine/Point";
 import { CircleControl } from "../../ai/CircleControl";
 import { HealthBar } from "../../healthbar/HealthBar";
 import { Gameplay } from "../../scenes/Gameplay";

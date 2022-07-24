@@ -12,7 +12,7 @@ import { RealDict } from "./engine/RealDict";
 import { Quest } from "./quests/Quest";
 import { Quests } from "./quests/Quests";
 import { RelPos } from "./engine/RelPos";
-import { Point } from "./engine/types-geom";
+import { Point } from "./engine/Point";
 import { Physics } from "./physics/physics";
 import { playerInput } from "./player/input/playerInput";
 import { Spawner } from "./player/input/Spawner";

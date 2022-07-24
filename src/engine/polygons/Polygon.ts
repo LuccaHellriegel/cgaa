@@ -1,4 +1,4 @@
-import { Point } from "../types-geom";
+import { Point } from "../Point";
 
 export class Polygon {
   x: number;

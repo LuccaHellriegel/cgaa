@@ -1,7 +1,7 @@
 import EasyStar from "easystarjs";
 import { EnvSetup } from "../config/EnvSetup";
 import { RelPos } from "../engine/RelPos";
-import { Point } from "../engine/types-geom";
+import { Point } from "../engine/Point";
 import { GameMap } from "../types";
 
 export class PathCalculator {

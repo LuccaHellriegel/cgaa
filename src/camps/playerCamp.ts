@@ -1,7 +1,7 @@
 import { CircleFactory, EnemySize } from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";
 import { PlayerFriend } from "../units/PlayerFriend";
-import { Point } from "../engine/types-geom";
+import { Point } from "../engine/Point";
 import { GuardComponent } from "../ai/GuardComponent";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";

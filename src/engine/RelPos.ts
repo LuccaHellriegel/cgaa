@@ -1,6 +1,6 @@
 import { EnvSetup } from "../config/EnvSetup";
 import Grid from "./Grid";
-import { Point } from "./types-geom";
+import { Point } from "./Point";
 
 export class RelPos {
   constructor(public row: number, public column: number) {}

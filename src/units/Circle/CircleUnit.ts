@@ -1,12 +1,13 @@
 import { CampID } from "../../config/CampSetup";
 import { listenToAnim } from "../../anim/anim-listen";
 import { initUnitAnims } from "../../anim/anim-play";
-import { addID } from "../../engine/id";
+
 import { damageable } from "../../engine/interfaces";
 import { HealthBar } from "../../healthbar/HealthBar";
 import { Gameplay } from "../../scenes/Gameplay";
 import { ChainWeapon } from "../../weapons/ChainWeapon/ChainWeapon";
 import { EnemySize } from "../CircleFactory";
+import { nanoid } from "nanoid";
 
 export class CircleUnit
   extends Phaser.Physics.Arcade.Sprite
@@ -32,7 +33,7 @@ export class CircleUnit
     public healthbar: HealthBar
   ) {
     super(scene, x, y, texture);
-    addID(this);
+    this.id = nanoid();
     scene.add.existing(this);
     scene.physics.add.existing(this);
     initUnitAnims(this);

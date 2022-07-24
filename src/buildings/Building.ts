@@ -1,10 +1,11 @@
 import { damageable } from "../engine/interfaces";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
-import { addID } from "../engine/id";
+
 import { BuildingSetup } from "../config/BuildingSetup";
 import { CampID } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
+import { nanoid } from "nanoid";
 
 export class Building
   extends Phaser.Physics.Arcade.Image
@@ -28,7 +29,7 @@ export class Building
     addBuildingToPhysics(this);
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    addID(this);
+    this.id = nanoid();
 
     this.setImmovable(true);
 

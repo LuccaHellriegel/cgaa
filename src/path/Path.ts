@@ -1,5 +1,5 @@
 import { RelPos } from "../engine/RelPos";
-import { Point } from "../engine/types-geom";
+import { Point } from "../engine/Point";
 
 export class Path {
   private realPathArr: Point[];

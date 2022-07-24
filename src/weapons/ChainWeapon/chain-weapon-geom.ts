@@ -1,4 +1,4 @@
-import { Point } from "../../engine/types-geom";
+import { Point } from "../../engine/Point";
 import { EnemySize } from "../../units/CircleFactory";
 import {
   cirlceSizeNames,
