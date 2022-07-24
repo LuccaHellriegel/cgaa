@@ -4,7 +4,7 @@ import { Towers } from "../../towers/Tower";
 import { SelectorRect } from "../../ui/SelectorRect";
 import { EventSetup } from "../../config/EventSetup";
 import { TowerSetup } from "../../config/TowerSetup";
-import { ClickModes } from "../../engine/ui/modes/ClickModes";
+import { ClickModes } from "../../ui/modes/ClickModes";
 import Grid from "../../engine/Grid";
 
 export class Spawner {

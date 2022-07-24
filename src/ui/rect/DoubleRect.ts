@@ -1,7 +1,7 @@
 import { SelectableGUIElement } from "../select/bars/SelectBar";
 import { RectPolygon } from "../../engine/polygons/RectPolygon";
 import { HUD } from "../../scenes/HUD";
-import { setupMouseOver } from "../../engine/ui/MouseOver";
+import { setupMouseOver } from "../MouseOver";
 
 class DoubleRect implements SelectableGUIElement {
   polygon: RectPolygon;

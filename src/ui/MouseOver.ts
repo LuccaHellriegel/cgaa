@@ -1,4 +1,4 @@
-import { EventHandler } from "../../events/EventHandler";
+import { EventHandler } from "../events/EventHandler";
 
 export const setupMouseOver = (
   boolObj: {

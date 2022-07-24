@@ -1,7 +1,7 @@
 import { EventSetup } from "../../config/EventSetup";
 import { Quest } from "../../engine/quest/Quest";
-import { IClickableElement } from "../../engine/ui/modes/IClickableElement";
-import { setupMouseOver } from "../../engine/ui/MouseOver";
+import { IClickableElement } from "../../ui/modes/IClickableElement";
+import { setupMouseOver } from "../../ui/MouseOver";
 import { CircleUnit } from "../Circle/CircleUnit";
 
 export class InteractionCircle extends CircleUnit implements IClickableElement {

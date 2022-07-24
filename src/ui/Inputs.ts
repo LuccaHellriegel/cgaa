@@ -4,8 +4,8 @@ import { TowerSelectBar } from "./select/bars/TowerSelectBar";
 import { SelectorRect } from "./SelectorRect";
 import { UIState } from "./UIState";
 import { SelectionManager } from "./select/SelectionManager";
-import { IMode, IModes } from "../engine/ui/modes/IMode";
-import { ClickModes } from "../engine/ui/modes/ClickModes";
+import { IMode, IModes } from "./modes/IMode";
+import { ClickModes } from "./modes/ClickModes";
 export class Inputs {
   static do(
     scene: Gameplay,
