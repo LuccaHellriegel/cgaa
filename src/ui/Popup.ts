@@ -29,7 +29,13 @@ export class Popup {
     let textObj = scene.add.text(
       x - 230,
       y - 70,
-      "Help!\nYour friends are getting ambushed.\nIf they die, all is lost!\nDefeat/Convince the Camps and kill the king!\n(Click to close)",
+      [
+        "Help!",
+        "Your friends are getting ambushed.",
+        "If they die, all is lost!",
+        "Defeat/Convince the Camps and kill the king!",
+        "(Click to close)",
+      ],
       {
         font: "25px Verdana ",
         fill: "#ffffff",
@@ -45,7 +51,14 @@ export class Popup {
     let textObj = scene.add.text(
       x - 140,
       y - 85,
-      "Congratulations!\nYou have defeated the king.\nYou saved your friends.\nNow you are:\nThe King Of The Arena\n(Reload site to restart)",
+      [
+        "Congratulations!",
+        "You have defeated the king.",
+        "You saved your friends.",
+        "Now you are:",
+        "The King Of The Arena",
+        "(Reload site to restart)",
+      ],
       {
         font: "25px Verdana ",
         fill: "#ffffff",
@@ -61,7 +74,7 @@ export class Popup {
     let textObj = scene.add.text(
       x - 115,
       y - 45,
-      "Oh no!\nGame Over Comrades.\n(Reload site to restart)",
+      ["Oh no!", "Game Over Comrades.", "(Reload site to restart)"],
       {
         font: "25px Verdana ",
         fill: "#ffffff",
@@ -77,7 +90,7 @@ export class Popup {
     let textObj = scene.add.text(
       x - 175,
       y - 32,
-      "The doors to the king have opened.\n(Click to close)",
+      ["The doors to the king have opened.", "(Click to close)"],
       {
         font: "25px Verdana ",
         fill: "#ffffff",
