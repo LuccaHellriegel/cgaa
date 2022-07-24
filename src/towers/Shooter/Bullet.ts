@@ -3,28 +3,6 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { TowerSetup } from "../../config/TowerSetup";
 import { UnitSetup } from "../../config/UnitSetup";
 
-export class Bullets extends Phaser.Physics.Arcade.Group {
-  constructor(scene, private addBulletToPhysics) {
-    super(scene.physics.world, scene);
-
-    this.maxSize = TowerSetup.maxShooters * TowerSetup.maxBullets;
-
-    this.createMultiple({
-      frameQuantity: TowerSetup.maxShooters * 2,
-      key: "bullet",
-      active: false,
-      visible: false,
-      classType: Bullet,
-    });
-  }
-
-  fireBullet(x, y, goalX, goalY, shooter: Shooter) {
-    let bullet = this.getFirstDead(true);
-    this.addBulletToPhysics(bullet);
-    bullet.shoot(x, y, goalX, goalY, shooter);
-  }
-}
-
 export class Bullet extends Phaser.Physics.Arcade.Sprite {
   goalX: number;
   goalY: number;

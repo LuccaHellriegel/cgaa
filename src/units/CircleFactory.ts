@@ -1,5 +1,4 @@
 import { DangerousCircle } from "./DangerousCircle/DangerousCircle";
-import { PlayerFriend } from "./PlayerFriend";
 import { InteractionCircle } from "./InteractionCircle/InteractionCircle";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
@@ -10,7 +9,7 @@ import { King } from "./King/King";
 import { UnitSetup } from "../config/UnitSetup";
 import { CampID } from "../config/CampSetup";
 
-const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
+export const veloConfigs = { Small: 185, Normal: 160, Big: 150 };
 
 const healthBarDangerousCircleFactoryConfigs = {
   Small: {
@@ -56,14 +55,19 @@ export class CircleFactory {
     console.log(campID, campMask);
   }
 
-  private createWeapon(x: number, y: number, size: EnemySize) {
-    return this.weaponPools[size].placeWeapon(
+  public static createWeapon(
+    weaponPools: { [key in EnemySize]: ChainWeapons },
+    x: number,
+    y: number,
+    size: EnemySize
+  ) {
+    return weaponPools[size].placeWeapon(
       x,
       y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2
     );
   }
 
-  private createHealthBar(scene, x, y, size) {
+  public static createHealthBar(scene, x, y, size) {
     return new HealthBar(x, y, {
       ...healthBarDangerousCircleFactoryConfigs[size],
       scene,
@@ -80,7 +84,12 @@ export class CircleFactory {
 
   createKing() {
     let size: EnemySize = "Big";
-    let weapon = this.createWeapon(this.x, this.y, size);
+    let weapon = CircleFactory.createWeapon(
+      this.weaponPools,
+      this.x,
+      this.y,
+      size
+    );
 
     let circle = new King(
       this.scene,
@@ -91,7 +100,7 @@ export class CircleFactory {
       this.campMask,
       weapon,
       size as EnemySize,
-      this.createHealthBar(this.scene, this.x, this.y, size),
+      CircleFactory.createHealthBar(this.scene, this.x, this.y, size),
       veloConfigs[size]
     );
     this.afterCreate(circle);
@@ -101,7 +110,12 @@ export class CircleFactory {
 
   createBoss() {
     let size: EnemySize = "Big";
-    let weapon = this.createWeapon(this.x, this.y, size);
+    let weapon = CircleFactory.createWeapon(
+      this.weaponPools,
+      this.x,
+      this.y,
+      size
+    );
 
     let circle = new DangerousCircle(
       this.scene,
@@ -112,7 +126,7 @@ export class CircleFactory {
       this.campMask,
       weapon,
       size as EnemySize,
-      this.createHealthBar(this.scene, this.x, this.y, size),
+      CircleFactory.createHealthBar(this.scene, this.x, this.y, size),
       veloConfigs[size]
     );
     this.afterCreate(circle);
@@ -121,7 +135,12 @@ export class CircleFactory {
   }
 
   createEnemy(size: EnemySize) {
-    let weapon = this.createWeapon(this.x, this.y, size);
+    let weapon = CircleFactory.createWeapon(
+      this.weaponPools,
+      this.x,
+      this.y,
+      size
+    );
     let circle = new DangerousCircle(
       this.scene,
       this.x,
@@ -131,27 +150,7 @@ export class CircleFactory {
       this.campMask,
       weapon,
       size as EnemySize,
-      this.createHealthBar(this.scene, this.x, this.y, size),
-      veloConfigs[size]
-    );
-    this.afterCreate(circle);
-
-    return circle;
-  }
-
-  createFriend(size: EnemySize) {
-    let weapon = this.createWeapon(this.x, this.y, size);
-
-    let circle = new PlayerFriend(
-      this.scene,
-      this.x,
-      this.y,
-      this.campID + size + "Circle",
-      this.campID as CampID,
-      this.campMask,
-      weapon,
-      size as EnemySize,
-      this.createHealthBar(this.scene, this.x, this.y, size),
+      CircleFactory.createHealthBar(this.scene, this.x, this.y, size),
       veloConfigs[size]
     );
     this.afterCreate(circle);
@@ -171,9 +170,9 @@ export class CircleFactory {
       this.campID + "InteractionCircle",
       this.campID as CampID,
       this.campMask,
-      this.createWeapon(x, y, size),
+      CircleFactory.createWeapon(this.weaponPools, x, y, size),
       size as EnemySize,
-      this.createHealthBar(this.scene, x, y, size)
+      CircleFactory.createHealthBar(this.scene, x, y, size)
     );
     this.afterCreate(circle);
 

@@ -64,7 +64,6 @@ export class WavePopulator {
                 enemy,
                 RelPos.fromPoint({ x: spawnPosition[0], y: spawnPosition[1] })
               )
-              .getRealPath()
               .reverse(),
             enemy,
             enemy.stateHandler,

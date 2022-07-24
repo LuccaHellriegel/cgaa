@@ -1,5 +1,5 @@
 import { BuildingGenerator } from "../buildings/BuildingGenerator";
-import { BlockadeGenerator } from "../camps/boss/BlockadeGenerator";
+import { generateBlockadeTextures } from "../camps/boss/generateBlockadeTextures";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { UnitSetup } from "../config/UnitSetup";
@@ -10,20 +10,21 @@ import {
   frameAdder,
   textureChain,
 } from "../engine/generation";
+import { Gameplay } from "../scenes/Gameplay";
 import { BossGenerator } from "../units/Boss/BossGenerator";
 import { CircleGenerator } from "../units/Circle/CircleGenerator";
 import { DiplomatSymbolGenerator } from "../units/DiplomatSymbolGenerator";
 import { InteractionCircleGenerator } from "../units/InteractionCircle/InteractionCircleGenerator";
 import { KingGenerator } from "../units/King/KingGenerator";
 
-function generatePlayerUnits(scene) {
+function generatePlayerUnits(scene: Gameplay) {
   new CircleGenerator(
     0x6495ed,
     scene,
     "blueCircle",
     UnitSetup.normalCircleRadius
   );
-  new BlockadeGenerator(scene);
+  generateBlockadeTextures(scene);
 
   const gridRectMeasurements = {
     width: EnvSetup.gridPartSize,

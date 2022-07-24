@@ -15,9 +15,6 @@ export class PlayerSoulCounter {
       .graphics({ fillStyle: { color: 0x228b22 } })
       .fillPoints(crossPoints);
 
-    let increaseEvent = "souls-gained";
-    let decreaseEvent = "souls-spent";
-
     this.startValue = 100;
     //this.startValue = 1000000;
 
@@ -33,7 +30,7 @@ export class PlayerSoulCounter {
 
     this.reset();
 
-    this.setupEventListeners(sceneToListen, increaseEvent, decreaseEvent);
+    this.setupEventListeners(sceneToListen);
   }
 
   reset() {
@@ -41,9 +38,9 @@ export class PlayerSoulCounter {
     this.playerCounterText.setText(this.value.toString());
   }
 
-  setupEventListeners(sceneToListen: Gameplay, increaseEvent, decreaseEvent) {
+  setupEventListeners(sceneToListen: Gameplay) {
     sceneToListen.events.on(
-      increaseEvent,
+      EventSetup.soulsGained,
       function (amount) {
         this.value += amount;
         this.playerCounterText.setText(this.value.toString());
@@ -57,7 +54,7 @@ export class PlayerSoulCounter {
       this
     );
     sceneToListen.events.on(
-      decreaseEvent,
+      EventSetup.soulsSpent,
       function (amount) {
         if (this.value - amount <= 0) {
           this.value = 0;

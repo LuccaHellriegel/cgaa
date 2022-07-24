@@ -1,34 +1,6 @@
-import { Bullets } from "./Bullet";
-import { Tower, Towers } from "../Tower";
+import { Bullets } from "./Bullets";
+import { Tower } from "../Tower";
 import { Gameplay } from "../../scenes/Gameplay";
-import { TowerSetup } from "../../config/TowerSetup";
-
-export class Shooters extends Towers {
-  constructor(scene, addTowerToPhysics, private bullets: Bullets) {
-    super(scene, addTowerToPhysics);
-
-    this.maxSize = TowerSetup.maxShooters;
-
-    this.createMultiple({
-      frameQuantity: TowerSetup.maxShooters / 2,
-      key: "shooter",
-      active: false,
-      visible: false,
-      classType: Shooter,
-    });
-
-    this.getChildren().forEach((child) =>
-      (child as Phaser.Physics.Arcade.Sprite).disableBody()
-    );
-  }
-
-  placeTower(x, y) {
-    let shooter = this.getFirstDead(true);
-    this.addTowerToPhysics(shooter);
-    shooter.place(x, y, this.bullets);
-    return shooter;
-  }
-}
 
 export class Shooter extends Tower {
   canFire = true;

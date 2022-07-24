@@ -6,7 +6,7 @@ import { physics } from "../physics/physics";
 import { Textures } from "../textures/textures";
 import { CGAAData } from "../types";
 import { InteractionCircle } from "../units/InteractionCircle/InteractionCircle";
-import { createShooterAnims } from "../towers/Shooter/shooter-anim";
+import { createShooterAnims } from "../towers/Shooter/createShooterAnims";
 import { createCircleAnims } from "../units/circle-anim";
 import { createChainWeaponAnims } from "../weapons/ChainWeapon/chain-weapon-anim";
 import { CampSetup } from "../config/CampSetup";

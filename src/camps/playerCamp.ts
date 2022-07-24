@@ -1,4 +1,4 @@
-import { CircleFactory, EnemySize } from "../units/CircleFactory";
+import { CircleFactory, EnemySize, veloConfigs } from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";
 import { PlayerFriend } from "../units/PlayerFriend";
 import { Point } from "../engine/Point";
@@ -7,11 +7,12 @@ import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { Pools } from "../pool/pools";
 import { FinalState } from "../start";
+import { Scene } from "phaser";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
 export function playerCamp(
-  scene,
+  scene: Scene,
   realMiddlePos: Point,
   pools: Pools,
   state: FinalState,
@@ -22,14 +23,6 @@ export function playerCamp(
     Small: null,
     Normal: null,
   };
-  const friendFactory = new CircleFactory(
-    scene,
-    CampSetup.playerCampID,
-    CampSetup.playerCampMask,
-    state.physics.addUnit,
-    enemies,
-    friendPools
-  );
 
   const friends: PlayerFriend[] = [];
   const baseConfig = {
@@ -83,8 +76,32 @@ export function playerCamp(
     },
   ];
 
+  const createFriend = (size: EnemySize) => {
+    let weapon = CircleFactory.createWeapon(friendPools, 0, 0, size);
+
+    let circle = new PlayerFriend(
+      scene,
+      0,
+      0,
+      CampSetup.playerCampID + size + "Circle",
+      CampSetup.playerCampID,
+      CampSetup.playerCampMask,
+      weapon,
+      size as EnemySize,
+      CircleFactory.createHealthBar(scene, 0, 0, size),
+      veloConfigs[size]
+    );
+    state.physics.addUnit(circle);
+
+    circle.weapon.setOwner(circle);
+    scene.children.bringToTop(circle.healthbar.bar);
+    enemies.addEnemy(circle);
+
+    return circle;
+  };
+
   friendConfigs.forEach((config) => {
-    let circle = friendFactory.createFriend(config.size as EnemySize);
+    let circle = createFriend(config.size as EnemySize);
     circle.stateHandler.setComponents([
       new GuardComponent(circle, circle.stateHandler),
     ]);

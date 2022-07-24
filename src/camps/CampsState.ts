@@ -3,22 +3,27 @@ import { Building } from "../buildings/Building";
 import { CampID } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 
+const initCampState = (buildings: Building[][]) => {
+  const stateDict = {};
+  buildings.forEach((buildingArr) => {
+    stateDict[buildingArr[0].campID] = {};
+    stateDict[buildingArr[0].campID].active = true;
+    stateDict[buildingArr[0].campID].interactionCircleAlive = true;
+    stateDict[buildingArr[0].campID].hostile = true;
+    stateDict[buildingArr[0].campID].activeBuildings = buildingArr.length;
+    stateDict[buildingArr[0].campID].buildings = {};
+    buildingArr.forEach((building) => {
+      stateDict[buildingArr[0].campID].buildings[building.id] = true;
+    });
+  });
+  return stateDict;
+};
+
 export class CampsState {
   stateDict = {};
 
   constructor(private scene: Gameplay, buildings: Building[][]) {
-    buildings.forEach((buildingArr) => {
-      this.stateDict[buildingArr[0].campID] = {};
-      this.stateDict[buildingArr[0].campID].active = true;
-      this.stateDict[buildingArr[0].campID].interactionCircleAlive = true;
-      this.stateDict[buildingArr[0].campID].hostile = true;
-      this.stateDict[buildingArr[0].campID].activeBuildings =
-        buildingArr.length;
-      this.stateDict[buildingArr[0].campID].buildings = {};
-      buildingArr.forEach((building) => {
-        this.stateDict[buildingArr[0].campID].buildings[building.id] = true;
-      });
-    });
+    this.stateDict = initCampState(buildings);
 
     scene.events.on(
       EventSetup.buildingDestroyEvent,

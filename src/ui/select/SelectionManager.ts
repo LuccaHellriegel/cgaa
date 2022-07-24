@@ -2,7 +2,7 @@ import { SelectorRect } from "../SelectorRect";
 import { TowerSelectBar } from "./bars/TowerSelectBar";
 import { InteractionSelectBar } from "./bars/InteractionSelectBar";
 import { Shooter } from "../../towers/Shooter/Shooter";
-import { Healer } from "../../towers/Healer/Healer";
+import { Healer } from "../../towers/Healer";
 export class SelectionManager {
   selectedUnit;
   healerSelectBar: TowerSelectBar;

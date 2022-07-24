@@ -1,6 +1,7 @@
 import { CampID } from "../config/CampSetup";
 import { CampMap } from "../data/data";
 import { RelPos } from "../engine/RelPos";
+import { Path } from "./Path";
 import { PathDict } from "./PathFactory";
 
 export class Paths {
@@ -19,7 +20,7 @@ export class Paths {
     }
   }
 
-  getPathToCamp(start: RelPos, campID: CampID) {
+  getPathToCamp(start: RelPos, campID: CampID): Path {
     return this.getPath(start, this.campMap.get(campID).areaMapMiddle);
   }
 }

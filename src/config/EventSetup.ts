@@ -17,12 +17,15 @@ export class EventSetup {
     Small: 40,
   };
 
+  static soulsGained = "souls-gained";
+  static soulsSpent = "souls-spent";
+
   static gainSouls(scene: Phaser.Scene, type) {
-    scene.events.emit("souls-gained", this.soulsDict[type]);
+    scene.events.emit(EventSetup.soulsGained, this.soulsDict[type]);
   }
 
   static spendSouls(scene: Phaser.Scene, amount) {
-    scene.events.emit("souls-spent", amount);
+    scene.events.emit(EventSetup.soulsSpent, amount);
   }
 
   static interactionCircleDestroyEvent = "interactionCircle-destroyed";
