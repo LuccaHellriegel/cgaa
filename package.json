@@ -5,8 +5,7 @@
   "scripts": {
     "watch": "parcel watch game.html",
     "start": "parcel serve game.html",
-    "build": "parcel build game.html --public-url ./ --dist-dir ./prod",
-    "clean": "rm -v dist/*",
+    "build": "rm -rf ./prod && parcel build game.html --public-url ./ --dist-dir ./prod",
     "ts": "tsc",
     "test": "jest",
     "graph": "npx depcruise --exclude '^(node_modules)' --output-type dot src/app.ts | dot -T svg > mingraph.svg",
