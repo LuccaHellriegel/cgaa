@@ -38,7 +38,7 @@ export class InteractionSelectBar extends SelectBar {
     let unitRect = new UnitCompositeRect(sceneToUse, "diplomat", x + 40, y + 2);
     (unitRect.rects[1] as TextGUIElement).textObj.setStyle({
       font: "18px Verdana ",
-      fill: "#000000",
+      color: "#000000",
       fontWeight: "bold",
     });
     (unitRect.rects[1] as TextGUIElement).textObj.setPosition(

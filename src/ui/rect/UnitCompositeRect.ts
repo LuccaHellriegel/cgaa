@@ -27,7 +27,7 @@ export class UnitCompositeRect implements SelectableGUIElement {
       y - 30,
       {
         font: "20px Verdana ",
-        fill: "#000000",
+        color: "#000000",
         fontWeight: "bold",
       }
     );

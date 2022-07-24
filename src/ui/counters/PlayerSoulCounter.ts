@@ -9,7 +9,7 @@ export class PlayerSoulCounter {
   startValue: number;
   playerCounterText: Phaser.GameObjects.Text;
 
-  constructor(sceneToUse: HUD, private sceneToListen: Gameplay, x, y) {
+  constructor(sceneToUse: HUD, sceneToListen: Gameplay, x, y) {
     const crossPoints = SymmetricCrossPolygon.points(x - 100, y, 40, 15);
     sceneToUse.add
       .graphics({ fillStyle: { color: 0x228b22 } })
@@ -27,7 +27,7 @@ export class PlayerSoulCounter {
       this.startValue.toString(),
       {
         font: "20px Verdana",
-        fill: "#ADFF2F",
+        color: "#ADFF2F",
       }
     );
 

@@ -1,4 +1,4 @@
-import { poolable } from "../engine/interfaces";
+import { poolable } from "../engine/poolable";
 import { Gameplay } from "../scenes/Gameplay";
 import { CircleFactory } from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";

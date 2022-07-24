@@ -2,7 +2,7 @@ import { CampID } from "../../config/CampSetup";
 import { listenToAnim } from "../../anim/anim-listen";
 import { initUnitAnims } from "../../anim/anim-play";
 
-import { damageable } from "../../engine/interfaces";
+import { damageable } from "../../engine/damageable";
 import { HealthBar } from "../../healthbar/HealthBar";
 import { Gameplay } from "../../scenes/Gameplay";
 import { ChainWeapon } from "../../weapons/ChainWeapon/ChainWeapon";

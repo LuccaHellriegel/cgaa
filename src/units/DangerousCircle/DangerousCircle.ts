@@ -1,5 +1,5 @@
 import { unitAnims } from "../../anim/anim-play";
-import { poolable } from "../../engine/interfaces";
+import { poolable } from "../../engine/poolable";
 import { Point } from "../../engine/Point";
 import { CircleControl } from "../../ai/CircleControl";
 import { HealthBar } from "../../healthbar/HealthBar";

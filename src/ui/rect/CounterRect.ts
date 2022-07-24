@@ -20,7 +20,7 @@ export class CounterRect extends Rect implements notifyWithVal {
       prefixText + this.count + postfixText,
       {
         font: "38px Verdana ",
-        fill: "#000000",
+        color: "#000000",
         fontWeight: "bold",
       }
     );

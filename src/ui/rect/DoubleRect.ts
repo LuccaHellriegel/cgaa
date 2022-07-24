@@ -99,7 +99,7 @@ export class ClickableTextRect extends TextRect {
   ) {
     super(sceneToUse, x, y, width, height, hexColor, text, {
       font: "20px Verdana ",
-      fill: "#000000",
+      color: "#000000",
       fontWeight: "bold",
     });
     setupMouseOver(this, this.graphics);

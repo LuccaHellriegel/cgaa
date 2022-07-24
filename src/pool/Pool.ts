@@ -1,4 +1,4 @@
-import { poolable } from "../engine/interfaces";
+import { poolable } from "../engine/poolable";
 
 import { Gameplay } from "../scenes/Gameplay";
 import { removeEle } from "../utils/removeEle";

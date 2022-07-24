@@ -4,7 +4,7 @@ import { UnitSetup } from "../config/UnitSetup";
 import { listenToAnim } from "../anim/anim-listen";
 import { unitAnims, initUnitAnims } from "../anim/anim-play";
 
-import { healable } from "../engine/interfaces";
+import { healable } from "../engine/healable";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";

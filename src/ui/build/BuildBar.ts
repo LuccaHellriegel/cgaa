@@ -42,7 +42,7 @@ export class BuildBar extends SelectBar {
 
     this.textEle = new TextGUIElement(sceneToUse, "Build", x - 30, y - 35, {
       font: "20px Verdana ",
-      fill: "#000000",
+      color: "#000000",
       fontWeight: "bold",
     });
 
@@ -76,7 +76,7 @@ export class PureCounter implements notifyWithVal, GUIElement {
       prefixText + this.count + postfixText,
       {
         font: "25px Verdana ",
-        fill: "#cc0000",
+        color: "#cc0000",
         fontWeight: "bold",
       }
     );

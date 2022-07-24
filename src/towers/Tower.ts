@@ -1,4 +1,6 @@
-import { damageable, poolable, healable } from "../engine/interfaces";
+import { poolable } from "../engine/poolable";
+import { healable } from "../engine/healable";
+import { damageable } from "../engine/damageable";
 import { IClickableElement } from "../ui/modes/IClickableElement";
 import { HealthBar } from "../healthbar/HealthBar";
 import { setupMouseOver } from "../ui/MouseOver";

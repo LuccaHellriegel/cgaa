@@ -1,4 +1,4 @@
-import { damageable } from "../engine/interfaces";
+import { damageable } from "../engine/damageable";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 
