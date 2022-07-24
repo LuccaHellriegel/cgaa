@@ -22,7 +22,9 @@ export abstract class Pool {
 
   private listenForInactiveUnits() {
     this.dict.forEach((_, key) => {
+      console.log("Listening to " + key);
       this.scene.events.on("inactive-" + key, (id) => {
+        console.log("Detected inactive unit.");
         Util.removeEle(id, this.activeIDArr);
         this.inactiveIDArr.push(id);
       });

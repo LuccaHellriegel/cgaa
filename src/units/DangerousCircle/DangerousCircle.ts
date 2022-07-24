@@ -39,6 +39,7 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
   }
 
   disable() {
+    console.log("Disabling DangerousCircle: " + this.id);
     this.scene.events.emit("inactive-" + this.id, this.id);
     this.disableBody(true, true);
     this.setPosition(-1000, -1000);
@@ -47,6 +48,16 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
   enable(x, y) {
     this.enableBody(true, x, y, true, true);
     this.stateHandler.lastPositions.push({ x, y });
+  }
+
+  damage(amount) {
+    if (this.healthbar.decrease(amount)) {
+      this.poolDestroy();
+      return true;
+    } else {
+      this.playDamage();
+      return false;
+    }
   }
 
   poolDestroy() {
