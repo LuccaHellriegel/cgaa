@@ -35,12 +35,11 @@ export class Popup {
         "If they die, all is lost!",
         "Defeat/Convince the Camps and kill the king!",
         "(Click to close)",
-      ],
-      { fontFamily: "Arial", color: "#00ff00" }
+      ]
       // {
       //   font: "25px Verdana ",
-      //   fill: "#ffffff",
-      //   fontWeight: "bold",
+      //   color: "#ffffff",
+      //   fontStyle: "bold",
       // }
     );
     new Popup(scene, x, y, width, height, textObj);
@@ -62,8 +61,8 @@ export class Popup {
       ],
       {
         font: "25px Verdana ",
-        fill: "#ffffff",
-        fontWeight: "bold",
+        color: "#ffffff",
+        fontStyle: "bold",
       }
     );
     new Popup(scene, x, y, width, height, textObj);
@@ -78,8 +77,8 @@ export class Popup {
       ["Oh no!", "Game Over Comrades.", "(Reload site to restart)"],
       {
         font: "25px Verdana ",
-        fill: "#ffffff",
-        fontWeight: "bold",
+        color: "#ffffff",
+        fontStyle: "bold",
       }
     );
     new Popup(scene, x, y, width, height, textObj);
@@ -94,8 +93,8 @@ export class Popup {
       ["The doors to the king have opened.", "(Click to close)"],
       {
         font: "25px Verdana ",
-        fill: "#ffffff",
-        fontWeight: "bold",
+        color: "#ffffff",
+        fontStyle: "bold",
       }
     );
     new Popup(scene, x, y, width, height, textObj);
