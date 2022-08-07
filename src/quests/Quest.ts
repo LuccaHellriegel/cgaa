@@ -62,10 +62,10 @@ export class Quest {
   ) {
     const quest = new Quest(
       () => {
-        return !quests.get(rivalries.getRival(id)).activeOrSuccess();
+        return !quests.get(rivalries.get(id)).activeOrSuccess();
       },
       () => {
-        let rivalID = rivalries.getRival(id);
+        let rivalID = rivalries.get(id);
         scene.events.emit(EventSetup.questAcceptedEvent, rivalID);
       }
     );

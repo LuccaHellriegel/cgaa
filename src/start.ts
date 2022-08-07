@@ -68,7 +68,7 @@ function initQuests(
   diplomats: InteractionCircle[][]
 ) {
   CampSetup.ordinaryCampIDs.forEach((id) => {
-    const rivalID = rivalries.getRival(id);
+    const rivalID = rivalries.get(id);
     const amountToKill = CampSetup.numbOfDiplomats + CampSetup.numbOfBuildings;
     const quest = Quest.killQuest(
       scene,

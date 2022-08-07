@@ -28,7 +28,7 @@ export class CampRouting {
   private initRerouteQueues(rivalries) {
     CampSetup.ordinaryCampIDs.forEach((id) => {
       this.rerouteQueues[id] = CampSetup.ordinaryCampIDs.filter((otherID) => {
-        return otherID !== id && otherID !== rivalries.getRival(id);
+        return otherID !== id && otherID !== rivalries.get(id);
       });
     });
   }

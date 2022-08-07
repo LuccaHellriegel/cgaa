@@ -1,24 +1,21 @@
 import { randomizeArr } from "../utils/randomizeArr";
 
-export class Rivalries extends Map<string, string> {
-  constructor(ids: string[]) {
-    super();
+export function createRivalsMap(ids: string[]) {
+  const rivalsMap = new Map<string, string>();
+  const randIDs = randomizeArr(ids);
 
-    const randIDs = randomizeArr(ids);
+  // only works for four camps
+  let id = randIDs.pop();
+  let secondID = randIDs.pop();
+  rivalsMap.set(id, secondID);
+  rivalsMap.set(secondID, id);
 
-    // only works for four camps
-    let id = randIDs.pop();
-    let secondID = randIDs.pop();
-    this.set(id, secondID);
-    this.set(secondID, id);
+  id = randIDs.pop();
+  secondID = randIDs.pop();
+  rivalsMap.set(id, secondID);
+  rivalsMap.set(secondID, id);
 
-    id = randIDs.pop();
-    secondID = randIDs.pop();
-    this.set(id, secondID);
-    this.set(secondID, id);
-  }
-
-  getRival(id) {
-    return this.get(id);
-  }
+  return rivalsMap;
 }
+
+export type Rivalries = ReturnType<typeof createRivalsMap>;

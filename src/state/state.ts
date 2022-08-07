@@ -5,12 +5,13 @@ import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 import { Quests } from "../quests/Quests";
 import { RelPos } from "../engine/RelPos";
 import { PathAssigner } from "../path/PathAssigner";
-import { PathCalculator } from "../path/PathCalculator";
-import { PathConfig } from "../path/PathConfig";
-import { PathFactory } from "../path/PathFactory";
-import { Paths } from "../path/Paths";
+import { createConfigs } from "../path/configuration";
+import { producePaths } from "../path/calculation";
 import { CampRouting } from "./CampRouting";
-import { Rivalries } from "./Rivalries";
+import { createRivalsMap, Rivalries } from "./Rivalries";
+import EasyStar from "easystarjs";
+import { GameMap } from "../types";
+import { EnvSetup } from "../config/EnvSetup";
 
 export interface State extends Data {
   cooperation: BitwiseCooperation;
@@ -18,6 +19,11 @@ export interface State extends Data {
   router: CampRouting;
   quests: Quests;
   pathAssigner: PathAssigner;
+}
+
+function configureEasyStar(easyStar: EasyStar.js, map: GameMap) {
+  easyStar.setGrid(map);
+  easyStar.setAcceptableTiles([EnvSetup.walkableSymbol, EnvSetup.exitSymbol]);
 }
 
 export function state(
@@ -29,20 +35,21 @@ export function state(
     scene.events.emit(EventSetup.cooperationEvent, id);
   });
 
-  const rivalries = new Rivalries(CampSetup.ordinaryCampIDs);
+  const rivalries = createRivalsMap(CampSetup.ordinaryCampIDs);
   const router = new CampRouting(scene.events, rivalries);
 
   const quests = new Quests();
 
-  const configs = PathConfig.createConfigs(
-    commonWaypoint(gameData),
-    gameData.camps
-  );
-  const paths = new Paths(
+  const configs = createConfigs(commonWaypoint(gameData), gameData.camps);
+
+  const easyStar = new EasyStar.js();
+  configureEasyStar(easyStar, gameData.gameMap);
+
+  const pathAssigner = new PathAssigner(
     gameData.camps,
-    PathFactory.produce(new PathCalculator(gameData.gameMap), configs)
+    producePaths(easyStar, configs),
+    router
   );
-  const pathAssigner = new PathAssigner(paths, router);
 
   console.log(cooperation, rivalries, router, quests, pathAssigner);
   return { ...gameData, cooperation, rivalries, router, quests, pathAssigner };

@@ -58,7 +58,7 @@ export class Gameplay extends Phaser.Scene {
       let id = interactCircle.campID;
       let mask = interactCircle.campMask;
       //Can not accept quests from rivals
-      if (!cgaa.quests.get(cgaa.rivalries.getRival(id)).activeOrSuccess()) {
+      if (!cgaa.quests.get(cgaa.rivalries.get(id)).activeOrSuccess()) {
         if (!interactCircle.quest.activeOrSuccess())
           interactCircle.quest.setActive();
         if (interactCircle.quest.success()) {

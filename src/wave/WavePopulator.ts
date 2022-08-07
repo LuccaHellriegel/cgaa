@@ -59,12 +59,10 @@ export class WavePopulator {
         enemy.stateHandler.setComponents([
           new GuardComponent(enemy, enemy.stateHandler),
           new AmbushComponent(
-            this.assigner
-              .assign(
-                enemy,
-                RelPos.fromPoint({ x: spawnPosition[0], y: spawnPosition[1] })
-              )
-              .reverse(),
+            this.assigner.assign(
+              enemy,
+              RelPos.fromPoint({ x: spawnPosition[0], y: spawnPosition[1] })
+            ),
             enemy,
             enemy.stateHandler,
             enemy.stateHandler
