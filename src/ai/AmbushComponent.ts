@@ -38,7 +38,7 @@ export class AmbushComponent implements AIComponent {
         this.parent.recursionFinished();
       } else {
         this.nextPosIndex++;
-        this.circleControl.turnTo(this.nextPos);
+        this.circle.turnTo(this.nextPos);
       }
     }
   }

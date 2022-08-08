@@ -1,3 +1,4 @@
+import { Point } from "../engine/Point";
 import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
 
 export interface AIComponent {
@@ -25,34 +26,14 @@ export class CircleControl implements AIComponent {
     this.circle.setPosition(lastPos.x, lastPos.y);
   }
 
-  turnTo(obj) {
-    let newRotation = Phaser.Math.Angle.Between(
-      this.circle.x,
-      this.circle.y,
-      obj.x,
-      obj.y
-    );
-    let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
-    this.circle.setRotation(
-      newRotation + correctionForPhasersMinus90DegreeTopPostion
-    );
-  }
-
-  updateLastPos() {
-    if (this.lastPositions.length > 10) this.lastPositions.shift();
-    this.lastPositions.push({ x: this.circle.x, y: this.circle.y });
-  }
-
-  moveTo(target, reachDist) {
-    let dist = Phaser.Math.Distance.Between(
-      this.circle.x,
-      this.circle.y,
-      target.x,
-      target.y
-    );
+  moveTo(target: Point, reachDist: number) {
+    let dist = this.circle.dist(target);
     let inReach = dist < reachDist;
     if (!inReach) {
-      this.updateLastPos();
+      //updateLastPos
+      if (this.lastPositions.length > 10) this.lastPositions.shift();
+      this.lastPositions.push({ x: this.circle.x, y: this.circle.y });
+
       this.circle.scene.physics.moveToObject(
         this.circle,
         target,

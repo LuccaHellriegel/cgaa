@@ -24,7 +24,7 @@ export class GuardComponent implements AIComponent {
           ) <
           4 * EnvSetup.halfGridPartSize;
 
-        this.circleControl.turnTo(this.circleControl.spotted);
+        this.circle.turnTo(this.circleControl.spotted);
         if (inSight) {
           this.circleControl.obstacle = this.circleControl.spotted;
           this.childComponent = new ObstacleComponent(

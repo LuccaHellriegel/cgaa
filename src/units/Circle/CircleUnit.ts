@@ -8,6 +8,9 @@ import { Gameplay } from "../../scenes/Gameplay";
 import { ChainWeapon } from "../../weapons/ChainWeapon/ChainWeapon";
 import { EnemySize } from "../CircleFactory";
 import { nanoid } from "nanoid";
+import { Point } from "../../engine/Point";
+
+const correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
 
 export class CircleUnit
   extends Phaser.Physics.Arcade.Sprite
@@ -63,5 +66,14 @@ export class CircleUnit
     this.weapon.destroy();
     this.healthbar.destroy();
     super.destroy();
+  }
+
+  dist(point: Point) {
+    return Phaser.Math.Distance.Between(this.x, this.y, point.x, point.y);
+  }
+
+  turnTo(obj: Point) {
+    let newRotation = Phaser.Math.Angle.Between(this.x, this.y, obj.x, obj.y);
+    this.setRotation(newRotation + correctionForPhasersMinus90DegreeTopPostion);
   }
 }

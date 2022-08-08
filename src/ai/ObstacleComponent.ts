@@ -15,7 +15,7 @@ export class ObstacleComponent implements AIComponent {
     if (this.recursing) {
       this.childComponent.tick();
     } else {
-      this.circleControl.turnTo(this.circleControl.obstacle);
+      this.circle.turnTo(this.circleControl.obstacle);
       let [inReach] = this.circleControl.moveTo(
         this.circleControl.obstacle,
         weaponHeights[this.circle.type].frame2 + 15
