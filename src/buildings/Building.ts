@@ -61,7 +61,7 @@ export class Building
   }
 
   destroy() {
-    this.scene.events.emit(EventSetup.unitKilledEvent, this.campID);
+    this.scene.events.emit(EventSetup.essentialUnitKilledEvent, this.campID);
     EventSetup.destroyBuilding(this.scene, this.campID, this.id);
     super.destroy();
     this.healthbar.destroy();

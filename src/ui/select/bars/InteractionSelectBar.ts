@@ -4,24 +4,22 @@ import { SelectBar } from "./SelectBar";
 import { UnitCompositeRect } from "../../rect/UnitCompositeRect";
 import { SelectionManager } from "../SelectionManager";
 import { ClickableTextRect, ClickableImageRect } from "../../rect/DoubleRect";
-import { Quests } from "../../../quests/Quests";
 import { TextGUIElement } from "../../TextGUIElement";
-import { Quest } from "../../../quests/Quest";
 import { CampSetup } from "../../../config/CampSetup";
 import { InteractionCircle } from "../../../units/InteractionCircle/InteractionCircle";
 import { BitwiseCooperation } from "../../../engine/BitwiseCooperation";
+import { QuestManager } from "../../../quests/QuestManager";
 
 export class InteractionSelectBar extends SelectBar {
   cooperation: BitwiseCooperation;
   selectionManager: SelectionManager;
-  quests;
   constructor(
     sceneToUse: HUD,
     x,
     y,
     cooperation: BitwiseCooperation,
-    selectionManager: SelectionManager,
-    quests: Quests
+    public questManager: QuestManager,
+    selectionManager: SelectionManager
   ) {
     let baseRect = new Rect(sceneToUse, x, y, 180, 80, 0xd3d3d3);
 
@@ -50,7 +48,6 @@ export class InteractionSelectBar extends SelectBar {
 
     this.cooperation = cooperation;
     this.selectionManager = selectionManager;
-    this.quests = quests;
 
     //TODO: oh man
     (
@@ -71,14 +68,14 @@ export class InteractionSelectBar extends SelectBar {
       interactedCampMask,
       CampSetup.playerCampMask
     );
-    //TODO: switch quest to bitwise too?
-    let quest: Quest = this.quests.get(
-      (this.selectionManager.selectedUnit as InteractionCircle).campID
-    );
 
     if (hasCooperation) {
       this.updateClickableText("Switch\nTarget");
-    } else if (quest.activeOrSuccess()) {
+    } else if (
+      this.questManager.activeOrSuccess(
+        (this.selectionManager.selectedUnit as InteractionCircle).campID
+      )
+    ) {
       this.updateClickableText("Check\nQuest");
     } else {
       this.updateClickableText("Accept\nQuest");

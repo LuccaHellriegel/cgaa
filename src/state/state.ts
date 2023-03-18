@@ -2,7 +2,6 @@ import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 import { Data } from "../data/data";
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
-import { Quests } from "../quests/Quests";
 import { RelPos } from "../engine/RelPos";
 import { PathAssigner } from "../path/PathAssigner";
 import { createConfigs } from "../path/configuration";
@@ -17,7 +16,6 @@ export interface State extends Data {
   cooperation: BitwiseCooperation;
   rivalries: Rivalries;
   router: CampRouting;
-  quests: Quests;
   pathAssigner: PathAssigner;
 }
 
@@ -38,8 +36,6 @@ export function state(
   const rivalries = createRivalsMap(CampSetup.ordinaryCampIDs);
   const router = new CampRouting(scene.events, rivalries);
 
-  const quests = new Quests();
-
   const configs = createConfigs(commonWaypoint(gameData), gameData.camps);
 
   const easyStar = new EasyStar.js();
@@ -51,6 +47,6 @@ export function state(
     router
   );
 
-  console.log(cooperation, rivalries, router, quests, pathAssigner);
-  return { ...gameData, cooperation, rivalries, router, quests, pathAssigner };
+  console.log(cooperation, rivalries, router, pathAssigner);
+  return { ...gameData, cooperation, rivalries, router, pathAssigner };
 }

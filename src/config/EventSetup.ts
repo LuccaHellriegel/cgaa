@@ -88,6 +88,6 @@ export class EventSetup {
   static canBuildHealer = "can-build-healer";
   static cannotBuildHealer = "can-not-build-healer";
 
-  static unitKilledEvent = "unit-killed";
+  static essentialUnitKilledEvent = "unit-killed";
   static essentialUnitsKilled = "essential-units-killed";
 }
