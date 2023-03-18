@@ -15,14 +15,14 @@
   "license": "",
   "dependencies": {
     "easystarjs": "^0.4.4",
-    "nanoid": "^4.0.0",
+    "nanoid": "^4.0.1",
     "phaser": "^3.55.2"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^29.5.0",
     "dependency-cruiser": "^12.10.2",
-    "jest": "^27.0.6",
-    "parcel": "latest",
-    "typescript": "^3.9.7"
+    "jest": "^29.5.0",
+    "parcel": "^2.8.3",
+    "typescript": "^5.0.2"
   }
 }
