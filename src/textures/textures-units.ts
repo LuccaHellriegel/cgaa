@@ -1,5 +1,5 @@
-import { BuildingGenerator } from "../buildings/BuildingGenerator";
-import { generateBlockadeTextures } from "../camps/boss/generateBlockadeTextures";
+import { BuildingGenerator } from "../camps/BuildingGenerator";
+import { generateBlockadeTextures } from "../camps/generateBlockadeTextures";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { UnitSetup } from "../config/UnitSetup";

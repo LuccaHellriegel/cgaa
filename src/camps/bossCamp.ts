@@ -1,19 +1,19 @@
-import { GuardComponent } from "../../ai/GuardComponent";
-import { BossSetup } from "../../config/BossSetup";
-import { CampSetup } from "../../config/CampSetup";
-import { RelPos } from "../../engine/RelPos";
-import { Point } from "../../engine/Point";
-import { BossPool } from "../../pool/CirclePool";
-import { Pools } from "../../pool/pools";
-import { Gameplay } from "../../scenes/Gameplay";
-import { EnemySpawnObj } from "../../spawn/EnemySpawnObj";
-import { FinalState } from "../../start";
-import { Camp } from "../../types";
-import { CircleFactory } from "../../units/CircleFactory";
-import { Enemies } from "../../units/Enemies";
-import { CampPopulator } from "../CampPopulator";
-import { areaRealSpawnDict } from "../camps";
-import { CampsState } from "../CampsState";
+import { GuardComponent } from "../ai/GuardComponent";
+import { BossSetup } from "../config/BossSetup";
+import { CampSetup } from "../config/CampSetup";
+import { RelPos } from "../engine/RelPos";
+import { Point } from "../engine/Point";
+import { BossPool } from "../pool/CirclePool";
+import { Pools } from "../pool/pools";
+import { Gameplay } from "../scenes/Gameplay";
+import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
+import { FinalState } from "../start";
+import { Camp } from "../types";
+import { CircleFactory } from "../units/CircleFactory";
+import { Enemies } from "../units/Enemies";
+import { CampPopulator } from "./CampPopulator";
+import { areaRealSpawnDict } from "./camps";
+import { CampsState } from "./CampsState";
 import { BossBarrier } from "./BossBarrier";
 
 function populate(

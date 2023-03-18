@@ -1,5 +1,5 @@
-import { RectPolygon } from "../../engine/polygons/RectPolygon";
-import { EnvSetup } from "../../config/EnvSetup";
+import { RectPolygon } from "../engine/polygons/RectPolygon";
+import { EnvSetup } from "../config/EnvSetup";
 import { Scene } from "phaser";
 
 export const generateBlockadeTextures = (scene: Scene) => {

@@ -2,7 +2,7 @@ import { CircleFactory } from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";
 import { InteractionCircle } from "../units/InteractionCircle";
 import { Gameplay } from "../scenes/Gameplay";
-import { Building } from "../buildings/Building";
+import { Building } from "./Building";
 import { CampMap } from "../data/data";
 import {
   layoutAreaToMapTopLeft,

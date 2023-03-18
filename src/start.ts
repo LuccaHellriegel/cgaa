@@ -1,5 +1,5 @@
-import { Building } from "./buildings/Building";
-import { bossCamp } from "./camps/boss/bossCamp";
+import { Building } from "./camps/Building";
+import { bossCamp } from "./camps/bossCamp";
 import { campsStaticUnits, populateCamps } from "./camps/camps";
 import { CampsState } from "./camps/CampsState";
 import { playerCamp } from "./camps/playerCamp";

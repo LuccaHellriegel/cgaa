@@ -4,7 +4,7 @@ import { initBounceGroupPair } from "./collision-bounce";
 import { initWeaponGroupPair } from "./overlap-weapon";
 import { initNonMovingGroupPair } from "./collision-basic";
 import { initSightGroupPair } from "./overlap-sight";
-import { Building } from "../buildings/Building";
+import { Building } from "../camps/Building";
 import { CampID, CampSetup } from "../config/CampSetup";
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 
