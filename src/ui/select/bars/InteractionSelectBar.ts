@@ -8,7 +8,7 @@ import { TextGUIElement } from "../../TextGUIElement";
 import { CampSetup } from "../../../config/CampSetup";
 import { InteractionCircle } from "../../../units/InteractionCircle";
 import { BitwiseCooperation } from "../../../engine/BitwiseCooperation";
-import { QuestManager } from "../../../camps/QuestManager";
+import { CampManager } from "../../../camps/CampManager";
 
 export class InteractionSelectBar extends SelectBar {
   cooperation: BitwiseCooperation;
@@ -18,7 +18,7 @@ export class InteractionSelectBar extends SelectBar {
     x,
     y,
     cooperation: BitwiseCooperation,
-    public questManager: QuestManager,
+    public questManager: CampManager,
     selectionManager: SelectionManager
   ) {
     let baseRect = new Rect(sceneToUse, x, y, 180, 80, 0xd3d3d3);

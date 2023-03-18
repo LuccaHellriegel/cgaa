@@ -1,9 +1,4 @@
-import {
-  CircleFactory,
-  EnemySize,
-  healthBarDangerousCircleFactoryConfigs,
-  veloConfigs,
-} from "../units/CircleFactory";
+import { CircleFactory, EnemySize } from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";
 import { PlayerFriend } from "../units/PlayerFriend";
 import { Point } from "../engine/Point";
@@ -14,6 +9,8 @@ import { Pools } from "../pool/pools";
 import { FinalState } from "../start";
 import { Scene } from "phaser";
 import { HealthComponent } from "../healthbar/HealthBar";
+import { healthBarDangerousCircleFactoryConfigs } from "../config/HealthbarSetup";
+import { veloConfigs } from "../config/VelocitySetup";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money

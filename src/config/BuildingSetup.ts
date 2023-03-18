@@ -1,8 +1,6 @@
 import { EnvSetup } from "./EnvSetup";
 
-export class BuildingSetup {
-  private constructor() {}
-
-  static halfBuildingWidth = (3 * EnvSetup.gridPartSize) / 2;
-  static halfBuildingHeight = EnvSetup.gridPartSize / 2;
-}
+export const BuildingSetup = {
+  halfBuildingWidth: (3 * EnvSetup.gridPartSize) / 2,
+  halfBuildingHeight: EnvSetup.gridPartSize / 2,
+};

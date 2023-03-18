@@ -27,7 +27,7 @@ import { PlayerFriend } from "./units/PlayerFriend";
 import { WaveController } from "./wave/WaveController";
 import { WaveOrder } from "./wave/WaveOrder";
 import { WavePopulator } from "./wave/WavePopulator";
-import { QuestManager } from "./camps/QuestManager";
+import { CampManager } from "./camps/CampManager";
 
 class WallSide extends Phaser.Physics.Arcade.Image {
   constructor(scene: Gameplay, x: number, y: number, width, height, addEnv) {
@@ -128,7 +128,7 @@ export interface CGAA extends FinalState {
   player: Player;
   friends: PlayerFriend[];
   waveOrder: WaveOrder;
-  questManager: QuestManager;
+  manager: CampManager;
 }
 
 export function GameStart(scene, state: FinalState): CGAA {

@@ -1,7 +1,4 @@
-export class BossSetup {
-  private constructor() {}
-
-  static maxBossCampPopulation = 10;
-
-  static bossGroupSize = 20;
-}
+export const BossSetup = {
+  maxBossCampPopulation: 10,
+  bossGroupSize: 20,
+};

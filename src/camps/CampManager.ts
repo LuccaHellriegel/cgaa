@@ -25,11 +25,13 @@ function createRivalsMap(ids: string[]) {
   return rivalsMap;
 }
 
-export class QuestManager {
+export class CampManager {
   ids: string[] = [];
   states: number[] = [];
   amountToKill: number[] = [];
   rivals: string[] = [];
+  routings: string[] = [];
+  reroutingQueues: string[][] = [];
 
   constructor(private scene: Scene) {
     const rivalries = createRivalsMap(CampSetup.ordinaryCampIDs);
@@ -39,11 +41,23 @@ export class QuestManager {
       this.amountToKill.push(
         CampSetup.numbOfDiplomats + CampSetup.numbOfBuildings
       );
-      this.rivals.push(rivalries.get(id));
+      const rivalID = rivalries.get(id);
+      this.rivals.push(rivalID);
+      //All camps start by attacking the player
+      this.routings.push(CampSetup.playerCampID);
+      this.reroutingQueues.push(
+        CampSetup.ordinaryCampIDs.filter((otherID) => {
+          return otherID !== id && otherID !== rivalID;
+        })
+      );
     }
 
     scene.events.on(EventSetup.essentialUnitKilledEvent, (id: string) => {
       this.decrement(id);
+    });
+    scene.events.on(EventSetup.conqueredEvent, () => {
+      //allow boss camp to be routed to
+      this.reroutingQueues.forEach((queue) => queue.push(CampSetup.bossCampID));
     });
   }
 
@@ -91,5 +105,21 @@ export class QuestManager {
   getRival(id: string) {
     const index = this.ids.indexOf(id);
     return this.rivals[index];
+  }
+
+  getRouting(campID: string): string {
+    const index = this.ids.indexOf(campID);
+    return this.routings[index];
+  }
+
+  reroute(campID: string) {
+    const index = this.ids.indexOf(campID);
+    let otherCamp = this.reroutingQueues[index].pop();
+    this.reroutingQueues[index].unshift(otherCamp);
+    this.routings[index] = otherCamp;
+    this.scene.events.emit(
+      EventSetup.partialReroutingEvent + campID,
+      otherCamp
+    );
   }
 }

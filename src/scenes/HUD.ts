@@ -175,7 +175,7 @@ export class HUD extends Phaser.Scene {
       0 + 180,
       0 + 30 + 5 + 5,
       this.ourGame.cgaa.cooperation,
-      this.ourGame.cgaa.questManager,
+      this.ourGame.cgaa.manager,
       selectionManager
     );
     let selectBars = [healerSelectBar, shooterSelectBar, interactionSelectBar];

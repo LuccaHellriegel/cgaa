@@ -1,4 +1,3 @@
-import { CampRouting } from "./CampRouting";
 import { CampID } from "../config/CampSetup";
 import { RelPos } from "../engine/RelPos";
 import { DangerousCircle } from "../units/DangerousCircle";
@@ -6,12 +5,13 @@ import { Point } from "../engine/Point";
 import { CampMap } from "../data/data";
 import { PathDict } from "./calculation";
 import { makePathId } from "./makePathId";
+import { CampManager } from "../camps/CampManager";
 
 export class PathAssigner {
   constructor(
     private campMap: CampMap,
     private pathDict: PathDict,
-    private router: CampRouting
+    private router: CampManager
   ) {}
 
   private getPathToCamp(start: RelPos, campID: CampID) {

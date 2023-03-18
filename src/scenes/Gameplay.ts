@@ -57,10 +57,10 @@ export class Gameplay extends Phaser.Scene {
     ) {
       let id = interactCircle.campID;
       let mask = interactCircle.campMask;
-      if (cgaa.questManager.setActive(id) && cgaa.questManager.success(id)) {
+      if (cgaa.manager.setActive(id) && cgaa.manager.success(id)) {
         // check if id has cooperation with player, because id would need to be rerouted
         if (cgaa.cooperation.has(mask, CampSetup.playerCampMask)) {
-          cgaa.router.reroute(id);
+          cgaa.manager.reroute(id);
         } else {
           cgaa.cooperation.activate(mask, CampSetup.playerCampMask);
         }

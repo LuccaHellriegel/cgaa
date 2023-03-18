@@ -3,7 +3,6 @@ import { BossSetup } from "../config/BossSetup";
 import { CampSetup } from "../config/CampSetup";
 import { RelPos } from "../engine/RelPos";
 import { Point } from "../engine/Point";
-import { BossPool } from "../pool/CirclePool";
 import { Pools } from "../pool/pools";
 import { Gameplay } from "../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
