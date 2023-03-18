@@ -25,7 +25,6 @@ import { Enemies } from "./units/Enemies";
 import { InteractionCircle } from "./units/InteractionCircle";
 import { PlayerFriend } from "./units/PlayerFriend";
 import { WaveController } from "./wave/WaveController";
-import { WaveOrder } from "./wave/WaveOrder";
 import { WavePopulator } from "./wave/WavePopulator";
 import { CampManager } from "./camps/CampManager";
 
@@ -74,7 +73,6 @@ function waveProducer(
   state: FinalState,
   pools: Pools,
   enemies: Enemies,
-  waveOrder: WaveOrder,
   staticUnits
 ) {
   for (const units of staticUnits) {
@@ -107,9 +105,7 @@ function waveProducer(
     }
   }
 
-  return () => {
-    new WaveController(scene, waveOrder);
-  };
+  return new WaveController(scene, campsState);
 }
 
 export interface FinalState extends State {
@@ -117,7 +113,7 @@ export interface FinalState extends State {
 }
 
 export interface CGAA extends FinalState {
-  startWaves: Function;
+  startWaves: WaveController;
   diplomats: InteractionCircle[][];
   input: {
     spawners: Spawner[];
@@ -127,7 +123,6 @@ export interface CGAA extends FinalState {
   };
   player: Player;
   friends: PlayerFriend[];
-  waveOrder: WaveOrder;
   manager: CampManager;
 }
 
@@ -200,8 +195,6 @@ export function GameStart(scene, state: FinalState): CGAA {
     return units.diplomats;
   });
 
-  const waveOrder = new WaveOrder(campsState);
-
   return {
     ...state,
     input,
@@ -212,11 +205,9 @@ export function GameStart(scene, state: FinalState): CGAA {
       state,
       pools,
       enemies,
-      waveOrder,
       staticUnits
     ),
     player,
-    waveOrder,
     friends,
   };
 }

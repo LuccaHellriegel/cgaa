@@ -1,4 +1,3 @@
-import { poolable } from "../engine/poolable";
 import { healable } from "../engine/healable";
 import { damageable } from "../engine/damageable";
 import { IClickableElement } from "../ui/modes/IClickableElement";
@@ -21,7 +20,7 @@ export abstract class Towers extends Phaser.Physics.Arcade.StaticGroup {
 //TODO: make Tower that Spawns Units that walk to boss (? walking to dynamic positions might be to complicated)
 export abstract class Tower
   extends Phaser.Physics.Arcade.Image
-  implements damageable, poolable, healable, IClickableElement
+  implements damageable, healable, IClickableElement
 {
   healthbar: HealthBar;
   id: string;

@@ -135,7 +135,7 @@ export class HUD extends Phaser.Scene {
 
     let x;
     let y;
-    this.ourGame.cgaa.waveOrder.order.forEach((color, index) => {
+    this.ourGame.cgaa.startWaves.order.forEach((color, index) => {
       x = 1280 - halfSize - 5;
       y = 0 + halfSize + 5 + index * 2 * halfSize + index * 10;
       campStates.push(
@@ -153,7 +153,7 @@ export class HUD extends Phaser.Scene {
     this.campStates = campStates;
 
     //Waves should start after CampState is initialized, otherwise first Wave is not recognized
-    this.ourGame.cgaa.startWaves();
+    this.ourGame.cgaa.startWaves.spawnWave();
 
     let selectionManager = new SelectionManager(
       this.ourGame.cgaa.input.selectorRect

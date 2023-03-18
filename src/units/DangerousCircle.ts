@@ -1,5 +1,4 @@
 import { unitAnims } from "../anim/anim-play";
-import { poolable } from "../engine/poolable";
 import { Point } from "../engine/Point";
 import { CircleControl } from "../ai/CircleControl";
 import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
@@ -11,7 +10,7 @@ import { CircleUnit } from "./CircleUnit";
 import { UnitSetup } from "../config/UnitSetup";
 import { CampID } from "../config/CampSetup";
 
-export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
+export class DangerousCircle extends CircleUnit implements unitAnims {
   pathArr: Point[];
   stateHandler: CircleControl = new CircleControl(this);
 
