@@ -42,12 +42,12 @@ function circleChainToPhysicsTopCircle(
 export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
   owner: Phaser.Physics.Arcade.Image;
   initialized = false;
-  attacking = false;
-  alreadyAttacked = [];
   amount: number;
   circle: Phaser.Physics.Arcade.Sprite;
   circleFrame1: Phaser.Physics.Arcade.Sprite;
   circleFrame2: Phaser.Physics.Arcade.Sprite;
+  attackingFactor = 0;
+  didDamageFactor = 1;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -91,7 +91,6 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
       distArrowAndChain
     );
     this.circle.disableBody(true, true);
-    //	this.circleFrame0 = this.scene.add.circle(this.x)
     this.circleFrame1 = circleChainToPhysicsTopCircle(
       this.scene,
       geoms.frame1.bigChain,
@@ -152,19 +151,18 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
   }
 
   attack() {
-    if (!this.attacking) {
+    if (this.attackingFactor === 0) {
       this.circle.enableBody(false, 0, 0, false, false);
-
-      this.attacking = true;
       this.anims.play("attack-" + this.texture.key);
+      this.attackingFactor = 1;
     }
   }
 
   finishAttack() {
     this.circle.disableBody(true, true);
     this.anims.play("idle-" + this.texture.key);
-    this.attacking = false;
-    this.alreadyAttacked = [];
+    this.attackingFactor = 0;
+    this.didDamageFactor = 1;
   }
 
   setRotationAroundOwner() {
@@ -244,7 +242,6 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
     this.setPosition(-100, -100);
     // owner needs to be disabled and placed first
     this.setRotationAroundOwner();
-    //TODO: Weapon should not be reused until I finish implementing the circle pool
 
     this.disableBody(false, true);
     // all the objs are already not visible or activated
