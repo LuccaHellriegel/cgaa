@@ -1,7 +1,7 @@
 import { poolable } from "../engine/poolable";
 
 import { Gameplay } from "../scenes/Gameplay";
-import { removeEle } from "../utils/removeEle";
+import { removeEle } from "../engine/removeEle";
 
 export abstract class Pool {
   activeIDArr: string[] = [];

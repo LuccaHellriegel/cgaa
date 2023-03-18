@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
-import { randomizeArr } from "../utils/randomizeArr";
+import { randomizeArr } from "../engine/randomizeArr";
 
 const QUEST_INACTIVE = 0;
 const QUEST_ACTIVE = 1;

@@ -1,7 +1,7 @@
 import { GameData } from "../data/data";
 import { Layouts } from "../data/data-layout";
 import { ClickModes } from "../ui/modes/ClickModes";
-import { state } from "../state/state";
+import { state } from "../state";
 import { physics } from "../physics/physics";
 import { Textures } from "../textures/textures";
 import { CGAAData } from "../types";

@@ -1,4 +1,4 @@
-import { CampRouting } from "../state/CampRouting";
+import { CampRouting } from "./CampRouting";
 import { CampID } from "../config/CampSetup";
 import { RelPos } from "../engine/RelPos";
 import { DangerousCircle } from "../units/DangerousCircle";

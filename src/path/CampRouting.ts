@@ -1,6 +1,6 @@
 import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
-import { QuestManager } from "../quests/QuestManager";
+import { QuestManager } from "../camps/QuestManager";
 
 export class CampRouting {
   private routings = {};

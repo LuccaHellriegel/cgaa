@@ -1,8 +1,8 @@
 import { CampsState } from "../camps/CampsState";
 
-import { randomizeArr } from "../utils/randomizeArr";
+import { randomizeArr } from "../engine/randomizeArr";
 import { CampID, CampSetup } from "../config/CampSetup";
-import { removeEle } from "../utils/removeEle";
+import { removeEle } from "../engine/removeEle";
 
 export class WaveOrder {
   order: CampID[];

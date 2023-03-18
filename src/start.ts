@@ -18,7 +18,7 @@ import { DangerousCirclePool } from "./pool/CirclePool";
 import { Pools, initPools } from "./pool/pools";
 import { Gameplay } from "./scenes/Gameplay";
 import { EnemySpawnObj } from "./spawn/EnemySpawnObj";
-import { State } from "./state/state";
+import { State } from "./state";
 import { BuildManager } from "./ui/build/BuildManager";
 import { SelectorRect } from "./ui/SelectorRect";
 import { CircleFactory } from "./units/CircleFactory";
@@ -28,7 +28,7 @@ import { PlayerFriend } from "./units/PlayerFriend";
 import { WaveController } from "./wave/WaveController";
 import { WaveOrder } from "./wave/WaveOrder";
 import { WavePopulator } from "./wave/WavePopulator";
-import { QuestManager } from "./quests/QuestManager";
+import { QuestManager } from "./camps/QuestManager";
 
 class WallSide extends Phaser.Physics.Arcade.Image {
   constructor(scene: Gameplay, x: number, y: number, width, height, addEnv) {

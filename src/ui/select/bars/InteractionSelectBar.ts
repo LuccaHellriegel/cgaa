@@ -8,7 +8,7 @@ import { TextGUIElement } from "../../TextGUIElement";
 import { CampSetup } from "../../../config/CampSetup";
 import { InteractionCircle } from "../../../units/InteractionCircle";
 import { BitwiseCooperation } from "../../../engine/BitwiseCooperation";
-import { QuestManager } from "../../../quests/QuestManager";
+import { QuestManager } from "../../../camps/QuestManager";
 
 export class InteractionSelectBar extends SelectBar {
   cooperation: BitwiseCooperation;

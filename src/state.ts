@@ -1,16 +1,16 @@
-import { CampSetup } from "../config/CampSetup";
-import { EventSetup } from "../config/EventSetup";
-import { Data } from "../data/data";
-import { BitwiseCooperation } from "../engine/BitwiseCooperation";
-import { RelPos } from "../engine/RelPos";
-import { PathAssigner } from "../path/PathAssigner";
-import { createConfigs } from "../path/configuration";
-import { producePaths } from "../path/calculation";
-import { CampRouting } from "./CampRouting";
+import { CampSetup } from "./config/CampSetup";
+import { EventSetup } from "./config/EventSetup";
+import { Data } from "./data/data";
+import { BitwiseCooperation } from "./engine/BitwiseCooperation";
+import { RelPos } from "./engine/RelPos";
+import { PathAssigner } from "./path/PathAssigner";
+import { createConfigs } from "./path/configuration";
+import { producePaths } from "./path/calculation";
+import { CampRouting } from "./path/CampRouting";
 import EasyStar from "easystarjs";
-import { GameMap } from "../types";
-import { EnvSetup } from "../config/EnvSetup";
-import { QuestManager } from "../quests/QuestManager";
+import { GameMap } from "./types";
+import { EnvSetup } from "./config/EnvSetup";
+import { QuestManager } from "./camps/QuestManager";
 
 export interface State extends Data {
   cooperation: BitwiseCooperation;
