@@ -1,6 +1,6 @@
 import { DangerousCircle } from "../units/DangerousCircle";
 import { AIComponent, CircleControl } from "./CircleControl";
-import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
+import { weaponHeights } from "../weapons/chain-weapon-data";
 
 export class ObstacleComponent implements AIComponent {
   recursing = false;

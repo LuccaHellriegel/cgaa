@@ -1,5 +1,5 @@
-import { UnitSetup } from "../../config/UnitSetup";
-import { createNonRepeatingAnim } from "../../anim/anim-create";
+import { UnitSetup } from "../config/UnitSetup";
+import { createNonRepeatingAnim } from "../anim/anim-create";
 
 export function createChainWeaponAnims(anims) {
   let speedPerSize = {

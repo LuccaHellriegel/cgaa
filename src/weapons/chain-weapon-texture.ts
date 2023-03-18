@@ -1,4 +1,4 @@
-import { EnemySize } from "../../units/CircleFactory";
+import { EnemySize } from "../units/CircleFactory";
 import {
   cirlceSizeNames,
   unitArrowHeadConfig,

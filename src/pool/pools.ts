@@ -3,7 +3,7 @@ import { UnitSetup } from "../config/UnitSetup";
 import { Healers } from "../towers/Healers";
 import { Bullets } from "../towers/Bullets";
 import { Shooters } from "../towers/Shooters";
-import { ChainWeapons } from "../weapons/ChainWeapon/ChainWeapons";
+import { ChainWeapons } from "../weapons/ChainWeapons";
 
 export type Pools = {
   healers: Healers;

@@ -1,5 +1,5 @@
-import { Point } from "../../engine/Point";
-import { EnemySize } from "../../units/CircleFactory";
+import { Point } from "../engine/Point";
+import { EnemySize } from "../units/CircleFactory";
 import {
   cirlceSizeNames,
   unitArrowHeadConfig,

@@ -1,9 +1,9 @@
 import { weaponGeoms } from "./chain-weapon-geom";
 import { weaponHeights, weaponDists } from "./chain-weapon-data";
 import { CircleChain, unitArrowHeadConfig } from "./chain-weapon-base";
-import { UnitSetup } from "../../config/UnitSetup";
-import { listenToAnim } from "../../anim/anim-listen";
-import { EnemySize } from "../../units/CircleFactory";
+import { UnitSetup } from "../config/UnitSetup";
+import { listenToAnim } from "../anim/anim-listen";
+import { EnemySize } from "../units/CircleFactory";
 
 // PHYSICS
 function circleChainToPhysicsTopCircle(

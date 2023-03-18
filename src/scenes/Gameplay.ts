@@ -8,7 +8,7 @@ import { CGAAData } from "../types";
 import { InteractionCircle } from "../units/InteractionCircle";
 import { createShooterAnims } from "../towers/createShooterAnims";
 import { createCircleAnims } from "../units/circle-anim";
-import { createChainWeaponAnims } from "../weapons/ChainWeapon/chain-weapon-anim";
+import { createChainWeaponAnims } from "../weapons/chain-weapon-anim";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { CGAA, GameStart } from "../start";

@@ -5,7 +5,7 @@ import { initUnitAnims } from "../anim/anim-play";
 import { damageable } from "../engine/damageable";
 import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
-import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { ChainWeapon } from "../weapons/ChainWeapon";
 import { EnemySize } from "./CircleFactory";
 import { nanoid } from "nanoid";
 import { Point } from "../engine/Point";

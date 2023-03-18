@@ -1,7 +1,7 @@
 import { EventSetup } from "../config/EventSetup";
 import { HealthComponent } from "../healthbar/HealthBar";
 import { CircleUnit } from "../units/CircleUnit";
-import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { ChainWeapon } from "../weapons/ChainWeapon";
 
 export function initWeaponGroupPair(scene: Phaser.Scene) {
   const weapons = scene.physics.add.group();

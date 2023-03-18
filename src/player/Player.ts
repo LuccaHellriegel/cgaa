@@ -6,8 +6,8 @@ import { unitAnims, initUnitAnims } from "../anim/anim-play";
 
 import { healable } from "../engine/healable";
 import { Gameplay } from "../scenes/Gameplay";
-import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
-import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { weaponHeights } from "../weapons/chain-weapon-data";
+import { ChainWeapon } from "../weapons/ChainWeapon";
 import { nanoid } from "nanoid";
 
 const playerTextureName = "blueNormalCircle";
