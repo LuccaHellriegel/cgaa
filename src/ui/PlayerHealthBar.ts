@@ -1,15 +1,20 @@
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 
 export class PlayerHealthBar extends HealthBar {
   constructor(scene) {
-    super(0, 0, {
-      scene,
-      posCorrectionX: 0,
-      posCorrectionY: 0,
-      healthWidth: 200,
-      healthLength: 12,
-      value: 100,
-    });
+    super(
+      0,
+      0,
+      {
+        scene,
+        posCorrectionX: 0,
+        posCorrectionY: 0,
+        healthWidth: 200,
+        healthLength: 12,
+        value: 100,
+      },
+      new HealthComponent(100, 100)
+    );
     this.move(
       this.calculatehealthBarXWrtScreen(),
       this.calculatehealthBarYWrtScreen()

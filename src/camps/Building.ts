@@ -1,5 +1,5 @@
 import { damageable } from "../engine/damageable";
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 
 import { BuildingSetup } from "../config/BuildingSetup";
@@ -14,6 +14,8 @@ export class Building
   id: string;
   polygon: any;
   healthbar: HealthBar;
+  health: HealthComponent;
+
   scene: Gameplay;
 
   constructor(
@@ -33,6 +35,7 @@ export class Building
 
     this.setImmovable(true);
 
+    this.health = new HealthComponent(100, 100);
     this.healthbar = new HealthBar(
       x - 25,
       y - BuildingSetup.halfBuildingHeight,
@@ -43,7 +46,8 @@ export class Building
         healthLength: 12,
         value: 100,
         scene: scene,
-      }
+      },
+      this.health
     );
 
     //Needed for gaining souls
@@ -55,7 +59,9 @@ export class Building
   }
 
   damage(amount: number) {
-    if (this.healthbar.decrease(amount)) {
+    const res = this.health.decrease(amount);
+    this.healthbar.draw();
+    if (res) {
       this.destroy();
     }
   }

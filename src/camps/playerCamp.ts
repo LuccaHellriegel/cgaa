@@ -1,4 +1,9 @@
-import { CircleFactory, EnemySize, veloConfigs } from "../units/CircleFactory";
+import {
+  CircleFactory,
+  EnemySize,
+  healthBarDangerousCircleFactoryConfigs,
+  veloConfigs,
+} from "../units/CircleFactory";
 import { Enemies } from "../units/Enemies";
 import { PlayerFriend } from "../units/PlayerFriend";
 import { Point } from "../engine/Point";
@@ -8,6 +13,7 @@ import { EnvSetup } from "../config/EnvSetup";
 import { Pools } from "../pool/pools";
 import { FinalState } from "../start";
 import { Scene } from "phaser";
+import { HealthComponent } from "../healthbar/HealthBar";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
@@ -79,6 +85,10 @@ export function playerCamp(
   const createFriend = (size: EnemySize) => {
     let weapon = CircleFactory.createWeapon(friendPools, 0, 0, size);
 
+    const health = new HealthComponent(
+      healthBarDangerousCircleFactoryConfigs[size].value,
+      healthBarDangerousCircleFactoryConfigs[size].value
+    );
     let circle = new PlayerFriend(
       scene,
       0,
@@ -88,7 +98,8 @@ export function playerCamp(
       CampSetup.playerCampMask,
       weapon,
       size as EnemySize,
-      CircleFactory.createHealthBar(scene, 0, 0, size),
+      CircleFactory.createHealthBar(scene, 0, 0, size, health),
+      health,
       veloConfigs[size]
     );
     state.physics.addUnit(circle);

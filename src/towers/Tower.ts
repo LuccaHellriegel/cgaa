@@ -2,7 +2,7 @@ import { poolable } from "../engine/poolable";
 import { healable } from "../engine/healable";
 import { damageable } from "../engine/damageable";
 import { IClickableElement } from "../ui/modes/IClickableElement";
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { setupMouseOver } from "../ui/MouseOver";
 import { CampID, CampSetup } from "../config/CampSetup";
 
@@ -28,6 +28,7 @@ export abstract class Tower
   campID: CampID;
   campMask: number;
   mouseOver = false;
+  health: HealthComponent;
 
   constructor(scene: Phaser.Scene, x, y, texture) {
     super(scene, x, y, texture);
@@ -36,20 +37,33 @@ export abstract class Tower
     scene.physics.add.existing(this);
   }
 
-  abstract damage(amount: number);
+  damage(amount: number) {
+    const res = this.health.decrease(amount);
+    this.healthbar.draw();
+    if (res) {
+      this.poolDestroy();
+    }
+  }
 
   abstract poolDestroy();
 
   place(x, y, _) {
-    if (!this.healthbar)
-      this.healthbar = new HealthBar(x, y, {
-        scene: this.scene,
-        posCorrectionX: -26,
-        posCorrectionY: -40,
-        healthWidth: 46,
-        healthLength: 12,
-        value: 100,
-      });
+    if (!this.healthbar) {
+      this.health = new HealthComponent(100, 100);
+      this.healthbar = new HealthBar(
+        x,
+        y,
+        {
+          scene: this.scene,
+          posCorrectionX: -26,
+          posCorrectionY: -40,
+          healthWidth: 46,
+          healthLength: 12,
+          value: 100,
+        },
+        this.health
+      );
+    }
     this.enableBody(true, x, y, true, true);
     this.healthbar.bar.setActive(true).setVisible(true);
     this.healthbar.move(x, y);
@@ -62,7 +76,8 @@ export abstract class Tower
   }
 
   heal(amount: number) {
-    this.healthbar.increase(amount);
+    this.health.increase(amount);
+    this.healthbar.draw();
   }
 
   makeClickable(onClickCallback) {

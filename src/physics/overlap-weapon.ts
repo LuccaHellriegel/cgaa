@@ -1,5 +1,5 @@
 import { EventSetup } from "../config/EventSetup";
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 
 export function initWeaponGroupPair(scene: Phaser.Scene) {
   const weapons = scene.physics.add.group();
@@ -26,7 +26,7 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
       //TODO: player physics to avoid the check???
       if (weaponOwner.unitType === "player") {
         //Gain souls if player kill (otherwise too much money)
-        if (damage >= (enemy.healthbar as HealthBar).health)
+        if (damage >= (enemy.health as HealthComponent).health)
           EventSetup.gainSouls(weapon.scene, enemy.type);
       }
 

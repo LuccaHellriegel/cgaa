@@ -2,7 +2,7 @@ import { unitAnims } from "../anim/anim-play";
 import { poolable } from "../engine/poolable";
 import { Point } from "../engine/Point";
 import { CircleControl } from "../ai/CircleControl";
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
@@ -27,9 +27,21 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
     weapon: ChainWeapon,
     size: EnemySize,
     healthbar: HealthBar,
+    health: HealthComponent,
     public velo: number
   ) {
-    super(scene, x, y, texture, campID, campMask, weapon, size, healthbar);
+    super(
+      scene,
+      x,
+      y,
+      texture,
+      campID,
+      campMask,
+      weapon,
+      size,
+      healthbar,
+      health
+    );
     this.setCircle(this.texture.get(0).halfWidth);
     this.attack = this.weapon.attack.bind(this.weapon);
   }
@@ -50,7 +62,9 @@ export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
   }
 
   damage(amount) {
-    if (this.healthbar.decrease(amount)) {
+    const res = this.health.decrease(amount);
+    this.healthbar.draw();
+    if (res) {
       this.poolDestroy();
       return true;
     } else {

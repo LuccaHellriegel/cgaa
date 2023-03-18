@@ -50,12 +50,6 @@ export class Healer extends Tower {
     this.redraw();
   }
 
-  damage(amount: number) {
-    if (this.healthbar.decrease(amount)) {
-      this.poolDestroy();
-    }
-  }
-
   inDistance(unit) {
     return (
       Phaser.Math.Distance.Between(this.x, this.y, unit.x, unit.y) <

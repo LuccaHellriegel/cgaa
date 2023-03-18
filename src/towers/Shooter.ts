@@ -12,12 +12,6 @@ export class Shooter extends Tower {
     //TODO: can be spawned ontop of units because I dont check enemies in TowerModus
   }
 
-  damage(amount: number) {
-    if (this.healthbar.decrease(amount)) {
-      this.poolDestroy();
-    }
-  }
-
   fire(target) {
     if (this.canFire) {
       this.bullets.fireBullet(this.x, this.y, target.x, target.y, this);

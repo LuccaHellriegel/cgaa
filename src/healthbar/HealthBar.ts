@@ -53,7 +53,7 @@ enum HealthChange {
 //   }
 // }
 
-class HealthComponent {
+export class HealthComponent {
   constructor(public health: number, public healthDefault: number) {}
 
   reset() {
@@ -78,9 +78,14 @@ export class HealthBar {
   posCorrectionX: number;
   posCorrectionY: number;
   lastHealth: number;
-  health: HealthComponent;
+  // health: HealthComponent;
 
-  constructor(public x: number, public y: number, config: HealthBarConfig) {
+  constructor(
+    public x: number,
+    public y: number,
+    config: HealthBarConfig,
+    private health: HealthComponent
+  ) {
     this.bar = (config.scene as Phaser.Scene).add.graphics();
 
     let { healthWidth, healthLength, posCorrectionX, posCorrectionY, value } =
@@ -93,7 +98,6 @@ export class HealthBar {
     this.posCorrectionX = posCorrectionX;
     this.posCorrectionY = posCorrectionY;
 
-    this.health = new HealthComponent(config.value, config.value);
     this.move(x, y);
     this.reset();
   }

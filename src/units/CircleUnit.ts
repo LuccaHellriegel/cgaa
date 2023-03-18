@@ -3,7 +3,7 @@ import { listenToAnim } from "../anim/anim-listen";
 import { initUnitAnims } from "../anim/anim-play";
 
 import { damageable } from "../engine/damageable";
-import { HealthBar } from "../healthbar/HealthBar";
+import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
 import { EnemySize } from "./CircleFactory";
@@ -33,7 +33,8 @@ export class CircleUnit
     public campMask: number,
     public weapon: ChainWeapon,
     size: EnemySize,
-    public healthbar: HealthBar
+    public healthbar: HealthBar,
+    public health: HealthComponent
   ) {
     super(scene, x, y, texture);
     this.id = nanoid();
@@ -53,7 +54,9 @@ export class CircleUnit
   }
 
   damage(amount) {
-    if (this.healthbar.decrease(amount)) {
+    const res = this.health.decrease(amount);
+    this.healthbar.draw();
+    if (res) {
       this.destroy();
       return true;
     } else {
