@@ -1,5 +1,5 @@
-import { SelectorRect } from "../../ui/SelectorRect";
-import { Player } from "../Player";
+import { SelectorRect } from "../ui/SelectorRect";
+import { Player } from "./Player";
 
 const setupMouseMovement = (
   scene: Phaser.Scene,

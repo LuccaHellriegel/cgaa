@@ -1,5 +1,5 @@
 import { EventSetup } from "../../config/EventSetup";
-import { TowerModus } from "../../player/input/TowerModus";
+import { TowerModus } from "../../player/TowerModus";
 import { Gameplay } from "../../scenes/Gameplay";
 
 export class BuildManager {
