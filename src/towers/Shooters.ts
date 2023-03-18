@@ -1,6 +1,6 @@
 import { Bullets } from "./Bullets";
-import { Towers } from "../Tower";
-import { TowerSetup } from "../../config/TowerSetup";
+import { Towers } from "./Tower";
+import { TowerSetup } from "../config/TowerSetup";
 import { Shooter } from "./Shooter";
 
 export class Shooters extends Towers {

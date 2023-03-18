@@ -1,5 +1,5 @@
 import { Towers } from "./Tower";
-import { Shooters } from "./Shooter/Shooters";
+import { Shooters } from "./Shooters";
 import { TowerSetup } from "../config/TowerSetup";
 import { Healer } from "./Healer";
 

@@ -1,6 +1,6 @@
 import { Bullets } from "./Bullets";
-import { Tower } from "../Tower";
-import { Gameplay } from "../../scenes/Gameplay";
+import { Tower } from "./Tower";
+import { Gameplay } from "../scenes/Gameplay";
 
 export class Shooter extends Tower {
   canFire = true;

@@ -1,4 +1,4 @@
-import { createNonRepeatingAnim } from "../../anim/anim-create";
+import { createNonRepeatingAnim } from "../anim/anim-create";
 
 export function createShooterAnims(anims) {
   createNonRepeatingAnim(anims, "invalid-shooter-pos", "selectorRect", 1, 2, 8);

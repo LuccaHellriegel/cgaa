@@ -1,5 +1,5 @@
 import { Shooter } from "./Shooter";
-import { TowerSetup } from "../../config/TowerSetup";
+import { TowerSetup } from "../config/TowerSetup";
 import { Bullet } from "./Bullet";
 
 export class Bullets extends Phaser.Physics.Arcade.Group {

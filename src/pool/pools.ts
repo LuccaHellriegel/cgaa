@@ -1,8 +1,8 @@
 import { CampSetup } from "../config/CampSetup";
 import { UnitSetup } from "../config/UnitSetup";
 import { Healers } from "../towers/Healers";
-import { Bullets } from "../towers/Shooter/Bullets";
-import { Shooters } from "../towers/Shooter/Shooters";
+import { Bullets } from "../towers/Bullets";
+import { Shooters } from "../towers/Shooters";
 import { ChainWeapons } from "../weapons/ChainWeapon/ChainWeapons";
 
 export type Pools = {

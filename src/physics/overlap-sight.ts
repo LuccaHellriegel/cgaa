@@ -1,6 +1,6 @@
 import { Gameplay } from "../scenes/Gameplay";
 import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
-import { Shooter } from "../towers/Shooter/Shooter";
+import { Shooter } from "../towers/Shooter";
 import { DangerousCircle } from "../units/DangerousCircle";
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
 
