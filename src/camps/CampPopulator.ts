@@ -4,7 +4,7 @@ import { UnitSetup } from "../config/UnitSetup";
 import { DangerousCirclePool } from "../pool/CirclePool";
 import { Gameplay } from "../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 import { CampsState } from "./CampsState";
 
 export class CampPopulator {

@@ -1,15 +1,15 @@
-import { unitAnims } from "../../anim/anim-play";
-import { poolable } from "../../engine/poolable";
-import { Point } from "../../engine/Point";
-import { CircleControl } from "../../ai/CircleControl";
-import { HealthBar } from "../../healthbar/HealthBar";
-import { Gameplay } from "../../scenes/Gameplay";
-import { weaponHeights } from "../../weapons/ChainWeapon/chain-weapon-data";
-import { ChainWeapon } from "../../weapons/ChainWeapon/ChainWeapon";
-import { EnemySize } from "../CircleFactory";
-import { CircleUnit } from "../Circle/CircleUnit";
-import { UnitSetup } from "../../config/UnitSetup";
-import { CampID } from "../../config/CampSetup";
+import { unitAnims } from "../anim/anim-play";
+import { poolable } from "../engine/poolable";
+import { Point } from "../engine/Point";
+import { CircleControl } from "../ai/CircleControl";
+import { HealthBar } from "../healthbar/HealthBar";
+import { Gameplay } from "../scenes/Gameplay";
+import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
+import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { EnemySize } from "./CircleFactory";
+import { CircleUnit } from "./CircleUnit";
+import { UnitSetup } from "../config/UnitSetup";
+import { CampID } from "../config/CampSetup";
 
 export class DangerousCircle extends CircleUnit implements poolable, unitAnims {
   pathArr: Point[];

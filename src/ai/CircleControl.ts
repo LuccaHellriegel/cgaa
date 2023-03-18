@@ -1,5 +1,5 @@
 import { Point } from "../engine/Point";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 export interface AIComponent {
   childComponent: AIComponent;

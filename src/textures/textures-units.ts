@@ -11,11 +11,11 @@ import {
   textureChain,
 } from "../engine/generation";
 import { Gameplay } from "../scenes/Gameplay";
-import { BossGenerator } from "../units/Boss/BossGenerator";
-import { CircleGenerator } from "../units/Circle/CircleGenerator";
+import { BossGenerator } from "../units/BossGenerator";
+import { CircleGenerator } from "../units/CircleGenerator";
 import { DiplomatSymbolGenerator } from "../units/DiplomatSymbolGenerator";
-import { InteractionCircleGenerator } from "../units/InteractionCircle/InteractionCircleGenerator";
-import { KingGenerator } from "../units/King/KingGenerator";
+import { InteractionCircleGenerator } from "../units/InteractionCircleGenerator";
+import { KingGenerator } from "../units/KingGenerator";
 
 function generatePlayerUnits(scene: Gameplay) {
   new CircleGenerator(

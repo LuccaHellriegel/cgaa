@@ -1,9 +1,10 @@
-import { Generator } from "../../engine/Generator";
-import { Gameplay } from "../../scenes/Gameplay";
+import { Generator } from "../engine/Generator";
+import { Gameplay } from "../scenes/Gameplay";
 
-export class CircleGenerator extends Generator {
+export class InteractionCircleGenerator extends Generator {
   title: string;
   radius: number;
+  hexColor: number;
 
   constructor(
     hexColor: number,
@@ -14,6 +15,7 @@ export class CircleGenerator extends Generator {
     super(hexColor, scene);
     this.title = title;
     this.radius = radius;
+    this.hexColor = hexColor;
     this.generate();
   }
 
@@ -23,11 +25,21 @@ export class CircleGenerator extends Generator {
   }
 
   drawCircleIdleFrame() {
+    this.graphics.fillStyle(this.hexColor);
     this.graphics.fillCircle(this.radius, this.radius, this.radius);
+    this.graphics.fillStyle(0x323232);
+    this.graphics.fillCircle(this.radius, this.radius, 2.5 * (this.radius / 3));
   }
 
   drawCircleDamageFrame() {
+    this.graphics.fillStyle(this.hexColor);
     this.graphics.fillCircle(3 * this.radius, this.radius, this.radius);
+    this.graphics.fillStyle(0x323232);
+    this.graphics.fillCircle(
+      3 * this.radius,
+      this.radius,
+      2.5 * (this.radius / 3)
+    );
     this.graphics.fillStyle(0xf08080);
     this.graphics.fillCircle(
       3 * this.radius,

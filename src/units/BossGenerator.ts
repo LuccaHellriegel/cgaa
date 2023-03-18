@@ -1,7 +1,7 @@
-import { CampSetup } from "../../config/CampSetup";
-import { UnitSetup } from "../../config/UnitSetup";
-import { Generator } from "../../engine/Generator";
-import { Gameplay } from "../../scenes/Gameplay";
+import { CampSetup } from "../config/CampSetup";
+import { UnitSetup } from "../config/UnitSetup";
+import { Generator } from "../engine/Generator";
+import { Gameplay } from "../scenes/Gameplay";
 
 export class BossGenerator extends Generator {
   title: string;

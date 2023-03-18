@@ -1,4 +1,4 @@
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 import { ObstacleComponent } from "./ObstacleComponent";
 import { AIComponent, CircleControl } from "./CircleControl";
 import { EnvSetup } from "../config/EnvSetup";

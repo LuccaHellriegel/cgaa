@@ -1,4 +1,4 @@
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 import { AIComponent, CircleControl } from "./CircleControl";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 

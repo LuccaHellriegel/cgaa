@@ -1,14 +1,14 @@
-import { CampID } from "../../config/CampSetup";
-import { listenToAnim } from "../../anim/anim-listen";
-import { initUnitAnims } from "../../anim/anim-play";
+import { CampID } from "../config/CampSetup";
+import { listenToAnim } from "../anim/anim-listen";
+import { initUnitAnims } from "../anim/anim-play";
 
-import { damageable } from "../../engine/damageable";
-import { HealthBar } from "../../healthbar/HealthBar";
-import { Gameplay } from "../../scenes/Gameplay";
-import { ChainWeapon } from "../../weapons/ChainWeapon/ChainWeapon";
-import { EnemySize } from "../CircleFactory";
+import { damageable } from "../engine/damageable";
+import { HealthBar } from "../healthbar/HealthBar";
+import { Gameplay } from "../scenes/Gameplay";
+import { ChainWeapon } from "../weapons/ChainWeapon/ChainWeapon";
+import { EnemySize } from "./CircleFactory";
 import { nanoid } from "nanoid";
-import { Point } from "../../engine/Point";
+import { Point } from "../engine/Point";
 
 const correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
 

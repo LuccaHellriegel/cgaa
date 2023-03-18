@@ -10,7 +10,7 @@ import { PathAssigner } from "../path/PathAssigner";
 import { DangerousCirclePool } from "../pool/CirclePool";
 import { Gameplay } from "../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 export class WavePopulator {
   waveSize = WaveSetup.waveSize;

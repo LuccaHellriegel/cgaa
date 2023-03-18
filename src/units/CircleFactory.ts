@@ -1,11 +1,11 @@
-import { DangerousCircle } from "./DangerousCircle/DangerousCircle";
-import { InteractionCircle } from "./InteractionCircle/InteractionCircle";
+import { DangerousCircle } from "./DangerousCircle";
+import { InteractionCircle } from "./InteractionCircle";
 import { HealthBar } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/ChainWeapon/chain-weapon-data";
 import { ChainWeapons } from "../weapons/ChainWeapon/ChainWeapons";
 import { Enemies } from "./Enemies";
-import { King } from "./King/King";
+import { King } from "./King";
 import { UnitSetup } from "../config/UnitSetup";
 import { CampID } from "../config/CampSetup";
 

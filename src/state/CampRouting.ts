@@ -1,13 +1,13 @@
 import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
-import { Rivalries } from "./Rivalries";
+import { QuestManager } from "../quests/QuestManager";
 
 export class CampRouting {
   private routings = {};
   private rerouteQueues = {};
-  constructor(private events, rivalries: Rivalries) {
+  constructor(private events, questManager: QuestManager) {
     this.initRoutings();
-    this.initRerouteQueues(rivalries);
+    this.initRerouteQueues(questManager);
 
     events.on(EventSetup.conqueredEvent, this.allowKingRouting.bind(this));
   }
@@ -25,10 +25,10 @@ export class CampRouting {
     });
   }
 
-  private initRerouteQueues(rivalries) {
+  private initRerouteQueues(questManager: QuestManager) {
     CampSetup.ordinaryCampIDs.forEach((id) => {
       this.rerouteQueues[id] = CampSetup.ordinaryCampIDs.filter((otherID) => {
-        return otherID !== id && otherID !== rivalries.get(id);
+        return otherID !== id && otherID !== questManager.getRival(id);
       });
     });
   }

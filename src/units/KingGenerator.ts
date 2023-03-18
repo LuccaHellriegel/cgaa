@@ -1,6 +1,6 @@
-import { UnitSetup } from "../../config/UnitSetup";
-import { Generator } from "../../engine/Generator";
-import { Gameplay } from "../../scenes/Gameplay";
+import { UnitSetup } from "../config/UnitSetup";
+import { Generator } from "../engine/Generator";
+import { Gameplay } from "../scenes/Gameplay";
 
 //TODO: remove duplication
 export class KingGenerator extends Generator {

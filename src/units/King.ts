@@ -1,4 +1,4 @@
-import { DangerousCircle } from "../DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "./DangerousCircle";
 
 export class King extends DangerousCircle {
   damage(amount) {

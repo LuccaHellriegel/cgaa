@@ -1,7 +1,7 @@
 import { CampRouting } from "../state/CampRouting";
 import { CampID } from "../config/CampSetup";
 import { RelPos } from "../engine/RelPos";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 import { Point } from "../engine/Point";
 import { CampMap } from "../data/data";
 import { PathDict } from "./calculation";

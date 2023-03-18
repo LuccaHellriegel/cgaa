@@ -48,7 +48,7 @@ export class Spawner {
       x = snappedXY.newX;
       y = snappedXY.newY;
       if (this.spawnObj.evaluatePoint({ x, y })) {
-        EventSetup.spendSouls(this.scene, this.cost);
+        this.scene.events.emit(EventSetup.soulsSpent, this.cost);
         this.clickModes.addTo(this.pool.placeTower(x, y));
       } else {
         selectorRect.anims.play("invalid-shooter-pos");

@@ -23,7 +23,7 @@ import { BuildManager } from "./ui/build/BuildManager";
 import { SelectorRect } from "./ui/SelectorRect";
 import { CircleFactory } from "./units/CircleFactory";
 import { Enemies } from "./units/Enemies";
-import { InteractionCircle } from "./units/InteractionCircle/InteractionCircle";
+import { InteractionCircle } from "./units/InteractionCircle";
 import { PlayerFriend } from "./units/PlayerFriend";
 import { WaveController } from "./wave/WaveController";
 import { WaveOrder } from "./wave/WaveOrder";
@@ -205,16 +205,6 @@ export function GameStart(scene, state: FinalState): CGAA {
   const diplomats = staticUnits.map((units) => {
     return units.diplomats;
   });
-  const manager = new QuestManager(scene, state.rivalries);
-  CampSetup.ordinaryCampIDs.forEach((id) => {
-    for (const diplomatArr of diplomats) {
-      for (const diplomat of diplomatArr) {
-        if (diplomat.campID == id) {
-          diplomat.questManager = manager;
-        }
-      }
-    }
-  });
 
   const waveOrder = new WaveOrder(campsState);
 
@@ -234,6 +224,5 @@ export function GameStart(scene, state: FinalState): CGAA {
     player,
     waveOrder,
     friends,
-    questManager: manager,
   };
 }

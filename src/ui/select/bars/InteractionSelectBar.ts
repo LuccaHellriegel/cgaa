@@ -6,7 +6,7 @@ import { SelectionManager } from "../SelectionManager";
 import { ClickableTextRect, ClickableImageRect } from "../../rect/DoubleRect";
 import { TextGUIElement } from "../../TextGUIElement";
 import { CampSetup } from "../../../config/CampSetup";
-import { InteractionCircle } from "../../../units/InteractionCircle/InteractionCircle";
+import { InteractionCircle } from "../../../units/InteractionCircle";
 import { BitwiseCooperation } from "../../../engine/BitwiseCooperation";
 import { QuestManager } from "../../../quests/QuestManager";
 

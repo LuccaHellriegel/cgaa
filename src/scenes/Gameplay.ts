@@ -5,7 +5,7 @@ import { state } from "../state/state";
 import { physics } from "../physics/physics";
 import { Textures } from "../textures/textures";
 import { CGAAData } from "../types";
-import { InteractionCircle } from "../units/InteractionCircle/InteractionCircle";
+import { InteractionCircle } from "../units/InteractionCircle";
 import { createShooterAnims } from "../towers/Shooter/createShooterAnims";
 import { createCircleAnims } from "../units/circle-anim";
 import { createChainWeaponAnims } from "../weapons/ChainWeapon/chain-weapon-anim";
@@ -57,10 +57,7 @@ export class Gameplay extends Phaser.Scene {
     ) {
       let id = interactCircle.campID;
       let mask = interactCircle.campMask;
-      if (
-        interactCircle.questManager.setActive(id) &&
-        interactCircle.questManager.success(id)
-      ) {
+      if (cgaa.questManager.setActive(id) && cgaa.questManager.success(id)) {
         // check if id has cooperation with player, because id would need to be rerouted
         if (cgaa.cooperation.has(mask, CampSetup.playerCampMask)) {
           cgaa.router.reroute(id);

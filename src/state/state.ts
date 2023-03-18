@@ -7,16 +7,16 @@ import { PathAssigner } from "../path/PathAssigner";
 import { createConfigs } from "../path/configuration";
 import { producePaths } from "../path/calculation";
 import { CampRouting } from "./CampRouting";
-import { createRivalsMap, Rivalries } from "./Rivalries";
 import EasyStar from "easystarjs";
 import { GameMap } from "../types";
 import { EnvSetup } from "../config/EnvSetup";
+import { QuestManager } from "../quests/QuestManager";
 
 export interface State extends Data {
   cooperation: BitwiseCooperation;
-  rivalries: Rivalries;
   router: CampRouting;
   pathAssigner: PathAssigner;
+  questManager: QuestManager;
 }
 
 function configureEasyStar(easyStar: EasyStar.js, map: GameMap) {
@@ -33,8 +33,8 @@ export function state(
     scene.events.emit(EventSetup.cooperationEvent, id);
   });
 
-  const rivalries = createRivalsMap(CampSetup.ordinaryCampIDs);
-  const router = new CampRouting(scene.events, rivalries);
+  const manager = new QuestManager(scene);
+  const router = new CampRouting(scene.events, manager);
 
   const configs = createConfigs(commonWaypoint(gameData), gameData.camps);
 
@@ -47,6 +47,12 @@ export function state(
     router
   );
 
-  console.log(cooperation, rivalries, router, pathAssigner);
-  return { ...gameData, cooperation, rivalries, router, pathAssigner };
+  console.log(cooperation, router, pathAssigner);
+  return {
+    ...gameData,
+    cooperation,
+    router,
+    pathAssigner,
+    questManager: manager,
+  };
 }

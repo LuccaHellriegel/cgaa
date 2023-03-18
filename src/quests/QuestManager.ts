@@ -1,11 +1,29 @@
 import { Scene } from "phaser";
 import { CampSetup } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
-import { Rivalries } from "../state/Rivalries";
+import { randomizeArr } from "../utils/randomizeArr";
 
 const QUEST_INACTIVE = 0;
 const QUEST_ACTIVE = 1;
 const QUEST_SUCCESS = 2;
+
+function createRivalsMap(ids: string[]) {
+  const rivalsMap = new Map<string, string>();
+  const randIDs = randomizeArr(ids);
+
+  // only works for four camps
+  let id = randIDs.pop();
+  let secondID = randIDs.pop();
+  rivalsMap.set(id, secondID);
+  rivalsMap.set(secondID, id);
+
+  id = randIDs.pop();
+  secondID = randIDs.pop();
+  rivalsMap.set(id, secondID);
+  rivalsMap.set(secondID, id);
+
+  return rivalsMap;
+}
 
 export class QuestManager {
   ids: string[] = [];
@@ -13,7 +31,8 @@ export class QuestManager {
   amountToKill: number[] = [];
   rivals: string[] = [];
 
-  constructor(private scene: Scene, rivalries: Rivalries) {
+  constructor(private scene: Scene) {
+    const rivalries = createRivalsMap(CampSetup.ordinaryCampIDs);
     for (const id of CampSetup.ordinaryCampIDs) {
       this.ids.push(id);
       this.states.push(QUEST_INACTIVE);
@@ -67,5 +86,10 @@ export class QuestManager {
       this.states[index] = QUEST_SUCCESS;
       this.scene.events.emit(EventSetup.essentialUnitsKilled, rivalID);
     }
+  }
+
+  getRival(id: string) {
+    const index = this.ids.indexOf(id);
+    return this.rivals[index];
   }
 }

@@ -1,7 +1,7 @@
 import { EnvSetup } from "../config/EnvSetup";
 import { UnitSetup } from "../config/UnitSetup";
 import { RectGenerator } from "../engine/RectGenerator";
-import { CircleGenerator } from "../units/Circle/CircleGenerator";
+import { CircleGenerator } from "../units/CircleGenerator";
 import { weaponTextures } from "../weapons/ChainWeapon/chain-weapon-texture";
 import { generateUnits } from "./textures-units";
 

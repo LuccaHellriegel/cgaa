@@ -24,15 +24,7 @@ export class EventSetup {
     scene.events.emit(EventSetup.soulsGained, this.soulsDict[type]);
   }
 
-  static spendSouls(scene: Phaser.Scene, amount) {
-    scene.events.emit(EventSetup.soulsSpent, amount);
-  }
-
   static interactionCircleDestroyEvent = "interactionCircle-destroyed";
-
-  static destroyInteractionCircle(scene: Phaser.Scene, campID: CampID) {
-    scene.events.emit(this.interactionCircleDestroyEvent, campID);
-  }
 
   static buildingDestroyEvent = "building-destroyed";
 

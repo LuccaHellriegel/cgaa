@@ -1,5 +1,5 @@
 import { BitwiseCooperation } from "../engine/BitwiseCooperation";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 export function initBounceGroupPair(
   scene: Phaser.Scene,

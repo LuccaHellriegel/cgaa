@@ -1,6 +1,6 @@
 import { CampsState } from "../camps/CampsState";
 import { CampID } from "../config/CampSetup";
-import { DangerousCircle } from "../units/DangerousCircle/DangerousCircle";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 export class Wave {
   constructor(
