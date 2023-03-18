@@ -7,10 +7,10 @@ import { CampID } from "../config/CampSetup";
 import { EventSetup } from "../config/EventSetup";
 import { WaveSetup } from "../config/WaveSetup";
 import { PathAssigner } from "../path/PathAssigner";
-import { DangerousCirclePool } from "../pool/CirclePool";
 import { Gameplay } from "../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { DangerousCircle } from "../units/DangerousCircle";
+import { CircleFactory, EnemySize } from "../units/CircleFactory";
 
 export class WavePopulator {
   waveSize = WaveSetup.waveSize;
@@ -19,11 +19,12 @@ export class WavePopulator {
   constructor(
     private scene: Gameplay,
     public id: CampID,
-    private enemyPool: DangerousCirclePool,
+    private circleFactory: CircleFactory,
     private enemySpawnObj: EnemySpawnObj,
     private assigner: PathAssigner,
     private state: CampsState,
-    private buildingID: string
+    private buildingID: string,
+    private size: EnemySize
   ) {
     this.setupInitEvents();
   }
@@ -51,10 +52,9 @@ export class WavePopulator {
       if (spawnPosition) {
         spawnPositions.push(spawnPosition);
 
-        let enemy = this.enemyPool.pop() as DangerousCircle;
-        //Path is saved in logical order (A to B), needs to be reversed for pop()
-
-        //	enemy.stateHandler.setComponents([new GuardComponent(enemy, enemy.stateHandler)]);
+        let enemy = this.circleFactory.createEnemy(
+          this.size
+        ) as DangerousCircle;
 
         enemy.stateHandler.setComponents([
           new GuardComponent(enemy, enemy.stateHandler),
@@ -84,7 +84,6 @@ export class WavePopulator {
 
   private startWave() {
     if (!this.state.isBuildingActive(this.id, this.buildingID)) {
-      this.enemyPool.destroy();
       return;
     }
 

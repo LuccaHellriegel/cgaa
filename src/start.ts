@@ -14,7 +14,6 @@ import { Physics } from "./physics/physics";
 import { playerInput } from "./player/playerInput";
 import { Spawner } from "./player/Spawner";
 import { Player } from "./player/Player";
-import { DangerousCirclePool } from "./pool/CirclePool";
 import { Pools, initPools } from "./pool/pools";
 import { Gameplay } from "./scenes/Gameplay";
 import { EnemySpawnObj } from "./spawn/EnemySpawnObj";
@@ -88,24 +87,19 @@ function waveProducer(
           new WavePopulator(
             scene,
             building.campID,
-            new DangerousCirclePool(
+            new CircleFactory(
               scene,
-              8,
-              new CircleFactory(
-                scene,
-                building.campID,
-                building.campMask,
-                state.physics.addUnit,
-                enemies,
-                pools.weapons[building.campID]
-              ),
+              building.campID,
+              building.campMask,
+              state.physics.addUnit,
               enemies,
-              building.spawnUnit
+              pools.weapons[building.campID]
             ),
             new EnemySpawnObj(spawnDict, enemies),
             state.pathAssigner,
             campsState,
-            building.id
+            building.id,
+            building.spawnUnit
           );
           break;
         }

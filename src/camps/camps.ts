@@ -18,7 +18,6 @@ import { EnvSetup } from "../config/EnvSetup";
 import { UnitSetup } from "../config/UnitSetup";
 import { RelPos } from "../engine/RelPos";
 import { Physics } from "../physics/physics";
-import { DangerousCirclePool } from "../pool/CirclePool";
 import { Pools } from "../pool/pools";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { FinalState } from "../start";
@@ -117,7 +116,7 @@ function populateCamp(
   camp: Camp,
   campsState: CampsState,
   enemies: Enemies,
-  pool: DangerousCirclePool,
+  circleFactory: CircleFactory,
   mapSpawnPos: RelPos[]
 ) {
   const spawnDict = areaRealSpawnDict(
@@ -128,7 +127,7 @@ function populateCamp(
   new CampPopulator(
     camp.id as CampID,
     scene,
-    pool,
+    () => circleFactory.createEnemy("Big"),
     new EnemySpawnObj(spawnDict, enemies),
     UnitSetup.maxCampPopulation,
     campsState
@@ -153,19 +152,13 @@ export function populateCamps(
         camp,
         campsState,
         enemies,
-        new DangerousCirclePool(
+        new CircleFactory(
           scene,
-          UnitSetup.campSize,
-          new CircleFactory(
-            scene,
-            camp.id,
-            camp.campMask,
-            state.physics.addUnit,
-            enemies,
-            pools.weapons[camp.id]
-          ),
+          camp.id,
+          camp.campMask,
+          state.physics.addUnit,
           enemies,
-          "Big"
+          pools.weapons[camp.id]
         ),
         mapSpawnPos
       );

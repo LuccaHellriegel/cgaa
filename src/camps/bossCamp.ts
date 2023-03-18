@@ -19,7 +19,7 @@ import { BossBarrier } from "./BossBarrier";
 function populate(
   scene: Gameplay,
   camp: Camp,
-  pool: BossPool,
+  circleFactory: CircleFactory,
   enemies: Enemies,
   campsState: CampsState,
   mapSpawnPos: RelPos[]
@@ -32,7 +32,7 @@ function populate(
   new CampPopulator(
     CampSetup.bossCampID,
     scene,
-    pool,
+    () => circleFactory.createBoss(),
     new EnemySpawnObj(spawnDict, enemies),
     BossSetup.maxBossCampPopulation,
     campsState
@@ -78,12 +78,5 @@ export function bossCamp(
     }
   );
   positionKing(bossFactory, camp.areaMapMiddle.toPoint());
-  populate(
-    scene,
-    camp,
-    new BossPool(scene, BossSetup.bossGroupSize, bossFactory, enemies),
-    enemies,
-    campsState,
-    mapSpawnPos
-  );
+  populate(scene, camp, bossFactory, enemies, campsState, mapSpawnPos);
 }
