@@ -78,18 +78,14 @@ export class Player
     this.weapon.setRotationAroundOwner();
   }
 
-  static withChainWeapon(scene: Gameplay, x, y) {
+  static withChainWeapon(scene: Gameplay, x: number, y: number) {
     let weapon = new ChainWeapon(
       scene,
       x,
       y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2,
-      "NormalchainWeapon"
-    );
-    weapon.init(
-      "Normal",
-      x,
-      y - UnitSetup.sizeDict["Normal"] - weaponHeights["Normal"].frame2 / 2,
-      40
+      "NormalchainWeapon",
+      40,
+      "Normal"
     );
     let circle = new Player(scene, x, y, weapon);
     weapon.setOwner(circle);

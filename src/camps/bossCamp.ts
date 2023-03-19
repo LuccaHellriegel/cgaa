@@ -3,7 +3,6 @@ import { BossSetup } from "../config/BossSetup";
 import { CampSetup } from "../config/CampSetup";
 import { RelPos } from "../engine/RelPos";
 import { Point } from "../engine/Point";
-import { Pools } from "../pool/pools";
 import { Gameplay } from "../scenes/Gameplay";
 import { EnemySpawnObj } from "../spawn/EnemySpawnObj";
 import { FinalState } from "../start";
@@ -31,7 +30,7 @@ function populate(
   new CampPopulator(
     CampSetup.bossCampID,
     scene,
-    () => circleFactory.createBoss(),
+    (x: number, y: number) => circleFactory.createBoss(x, y),
     new EnemySpawnObj(spawnDict, enemies),
     BossSetup.maxBossCampPopulation,
     campsState
@@ -39,18 +38,16 @@ function populate(
 }
 
 function positionKing(bossFactory: CircleFactory, kingPoint: Point) {
-  let king = bossFactory.createKing();
+  let king = bossFactory.createKing(kingPoint.x, kingPoint.y);
   king.stateHandler.setComponents([
     new GuardComponent(king, king.stateHandler),
   ]);
-  king.setPosition(kingPoint.x, kingPoint.y);
 }
 
 export function bossCamp(
   scene,
   state: FinalState,
   enemies: Enemies,
-  pools: Pools,
   campsState: CampsState,
   mapSpawnPos: RelPos[]
 ) {

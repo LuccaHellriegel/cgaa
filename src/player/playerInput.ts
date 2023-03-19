@@ -2,7 +2,7 @@ import { EnvSetup } from "../config/EnvSetup";
 import { TowerSetup } from "../config/TowerSetup";
 import { RealDict } from "../engine/RealDict";
 import { RelPos } from "../engine/RelPos";
-import { Pools } from "../pool/pools";
+import { Pools } from "../towers/pools";
 import { TowerSpawnObj } from "../spawn/TowerSpawnObj";
 import { BuildManager } from "../ui/build/BuildManager";
 import { SelectorRect } from "../ui/SelectorRect";

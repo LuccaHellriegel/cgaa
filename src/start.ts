@@ -14,7 +14,7 @@ import { Physics } from "./physics/physics";
 import { playerInput } from "./player/playerInput";
 import { Spawner } from "./player/Spawner";
 import { Player } from "./player/Player";
-import { Pools, initPools } from "./pool/pools";
+import { Pools, initPools } from "./towers/pools";
 import { Gameplay } from "./scenes/Gameplay";
 import { EnemySpawnObj } from "./spawn/EnemySpawnObj";
 import { State } from "./state";
@@ -143,13 +143,6 @@ export function GameStart(scene, state: FinalState): CGAA {
   const player = Player.withChainWeapon(scene, playerExit.x, playerExit.y);
   state.physics.addUnit(player);
 
-  const pools = initPools(
-    scene,
-    state.physics.addTower,
-    state.physics.addBullet,
-    player
-  );
-
   const staticUnits = campsStaticUnits(
     scene,
     state.camps,
@@ -168,23 +161,22 @@ export function GameStart(scene, state: FinalState): CGAA {
     state.mapDefaultSymbol,
     state.exits
   );
-  populateCamps(
-    scene,
-    state.camps,
-    enemies,
-    campsState,
-    mapSpawnPos,
-    state,
-    pools
-  );
+  populateCamps(scene, state.camps, enemies, campsState, mapSpawnPos, state);
 
-  bossCamp(scene, state, enemies, pools, campsState, mapSpawnPos);
+  bossCamp(scene, state, enemies, campsState, mapSpawnPos);
 
   const friends = playerCamp(
     scene,
     state.camps.get(CampSetup.playerCampID).areaMapMiddle.toPoint(),
     state,
     enemies
+  );
+
+  const pools = initPools(
+    scene,
+    state.physics.addTower,
+    state.physics.addBullet,
+    player
   );
   const input = playerInput(scene, player, mapSpawnPos, enemies, pools);
 

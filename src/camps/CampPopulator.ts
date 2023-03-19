@@ -12,7 +12,7 @@ export class CampPopulator {
   constructor(
     private campID: CampID,
     private scene: Gameplay,
-    private create: () => DangerousCircle,
+    private create: (x: number, y: number) => DangerousCircle,
     private enemySpawnObj: EnemySpawnObj,
     private maxCampPopulation: number,
     private campsState: CampsState
@@ -47,14 +47,12 @@ export class CampPopulator {
   private spawnEnemy(leftToSpawn: number) {
     let spawnPosition = this.enemySpawnObj.getRandomSpawnPosition();
     if (spawnPosition) {
-      let enemy = this.create();
+      let enemy = this.create(spawnPosition[0], spawnPosition[1]);
       this.active++;
 
       enemy.stateHandler.setComponents([
         new GuardComponent(enemy, enemy.stateHandler),
       ]);
-
-      enemy.poolActivate(spawnPosition[0], spawnPosition[1]);
       leftToSpawn--;
     }
     if (leftToSpawn > 0) {

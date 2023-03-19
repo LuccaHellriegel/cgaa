@@ -15,7 +15,8 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
     console.log(weapon.attackingFactor, weapon.didDamageFactor);
     // need to have an eye if this is a good tradeoff vs having more groups
     if (weaponOwner.campID !== enemy.campID) {
-      let damage = weapon.amount;
+      let damage =
+        weapon.attackingFactor * weapon.didDamageFactor * weapon.amount;
       let enemyStateHandler = enemy.stateHandler;
 
       //TODO: player physics to avoid the check???
@@ -25,7 +26,8 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
           EventSetup.gainSouls(weapon.scene, enemy.type);
       }
 
-      enemy.damage(weapon.attackingFactor * weapon.didDamageFactor * damage);
+      enemy.damage(damage);
+      // if (damage > 0)
       weapon.didDamageFactor = 0;
 
       if (enemyStateHandler) {

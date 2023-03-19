@@ -1,6 +1,6 @@
-import { Healers } from "../towers/Healers";
-import { Bullets } from "../towers/Bullets";
-import { Shooters } from "../towers/Shooters";
+import { Healers } from "./Healers";
+import { Bullets } from "./Bullets";
+import { Shooters } from "./Shooters";
 
 export type Pools = {
   healers: Healers;

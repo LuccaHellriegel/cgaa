@@ -24,6 +24,7 @@ export class CircleControl implements AIComponent {
   moveBack() {
     let lastPos = this.lastPositions[0];
     this.circle.setPosition(lastPos.x, lastPos.y);
+    this.circle.weapon.setRotationAroundOwner();
   }
 
   moveTo(target: Point, reachDist: number) {

@@ -26,7 +26,7 @@ export class WavePopulator {
     private buildingID: string,
     private size: EnemySize
   ) {
-    // this.setupInitEvents();
+    this.setupInitEvents();
   }
 
   private setupInitEvents() {
@@ -53,7 +53,9 @@ export class WavePopulator {
         spawnPositions.push(spawnPosition);
 
         let enemy = this.circleFactory.createEnemy(
-          this.size
+          this.size,
+          spawnPosition[0],
+          spawnPosition[1]
         ) as DangerousCircle;
 
         enemy.stateHandler.setComponents([

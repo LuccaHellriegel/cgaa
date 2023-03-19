@@ -110,6 +110,7 @@ export function playerCamp(
       ),
     ]);
     circle.setPosition(config.x, config.y);
+    circle.weapon.setRotationAroundOwner();
     friends.push(circle);
   });
   return friends;
