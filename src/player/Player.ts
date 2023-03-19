@@ -35,7 +35,7 @@ export class Player
     scene: Gameplay,
     x: number,
     y: number,
-    private weapon: ChainWeapon
+    public weapon: ChainWeapon
   ) {
     super(scene, x, y, playerTextureName);
 
@@ -78,7 +78,7 @@ export class Player
     this.weapon.setRotationAroundOwner();
   }
 
-  static withChainWeapon(scene: Phaser.Scene, x, y) {
+  static withChainWeapon(scene: Gameplay, x, y) {
     let weapon = new ChainWeapon(
       scene,
       x,

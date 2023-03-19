@@ -12,6 +12,7 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
     let weapon: ChainWeapon = circle.getData("weapon");
     let weaponOwner = weapon.owner as CircleUnit;
 
+    console.log(weapon.attackingFactor, weapon.didDamageFactor);
     // need to have an eye if this is a good tradeoff vs having more groups
     if (weaponOwner.campID !== enemy.campID) {
       let damage = weapon.amount;

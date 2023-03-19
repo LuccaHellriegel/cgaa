@@ -21,6 +21,7 @@ export class CounterRect extends Rect implements notifyWithVal {
       {
         font: "38px Verdana ",
         color: "#000000",
+        //@ts-ignore
         fontWeight: "bold",
       }
     );

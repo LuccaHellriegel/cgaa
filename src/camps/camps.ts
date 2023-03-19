@@ -66,8 +66,7 @@ export function campsStaticUnits(
   scene,
   campMap: CampMap,
   physics: Physics,
-  enemies: Enemies,
-  weaponPools
+  enemies: Enemies
 ) {
   const camps = campMap.values();
   const result = [];
@@ -83,8 +82,7 @@ export function campsStaticUnits(
           camp.id as CampID,
           camp.campMask,
           physics.addUnit,
-          enemies,
-          weaponPools[camp.id]
+          enemies
         )
       );
       result.push({ buildings, diplomats });
@@ -157,8 +155,7 @@ export function populateCamps(
           camp.id,
           camp.campMask,
           state.physics.addUnit,
-          enemies,
-          pools.weapons[camp.id]
+          enemies
         ),
         mapSpawnPos
       );

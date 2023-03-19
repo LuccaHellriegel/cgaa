@@ -26,7 +26,7 @@ export class WavePopulator {
     private buildingID: string,
     private size: EnemySize
   ) {
-    this.setupInitEvents();
+    // this.setupInitEvents();
   }
 
   private setupInitEvents() {

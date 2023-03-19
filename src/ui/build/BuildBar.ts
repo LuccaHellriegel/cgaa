@@ -77,6 +77,7 @@ export class PureCounter implements notifyWithVal, GUIElement {
       {
         font: "25px Verdana ",
         color: "#cc0000",
+        //@ts-ignore
         fontWeight: "bold",
       }
     );

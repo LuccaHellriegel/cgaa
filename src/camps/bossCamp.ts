@@ -69,12 +69,7 @@ export function bossCamp(
     CampSetup.bossCampID,
     CampSetup.bossCampMask,
     state.physics.addUnit,
-    enemies,
-    {
-      Big: pools.bossWeapons,
-      Small: null,
-      Normal: null,
-    }
+    enemies
   );
   positionKing(bossFactory, camp.areaMapMiddle.toPoint());
   populate(scene, camp, bossFactory, enemies, campsState, mapSpawnPos);

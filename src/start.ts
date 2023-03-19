@@ -90,8 +90,7 @@ function waveProducer(
               building.campID,
               building.campMask,
               state.physics.addUnit,
-              enemies,
-              pools.weapons[building.campID]
+              enemies
             ),
             new EnemySpawnObj(spawnDict, enemies),
             state.pathAssigner,
@@ -155,8 +154,7 @@ export function GameStart(scene, state: FinalState): CGAA {
     scene,
     state.camps,
     state.physics,
-    enemies,
-    pools.weapons
+    enemies
   );
   const campsState = new CampsState(
     scene,
@@ -185,7 +183,6 @@ export function GameStart(scene, state: FinalState): CGAA {
   const friends = playerCamp(
     scene,
     state.camps.get(CampSetup.playerCampID).areaMapMiddle.toPoint(),
-    pools,
     state,
     enemies
   );

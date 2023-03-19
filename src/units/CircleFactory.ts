@@ -3,13 +3,14 @@ import { InteractionCircle } from "./InteractionCircle";
 import { HealthBar, HealthComponent } from "../healthbar/HealthBar";
 import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/chain-weapon-data";
-import { ChainWeapons } from "../weapons/ChainWeapons";
 import { Enemies } from "./Enemies";
 import { King } from "./King";
 import { UnitSetup } from "../config/UnitSetup";
 import { CampID } from "../config/CampSetup";
 import { healthBarDangerousCircleFactoryConfigs } from "../config/HealthbarSetup";
 import { veloConfigs } from "../config/VelocitySetup";
+import { ChainWeapon } from "../weapons/ChainWeapon";
+import { unitAmountConfig } from "../weapons/chain-weapon-base";
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
@@ -22,22 +23,30 @@ export class CircleFactory {
     private campID: string,
     private campMask: number,
     private addUnit: Function,
-    private enemies: Enemies,
-    private weaponPools: { [key in EnemySize]: ChainWeapons }
+    private enemies: Enemies
   ) {
     console.log(campID, campMask);
   }
 
   public static createWeapon(
-    weaponPools: { [key in EnemySize]: ChainWeapons },
+    scene: Gameplay,
     x: number,
     y: number,
     size: EnemySize
   ) {
-    return weaponPools[size].placeWeapon(
+    let weapon: ChainWeapon = new ChainWeapon(
+      scene,
       x,
-      y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2
+      y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2,
+      size + "chainWeapon"
     );
+    weapon.init(
+      size,
+      x,
+      y - UnitSetup.sizeDict[size] - weaponHeights[size].frame2 / 2,
+      unitAmountConfig[size].amount
+    );
+    return weapon;
   }
 
   public static createHealthBar(scene, x, y, size, health: HealthComponent) {
@@ -62,12 +71,7 @@ export class CircleFactory {
 
   createKing() {
     let size: EnemySize = "Big";
-    let weapon = CircleFactory.createWeapon(
-      this.weaponPools,
-      this.x,
-      this.y,
-      size
-    );
+    let weapon = CircleFactory.createWeapon(this.scene, this.x, this.y, size);
 
     const health = new HealthComponent(
       healthBarDangerousCircleFactoryConfigs[size].value,
@@ -93,12 +97,7 @@ export class CircleFactory {
 
   createBoss() {
     let size: EnemySize = "Big";
-    let weapon = CircleFactory.createWeapon(
-      this.weaponPools,
-      this.x,
-      this.y,
-      size
-    );
+    let weapon = CircleFactory.createWeapon(this.scene, this.x, this.y, size);
 
     const health = new HealthComponent(
       healthBarDangerousCircleFactoryConfigs[size].value,
@@ -123,12 +122,7 @@ export class CircleFactory {
   }
 
   createEnemy(size: EnemySize) {
-    let weapon = CircleFactory.createWeapon(
-      this.weaponPools,
-      this.x,
-      this.y,
-      size
-    );
+    let weapon = CircleFactory.createWeapon(this.scene, this.x, this.y, size);
     const health = new HealthComponent(
       healthBarDangerousCircleFactoryConfigs[size].value,
       healthBarDangerousCircleFactoryConfigs[size].value
@@ -167,7 +161,7 @@ export class CircleFactory {
       this.campID + "InteractionCircle",
       this.campID as CampID,
       this.campMask,
-      CircleFactory.createWeapon(this.weaponPools, x, y, size),
+      CircleFactory.createWeapon(this.scene, x, y, size),
       size as EnemySize,
       CircleFactory.createHealthBar(this.scene, x, y, size, health),
       health

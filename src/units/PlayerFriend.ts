@@ -6,8 +6,10 @@ export class PlayerFriend extends DangerousCircle implements subscribable {
     if (this.healthbar.decrease(amount)) {
       this.observer.notify();
       this.destroy();
+      return true;
     } else {
       this.anims.play("damage-" + this.texture.key);
+      return false;
     }
   }
   subscribe(type: string, observer: ObserverWrapper) {

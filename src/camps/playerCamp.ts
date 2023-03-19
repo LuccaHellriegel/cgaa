@@ -5,28 +5,21 @@ import { Point } from "../engine/Point";
 import { GuardComponent } from "../ai/GuardComponent";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
-import { Pools } from "../pool/pools";
 import { FinalState } from "../start";
-import { Scene } from "phaser";
 import { HealthComponent } from "../healthbar/HealthBar";
 import { healthBarDangerousCircleFactoryConfigs } from "../config/HealthbarSetup";
 import { veloConfigs } from "../config/VelocitySetup";
+import { Gameplay } from "../scenes/Gameplay";
+import { DangerousCircle } from "../units/DangerousCircle";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
 export function playerCamp(
-  scene: Scene,
+  scene: Gameplay,
   realMiddlePos: Point,
-  pools: Pools,
   state: FinalState,
   enemies: Enemies
 ) {
-  const friendPools = {
-    Big: pools.friendWeapons,
-    Small: null,
-    Normal: null,
-  };
-
   const friends: PlayerFriend[] = [];
   const baseConfig = {
     size: "Big",
@@ -80,7 +73,7 @@ export function playerCamp(
   ];
 
   const createFriend = (size: EnemySize) => {
-    let weapon = CircleFactory.createWeapon(friendPools, 0, 0, size);
+    let weapon = CircleFactory.createWeapon(scene, 0, 0, size);
 
     const health = new HealthComponent(
       healthBarDangerousCircleFactoryConfigs[size].value,
@@ -111,7 +104,10 @@ export function playerCamp(
   friendConfigs.forEach((config) => {
     let circle = createFriend(config.size as EnemySize);
     circle.stateHandler.setComponents([
-      new GuardComponent(circle, circle.stateHandler),
+      new GuardComponent(
+        circle as unknown as DangerousCircle,
+        circle.stateHandler
+      ),
     ]);
     circle.setPosition(config.x, config.y);
     friends.push(circle);

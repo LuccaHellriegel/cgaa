@@ -123,9 +123,6 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
       this.circleFrame1.y + diffY
     );
 
-    this.setRotation = this.setRotationCombined;
-    this.setPosition = this.setPositionCombined;
-
     this.initialized = true;
 
     listenToAnim(this, {
@@ -181,15 +178,13 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
       this.owner.rotation
     );
     this.setPosition(point.x, point.y);
-    this.setRotation(this.owner.rotation);
-  }
-
-  setRotationCombined(radians) {
+    this.setPhysicsPosition(point.x, point.y);
+    const radians = this.owner.rotation;
     // setRotation starts always at 0, rotate around starts at the last value
     // so we need to only rotate the difference
     for (let point of [this.circle, this.circleFrame1, this.circleFrame2])
       Phaser.Math.RotateAround(point, this.x, this.y, radians - this.rotation);
-    return super.setRotation(radians);
+    this.setRotation(this.owner.rotation);
   }
 
   setPhysicsPosition(x, y) {
@@ -199,21 +194,15 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
       point.setPosition(point.x + diffX, point.y + diffY);
   }
 
-  setPositionCombined(x, y, z, w) {
-    this.setPhysicsPosition(x, y);
-    return super.setPosition(x, y, z, w);
-  }
+  // setPositionCombined(x, y, z, w) {
+  //   this.setPhysicsPosition(x, y);
+  //   return super.setPosition(x, y, z, w);
+  // }
 
   setVelocity(x, y) {
     this.setVelocityX(x);
     this.setVelocityY(y);
     return this;
-  }
-
-  setVelocityOfOwner() {
-    let velo = this.owner.body.velocity;
-    this.setVelocityX(velo.x);
-    this.setVelocityY(velo.y);
   }
 
   setVelocityX(velo) {
