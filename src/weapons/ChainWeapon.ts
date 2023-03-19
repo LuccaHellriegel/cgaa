@@ -123,6 +123,7 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
     this.visible = true;
     this.initialized = true;
 
+    this.alignCircles(0, 1);
     listenToAnim(this, {
       animComplete: true,
       attackComplete: this.finishAttack.bind(this),
@@ -131,9 +132,9 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
 
     // this.setPosition(x, y);
     // this.enableBody(true, x, y, true, true);
-    this.circle.enableBody(true, x, y, false, false);
-    this.circleFrame1.enableBody(true, x, y, false, false);
-    this.circleFrame2.enableBody(true, x, y, false, false);
+    // this.circle.enableBody(true, x, y, false, false);
+    // this.circleFrame1.enableBody(true, x, y, false, false);
+    // this.circleFrame2.enableBody(true, x, y, false, false);
   }
 
   setOwner(owner: Phaser.Physics.Arcade.Image) {

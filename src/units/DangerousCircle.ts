@@ -43,11 +43,6 @@ export class DangerousCircle extends CircleUnit implements unitAnims {
     );
     this.setCircle(this.texture.get(0).halfWidth);
     this.attack = this.weapon.attack.bind(this.weapon);
-    this.setPosition = (x, y) => {
-      super.setPosition(x, y);
-      this.weapon.setRotationAroundOwner();
-      return this;
-    };
   }
 
   heal(amount: number) {
