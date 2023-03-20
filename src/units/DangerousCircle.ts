@@ -7,8 +7,6 @@ import { ChainWeapon } from "../weapons/ChainWeapon";
 import { EnemySize } from "./CircleFactory";
 import { CircleUnit } from "./CircleUnit";
 import { CampID } from "../config/CampSetup";
-import { UnitSetup } from "../config/UnitSetup";
-import { weaponHeights } from "../weapons/chain-weapon-data";
 
 export class DangerousCircle extends CircleUnit implements unitAnims {
   pathArr: Point[];

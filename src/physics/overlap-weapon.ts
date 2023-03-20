@@ -11,8 +11,8 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
   function doDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
     let weapon: ChainWeapon = circle.getData("weapon");
     let weaponOwner = weapon.owner as CircleUnit;
-
-    console.log(weapon.attackingFactor, weapon.didDamageFactor);
+    if (weaponOwner.unitType === "player")
+      console.log(weapon.attackingFactor, weapon.didDamageFactor);
     // need to have an eye if this is a good tradeoff vs having more groups
     if (weaponOwner.campID !== enemy.campID) {
       let damage =
@@ -26,9 +26,10 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
           EventSetup.gainSouls(weapon.scene, enemy.type);
       }
 
-      enemy.damage(damage);
-      // if (damage > 0)
-      weapon.didDamageFactor = 0;
+      if (damage > 0) {
+        enemy.damage(damage);
+        weapon.didDamageFactor = 0;
+      }
 
       if (enemyStateHandler) {
         enemyStateHandler.spotted = weaponOwner;

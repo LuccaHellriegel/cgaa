@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { Gameplay } from "./scenes/Gameplay";
 import { HUD } from "./scenes/HUD";
 
-const devMode = true;
+const devMode = false;
 const debugMode = devMode || false;
 
 function createGameConfig() {
