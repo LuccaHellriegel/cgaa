@@ -76,10 +76,15 @@ export class Player
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     // we dont need to set rotation by hand because we do it every frame here
-    EntityManager.setRotationAroundOwner(this, this.weapon);
+    // EntityManager.setRotationAroundOwner(this, this.weapon);
   }
 
-  static withChainWeapon(scene: Gameplay, x: number, y: number) {
+  static withChainWeapon(
+    scene: Gameplay,
+    entityManager: EntityManager,
+    x: number,
+    y: number
+  ) {
     let weapon = new ChainWeapon(
       scene,
       x,
@@ -89,8 +94,7 @@ export class Player
       "Normal"
     );
     let circle = new Player(scene, x, y, weapon);
-    weapon.setOwner(circle);
-
+    entityManager.registerWeapon(circle, weapon);
     //DEV: weapon.amount = 40000;
 
     return circle;

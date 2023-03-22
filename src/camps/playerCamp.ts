@@ -95,7 +95,7 @@ export function playerCamp(
     );
     state.physics.addUnit(circle);
 
-    circle.weapon.setOwner(circle);
+    state.entityManager.registerWeapon(circle, weapon);
     scene.children.bringToTop(circle.healthbar.bar);
     enemies.addEnemy(circle);
 
@@ -111,7 +111,6 @@ export function playerCamp(
       ),
     ]);
     circle.setPosition(config.x, config.y);
-    EntityManager.setRotationAroundOwner(circle, circle.weapon);
     friends.push(circle);
   });
   return friends;

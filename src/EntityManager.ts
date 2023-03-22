@@ -7,9 +7,13 @@ export class EntityManager {
   owners: CircleUnit[] = [];
   weapons: ChainWeapon[] = [];
 
-  registerWeapon(circle: CircleUnit, weapon: ChainWeapon) {
-    this.owners.push(circle);
+  registerWeapon(owner: CircleUnit, weapon: ChainWeapon) {
+    this.owners.push(owner);
     this.weapons.push(weapon);
+    weapon.owner = owner;
+    weapon.circle.owner = owner;
+    weapon.circle.unitType = owner.unitType;
+    weapon.circle.campID = owner.campID;
   }
 
   update() {

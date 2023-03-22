@@ -1,26 +1,22 @@
 import { EventSetup } from "../config/EventSetup";
 import { HealthComponent } from "../healthbar/HealthBar";
-import { CircleUnit } from "../units/CircleUnit";
-import { ChainWeapon } from "../weapons/ChainWeapon";
+import { DangerousCircle } from "../units/DangerousCircle";
+import { PhysicsCircle } from "../weapons/ChainWeapon";
 
 export function initWeaponGroupPair(scene: Phaser.Scene) {
   const weapons = scene.physics.add.group();
   const enemies = scene.physics.add.group();
   const staticEnemies = scene.physics.add.staticGroup();
 
-  function doDamage(circle: Phaser.Physics.Arcade.Sprite, enemy) {
-    let weapon: ChainWeapon = circle.getData("weapon");
-    let weaponOwner = weapon.owner as CircleUnit;
-    if (weaponOwner.unitType === "player")
-      console.log(weapon.attackingFactor, weapon.didDamageFactor);
+  function doDamage(weapon: PhysicsCircle, enemy: DangerousCircle) {
     // need to have an eye if this is a good tradeoff vs having more groups
-    if (weaponOwner.campID !== enemy.campID) {
+    if (weapon.campID !== enemy.campID) {
       let damage =
         weapon.attackingFactor * weapon.didDamageFactor * weapon.amount;
       let enemyStateHandler = enemy.stateHandler;
 
       //TODO: player physics to avoid the check???
-      if (weaponOwner.unitType === "player") {
+      if (weapon.unitType === "player") {
         //Gain souls if player kill (otherwise too much money)
         if (damage >= (enemy.health as HealthComponent).health)
           EventSetup.gainSouls(weapon.scene, enemy.type);
@@ -32,8 +28,8 @@ export function initWeaponGroupPair(scene: Phaser.Scene) {
       }
 
       if (enemyStateHandler) {
-        enemyStateHandler.spotted = weaponOwner;
-        enemyStateHandler.obstacle = weaponOwner;
+        enemyStateHandler.spotted = weapon.owner;
+        enemyStateHandler.obstacle = weapon.owner;
       }
     }
   }

@@ -140,7 +140,12 @@ export function GameStart(scene, state: FinalState): CGAA {
   const playerExit = arrayMiddle(
     state.camps.get(CampSetup.playerCampID).exitPositionsInMap[0].positionsInMap
   ).toPoint();
-  const player = Player.withChainWeapon(scene, playerExit.x, playerExit.y);
+  const player = Player.withChainWeapon(
+    scene,
+    state.entityManager,
+    playerExit.x,
+    playerExit.y
+  );
   state.physics.addUnit(player);
 
   const staticUnits = campsStaticUnits(

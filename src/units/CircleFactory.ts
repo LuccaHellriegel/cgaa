@@ -12,6 +12,7 @@ import { veloConfigs } from "../config/VelocitySetup";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import { unitAmountConfig } from "../weapons/chain-weapon-base";
 import { EntityManager } from "../EntityManager";
+import { CircleUnit } from "./CircleUnit";
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
@@ -54,10 +55,8 @@ export class CircleFactory {
     );
   }
 
-  private afterCreate(circle) {
+  private afterCreate(circle: CircleUnit) {
     this.addUnit(circle);
-
-    circle.weapon.setOwner(circle);
     this.scene.children.bringToTop(circle.healthbar.bar);
     this.enemies.addEnemy(circle);
   }

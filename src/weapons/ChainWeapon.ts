@@ -1,9 +1,9 @@
 import { weaponGeoms } from "./chain-weapon-geom";
 import { weaponHeights, weaponDists } from "./chain-weapon-data";
 import { CircleChain, unitArrowHeadConfig } from "./chain-weapon-base";
-import { UnitSetup } from "../config/UnitSetup";
 import { listenToAnim } from "../anim/anim-listen";
 import { EnemySize } from "../units/CircleFactory";
+import { CircleUnit } from "../units/CircleUnit";
 
 // PHYSICS
 function circleChainToPhysicsTopCircle(
@@ -37,17 +37,22 @@ function circleChainToPhysicsTopCircle(
   return result;
 }
 
+export interface PhysicsCircle extends Phaser.Physics.Arcade.Sprite {
+  attackingFactor: number;
+  didDamageFactor: number;
+  unitType: string;
+  campID: string;
+  amount: number;
+  owner: CircleUnit;
+}
+
 // WEAPON
 
 export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
   owner: Phaser.Physics.Arcade.Image;
-  initialized = false;
-  amount: number;
-  circle: Phaser.Physics.Arcade.Sprite;
+  circle: PhysicsCircle;
   circleFrame1: Phaser.Physics.Arcade.Sprite;
   circleFrame2: Phaser.Physics.Arcade.Sprite;
-  attackingFactor = 0;
-  didDamageFactor = 1;
 
   constructor(
     scene: Phaser.Scene,
@@ -62,9 +67,6 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
     //for sight
     this.setSize(444, 444);
-
-    this.amount = amount;
-
     let geoms = weaponGeoms[unitSize];
     let smallChain = geoms.frame2.smallChain;
     let points = smallChain.points;
@@ -87,7 +89,10 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
       height,
       width,
       distArrowAndChain
-    );
+    ) as PhysicsCircle;
+    this.circle.amount = amount;
+    this.circle.attackingFactor = 0;
+    this.circle.didDamageFactor = 1;
     this.circleFrame1 = circleChainToPhysicsTopCircle(
       this.scene,
       geoms.frame1.bigChain,
@@ -121,17 +126,11 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
     );
 
     this.visible = true;
-    this.initialized = true;
-
     listenToAnim(this, {
       animComplete: true,
       attackComplete: this.finishAttack.bind(this),
       animUpdateCustom: this.alignCircles.bind(this),
     });
-  }
-
-  setOwner(owner: Phaser.Physics.Arcade.Image) {
-    this.owner = owner;
   }
 
   alignCircles(key, frame) {
@@ -144,16 +143,16 @@ export class ChainWeapon extends Phaser.Physics.Arcade.Sprite {
   }
 
   attack() {
-    if (this.attackingFactor === 0) {
+    if (this.circle.attackingFactor === 0) {
       this.anims.play("attack-" + this.texture.key);
-      this.attackingFactor = 1;
+      this.circle.attackingFactor = 1;
     }
   }
 
   finishAttack() {
     this.anims.play("idle-" + this.texture.key);
-    this.attackingFactor = 0;
-    this.didDamageFactor = 1;
+    this.circle.attackingFactor = 0;
+    this.circle.didDamageFactor = 1;
   }
 
   setPhysicsPosition(x, y) {
