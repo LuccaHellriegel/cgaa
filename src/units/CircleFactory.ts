@@ -11,11 +11,13 @@ import { healthBarDangerousCircleFactoryConfigs } from "../config/HealthbarSetup
 import { veloConfigs } from "../config/VelocitySetup";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import { unitAmountConfig } from "../weapons/chain-weapon-base";
+import { EntityManager } from "../EntityManager";
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
 export class CircleFactory {
   constructor(
+    private entityManager: EntityManager,
     public scene: Gameplay,
     private campID: string,
     private campMask: number,
@@ -81,6 +83,8 @@ export class CircleFactory {
       health,
       veloConfigs[size]
     );
+    this.entityManager.registerWeapon(circle, weapon);
+
     this.afterCreate(circle);
 
     return circle;
@@ -107,6 +111,7 @@ export class CircleFactory {
       health,
       veloConfigs[size]
     );
+    this.entityManager.registerWeapon(circle, weapon);
     this.afterCreate(circle);
 
     return circle;
@@ -131,6 +136,7 @@ export class CircleFactory {
       health,
       veloConfigs[size]
     );
+    this.entityManager.registerWeapon(circle, weapon);
     this.afterCreate(circle);
 
     return circle;
@@ -145,6 +151,7 @@ export class CircleFactory {
       healthBarDangerousCircleFactoryConfigs[size].value,
       healthBarDangerousCircleFactoryConfigs[size].value
     );
+    const weapon = CircleFactory.createWeapon(this.scene, x, y, size);
     let circle = new InteractionCircle(
       this.scene,
       x,
@@ -152,11 +159,12 @@ export class CircleFactory {
       this.campID + "InteractionCircle",
       this.campID as CampID,
       this.campMask,
-      CircleFactory.createWeapon(this.scene, x, y, size),
+      weapon,
       size as EnemySize,
       CircleFactory.createHealthBar(this.scene, x, y, size, health),
       health
     );
+    this.entityManager.registerWeapon(circle, weapon);
     this.afterCreate(circle);
 
     // was overwritten somewhere (I think when adding to the physics groups), so set it here

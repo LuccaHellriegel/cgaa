@@ -62,6 +62,7 @@ function createDiplomats(camp: Camp, factory: CircleFactory) {
 }
 
 export function campsStaticUnits(
+  state: FinalState,
   scene,
   campMap: CampMap,
   physics: Physics,
@@ -77,6 +78,7 @@ export function campsStaticUnits(
       const diplomats = createDiplomats(
         camp,
         new CircleFactory(
+          state.entityManager,
           scene,
           camp.id as CampID,
           camp.campMask,
@@ -149,6 +151,7 @@ export function populateCamps(
         campsState,
         enemies,
         new CircleFactory(
+          state.entityManager,
           scene,
           camp.id,
           camp.campMask,

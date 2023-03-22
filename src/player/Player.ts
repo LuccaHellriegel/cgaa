@@ -9,6 +9,7 @@ import { Gameplay } from "../scenes/Gameplay";
 import { weaponHeights } from "../weapons/chain-weapon-data";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import { nanoid } from "nanoid";
+import { EntityManager } from "../EntityManager";
 
 const playerTextureName = "blueNormalCircle";
 
@@ -75,7 +76,7 @@ export class Player
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     // we dont need to set rotation by hand because we do it every frame here
-    this.weapon.setRotationAroundOwner();
+    EntityManager.setRotationAroundOwner(this, this.weapon);
   }
 
   static withChainWeapon(scene: Gameplay, x: number, y: number) {

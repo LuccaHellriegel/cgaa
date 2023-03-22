@@ -62,6 +62,7 @@ export function bossCamp(
   }
 
   const bossFactory = new CircleFactory(
+    state.entityManager,
     scene,
     CampSetup.bossCampID,
     CampSetup.bossCampMask,

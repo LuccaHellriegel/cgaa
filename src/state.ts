@@ -10,11 +10,13 @@ import EasyStar from "easystarjs";
 import { GameMap } from "./types";
 import { EnvSetup } from "./config/EnvSetup";
 import { CampManager } from "./camps/CampManager";
+import { EntityManager } from "./EntityManager";
 
 export interface State extends Data {
   cooperation: BitwiseCooperation;
   pathAssigner: PathAssigner;
   manager: CampManager;
+  entityManager: EntityManager;
 }
 
 function configureEasyStar(easyStar: EasyStar.js, map: GameMap) {
@@ -49,5 +51,6 @@ export function state(
     cooperation,
     pathAssigner,
     manager: manager,
+    entityManager: new EntityManager(),
   };
 }

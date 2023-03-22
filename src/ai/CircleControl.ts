@@ -1,4 +1,5 @@
 import { Point } from "../engine/Point";
+import { EntityManager } from "../EntityManager";
 import { DangerousCircle } from "../units/DangerousCircle";
 
 export interface AIComponent {
@@ -24,7 +25,7 @@ export class CircleControl implements AIComponent {
   moveBack() {
     let lastPos = this.lastPositions[0];
     this.circle.setPosition(lastPos.x, lastPos.y);
-    this.circle.weapon.setRotationAroundOwner();
+    EntityManager.setRotationAroundOwner(this.circle, this.circle.weapon);
   }
 
   moveTo(target: Point, reachDist: number) {

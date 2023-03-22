@@ -14,7 +14,7 @@ import { Physics } from "./physics/physics";
 import { playerInput } from "./player/playerInput";
 import { Spawner } from "./player/Spawner";
 import { Player } from "./player/Player";
-import { Pools, initPools } from "./towers/pools";
+import { initPools } from "./towers/pools";
 import { Gameplay } from "./scenes/Gameplay";
 import { EnemySpawnObj } from "./spawn/EnemySpawnObj";
 import { State } from "./state";
@@ -71,7 +71,6 @@ function waveProducer(
   scene,
   campsState: CampsState,
   state: FinalState,
-  pools: Pools,
   enemies: Enemies,
   staticUnits
 ) {
@@ -86,6 +85,7 @@ function waveProducer(
             scene,
             building.campID,
             new CircleFactory(
+              state.entityManager,
               scene,
               building.campID,
               building.campMask,
@@ -144,6 +144,7 @@ export function GameStart(scene, state: FinalState): CGAA {
   state.physics.addUnit(player);
 
   const staticUnits = campsStaticUnits(
+    state,
     scene,
     state.camps,
     state.physics,
@@ -188,14 +189,7 @@ export function GameStart(scene, state: FinalState): CGAA {
     ...state,
     input,
     diplomats,
-    startWaves: waveProducer(
-      scene,
-      campsState,
-      state,
-      pools,
-      enemies,
-      staticUnits
-    ),
+    startWaves: waveProducer(scene, campsState, state, enemies, staticUnits),
     player,
     friends,
   };

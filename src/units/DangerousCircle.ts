@@ -64,7 +64,6 @@ export class DangerousCircle extends CircleUnit implements unitAnims {
 
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
-    this.weapon.setRotationAroundOwner();
     this.healthbar.move(this.x, this.y);
     this.stateHandler.tick();
   }

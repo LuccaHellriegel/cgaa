@@ -11,6 +11,7 @@ import { healthBarDangerousCircleFactoryConfigs } from "../config/HealthbarSetup
 import { veloConfigs } from "../config/VelocitySetup";
 import { Gameplay } from "../scenes/Gameplay";
 import { DangerousCircle } from "../units/DangerousCircle";
+import { EntityManager } from "../EntityManager";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
@@ -110,7 +111,7 @@ export function playerCamp(
       ),
     ]);
     circle.setPosition(config.x, config.y);
-    circle.weapon.setRotationAroundOwner();
+    EntityManager.setRotationAroundOwner(circle, circle.weapon);
     friends.push(circle);
   });
   return friends;

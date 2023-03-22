@@ -80,6 +80,7 @@ export class Gameplay extends Phaser.Scene {
   }
 
   update() {
+    this.cgaa.entityManager.update();
     this.cgaa.input.move();
   }
 
