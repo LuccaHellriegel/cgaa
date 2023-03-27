@@ -1,7 +1,7 @@
 type EntityIDs = number[];
 type IDAligned = number[];
 
-type State = {
+type EntityState = {
   campIDAssignments: IDAligned;
   health: IDAligned;
   //
@@ -19,8 +19,7 @@ type State = {
   killedEntities: EntityIDs;
 };
 
-let entityCounter = 0;
-export const state: State = {
+export const entityState: EntityState = {
   campIDAssignments: [],
   health: [],
   weapon_owner: [],
@@ -33,7 +32,7 @@ export const state: State = {
   killedEntities: [],
 };
 
-type StateProp = keyof State;
+type StateProp = keyof EntityState;
 
 const frameSensitiveProps: StateProp[] = [
   "weaponOverlap_Overlapped",
@@ -44,23 +43,29 @@ const frameSensitiveProps: StateProp[] = [
 ];
 
 export function prepareStateForNextFrame() {
-  frameSensitiveProps.forEach((key) => (state[key] = []));
+  frameSensitiveProps.forEach((key) => (entityState[key] = []));
 }
 
+export const counterState = {
+  entityCounter: 0,
+  playerSouls: 200,
+};
+
 export function getNextEntityId(campID: number, health: number): number {
-  entityCounter++;
-  state.campIDAssignments.push(campID);
-  state.health.push(health);
-  return entityCounter;
+  counterState.entityCounter++;
+  entityState.campIDAssignments.push(campID);
+  entityState.health.push(health);
+  return counterState.entityCounter;
 }
+
 export function handleAttacks() {
   const newAttacking = [];
 
-  for (let i = 0; i < state.attacking.length; i++) {
-    const attacker = state.attacking[i];
+  for (let i = 0; i < entityState.attacking.length; i++) {
+    const attacker = entityState.attacking[i];
     let overlapperIndex;
-    for (let j = 0; j < state.weaponOverlap_Overlapper.length; j++) {
-      if (state.weaponOverlap_Overlapper[j] === attacker) {
+    for (let j = 0; j < entityState.weaponOverlap_Overlapper.length; j++) {
+      if (entityState.weaponOverlap_Overlapper[j] === attacker) {
         overlapperIndex = j;
         break;
       }
@@ -68,14 +73,14 @@ export function handleAttacks() {
     let damaged = false;
     //is attacking and has weapon overlap
     if (overlapperIndex !== -1) {
-      const overlapped = state.weaponOverlap_Overlapped[overlapperIndex];
+      const overlapped = entityState.weaponOverlap_Overlapped[overlapperIndex];
       //not the same camp - might need to change this to collab status to disable all friendly fire
       if (
-        state.campIDAssignments[attacker] !==
-        state.campIDAssignments[overlapped]
+        entityState.campIDAssignments[attacker] !==
+        entityState.campIDAssignments[overlapped]
       ) {
-        state.attackedEntities.push(overlapped);
-        state.attackingEntities.push(attacker);
+        entityState.attackedEntities.push(overlapped);
+        entityState.attackingEntities.push(attacker);
         damaged = true;
       }
     }
@@ -86,27 +91,27 @@ export function handleAttacks() {
     }
   }
 
-  state.attacking = newAttacking;
+  entityState.attacking = newAttacking;
 }
 
 export function handleDamages() {
-  for (let i = 0; i < state.attackedEntities.length; i++) {
-    const attacker = state.attackingEntities[i];
+  for (let i = 0; i < entityState.attackedEntities.length; i++) {
+    const attacker = entityState.attackingEntities[i];
     let attackerWeaponIndex;
-    for (let j = 0; j < state.weapon_owner.length; j++) {
-      if (state.weapon_owner[j] === attacker) {
+    for (let j = 0; j < entityState.weapon_owner.length; j++) {
+      if (entityState.weapon_owner[j] === attacker) {
         attackerWeaponIndex = j;
         break;
       }
     }
-    const weaponDamage = state.weapon_damage[attackerWeaponIndex];
-    const attacked = state.attackedEntities[i];
-    const attackedHealth = state.health[attacked];
+    const weaponDamage = entityState.weapon_damage[attackerWeaponIndex];
+    const attacked = entityState.attackedEntities[i];
+    const attackedHealth = entityState.health[attacked];
     const newHealth = attackedHealth - weaponDamage;
     if (newHealth <= 0) {
-      state.killedEntities.push(attacked);
+      entityState.killedEntities.push(attacked);
     } else {
-      state.health[attacked] = newHealth;
+      entityState.health[attacked] = newHealth;
     }
   }
 }
