@@ -1,30 +1,57 @@
+type EntityIDs = number[];
+type IDAligned = number[];
+
 type State = {
-  entityCounter: number;
-  campEntities: number[];
-  attacking: number[];
-  weaponOverlap_Overlapper: number[];
-  weaponOverlap_Overlapped: number[];
-  attackedEntities: number[];
-  attackingEntities: number[];
-  damage: number[];
-  killedEntities: number[];
+  campIDAssignments: IDAligned;
+  health: IDAligned;
+  //
+  weapon_owner: EntityIDs;
+  weapon_damage: number[];
+  //
+  attacking: EntityIDs;
+  //
+  weaponOverlap_Overlapper: EntityIDs;
+  weaponOverlap_Overlapped: EntityIDs;
+  //
+  attackedEntities: EntityIDs;
+  attackingEntities: EntityIDs;
+  //
+  killedEntities: EntityIDs;
 };
 
+let entityCounter = 0;
 export const state: State = {
-  entityCounter: 0,
-  campEntities: [],
+  campIDAssignments: [],
+  health: [],
+  weapon_owner: [],
+  weapon_damage: [],
   attacking: [],
   weaponOverlap_Overlapper: [],
   weaponOverlap_Overlapped: [],
   attackedEntities: [],
   attackingEntities: [],
-  damage: [],
   killedEntities: [],
 };
 
-export function getNextEntityId(): number {
-  state.entityCounter++;
-  return state.entityCounter;
+type StateProp = keyof State;
+
+const frameSensitiveProps: StateProp[] = [
+  "weaponOverlap_Overlapped",
+  "weaponOverlap_Overlapper",
+  "attackedEntities",
+  "attackingEntities",
+  "killedEntities",
+];
+
+export function prepareStateForNextFrame() {
+  frameSensitiveProps.forEach((key) => (state[key] = []));
+}
+
+export function getNextEntityId(campID: number, health: number): number {
+  entityCounter++;
+  state.campIDAssignments.push(campID);
+  state.health.push(health);
+  return entityCounter;
 }
 
 export function handleAttacks() {
@@ -40,7 +67,10 @@ export function handleAttacks() {
     if (overlapperIndex !== -1) {
       const overlapped = state.weaponOverlap_Overlapped[overlapperIndex];
       //not the same camp - might need to change this to collab status to disable all friendly fire
-      if (state.campEntities[attacker] !== state.campEntities[overlapped]) {
+      if (
+        state.campIDAssignments[attacker] !==
+        state.campIDAssignments[overlapped]
+      ) {
         state.attackedEntities.push(overlapped);
         state.attackingEntities.push(attacker);
         damaged = true;
@@ -54,4 +84,22 @@ export function handleAttacks() {
   }
 
   state.attacking = newAttacking;
+}
+
+export function handleDamages() {
+  for (let index = 0; index < state.attackedEntities.length; index++) {
+    const attacker = state.attackingEntities[index];
+    const attackerWeaponIndex = state.weapon_owner.findIndex(
+      (val) => val === attacker
+    );
+    const weaponDamage = state.weapon_damage[attackerWeaponIndex];
+    const attacked = state.attackedEntities[index];
+    const attackedHealth = state.health[attacked];
+    const newHealth = attackedHealth - weaponDamage;
+    if (newHealth <= 0) {
+      state.killedEntities.push(attacked);
+    } else {
+      state.health[attacked] = newHealth;
+    }
+  }
 }
