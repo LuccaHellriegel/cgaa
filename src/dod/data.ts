@@ -1,48 +1,48 @@
-let entityCounter = 0;
+type State = {
+  entityCounter: number;
+  campEntities: number[];
+  attacking: number[];
+  weaponOverlap_Overlapper: number[];
+  weaponOverlap_Overlapped: number[];
+  attackedEntities: number[];
+  attackingEntities: number[];
+  damage: number[];
+  killedEntities: number[];
+};
 
-function nextEntityId() {
-  entityCounter++;
-  return entityCounter;
+export const state: State = {
+  entityCounter: 0,
+  campEntities: [],
+  attacking: [],
+  weaponOverlap_Overlapper: [],
+  weaponOverlap_Overlapped: [],
+  attackedEntities: [],
+  attackingEntities: [],
+  damage: [],
+  killedEntities: [],
+};
+
+export function getNextEntityId(): number {
+  state.entityCounter++;
+  return state.entityCounter;
 }
 
-// CAMP
-let campEntities: number[] = [];
-
-// ATTACKING
-let attacking: number[] = [];
-function registerAsAttacking(entityId: number) {
-  attacking.push(entityId);
-}
-
-// WEAPON
-let weaponOverlap_Overlapper: number[] = [];
-let weaponOverlap_Overlapped: number[] = [];
-
-function registerWeaponOverlap(weapon: number, overlapped: number) {
-  weaponOverlap_Overlapper.push(weapon);
-  weaponOverlap_Overlapped.push(overlapped);
-}
-
-// ATTACK
-let attackedEntities: number[] = [];
-let attackingEntities: number[] = [];
-
-function handleAttacks() {
+export function handleAttacks() {
   const newAttacking = [];
 
-  for (let index = 0; index < attacking.length; index++) {
-    const attacker = attacking[index];
-    const overlapperIndex = weaponOverlap_Overlapper.findIndex(
+  for (let index = 0; index < state.attacking.length; index++) {
+    const attacker = state.attacking[index];
+    const overlapperIndex = state.weaponOverlap_Overlapper.findIndex(
       (val) => val === attacker
     );
     let damaged = false;
     //is attacking and has weapon overlap
     if (overlapperIndex !== -1) {
-      const overlapped = weaponOverlap_Overlapped[overlapperIndex];
+      const overlapped = state.weaponOverlap_Overlapped[overlapperIndex];
       //not the same camp - might need to change this to collab status to disable all friendly fire
-      if (campEntities[attacker] !== campEntities[overlapped]) {
-        attackedEntities.push(overlapped);
-        attackingEntities.push(attacker);
+      if (state.campEntities[attacker] !== state.campEntities[overlapped]) {
+        state.attackedEntities.push(overlapped);
+        state.attackingEntities.push(attacker);
         damaged = true;
       }
     }
@@ -53,12 +53,5 @@ function handleAttacks() {
     }
   }
 
-  attacking = newAttacking;
+  state.attacking = newAttacking;
 }
-
-// DAMAGE
-//aligned with ATTACK
-let damage: number[] = [];
-
-// KILL
-let killedEntities: number[] = [];
