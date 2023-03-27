@@ -53,15 +53,18 @@ export function getNextEntityId(campID: number, health: number): number {
   state.health.push(health);
   return entityCounter;
 }
-
 export function handleAttacks() {
   const newAttacking = [];
 
-  for (let index = 0; index < state.attacking.length; index++) {
-    const attacker = state.attacking[index];
-    const overlapperIndex = state.weaponOverlap_Overlapper.findIndex(
-      (val) => val === attacker
-    );
+  for (let i = 0; i < state.attacking.length; i++) {
+    const attacker = state.attacking[i];
+    let overlapperIndex;
+    for (let j = 0; j < state.weaponOverlap_Overlapper.length; j++) {
+      if (state.weaponOverlap_Overlapper[j] === attacker) {
+        overlapperIndex = j;
+        break;
+      }
+    }
     let damaged = false;
     //is attacking and has weapon overlap
     if (overlapperIndex !== -1) {
@@ -87,13 +90,17 @@ export function handleAttacks() {
 }
 
 export function handleDamages() {
-  for (let index = 0; index < state.attackedEntities.length; index++) {
-    const attacker = state.attackingEntities[index];
-    const attackerWeaponIndex = state.weapon_owner.findIndex(
-      (val) => val === attacker
-    );
+  for (let i = 0; i < state.attackedEntities.length; i++) {
+    const attacker = state.attackingEntities[i];
+    let attackerWeaponIndex;
+    for (let j = 0; j < state.weapon_owner.length; j++) {
+      if (state.weapon_owner[j] === attacker) {
+        attackerWeaponIndex = j;
+        break;
+      }
+    }
     const weaponDamage = state.weapon_damage[attackerWeaponIndex];
-    const attacked = state.attackedEntities[index];
+    const attacked = state.attackedEntities[i];
     const attackedHealth = state.health[attacked];
     const newHealth = attackedHealth - weaponDamage;
     if (newHealth <= 0) {
