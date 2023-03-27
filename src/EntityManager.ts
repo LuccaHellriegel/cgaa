@@ -3,9 +3,19 @@ import { CircleUnit } from "./units/CircleUnit";
 import { weaponHeights } from "./weapons/chain-weapon-data";
 import { ChainWeapon } from "./weapons/ChainWeapon";
 
+interface WeaponComponent {
+  campID: string;
+  attackingFactor: number;
+  didDamageFactor: number;
+  amount: number;
+  unitType: string;
+  owner: CircleUnit;
+}
+
 export class EntityManager {
   owners: CircleUnit[] = [];
   weapons: ChainWeapon[] = [];
+  weaponCmps: WeaponComponent[] = [];
 
   registerWeapon(owner: CircleUnit, weapon: ChainWeapon) {
     this.owners.push(owner);

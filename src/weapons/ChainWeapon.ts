@@ -44,6 +44,7 @@ export interface PhysicsCircle extends Phaser.Physics.Arcade.Sprite {
   campID: string;
   amount: number;
   owner: CircleUnit;
+  // weaponCmpId: number;
 }
 
 // WEAPON
