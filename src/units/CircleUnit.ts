@@ -16,6 +16,7 @@ export class CircleUnit
   extends Phaser.Physics.Arcade.Sprite
   implements damageable
 {
+  entityId: number;
   unitType: string;
   id: string;
   scene: Gameplay;
@@ -32,7 +33,7 @@ export class CircleUnit
     public campID: CampID,
     public campMask: number,
     public weapon: ChainWeapon,
-    size: EnemySize,
+    public enemySize: EnemySize,
     public healthbar: HealthBar,
     public health: HealthComponent
   ) {
@@ -48,7 +49,7 @@ export class CircleUnit
 
     this.unitType = "circle";
     //Needed for gaining souls
-    this.type = size;
+    this.type = enemySize;
 
     this.weaponPhysics = weapon.circle;
   }

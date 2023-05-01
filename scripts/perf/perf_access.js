@@ -67,3 +67,31 @@ perf(() => {
     vals22[index] = vals22[index] * 2 - 10;
   }
 }, 10000000);
+
+const p3 = () => {
+  const vals = p1();
+  const res = {};
+  vals.forEach((v) => (res[v.id] = v.val));
+  return res;
+};
+const val3 = p3();
+perf(() => {
+  const target = Math.floor(Math.random() * 100);
+  if (val3[target] !== undefined) {
+    val3[target] = val3[target] * 2 - 10;
+  }
+}, 10000000);
+
+const p4 = () => {
+  const vals = p1();
+  const res = new Map();
+  vals.forEach((v) => res.set(v.id, v.val));
+  return res;
+};
+const val4 = p4();
+perf(() => {
+  const target = Math.floor(Math.random() * 100);
+  if (val4.has(target)) {
+    val4.set(target, val4.get(target) * 2 - 10);
+  }
+}, 10000000);

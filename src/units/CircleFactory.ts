@@ -13,6 +13,8 @@ import { ChainWeapon } from "../weapons/ChainWeapon";
 import { unitAmountConfig } from "../weapons/chain-weapon-base";
 import { EntityManager } from "../EntityManager";
 import { CircleUnit } from "./CircleUnit";
+import { entityState, getNextEntityId, registerCircle } from "../dod/data";
+import { CircleControl } from "../ai/CircleControl";
 
 export type EnemySize = "Small" | "Normal" | "Big";
 
@@ -59,6 +61,7 @@ export class CircleFactory {
     this.addUnit(circle);
     this.scene.children.bringToTop(circle.healthbar.bar);
     this.enemies.addEnemy(circle);
+    registerCircle(circle);
   }
 
   createKing(x: number, y: number) {

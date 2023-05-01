@@ -10,6 +10,7 @@ import { weaponHeights } from "../weapons/chain-weapon-data";
 import { ChainWeapon } from "../weapons/ChainWeapon";
 import { nanoid } from "nanoid";
 import { EntityManager } from "../EntityManager";
+import { registerCircle } from "../dod/data";
 
 const playerTextureName = "blueNormalCircle";
 
@@ -95,6 +96,7 @@ export class Player
     );
     let circle = new Player(scene, x, y, weapon);
     entityManager.registerWeapon(circle, weapon);
+    registerCircle(circle);
     //DEV: weapon.amount = 40000;
 
     return circle;

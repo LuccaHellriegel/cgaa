@@ -7,52 +7,6 @@ interface HealthBarConfig {
   value: number;
 }
 
-enum HealthChange {
-  RESET,
-  DECREASE,
-  INCREASE,
-}
-
-// export class HealthManager {
-//   healths: HealthComponent[] = [];
-//   bars: HealthBar[] = [];
-//   //
-//   toBeDrawn: number[] = [];
-//   dead: number[] = [];
-
-//   execute() {
-//     for (let index = 0; index < this.toBeDrawn.length; index++) {
-//       this.bars[index].draw(this.healths[index].health);
-//     }
-//     this.toBeDrawn = [];
-//   }
-
-//   change(healthNumber: number, change: HealthChange, amount?: number) {
-//     const cmp = this.healths[healthNumber];
-//     const old = cmp.health;
-//     switch (change) {
-//       case HealthChange.RESET:
-//         cmp.reset();
-//         break;
-//       case HealthChange.DECREASE:
-//         cmp.decrease(amount);
-//         break;
-//       case HealthChange.INCREASE:
-//         cmp.increase(amount);
-//         break;
-//     }
-//     if (old !== cmp.health) {
-//       this.toBeDrawn.push(healthNumber);
-//     }
-//   }
-
-//   register(bar: HealthBar, config: HealthBarConfig) {
-//     this.healths.push(new HealthComponent(config.value, config.value));
-//     this.bars.push(bar);
-//     return this.bars.length - 1;
-//   }
-// }
-
 export class HealthComponent {
   constructor(public health: number, public healthDefault: number) {}
 
@@ -77,14 +31,12 @@ export class HealthBar {
   p: number;
   posCorrectionX: number;
   posCorrectionY: number;
-  lastHealth: number;
-  // health: HealthComponent;
 
   constructor(
     public x: number,
     public y: number,
     config: HealthBarConfig,
-    private health: HealthComponent
+    public health: HealthComponent
   ) {
     this.bar = (config.scene as Phaser.Scene).add.graphics();
 

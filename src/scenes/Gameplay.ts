@@ -12,6 +12,7 @@ import { createChainWeaponAnims } from "../weapons/chain-weapon-anim";
 import { CampSetup } from "../config/CampSetup";
 import { EnvSetup } from "../config/EnvSetup";
 import { CGAA, GameStart } from "../start";
+import { runSystems } from "../dod/data";
 
 export class Gameplay extends Phaser.Scene {
   cgaa: CGAA;
@@ -82,6 +83,7 @@ export class Gameplay extends Phaser.Scene {
   update() {
     this.cgaa.entityManager.update();
     this.cgaa.input.move();
+    runSystems(this);
   }
 
   create() {}

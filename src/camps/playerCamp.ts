@@ -12,6 +12,7 @@ import { veloConfigs } from "../config/VelocitySetup";
 import { Gameplay } from "../scenes/Gameplay";
 import { DangerousCircle } from "../units/DangerousCircle";
 import { EntityManager } from "../EntityManager";
+import { registerCircle } from "../dod/data";
 
 //TODO: make Enemies once they are in the PlayerCamp search these units?
 //TODO: Friend Kills should give the player money
@@ -96,6 +97,7 @@ export function playerCamp(
     state.physics.addUnit(circle);
 
     state.entityManager.registerWeapon(circle, weapon);
+    registerCircle(circle);
     scene.children.bringToTop(circle.healthbar.bar);
     enemies.addEnemy(circle);
 

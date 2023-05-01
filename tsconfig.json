@@ -10,5 +10,5 @@
     "lib": ["es6", "dom", "es2017"],
     "noUnusedLocals": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/dod/data.ts"]
 }
