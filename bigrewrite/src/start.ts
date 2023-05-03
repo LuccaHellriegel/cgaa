@@ -9,6 +9,11 @@ import { CircleGenerator } from "./textures/CircleGenerator";
 import { RectGenerator } from "./textures/RectGenerator";
 import { weaponTextures } from "./textures/chainWeaponTexture";
 import { generateUnits } from "./textures/textures-units";
+import { Circle } from "./gameobjects/Circle";
+import { setupPlayerMovement } from "./player-movement";
+import { SelectorRect } from "./gameobjects/SelectorRect";
+
+let move: Function;
 
 class Gameplay extends Phaser.Scene {
   constructor() {
@@ -41,9 +46,14 @@ class Gameplay extends Phaser.Scene {
     createShooterAnims(this.anims);
   }
 
-  create() {}
+  create() {
+    const player = Circle.player(this, 100, 100);
+    this.cameras.main.startFollow(player);
+    move = setupPlayerMovement(this, player, new SelectorRect(this, 100, 100));
+  }
 
   update() {
+    move();
     runSystems(this);
   }
 }
