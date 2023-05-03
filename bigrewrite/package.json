@@ -1,0 +1,28 @@
+{
+  "name": "cgaa",
+  "version": "1.0.0",
+  "description": "Circle Gladiator Army Arena",
+  "scripts": {
+    "watch": "parcel watch game.html",
+    "start": "parcel serve game.html",
+    "build": "rm -rf ./prod && parcel build game.html --public-url ./ --dist-dir ./prod",
+    "ts": "tsc",
+    "test": "jest",
+    "graph": "npx depcruise --exclude '^(node_modules)' --output-type dot src/app.ts | dot -T svg > mingraph.svg",
+    "could": "npm run test && npm run ts"
+  },
+  "author": "Lucca Hellriegel",
+  "license": "",
+  "dependencies": {
+    "easystarjs": "^0.4.4",
+    "nanoid": "^4.0.1",
+    "phaser": "^3.55.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "dependency-cruiser": "^12.10.2",
+    "jest": "^29.5.0",
+    "parcel": "^2.8.3",
+    "typescript": "^5.0.2"
+  }
+}

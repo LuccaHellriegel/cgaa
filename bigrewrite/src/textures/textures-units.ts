@@ -1,23 +1,22 @@
-import { BuildingGenerator } from "../camps/BuildingGenerator";
-import { generateBlockadeTextures } from "../camps/generateBlockadeTextures";
-import { CampSetup } from "../config/CampSetup";
-import { EnvSetup } from "../config/EnvSetup";
-import { UnitSetup } from "../config/UnitSetup";
+import { EnvSetup } from "../data/EnvSetup";
+import { UnitSetup } from "../data/UnitSetup";
+import { BossGenerator } from "./BossGenerator";
+import { CircleGenerator } from "./CircleGenerator";
+import { generateBlockadeTextures } from "./generateBlockadeTextures";
 import {
   TextureChainTuple,
   rectsDrawer,
   emptyRectsDrawer,
   frameAdder,
   textureChain,
-} from "../engine/generation";
-import { Gameplay } from "../scenes/Gameplay";
-import { BossGenerator } from "../units/BossGenerator";
-import { CircleGenerator } from "../units/CircleGenerator";
-import { DiplomatSymbolGenerator } from "../units/DiplomatSymbolGenerator";
-import { InteractionCircleGenerator } from "../units/InteractionCircleGenerator";
-import { KingGenerator } from "../units/KingGenerator";
+} from "./generation";
+import { CampSetup } from "../data/CampSetup";
+import { BuildingGenerator } from "./BuildingGenerator";
+import { InteractionCircleGenerator } from "./InteractionCircleGenerator";
+import { KingGenerator } from "./KingGenerator";
+import { DiplomatSymbolGenerator } from "./DiplomatSymbolGenerator";
 
-function generatePlayerUnits(scene: Gameplay) {
+function generatePlayerUnits(scene: Phaser.Scene) {
   new CircleGenerator(
     0x6495ed,
     scene,
