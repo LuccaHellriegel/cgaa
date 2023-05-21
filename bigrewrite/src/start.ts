@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { createChainWeaponAnims } from "./anims/chainWeaponAnim";
-import { runSystems } from "./ecs";
+import { runSystems, setupPlayer } from "./ecs";
 import { createCircleAnims } from "./anims/circle-anim";
 import { createShooterAnims } from "./anims/createShooterAnims";
 import { EnvSetup } from "./data/EnvSetup";
@@ -9,11 +9,6 @@ import { CircleGenerator } from "./textures/CircleGenerator";
 import { RectGenerator } from "./textures/RectGenerator";
 import { weaponTextures } from "./textures/chainWeaponTexture";
 import { generateUnits } from "./textures/textures-units";
-import { Circle } from "./gameobjects/Circle";
-import { setupPlayerMovement } from "./player-movement";
-import { SelectorRect } from "./gameobjects/SelectorRect";
-
-let move: Function;
 
 class Gameplay extends Phaser.Scene {
   constructor() {
@@ -47,13 +42,15 @@ class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    const player = Circle.player(this, 100, 100);
-    this.cameras.main.startFollow(player);
-    move = setupPlayerMovement(this, player, new SelectorRect(this, 100, 100));
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    this.scale.displaySize.setAspectRatio(width / height);
+    this.scale.refresh();
+
+    setupPlayer(this);
   }
 
   update() {
-    move();
     runSystems(this);
   }
 }
@@ -65,8 +62,8 @@ function createGameConfig(): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.WEBGL,
     canvas: document.getElementById("game") as HTMLCanvasElement,
-    width: 1280,
-    height: 720,
+    // width: 1280,
+    // height: 720,
     physics: {
       default: "arcade",
       arcade: {
@@ -74,6 +71,7 @@ function createGameConfig(): Phaser.Types.Core.GameConfig {
       },
     },
     scale: {
+      mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     scene: [Gameplay],

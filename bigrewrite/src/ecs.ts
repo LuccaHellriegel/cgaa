@@ -2,6 +2,9 @@ import { EnemySize } from "./data/EnemySize";
 import { HealthBar } from "./gameobjects/HealthBar";
 import { Point } from "./geom/Point";
 import { ChainWeapon } from "./gameobjects/ChainWeapon";
+import { Circle } from "./gameobjects/Circle";
+import { SelectorRect } from "./gameobjects/SelectorRect";
+import { GameObjects } from "phaser";
 
 //Drawing, physics and animation managed by PhaserJS
 //PhaserJS objects completely stripped of any Game Logic
@@ -20,11 +23,13 @@ type EntityState = {
   weaponOverlap: EntityToEntityMap;
   damagePairs: [EntityID, EntityID][];
   killedEntities: [EntityID, EntityID][];
+  selectorRect: SelectorRect;
   ai: any;
   // ai: Record<EntityID, CircleControl>;
-  entityObjects: Record<EntityID, Point>;
+  entityObjects: Record<EntityID, Phaser.Physics.Arcade.Sprite>;
   unitSizes: Record<EntityID, EnemySize>;
   healthbars: Record<EntityID, HealthBar>;
+  cursorPositions: Point[];
 };
 
 export const components: EntityState = {
@@ -36,17 +41,20 @@ export const components: EntityState = {
   entityObjects: {},
   unitSizes: {},
   healthbars: {},
+  selectorRect: null,
   //TEMP
   damagePairs: [],
   killedEntities: [],
   weaponOverlap: {},
   attacking: [],
+  cursorPositions: [],
 };
 
 export function prepareStateForNextFrame() {
   components.weaponOverlap = {};
   components.damagePairs = [];
   components.killedEntities = [];
+  components.cursorPositions = [];
 }
 
 export const counterState = {
@@ -136,7 +144,45 @@ export function handleKilled() {
   });
 }
 
+let WASD;
+const playerVelocity = 500;
 export function handlePlayer(scene: Phaser.Scene) {
+  //player velocity
+  let { left, right, up, down } = WASD();
+  const player = components.entityObjects[0];
+  if (left) {
+    player.setVelocityX(-playerVelocity);
+  }
+  if (right) {
+    player.setVelocityX(playerVelocity);
+  }
+  if (up) {
+    player.setVelocityY(-playerVelocity);
+  }
+  if (down) {
+    player.setVelocityY(playerVelocity);
+  }
+  let noButtonDown = !left && !right && !up && !down;
+  if (noButtonDown) {
+    player.setVelocityX(0);
+    player.setVelocityY(0);
+  }
+
+  //selector rect
+  if (components.cursorPositions.length > 0) {
+    const pointer =
+      components.cursorPositions[components.cursorPositions.length - 1];
+    let newX = pointer.x + scene.cameras.main.scrollX;
+    let newY = pointer.y + scene.cameras.main.scrollY;
+    let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
+    let rotation =
+      Phaser.Math.Angle.Between(player.x, player.y, newX, newY) +
+      correctionForPhasersMinus90DegreeTopPostion;
+    player.setRotation(rotation);
+    components.selectorRect.setPosition(newX, newY);
+  }
+
+  //soul gain
   for (let index = 0; index < components.killedEntities.length; index++) {
     const element = components.killedEntities[index];
     const killedBy = element[1];
@@ -144,6 +190,33 @@ export function handlePlayer(scene: Phaser.Scene) {
       // EventSetup.gainSouls(scene, entityState.unitSizes[element[0]]);
     }
   }
+}
+
+export function setupPlayer(scene: Phaser.Scene) {
+  components.selectorRect = new SelectorRect(scene, 100, 100);
+  const player = Circle.player(scene, 100, 100);
+  components.entityObjects[0] = player;
+  scene.cameras.main.startFollow(player);
+  scene.input.on("pointermove", (pointer: Point) => {
+    components.cursorPositions.push(pointer);
+  });
+  const cursors = scene.input.keyboard.addKeys({
+    up: Phaser.Input.Keyboard.KeyCodes.W,
+    down: Phaser.Input.Keyboard.KeyCodes.S,
+    left: Phaser.Input.Keyboard.KeyCodes.A,
+    right: Phaser.Input.Keyboard.KeyCodes.D,
+  }) as any;
+  const left = cursors.left;
+  const right = cursors.right;
+  const up = cursors.up;
+  const down = cursors.down;
+
+  WASD = () => ({
+    left: left.isDown,
+    right: right.isDown,
+    up: up.isDown,
+    down: down.isDown,
+  });
 }
 
 export function runSystems(scene: Phaser.Scene) {
