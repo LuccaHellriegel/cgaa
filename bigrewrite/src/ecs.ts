@@ -1,10 +1,8 @@
 import { EnemySize } from "./data/EnemySize";
 import { HealthBar } from "./gameobjects/HealthBar";
-import { Point } from "./geom/Point";
 import { ChainWeapon } from "./gameobjects/ChainWeapon";
 import { Circle } from "./gameobjects/Circle";
 import { SelectorRect } from "./gameobjects/SelectorRect";
-import { GameObjects } from "phaser";
 
 //Drawing, physics and animation managed by PhaserJS
 //PhaserJS objects completely stripped of any Game Logic
@@ -29,7 +27,6 @@ type EntityState = {
   entityObjects: Record<EntityID, Phaser.Physics.Arcade.Sprite>;
   unitSizes: Record<EntityID, EnemySize>;
   healthbars: Record<EntityID, HealthBar>;
-  cursorPositions: Point[];
 };
 
 export const components: EntityState = {
@@ -47,14 +44,12 @@ export const components: EntityState = {
   killedEntities: [],
   weaponOverlap: {},
   attacking: [],
-  cursorPositions: [],
 };
 
 export function prepareStateForNextFrame() {
   components.weaponOverlap = {};
   components.damagePairs = [];
   components.killedEntities = [];
-  components.cursorPositions = [];
 }
 
 export const counterState = {
@@ -169,18 +164,15 @@ export function handlePlayer(scene: Phaser.Scene) {
   }
 
   //selector rect
-  if (components.cursorPositions.length > 0) {
-    const pointer =
-      components.cursorPositions[components.cursorPositions.length - 1];
-    let newX = pointer.x + scene.cameras.main.scrollX;
-    let newY = pointer.y + scene.cameras.main.scrollY;
-    let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
-    let rotation =
-      Phaser.Math.Angle.Between(player.x, player.y, newX, newY) +
-      correctionForPhasersMinus90DegreeTopPostion;
-    player.setRotation(rotation);
-    components.selectorRect.setPosition(newX, newY);
-  }
+  const pointer = scene.input.activePointer;
+  let newX = pointer.x + scene.cameras.main.scrollX;
+  let newY = pointer.y + scene.cameras.main.scrollY;
+  let correctionForPhasersMinus90DegreeTopPostion = (Math.PI / 180) * 90;
+  let rotation =
+    Phaser.Math.Angle.Between(player.x, player.y, newX, newY) +
+    correctionForPhasersMinus90DegreeTopPostion;
+  player.setRotation(rotation);
+  components.selectorRect.setPosition(newX, newY);
 
   //soul gain
   for (let index = 0; index < components.killedEntities.length; index++) {
@@ -197,9 +189,6 @@ export function setupPlayer(scene: Phaser.Scene) {
   const player = Circle.player(scene, 100, 100);
   components.entityObjects[0] = player;
   scene.cameras.main.startFollow(player);
-  scene.input.on("pointermove", (pointer: Point) => {
-    components.cursorPositions.push(pointer);
-  });
   const cursors = scene.input.keyboard.addKeys({
     up: Phaser.Input.Keyboard.KeyCodes.W,
     down: Phaser.Input.Keyboard.KeyCodes.S,

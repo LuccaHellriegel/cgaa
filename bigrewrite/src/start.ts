@@ -42,11 +42,6 @@ class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    this.scale.displaySize.setAspectRatio(width / height);
-    this.scale.refresh();
-
     setupPlayer(this);
   }
 
@@ -62,8 +57,8 @@ function createGameConfig(): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.WEBGL,
     canvas: document.getElementById("game") as HTMLCanvasElement,
-    // width: 1280,
-    // height: 720,
+    width: 1280,
+    height: 720,
     physics: {
       default: "arcade",
       arcade: {
@@ -71,7 +66,7 @@ function createGameConfig(): Phaser.Types.Core.GameConfig {
       },
     },
     scale: {
-      mode: Phaser.Scale.FIT,
+      mode: Phaser.Scale.RESIZE,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     scene: [Gameplay],
