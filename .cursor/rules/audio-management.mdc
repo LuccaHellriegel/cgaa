@@ -1,0 +1,424 @@
+---
+description: Implement efficient audio management when adding sound to enhance gameplay without performance issues
+globs: "src/**/*.ts"
+---
+
+# Effective Audio Management
+
+## Context
+- When implementing sound effects and music in games
+- When experiencing performance issues related to audio playback
+- When implementing adaptive/dynamic audio based on gameplay
+- When supporting different platforms with varied audio capabilities
+- When organizing audio resources for a complex game
+
+## Requirements
+- Use Phaser's built-in audio system efficiently
+- Implement audio pooling for frequently used sound effects
+- Create a centralized audio management system
+- Support responsive audio based on game state
+- Optimize audio memory usage
+- Provide user control over audio (volume, mute)
+
+## Examples
+
+<example>
+```typescript
+// Centralized and optimized audio manager for Phaser
+export class AudioManager {
+  private scene: Phaser.Scene;
+  private soundEffects: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private music: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private soundPools: Map<string, Phaser.Sound.BaseSound[]> = new Map();
+  private currentMusic: string | null = null;
+  private sfxVolume: number = 0.7;
+  private musicVolume: number = 0.5;
+  private muted: boolean = false;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.initialize();
+  }
+  
+  private initialize(): void {
+    // Set up event listeners for game pause/resume
+    this.scene.events.on('pause', () => this.onPause());
+    this.scene.events.on('resume', () => this.onResume());
+    
+    // Listen for scene shutdown to clean up resources
+    this.scene.events.once('shutdown', () => this.shutdown());
+  }
+  
+  preload(): void {
+    // Load audio assets with appropriate formats for cross-browser support
+    this.scene.load.audio('explosion', [
+      'assets/audio/explosion.ogg', 
+      'assets/audio/explosion.mp3'
+    ]);
+    
+    this.scene.load.audio('shoot', [
+      'assets/audio/shoot.ogg',
+      'assets/audio/shoot.mp3'
+    ]);
+    
+    this.scene.load.audio('powerup', [
+      'assets/audio/powerup.ogg',
+      'assets/audio/powerup.mp3'
+    ]);
+    
+    this.scene.load.audio('music_gameplay', [
+      'assets/audio/music_gameplay.ogg',
+      'assets/audio/music_gameplay.mp3'
+    ]);
+    
+    this.scene.load.audio('music_boss', [
+      'assets/audio/music_boss.ogg',
+      'assets/audio/music_boss.mp3'
+    ]);
+  }
+  
+  create(): void {
+    // Create sound effects
+    this.createSoundEffect('explosion', { volume: this.sfxVolume });
+    this.createSoundEffect('shoot', { volume: this.sfxVolume });
+    this.createSoundEffect('powerup', { volume: this.sfxVolume });
+    
+    // Create pooled sound effects for frequently used sounds
+    this.createSoundPool('shoot', 5);
+    
+    // Create music tracks
+    this.createMusic('music_gameplay', { volume: this.musicVolume, loop: true });
+    this.createMusic('music_boss', { volume: this.musicVolume, loop: true });
+    
+    // Set up audio controls in the UI (if applicable)
+    this.setupAudioControls();
+  }
+  
+  private createSoundEffect(key: string, config: Phaser.Types.Sound.SoundConfig = {}): void {
+    const sound = this.scene.sound.add(key, config);
+    this.soundEffects.set(key, sound);
+  }
+  
+  private createMusic(key: string, config: Phaser.Types.Sound.SoundConfig = {}): void {
+    const music = this.scene.sound.add(key, config);
+    this.music.set(key, music);
+  }
+  
+  private createSoundPool(key: string, size: number): void {
+    const pool: Phaser.Sound.BaseSound[] = [];
+    
+    for (let i = 0; i < size; i++) {
+      pool.push(this.scene.sound.add(key, { volume: this.sfxVolume }));
+    }
+    
+    this.soundPools.set(key, pool);
+  }
+  
+  playSfx(key: string, config: Phaser.Types.Sound.SoundConfig = {}): void {
+    if (this.muted) return;
+    
+    // Check if this sound has a pool
+    if (this.soundPools.has(key)) {
+      this.playFromPool(key, config);
+      return;
+    }
+    
+    // Play regular sound effect
+    const sound = this.soundEffects.get(key);
+    if (sound) {
+      sound.play(config);
+    }
+  }
+  
+  private playFromPool(key: string, config: Phaser.Types.Sound.SoundConfig = {}): void {
+    const pool = this.soundPools.get(key);
+    if (!pool || pool.length === 0) return;
+    
+    // Find first sound that's not playing
+    let sound = pool.find(s => !s.isPlaying);
+    
+    // If all sounds are playing, use the oldest one
+    if (!sound) {
+      sound = pool[0];
+    }
+    
+    // Move to end of pool (for round-robin)
+    const index = pool.indexOf(sound);
+    if (index !== -1) {
+      pool.splice(index, 1);
+      pool.push(sound);
+    }
+    
+    // Play the sound
+    sound.play(config);
+  }
+  
+  playMusic(key: string, fadeTime: number = 1000): void {
+    if (this.muted) return;
+    if (this.currentMusic === key) return;
+    
+    const newMusic = this.music.get(key);
+    if (!newMusic) return;
+    
+    // Fade out current music if playing
+    if (this.currentMusic) {
+      const currentMusic = this.music.get(this.currentMusic);
+      if (currentMusic && currentMusic.isPlaying) {
+        this.scene.tweens.add({
+          targets: currentMusic,
+          volume: 0,
+          duration: fadeTime,
+          onComplete: () => {
+            currentMusic.stop();
+          }
+        });
+      }
+    }
+    
+    // Start new music with fade in
+    this.currentMusic = key;
+    newMusic.volume = 0;
+    newMusic.play();
+    
+    this.scene.tweens.add({
+      targets: newMusic,
+      volume: this.musicVolume,
+      duration: fadeTime
+    });
+  }
+  
+  stopMusic(fadeTime: number = 1000): void {
+    if (!this.currentMusic) return;
+    
+    const music = this.music.get(this.currentMusic);
+    if (music && music.isPlaying) {
+      this.scene.tweens.add({
+        targets: music,
+        volume: 0,
+        duration: fadeTime,
+        onComplete: () => {
+          music.stop();
+          this.currentMusic = null;
+        }
+      });
+    }
+  }
+  
+  setMusicVolume(volume: number): void {
+    this.musicVolume = Phaser.Math.Clamp(volume, 0, 1);
+    
+    this.music.forEach(music => {
+      music.volume = this.musicVolume;
+    });
+  }
+  
+  setSfxVolume(volume: number): void {
+    this.sfxVolume = Phaser.Math.Clamp(volume, 0, 1);
+    
+    this.soundEffects.forEach(sound => {
+      sound.volume = this.sfxVolume;
+    });
+    
+    this.soundPools.forEach(pool => {
+      pool.forEach(sound => {
+        sound.volume = this.sfxVolume;
+      });
+    });
+  }
+  
+  toggleMute(): boolean {
+    this.muted = !this.muted;
+    this.scene.sound.mute = this.muted;
+    return this.muted;
+  }
+  
+  private onPause(): void {
+    // Automatically pause all audio when game pauses
+    this.scene.sound.pauseAll();
+  }
+  
+  private onResume(): void {
+    // Resume audio when game resumes (unless muted)
+    if (!this.muted) {
+      this.scene.sound.resumeAll();
+    }
+  }
+  
+  private setupAudioControls(): void {
+    // Implement UI controls for audio settings
+    // This would connect to your UI elements
+  }
+  
+  shutdown(): void {
+    // Clean up all audio resources
+    this.stopMusic(0);
+    
+    this.soundEffects.forEach(sound => {
+      sound.stop();
+      sound.destroy();
+    });
+    
+    this.music.forEach(music => {
+      music.stop();
+      music.destroy();
+    });
+    
+    this.soundPools.forEach(pool => {
+      pool.forEach(sound => {
+        sound.stop();
+        sound.destroy();
+      });
+    });
+    
+    this.soundEffects.clear();
+    this.music.clear();
+    this.soundPools.clear();
+    this.currentMusic = null;
+    
+    // Remove event listeners
+    this.scene.events.off('pause', this.onPause, this);
+    this.scene.events.off('resume', this.onResume, this);
+  }
+}
+```
+This example implements a comprehensive audio management system using Phaser's audio capabilities. It includes sound pooling for frequently played effects, smooth music transitions with crossfading, volume controls, and proper resource management. The manager handles the audio lifecycle, ensuring proper cleanup when the scene changes.
+</example>
+
+<example type="invalid">
+```typescript
+// Inefficient and problematic audio implementation
+export class BadAudioImplementation {
+  private scene: Phaser.Scene;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.loadAudio();
+  }
+  
+  private loadAudio(): void {
+    // Load sound files directly in constructor without preload phase
+    this.scene.sound.add('shoot', 'assets/audio/shoot.mp3');
+    this.scene.sound.add('explosion', 'assets/audio/explosion.mp3');
+    this.scene.sound.add('music', 'assets/audio/music.mp3');
+  }
+  
+  playSfx(key: string): void {
+    // Create a new sound instance each time instead of reusing
+    const sound = this.scene.sound.add(key);
+    sound.play();
+    
+    // No cleanup - sound instances accumulate
+  }
+  
+  playExplosion(x: number, y: number): void {
+    // Creating a new sound instance for EVERY explosion
+    const explosion = this.scene.sound.add('explosion');
+    explosion.play();
+    
+    // No limit on concurrent sounds
+  }
+  
+  startMusic(): void {
+    // Start music without checking if it's already playing
+    const music = this.scene.sound.add('music');
+    music.setLoop(true);
+    music.play();
+    
+    // Multiple music tracks can overlap
+  }
+  
+  stopAllAudio(): void {
+    // Abrupt stop without fading
+    this.scene.sound.stopAll();
+  }
+  
+  // No centralized volume controls
+  // No organized audio resource management
+  // No handling of game pause/resume states
+}
+```
+This implementation creates major performance and user experience problems: creating new sound instances for every sound effect, allowing unlimited concurrent sounds without pooling, starting music without checking if it's already playing, stopping sounds abruptly, and lacking proper resource management and controls.
+</example>
+
+## Phaser-Specific Notes
+
+1. Use Phaser's built-in audio formats and fallbacks:
+   ```typescript
+   // Provide multiple formats for cross-browser compatibility
+   this.load.audio('explosion', [
+     'assets/audio/explosion.ogg', // Smaller file size, preferred
+     'assets/audio/explosion.mp3'  // Wider compatibility
+   ]);
+   ```
+
+2. Take advantage of Phaser's sound manager for global control:
+   ```typescript
+   // Global mute
+   this.sound.mute = true;
+   
+   // Global volume
+   this.sound.volume = 0.5;
+   
+   // Pause all sounds
+   this.sound.pauseAll();
+   
+   // Resume all sounds
+   this.sound.resumeAll();
+   ```
+
+3. Use Phaser's built-in audio features for advanced control:
+   ```typescript
+   const sound = this.sound.add('effect', {
+     volume: 0.5,
+     rate: 1.0,
+     detune: 0,
+     seek: 0,
+     loop: false,
+     delay: 0
+   });
+   
+   // Change playback rate on the fly (pitch shift)
+   sound.setRate(1.5);
+   
+   // Set spatial position for stereo panning
+   sound.setPan(-1.0); // Left speaker
+   ```
+
+4. Use Phaser's event system for audio synchronization:
+   ```typescript
+   // React to audio events
+   sound.once('complete', () => {
+     // Do something when sound finishes
+   });
+   
+   // Create timed gameplay events
+   const music = this.sound.add('music');
+   music.play();
+   
+   music.once('looped', () => {
+     // Trigger event at end of music loop
+     this.spawnBoss();
+   });
+   ```
+
+5. Use markers for sprite sheets of audio:
+   ```typescript
+   // Add multiple sound effects within one audio file
+   const sfx = this.sound.add('sfx_sprite');
+   
+   // Define markers for different parts of the audio file
+   sfx.addMarker({
+     name: 'jump',
+     start: 0,
+     duration: 0.5
+   });
+   
+   sfx.addMarker({
+     name: 'coin',
+     start: 0.5,
+     duration: 0.25
+   });
+   
+   // Play specific marker
+   sfx.play('jump');
+   

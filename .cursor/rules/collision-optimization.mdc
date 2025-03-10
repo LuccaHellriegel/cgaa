@@ -1,0 +1,273 @@
+---
+description: Optimize collision detection when implementing game physics to prevent performance bottlenecks
+globs: "src/**/*.ts"
+---
+
+# Efficient Collision Detection
+
+## Context
+- When implementing physics and collision in games with many entities
+- When experiencing performance drops during collision-heavy scenarios
+- When using custom collision shapes beyond Phaser's built-in circles and rectangles
+- When implementing line-of-sight or detection mechanics
+
+## Requirements
+- Use Phaser's built-in optimizations for collision detection
+- Implement spatial partitioning for custom collision systems
+- Use a broad-phase and narrow-phase approach to collision detection
+- Limit collision checks to relevant objects and appropriate intervals
+- Optimize hotspots in collision code that run frequently
+
+## Examples
+
+<example>
+```typescript
+// Using Phaser's optimized collision detection
+export class EfficientCollisionManager {
+  private scene: Phaser.Scene;
+  private player: Phaser.Physics.Arcade.Sprite;
+  private enemies: Phaser.Physics.Arcade.Group;
+  private projectiles: Phaser.Physics.Arcade.Group;
+  private obstacles: Phaser.Physics.Arcade.StaticGroup;
+  
+  constructor(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
+    this.scene = scene;
+    this.player = player;
+    
+    // Create physics groups for efficient collision detection
+    this.enemies = scene.physics.add.group({
+      collideWorldBounds: true,
+      bounceX: 0.5,
+      bounceY: 0.5
+    });
+    
+    this.projectiles = scene.physics.add.group({
+      allowGravity: false
+    });
+    
+    this.obstacles = scene.physics.add.staticGroup();
+    
+    // Set up collision handlers
+    this.setupCollisions();
+  }
+  
+  setupCollisions(): void {
+    // Player collides with obstacles
+    this.scene.physics.add.collider(this.player, this.obstacles);
+    
+    // Enemies collide with obstacles and each other
+    this.scene.physics.add.collider(this.enemies, this.obstacles);
+    this.scene.physics.add.collider(this.enemies, this.enemies);
+    
+    // Projectiles overlap with enemies (one-way collision)
+    this.scene.physics.add.overlap(
+      this.projectiles, 
+      this.enemies, 
+      this.handleProjectileEnemyCollision,
+      null,
+      this
+    );
+    
+    // Enemies overlap with player
+    this.scene.physics.add.overlap(
+      this.enemies,
+      this.player,
+      this.handleEnemyPlayerCollision,
+      null,
+      this
+    );
+  }
+  
+  handleProjectileEnemyCollision(
+    projectile: Phaser.Physics.Arcade.Sprite, 
+    enemy: Phaser.Physics.Arcade.Sprite
+  ): void {
+    // Disable projectile
+    projectile.setActive(false);
+    projectile.setVisible(false);
+    
+    // Apply damage to enemy
+    enemy.getData('health').takeDamage(10);
+  }
+  
+  handleEnemyPlayerCollision(
+    enemy: Phaser.Physics.Arcade.Sprite,
+    player: Phaser.Physics.Arcade.Sprite
+  ): void {
+    // Only process collision if enemy is in attack state
+    if (enemy.getData('state') === 'attacking') {
+      player.getData('health').takeDamage(enemy.getData('damage'));
+    }
+  }
+  
+  addEnemy(x: number, y: number): Phaser.Physics.Arcade.Sprite {
+    const enemy = this.enemies.create(x, y, 'enemy');
+    enemy.setData('health', { health: 100, takeDamage: (amount) => { /* ... */ } });
+    enemy.setData('state', 'idle');
+    enemy.setData('damage', 10);
+    return enemy;
+  }
+  
+  addObstacle(x: number, y: number, width: number, height: number): Phaser.Physics.Arcade.Sprite {
+    const obstacle = this.obstacles.create(x, y, 'obstacle');
+    obstacle.setDisplaySize(width, height);
+    obstacle.refreshBody(); // Important: Update physics body after resizing
+    return obstacle;
+  }
+  
+  fireProjectile(x: number, y: number, angle: number): Phaser.Physics.Arcade.Sprite {
+    const projectile = this.projectiles.create(x, y, 'projectile');
+    this.scene.physics.velocityFromAngle(angle, 300, projectile.body.velocity);
+    
+    // Auto-remove projectiles when they leave the screen
+    projectile.checkWorldBounds = true;
+    projectile.outOfBoundsKill = true;
+    
+    return projectile;
+  }
+}
+```
+This example uses Phaser's physics groups and optimized collision detection to handle collisions efficiently. Groups allow Phaser to optimize collision checks internally, and overlap callbacks provide fine-grained control over collision responses.
+</example>
+
+<example type="invalid">
+```typescript
+// Inefficient brute-force collision checking
+export class InefficientCollisionManager {
+  private scene: Phaser.Scene;
+  private player: Phaser.Physics.Arcade.Sprite;
+  private enemies: Phaser.Physics.Arcade.Sprite[] = [];
+  private projectiles: Phaser.Physics.Arcade.Sprite[] = [];
+  private obstacles: Phaser.Physics.Arcade.Sprite[] = [];
+  
+  constructor(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
+    this.scene = scene;
+    this.player = player;
+  }
+  
+  update(): void {
+    // Check all projectiles against all enemies (O(n²) complexity)
+    for (const projectile of this.projectiles) {
+      if (!projectile.active) continue;
+      
+      for (const enemy of this.enemies) {
+        if (!enemy.active) continue;
+        
+        // Manual rectangle collision check
+        if (Phaser.Geom.Intersects.RectangleToRectangle(
+          projectile.getBounds(),
+          enemy.getBounds()
+        )) {
+          this.handleProjectileEnemyCollision(projectile, enemy);
+        }
+      }
+    }
+    
+    // Check all enemies against player
+    for (const enemy of this.enemies) {
+      if (!enemy.active) continue;
+      
+      if (Phaser.Geom.Intersects.RectangleToRectangle(
+        enemy.getBounds(),
+        this.player.getBounds()
+      )) {
+        this.handleEnemyPlayerCollision(enemy, this.player);
+      }
+    }
+    
+    // Check all enemies against all obstacles
+    for (const enemy of this.enemies) {
+      if (!enemy.active) continue;
+      
+      for (const obstacle of this.obstacles) {
+        if (Phaser.Geom.Intersects.RectangleToRectangle(
+          enemy.getBounds(),
+          obstacle.getBounds()
+        )) {
+          this.handleEnemyObstacleCollision(enemy, obstacle);
+        }
+      }
+    }
+    
+    // Check player against all obstacles
+    for (const obstacle of this.obstacles) {
+      if (Phaser.Geom.Intersects.RectangleToRectangle(
+        this.player.getBounds(),
+        obstacle.getBounds()
+      )) {
+        this.handlePlayerObstacleCollision(this.player, obstacle);
+      }
+    }
+  }
+  
+  // Handler methods...
+}
+```
+This approach performs unnecessary collision checks between all objects every frame, leading to O(n²) complexity. It doesn't use Phaser's built-in collision optimization, resulting in poor performance as the number of entities increases.
+</example>
+
+## Phaser-Specific Notes
+
+1. Phaser's Arcade Physics provides built-in optimizations:
+   - Use `physics.add.group()` to create groups of similar objects
+   - Use `physics.add.collider()` and `physics.add.overlap()` for efficient collision detection
+   - Set `checkCollision.none = true` for one-way collisions
+
+2. For custom physics requirements, leverage Phaser's spatial hashing:
+   ```typescript
+   // Access Phaser's internal spatial hash
+   const bodies = this.scene.physics.world.bodies;
+   
+   // Get bodies in a region (much faster than checking all)
+   const bodiesInRegion = this.scene.physics.world.tree.search({
+     minX: x - radius,
+     minY: y - radius,
+     maxX: x + radius,
+     maxY: y + radius
+   });
+   ```
+
+3. When using collision callbacks, optimize the process function:
+   ```typescript
+   this.physics.add.overlap(
+     bullets,
+     enemies,
+     this.bulletHitEnemy,
+     // This process function pre-filters collision checks
+     (bullet, enemy) => {
+       // Only check collision if both are active
+       return bullet.active && enemy.active;
+       
+       // Additional filtering to reduce unnecessary checks
+       // e.g., distance-based filtering
+       const dx = bullet.x - enemy.x;
+       const dy = bullet.y - enemy.y;
+       return (dx * dx + dy * dy) < 10000; // Rough distance check
+     },
+     this
+   );
+   ```
+
+4. For line-of-sight mechanics, use Phaser's ray casting:
+   ```typescript
+   // Simple line of sight using Phaser's ray casting
+   checkLineOfSight(from: Phaser.GameObjects.Sprite, to: Phaser.GameObjects.Sprite, obstacles: Phaser.GameObjects.Group): boolean {
+     const ray = new Phaser.Geom.Line(from.x, from.y, to.x, to.y);
+     
+     // Fast check - are we in range?
+     const distance = Phaser.Math.Distance.Between(from.x, from.y, to.x, to.y);
+     if (distance > from.getData('sightRange')) {
+       return false;
+     }
+     
+     // Check against obstacles
+     let hasLineOfSight = true;
+     obstacles.getChildren().forEach((obstacle: Phaser.GameObjects.Sprite) => {
+       if (Phaser.Geom.Intersects.LineToRectangle(ray, obstacle.getBounds())) {
+         hasLineOfSight = false;
+       }
+     });
+     
+     return hasLineOfSight;
+   }
+   

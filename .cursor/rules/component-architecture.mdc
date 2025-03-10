@@ -1,0 +1,289 @@
+---
+description: Use component-based architecture when designing game entities to improve maintainability and flexibility
+globs: "src/**/*.ts"
+---
+
+# Component-Based Game Entity Architecture
+
+## Context
+- When creating complex game entities with multiple behaviors
+- When code reuse across different entity types is important
+- When entity behavior needs to be modified at runtime
+- When working on medium to large Phaser game projects
+
+## Requirements
+- Extend Phaser.GameObjects with component-based design
+- Separate entity behaviors into individual components
+- Design components to be reusable across different entity types
+- Ensure components can be added/removed dynamically
+- Components should follow single responsibility principle
+
+## Examples
+
+<example>
+```typescript
+// Component interface compatible with Phaser's lifecycle
+interface Component {
+  update(time: number, delta: number): void;
+  destroy(): void;
+}
+
+// Base entity class that integrates with Phaser's GameObject system
+class Entity extends Phaser.GameObjects.Container {
+  private components: Map<string, Component> = new Map();
+
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y);
+    scene.add.existing(this);
+    scene.sys.updateList.add(this);
+  }
+
+  addComponent(name: string, component: Component): this {
+    this.components.set(name, component);
+    return this;
+  }
+
+  getComponent<T extends Component>(name: string): T | undefined {
+    return this.components.get(name) as T;
+  }
+
+  removeComponent(name: string): boolean {
+    const component = this.components.get(name);
+    if (component) {
+      component.destroy();
+      return this.components.delete(name);
+    }
+    return false;
+  }
+
+  update(time: number, delta: number): void {
+    // Update all components
+    this.components.forEach(component => component.update(time, delta));
+  }
+
+  destroy(fromScene?: boolean): void {
+    // Clean up all components
+    this.components.forEach(component => component.destroy());
+    this.components.clear();
+    super.destroy(fromScene);
+  }
+}
+
+// Health component that works with Phaser events
+class HealthComponent implements Component {
+  private entity: Entity;
+  private currentHealth: number;
+  private maxHealth: number;
+  
+  constructor(entity: Entity, maxHealth: number) {
+    this.entity = entity;
+    this.maxHealth = maxHealth;
+    this.currentHealth = maxHealth;
+  }
+
+  takeDamage(amount: number): void {
+    this.currentHealth = Math.max(0, this.currentHealth - amount);
+    
+    // Emit a Phaser event that can be listened to
+    this.entity.scene.events.emit('entityDamaged', this.entity, amount);
+    
+    if (this.currentHealth <= 0) {
+      this.entity.scene.events.emit('entityDied', this.entity);
+    }
+  }
+
+  heal(amount: number): void {
+    this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
+    this.entity.scene.events.emit('entityHealed', this.entity, amount);
+  }
+
+  getHealthPercent(): number {
+    return this.currentHealth / this.maxHealth;
+  }
+
+  update(time: number, delta: number): void {
+    // No per-frame update needed
+  }
+
+  destroy(): void {
+    // Cleanup code if needed
+  }
+}
+
+// Movement component using Phaser's physics
+class MovementComponent implements Component {
+  private entity: Entity;
+  private speed: number;
+  private body: Phaser.Physics.Arcade.Body;
+  
+  constructor(entity: Entity, speed: number) {
+    this.entity = entity;
+    this.speed = speed;
+    
+    // Add physics to the entity
+    this.entity.scene.physics.world.enable(this.entity);
+    this.body = this.entity.body as Phaser.Physics.Arcade.Body;
+    this.body.setCollideWorldBounds(true);
+  }
+
+  moveTo(x: number, y: number): void {
+    const angle = Phaser.Math.Angle.Between(this.entity.x, this.entity.y, x, y);
+    this.moveInDirection(angle);
+  }
+
+  moveInDirection(angle: number): void {
+    this.entity.scene.physics.velocityFromRotation(
+      angle, 
+      this.speed, 
+      this.body.velocity
+    );
+  }
+
+  stop(): void {
+    this.body.setVelocity(0, 0);
+  }
+
+  update(time: number, delta: number): void {
+    // Additional movement logic can go here
+  }
+
+  destroy(): void {
+    // Optional: Disable physics if needed
+    if (this.body) {
+      this.entity.scene.physics.world.disable(this.entity);
+    }
+  }
+}
+
+// Usage example
+const createEnemy = (scene: Phaser.Scene, x: number, y: number): Entity => {
+  const enemy = new Entity(scene, x, y);
+  
+  // Add sprite as a child of the container
+  const sprite = scene.add.sprite(0, 0, 'enemy');
+  enemy.add(sprite);
+  
+  // Add components
+  enemy.addComponent('health', new HealthComponent(enemy, 100));
+  enemy.addComponent('movement', new MovementComponent(enemy, 150));
+  
+  return enemy;
+};
+```
+This approach integrates well with Phaser's GameObject and Scene systems while providing component-based architecture benefits. Components are modular, reusable, and can be added or removed at runtime.
+</example>
+
+<example type="invalid">
+```typescript
+// Monolithic entity class with mixed responsibilities
+class Enemy extends Phaser.GameObjects.Sprite {
+  private health: number = 100;
+  private maxHealth: number = 100;
+  private speed: number = 150;
+  private target: Phaser.GameObjects.GameObject;
+  private isAttacking: boolean = false;
+  private attackCooldown: number = 0;
+  private attackDamage: number = 10;
+  private isTakingDamage: boolean = false;
+  private damageFlashTimer: number = 0;
+  
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, 'enemy');
+    scene.add.existing(this);
+    scene.physics.world.enable(this);
+    this.body.setCollideWorldBounds(true);
+  }
+  
+  update(time: number, delta: number): void {
+    // Handle movement
+    if (this.target && !this.isAttacking) {
+      const angle = Phaser.Math.Angle.Between(
+        this.x, this.y,
+        this.target.x, this.target.y
+      );
+      this.scene.physics.velocityFromRotation(angle, this.speed, this.body.velocity);
+    }
+    
+    // Handle attack cooldown
+    if (this.attackCooldown > 0) {
+      this.attackCooldown -= delta;
+      if (this.attackCooldown <= 0) {
+        this.isAttacking = false;
+      }
+    }
+    
+    // Handle damage flash effect
+    if (this.isTakingDamage) {
+      this.damageFlashTimer -= delta;
+      if (this.damageFlashTimer <= 0) {
+        this.clearTint();
+        this.isTakingDamage = false;
+      }
+    }
+    
+    // And many more intertwined behaviors...
+  }
+  
+  takeDamage(amount: number): void {
+    this.health -= amount;
+    this.isTakingDamage = true;
+    this.damageFlashTimer = 200;
+    this.setTint(0xff0000);
+    
+    if (this.health <= 0) {
+      this.die();
+    }
+  }
+  
+  attack(target: Phaser.GameObjects.GameObject): void {
+    this.isAttacking = true;
+    this.attackCooldown = 1000;
+    this.body.setVelocity(0, 0);
+    
+    // Attack animation
+    this.play('enemy_attack');
+    
+    // Deal damage
+    // ... more attack logic
+  }
+  
+  die(): void {
+    this.play('enemy_death');
+    this.scene.time.delayedCall(500, () => {
+      this.destroy();
+    });
+  }
+  
+  // Many more methods...
+}
+```
+This monolithic class mixes multiple responsibilities (movement, health, attacks, animations, effects) in a single class, making it difficult to extend, test, or reuse. Adding new features requires modifying the entire class, increasing complexity and the risk of bugs.
+</example>
+
+## Phaser-Specific Notes
+
+1. Phaser's GameObject system can be extended with components:
+   - Use `Phaser.GameObjects.Container` as a base class for entities
+   - Components can access Phaser features through the entity reference
+   - Integrate with Phaser's update loop via `scene.sys.updateList`
+
+2. For TypeScript integration, use:
+   ```typescript
+   interface PhaserComponent extends Component {
+     // Phaser-specific lifecycle methods
+     preUpdate?(time: number, delta: number): void;
+     postUpdate?(time: number, delta: number): void;
+   }
+   ```
+
+3. Leverage Phaser's event system for component communication:
+   ```typescript
+   // Component publishing an event
+   this.entity.scene.events.emit('entityEvent', data);
+   
+   // Component or system listening for events
+   this.entity.scene.events.on('entityEvent', this.handleEvent, this);
+   
+   // Clean up when destroying
+   this.entity.scene.events.off('entityEvent', this.handleEvent, this);
+   

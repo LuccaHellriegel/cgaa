@@ -1,0 +1,147 @@
+---
+description: Implement object pooling when creating frequently used game objects to prevent performance degradation
+globs: "src/**/*.ts"
+---
+
+# Object Pooling for Game Entities
+
+## Context
+- When developing games with frequent object creation/destruction (bullets, enemies, particles)
+- When experiencing frame rate drops during intense gameplay moments
+- When garbage collection pauses are noticeable during gameplay
+
+## Requirements
+- Use Phaser's built-in Group and GroupConfig for object pooling
+- Pre-allocate objects for frequently created entities
+- Properly reset object state when recycling from the pool
+- Implement custom pools when Phaser's built-in options are insufficient
+
+## Examples
+
+<example>
+```typescript
+// Using Phaser's built-in Group for pooling bullets
+export class BulletManager {
+  private bulletPool: Phaser.GameObjects.Group;
+  
+  constructor(scene: Phaser.Scene) {
+    // Create a bullet pool with Phaser's Group
+    this.bulletPool = scene.add.group({
+      classType: Bullet,
+      maxSize: 30,
+      runChildUpdate: true,
+      createCallback: (bullet: Bullet) => {
+        bullet.setActive(false);
+        bullet.setVisible(false);
+      }
+    });
+  }
+  
+  fireBullet(x: number, y: number, direction: number): Bullet | null {
+    // Get a bullet from the pool
+    const bullet = this.bulletPool.get(x, y) as Bullet;
+    
+    // No bullets left in pool
+    if (!bullet) return null;
+    
+    // Reset and initialize the bullet
+    bullet.fire(x, y, direction);
+    return bullet;
+  }
+  
+  returnBullet(bullet: Bullet): void {
+    // Return bullet to pool
+    bullet.reset();
+    this.bulletPool.killAndHide(bullet);
+  }
+}
+
+// The bullet class
+class Bullet extends Phaser.GameObjects.Sprite {
+  private speed: number = 300;
+  
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, 'bullet');
+    this.setActive(false);
+    this.setVisible(false);
+  }
+  
+  fire(x: number, y: number, direction: number): void {
+    this.setPosition(x, y);
+    this.setActive(true);
+    this.setVisible(true);
+    
+    // Set velocity based on direction
+    this.scene.physics.velocityFromAngle(direction, this.speed, this.body.velocity);
+  }
+  
+  reset(): void {
+    this.setActive(false);
+    this.setVisible(false);
+    this.body.reset(0, 0);
+  }
+  
+  update(time: number, delta: number): void {
+    // Check if bullet is out of bounds
+    if (this.x < -50 || this.x > this.scene.game.config.width + 50 ||
+        this.y < -50 || this.y > this.scene.game.config.height + 50) {
+      this.reset();
+      this.scene.events.emit('bulletKilled', this);
+    }
+  }
+}
+```
+Using Phaser's Group for object pooling leverages the engine's built-in recycling system, providing efficient performance while keeping code clean. The bullet pool pre-allocates objects and reuses them instead of creating new instances.
+</example>
+
+<example type="invalid">
+```typescript
+// Creating new objects every time without pooling
+export class BadBulletManager {
+  private scene: Phaser.Scene;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  fireBullet(x: number, y: number, direction: number): void {
+    // Creates a new bullet instance every time
+    const bullet = new Bullet(this.scene, x, y);
+    bullet.fire(direction);
+    
+    // No recycling mechanism, objects are left for garbage collection
+    this.scene.time.delayedCall(3000, () => {
+      bullet.destroy();
+    });
+  }
+}
+```
+This approach creates a new bullet object every time one is fired, leading to frequent garbage collection pauses that harm performance, especially during intense gameplay when many bullets are created in a short time.
+</example>
+
+## Phaser-Specific Notes
+
+1. Phaser provides several built-in pooling mechanisms:
+   - `Phaser.GameObjects.Group` with `maxSize` for basic pooling
+   - `Phaser.GameObjects.Group.createMultiple()` for pre-populating pools
+   - `Phaser.Actions` for manipulating multiple objects efficiently
+   
+2. For particle effects, use Phaser's Particle Emitter Manager which handles pooling internally:
+   ```typescript
+   const particles = scene.add.particles('flare');
+   const emitter = particles.createEmitter({
+     maxParticles: 30,
+     lifespan: 2000,
+     // Other configuration
+   });
+   ```
+
+3. When using pools with physics objects, remember to properly reset physics bodies:
+   ```typescript
+   reset() {
+     this.body.reset(0, 0);
+     this.setVelocity(0, 0);
+     this.setAngularVelocity(0);
+     this.setAcceleration(0, 0);
+   }
+   ``` 
