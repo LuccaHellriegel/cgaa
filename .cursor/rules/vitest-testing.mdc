@@ -1,0 +1,285 @@
+---
+description: Use Vitest instead of Jest for efficient testing of Phaser game components and logic
+globs: src/**/*.{test,spec}.{ts,tsx}
+---
+
+# Vitest Testing for Phaser Games
+
+## Context
+- When implementing unit and integration tests for Phaser game components
+- When migrating from Jest to a faster testing solution
+- When using Vite as your build tool
+- When testing game logic without needing to render the full Phaser engine
+- When implementing test-driven development (TDD) for complex game systems
+
+## Requirements
+- Configure Vitest properly in your Phaser project
+- Separate game logic from Phaser rendering concerns to make testing easier
+- Use proper mocking techniques for Phaser objects and systems
+- Implement efficient test patterns for common Phaser game scenarios
+- Set up JSDOM environment for components that require DOM interaction
+- Leverage Vitest's speed advantages for faster feedback cycles
+
+## Examples
+
+<example>
+```typescript
+// File: vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  // Normal Vite config
+  plugins: [/* your plugins */],
+  
+  // Vitest configuration
+  test: {
+    globals: true,                 // Makes test APIs globally available
+    environment: 'jsdom',          // Use jsdom for DOM testing
+    setupFiles: 'src/setupTests.ts', // Custom setup for tests
+    includeSource: ['src/**/*.{ts,tsx}'],
+    coverage: {
+      reporter: ['text', 'html'],  // Coverage reporting
+      exclude: ['node_modules/', 'src/setupTests.ts']
+    }
+  }
+});
+```
+
+```typescript
+// File: src/setupTests.ts
+import '@testing-library/jest-dom';
+
+// Add custom matchers or global setup here
+window.game = {
+  // Mock common game objects/methods needed across tests
+};
+
+// Avoid actual rendering of Phaser canvas
+vi.mock('phaser', () => {
+  return {
+    Game: vi.fn().mockImplementation(() => ({
+      destroy: vi.fn()
+    })),
+    Scene: vi.fn().mockImplementation(() => ({})),
+    AUTO: 'auto',
+    Scale: {
+      FIT: 'fit',
+      RESIZE: 'resize'
+    }
+  };
+});
+```
+
+```typescript
+// File: src/components/Player.test.ts
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { Player } from './Player';
+
+// Isolate the game logic from Phaser rendering for pure unit tests
+describe('Player', () => {
+  let player;
+  
+  beforeEach(() => {
+    // Create test instance with mock dependencies
+    player = new Player({
+      scene: {
+        add: {
+          sprite: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
+            setScale: vi.fn().mockReturnThis(),
+            setDepth: vi.fn().mockReturnThis()
+          })
+        },
+        physics: {
+          add: {
+            existing: vi.fn()
+          }
+        }
+      },
+      x: 100,
+      y: 100,
+      texture: 'player'
+    });
+  });
+  
+  it('should update player velocity correctly', () => {
+    // Test only the game logic without Phaser dependencies
+    player.setVelocity(10, 5);
+    expect(player.velocityX).toBe(10);
+    expect(player.velocityY).toBe(5);
+  });
+  
+  it('should detect collision with enemy', () => {
+    const enemy = { x: 101, y: 101, width: 20, height: 20 };
+    player.width = 20;
+    player.height = 20;
+    
+    expect(player.isCollidingWith(enemy)).toBe(true);
+    
+    enemy.x = 200;
+    expect(player.isCollidingWith(enemy)).toBe(false);
+  });
+});
+```
+
+```typescript
+// File: package.json (scripts section)
+{
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
+  }
+}
+```
+
+This example demonstrates proper Vitest setup for testing Phaser game components. The tests focus on game logic rather than rendering, making them fast and reliable. By separating concerns, you can test game mechanics without having to mock the entire Phaser engine.
+</example>
+
+<example type="invalid">
+```typescript
+// File: src/scenes/GameScene.test.ts - Poor testing approach
+import { describe, it, expect } from 'vitest';
+import { Game, Scene, AUTO } from 'phaser';
+import { GameScene } from './GameScene';
+
+// Trying to test the entire Phaser scene directly
+describe('GameScene', () => {
+  let game;
+  let gameScene;
+  
+  beforeEach(() => {
+    // Creating an actual Phaser game instance
+    // This is slow and unnecessary for most tests
+    game = new Game({
+      type: AUTO,
+      width: 800,
+      height: 600,
+      scene: [GameScene]
+    });
+    
+    gameScene = game.scene.getScene('GameScene');
+  });
+  
+  it('should create player sprite', () => {
+    // This test depends on actual Phaser rendering
+    // and will fail without a canvas/WebGL context
+    expect(gameScene.player).toBeDefined();
+    expect(gameScene.player.x).toBe(100);
+  });
+  
+  it('should update enemy positions', () => {
+    // Depending on Phaser's actual update loop
+    // makes tests unpredictable and slow
+    gameScene.update(16, 16);
+    expect(gameScene.enemies[0].x).not.toBe(100);
+  });
+  
+  afterEach(() => {
+    // Cleanup requires actual Phaser destruction
+    game.destroy(true);
+  });
+});
+```
+
+This example demonstrates poor testing practices when using Vitest with Phaser:
+1. It attempts to instantiate the actual Phaser game engine, which is slow and unreliable in a test environment
+2. Tests depend on actual rendering capabilities, which may not be available in all CI environments
+3. It doesn't separate game logic from rendering concerns, making tests brittle
+4. The tests are not focused on specific behaviors but try to test too much at once
+</example>
+
+## Phaser-Specific Notes
+
+1. **Isolate Game Logic**:
+   ```typescript
+   // Extract pure game logic to separate classes
+   export class PhysicsSystem {
+     // Implement core physics calculations without Phaser dependencies
+     detectCollision(a, b) {
+       // Pure collision detection logic
+       return (
+         a.x < b.x + b.width &&
+         a.x + a.width > b.x &&
+         a.y < b.y + b.height &&
+         a.y + a.height > b.y
+       );
+     }
+   }
+   
+   // Then use this in your Phaser scene
+   class GameScene extends Phaser.Scene {
+     create() {
+       this.physicsSystem = new PhysicsSystem();
+       // Now you can test PhysicsSystem separately
+     }
+   }
+   ```
+
+2. **Mock Phaser Objects Efficiently**:
+   ```typescript
+   // Create lightweight mock factories for common Phaser objects
+   const createMockSprite = (x, y) => ({
+     x, y,
+     setVelocity: vi.fn(),
+     setPosition: vi.fn(),
+     destroy: vi.fn(),
+     setActive: vi.fn(),
+     setVisible: vi.fn()
+   });
+   
+   // Use in tests
+   it('should handle sprite movement', () => {
+     const sprite = createMockSprite(10, 20);
+     gameSystem.moveSprite(sprite, 5, 0);
+     expect(sprite.setPosition).toHaveBeenCalledWith(15, 20);
+   });
+   ```
+
+3. **Test Scene Transitions**:
+   ```typescript
+   // In your scene
+   class MenuScene extends Phaser.Scene {
+     startGame() {
+       this.scene.start('GameScene', { level: 1 });
+     }
+   }
+   
+   // In your test
+   it('should transition to game scene with correct data', () => {
+     const menuScene = new MenuScene();
+     menuScene.scene = { start: vi.fn() };
+     
+     menuScene.startGame();
+     
+     expect(menuScene.scene.start).toHaveBeenCalledWith(
+       'GameScene', 
+       { level: 1 }
+     );
+   });
+   ```
+
+4. **Handle Asset Loading in Tests**:
+   ```typescript
+   // In tests, bypass actual loading
+   beforeEach(() => {
+     gameScene.load = {
+       image: vi.fn(),
+       audio: vi.fn(),
+       spritesheet: vi.fn(),
+       on: vi.fn(),
+       once: vi.fn()
+     };
+     
+     // Simulate load complete
+     gameScene.create();
+   });
+   ```
+
+5. **Use Vitest UI for Visual Debugging**:
+   ```bash
+   # Add to package.json scripts
+   "test:ui": "vitest --ui"
+   ```
+   This provides a visual interface for test results and debugging that's especially helpful for complex game logic. 
