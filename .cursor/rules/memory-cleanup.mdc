@@ -1,0 +1,401 @@
+---
+description: Implement proper memory and resource cleanup to prevent memory leaks and ensure consistent performance
+globs: src/**/*.{ts,tsx}
+---
+
+# Effective Memory Management
+
+## Context
+- When developing games with long play sessions
+- When handling frequent scene transitions and object creation/destruction
+- When managing manually created resources (textures, event listeners, timers)
+- When experiencing performance deterioration over time
+- When targeting memory-constrained devices
+
+## Requirements
+- Use Phaser's built-in lifecycle hooks for resource cleanup
+- Properly dispose of created resources when no longer needed
+- Unsubscribe from event listeners to prevent memory leaks
+- Implement an explicit cleanup pattern for custom components
+- Monitor memory usage during development to identify leaks
+- Follow a clear ownership model for resources and disposal responsibilities
+- Cache and reuse frequently accessed resources rather than recreating them
+
+## Examples
+
+<example>
+```typescript
+// Component with proper resource management
+export class CleanComponent {
+  private scene: Phaser.Scene;
+  private sprites: Phaser.GameObjects.Sprite[] = [];
+  private timerEvents: Phaser.Time.TimerEvent[] = [];
+  private eventKeys: string[] = [];
+  private tweens: Phaser.Tweens.Tween[] = [];
+  private renderTexture: Phaser.GameObjects.RenderTexture | null = null;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Register for scene events to handle cleanup automatically
+    this.scene.events.once('shutdown', this.cleanup, this);
+    this.scene.events.once('destroy', this.cleanup, this);
+  }
+  
+  initialize(): void {
+    // Create sprites and track them
+    const sprite1 = this.scene.add.sprite(100, 100, 'player');
+    const sprite2 = this.scene.add.sprite(200, 100, 'enemy');
+    this.sprites.push(sprite1, sprite2);
+    
+    // Set up events and track them
+    const key1 = 'game-event-1';
+    const key2 = 'player-damaged';
+    this.scene.events.on(key1, this.handleEvent1, this);
+    this.scene.events.on(key2, this.handleEvent2, this);
+    this.eventKeys.push(key1, key2);
+    
+    // Create timers and track them
+    const timer1 = this.scene.time.addEvent({
+      delay: 1000,
+      callback: this.timerCallback1,
+      callbackScope: this,
+      loop: true
+    });
+    const timer2 = this.scene.time.delayedCall(5000, this.timerCallback2, [], this);
+    this.timerEvents.push(timer1, timer2);
+    
+    // Create tweens and track them
+    const tween1 = this.scene.tweens.add({
+      targets: sprite1,
+      x: 300,
+      duration: 2000,
+      ease: 'Power2'
+    });
+    this.tweens.push(tween1);
+    
+    // Create render texture and track it
+    this.renderTexture = this.scene.add.renderTexture(0, 0, 800, 600);
+    this.renderTexture.draw(sprite1);
+  }
+  
+  private handleEvent1(): void {
+    // Event handler 1
+  }
+  
+  private handleEvent2(): void {
+    // Event handler 2
+  }
+  
+  private timerCallback1(): void {
+    // Timer callback 1
+  }
+  
+  private timerCallback2(): void {
+    // Timer callback 2
+  }
+  
+  // Explicit cleanup method that can be called manually
+  // or automatically via scene events
+  cleanup(): void {
+    // Clear event listeners
+    this.eventKeys.forEach(key => {
+      this.scene.events.off(key);
+    });
+    this.eventKeys = [];
+    
+    // Clear timers
+    this.timerEvents.forEach(timer => {
+      timer.remove();
+    });
+    this.timerEvents = [];
+    
+    // Stop and remove tweens
+    this.tweens.forEach(tween => {
+      tween.stop();
+      tween.remove();
+    });
+    this.tweens = [];
+    
+    // Clean up sprites if not already part of scene cleanup
+    this.sprites.forEach(sprite => {
+      sprite.destroy();
+    });
+    this.sprites = [];
+    
+    // Clean up render texture
+    if (this.renderTexture) {
+      this.renderTexture.destroy();
+      this.renderTexture = null;
+    }
+    
+    // Remove scene event listeners
+    this.scene.events.off('shutdown', this.cleanup, this);
+    this.scene.events.off('destroy', this.cleanup, this);
+  }
+}
+
+// Scene with proper lifecycle management
+export class WellManagedScene extends Phaser.Scene {
+  private components: CleanComponent[] = [];
+  private particleSystems: Phaser.GameObjects.Particles.ParticleEmitterManager[] = [];
+  private customTextures: string[] = [];
+  
+  constructor() {
+    super({ key: 'WellManagedScene' });
+  }
+  
+  create(): void {
+    // Create components and track them
+    const component1 = new CleanComponent(this);
+    component1.initialize();
+    this.components.push(component1);
+    
+    // Create particle systems and track them
+    const particles = this.add.particles('flare');
+    const emitter = particles.createEmitter({
+      x: 400,
+      y: 300,
+      speed: 200,
+      lifespan: 3000,
+      blendMode: 'ADD',
+      scale: { start: 1, end: 0 },
+      quantity: 2
+    });
+    this.particleSystems.push(particles);
+    
+    // Create dynamic textures and track them
+    const textureName = 'dynamic-texture-1';
+    const graphics = this.make.graphics();
+    graphics.fillStyle(0xff0000);
+    graphics.fillCircle(64, 64, 64);
+    graphics.generateTexture(textureName, 128, 128);
+    graphics.destroy(); // Clean up the graphics object
+    this.customTextures.push(textureName);
+    
+    // Use the dynamic texture
+    this.add.image(400, 400, textureName);
+    
+    // Set up scene transition handling
+    this.input.keyboard.once('keydown-SPACE', () => {
+      // Clean up before transitioning
+      this.cleanupBeforeTransition();
+      this.scene.start('NextScene');
+    });
+  }
+  
+  private cleanupBeforeTransition(): void {
+    // Manually clean up all tracked components
+    this.components.forEach(component => {
+      component.cleanup();
+    });
+    this.components = [];
+    
+    // Clean up particle systems
+    this.particleSystems.forEach(system => {
+      system.destroy();
+    });
+    this.particleSystems = [];
+    
+    // Remove custom textures from texture manager
+    this.customTextures.forEach(textureName => {
+      if (this.textures.exists(textureName)) {
+        this.textures.remove(textureName);
+      }
+    });
+    this.customTextures = [];
+  }
+  
+  // Scene lifecycle - shutdown is called when scene is stopped or another scene is started
+  shutdown(): void {
+    this.cleanupBeforeTransition();
+  }
+  
+  // Scene lifecycle - destroy is called when scene is destroyed or game is shut down
+  destroy(): void {
+    this.cleanupBeforeTransition();
+  }
+}
+```
+This example demonstrates proper resource tracking and cleanup in both components and scenes. It tracks all created resources (sprites, events, timers, tweens, textures) and provides explicit cleanup methods that are hooked into Phaser's lifecycle events.
+</example>
+
+<example type="invalid">
+```typescript
+// Scene with memory leaks
+export class LeakyScene extends Phaser.Scene {
+  private intervalId: number | null = null;
+  
+  constructor() {
+    super({ key: 'LeakyScene' });
+  }
+  
+  create(): void {
+    // Leaked DOM interval
+    this.intervalId = window.setInterval(() => {
+      console.log('Interval still running even after scene change');
+    }, 1000);
+    
+    // Leaked event listeners - never removed
+    this.events.on('custom-event', this.handleCustomEvent, this);
+    this.input.on('pointerdown', this.handlePointerDown, this);
+    
+    // Adding event listeners without proper tracking or removal
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('resize', this.handleResize);
+    
+    // Creating dynamic textures without cleanup
+    for (let i = 0; i < 10; i++) {
+      const textureName = `temp-texture-${i}`;
+      const graphics = this.make.graphics();
+      graphics.fillStyle(0xff0000);
+      graphics.fillRect(0, 0, 100, 100);
+      graphics.generateTexture(textureName, 100, 100);
+      // graphics is never destroyed
+      // texture is never removed from textures manager
+    }
+    
+    // Creating tweens without tracking or cleanup
+    for (let i = 0; i < 20; i++) {
+      const sprite = this.add.sprite(100 + i * 30, 100, 'item');
+      this.tweens.add({
+        targets: sprite,
+        y: 500,
+        duration: 2000,
+        repeat: -1,
+        yoyo: true
+      });
+      // Tweens are not tracked for cleanup
+    }
+    
+    // Recursive generation of objects without limitations
+    this.generateObjects(10);
+    
+    // No cleanup when changing scenes
+    this.input.keyboard.on('keydown-N', () => {
+      // Directly transition without cleanup
+      this.scene.start('NextScene');
+    });
+  }
+  
+  private generateObjects(depth: number): void {
+    if (depth <= 0) return;
+    
+    for (let i = 0; i < 5; i++) {
+      const sprite = this.add.sprite(
+        Math.random() * 800, 
+        Math.random() * 600, 
+        'item'
+      );
+      
+      // Recursively create more with no cleanup strategy
+      this.time.delayedCall(1000, () => {
+        this.generateObjects(depth - 1);
+      });
+    }
+  }
+  
+  private handleCustomEvent(): void {
+    // Event handler
+  }
+  
+  private handlePointerDown(): void {
+    // Pointer handler
+  }
+  
+  private handleVisibilityChange(): void {
+    // Visibility handler
+  }
+  
+  private handleResize(): void {
+    // Resize handler
+  }
+  
+  // Missing shutdown() and destroy() methods
+  // No cleanup of DOM event listeners
+  // No cleanup of dynamic textures
+  // No cleanup of the interval
+}
+```
+This implementation has serious memory leaks. It creates DOM intervals and event listeners without cleaning them up, generates textures without removing them, creates recursive game objects, and lacks scene lifecycle cleanup methods. This will lead to increased memory usage, event listener duplication, and performance deterioration over time.
+</example>
+
+## Phaser-Specific Notes
+
+1. Use Phaser's lifecycle hooks for automatic cleanup:
+   ```typescript
+   create(): void {
+     // Register cleanup events
+     this.events.once('shutdown', this.cleanup, this);
+     this.events.once('destroy', this.cleanup, this);
+   }
+   
+   shutdown(): void {
+     // Called when scene is stopped or another scene starts
+     this.cleanup();
+   }
+   
+   destroy(): void {
+     // Called when scene is destroyed or game shuts down
+     this.cleanup();
+   }
+   
+   private cleanup(): void {
+     // Custom cleanup logic
+   }
+   ```
+
+2. Clean up different resource types correctly:
+   ```typescript
+   // Event listeners
+   this.events.off('event-name', this.handlerFunction, this);
+   this.input.off('pointerdown', this.pointerFunction, this);
+   
+   // Timers
+   this.time.removeEvent(this.timer);
+   this.time.removeAllEvents(); // Use with caution
+   
+   // Tweens
+   this.tween.stop();
+   this.tween.remove();
+   this.tweens.killAll(); // Use with caution
+   
+   // Custom textures
+   this.textures.remove('texture-key');
+   
+   // Groups
+   this.group.clear(true, true); // Destroy children
+   this.group.destroy();
+   
+   // DOM elements if using them
+   if (this.domElement) {
+     this.domElement.removeEventListener('click', this.clickHandler);
+     this.children.remove(this.domElement);
+   }
+   ```
+
+3. Manage external resources and references:
+   ```typescript
+   // Clear DOM intervals/timeouts
+   if (this.intervalId !== null) {
+     clearInterval(this.intervalId);
+     this.intervalId = null;
+   }
+   
+   // Remove DOM event listeners
+   window.removeEventListener('resize', this.handleResize);
+   document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+   ```
+
+4. Monitor memory usage during development:
+   ```typescript
+   // Add a debug button to show memory usage
+   this.add.text(10, 10, 'Show Memory', { color: '#ffffff' })
+     .setInteractive()
+     .on('pointerdown', () => {
+       if (window.performance && window.performance.memory) {
+         console.log(`Used JS Heap: ${window.performance.memory.usedJSHeapSize / 1048576} MB`);
+         console.log(`Total JS Heap: ${window.performance.memory.totalJSHeapSize / 1048576} MB`);
+       }
+     });
+   

@@ -1,0 +1,516 @@
+---
+description: Implement structured logging with appropriate verbosity levels to facilitate debugging and performance monitoring
+globs: src/**/*.{ts,tsx}
+---
+
+# Structured Logging for Game Development
+
+## Context
+- When debugging complex game mechanics and interactions
+- When monitoring performance in different game scenarios
+- When tracking user behavior and game progression
+- When troubleshooting issues across different platforms and devices
+- When collaborating in a team with varied debugging needs
+
+## Requirements
+- Create a centralized logging system with configurable verbosity levels
+- Categorize logs by system component (physics, audio, UI, etc.)
+- Include timestamps and contextual data in log messages
+- Implement conditional logging based on build environment (dev/prod)
+- Create visual in-game debugging overlays for critical information
+- Ensure logging has minimal performance impact in production
+- Support remote logging/telemetry for production diagnostics
+- Allow runtime adjustment of logging verbosity
+
+## Examples
+
+<example>
+```typescript
+// Structured logging system for Phaser games
+export enum LogLevel {
+  NONE = 0,
+  ERROR = 1,
+  WARN = 2,
+  INFO = 3,
+  DEBUG = 4,
+  TRACE = 5
+}
+
+export enum LogCategory {
+  GENERAL = 'GENERAL',
+  PHYSICS = 'PHYSICS',
+  AUDIO = 'AUDIO',
+  INPUT = 'INPUT',
+  RENDER = 'RENDER',
+  ASSETS = 'ASSETS',
+  NETWORK = 'NETWORK',
+  AI = 'AI',
+  PERFORMANCE = 'PERFORMANCE'
+}
+
+export class GameLogger {
+  private static instance: GameLogger;
+  private currentLevel: LogLevel = LogLevel.INFO;
+  private logsHistory: LogEntry[] = [];
+  private maxHistory: number = 1000;
+  private logHandlers: LogHandler[] = [];
+  private startTime: number = Date.now();
+  private visualLogger: VisualLogger | null = null;
+  
+  // Singleton pattern
+  public static getInstance(): GameLogger {
+    if (!GameLogger.instance) {
+      GameLogger.instance = new GameLogger();
+    }
+    return GameLogger.instance;
+  }
+  
+  private constructor() {
+    // Add default console handler
+    this.addHandler(new ConsoleLogHandler());
+    
+    // Set appropriate level based on environment
+    if (process.env.NODE_ENV === 'production') {
+      this.setLevel(LogLevel.ERROR);
+    } else {
+      this.setLevel(LogLevel.DEBUG);
+    }
+  }
+  
+  public initVisualLogger(scene: Phaser.Scene): void {
+    this.visualLogger = new VisualLogger(scene);
+  }
+  
+  public setLevel(level: LogLevel): void {
+    this.currentLevel = level;
+    this.info(LogCategory.GENERAL, `Log level set to ${LogLevel[level]}`);
+  }
+  
+  public addHandler(handler: LogHandler): void {
+    this.logHandlers.push(handler);
+  }
+  
+  public trace(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.TRACE, category, message, data);
+  }
+  
+  public debug(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.DEBUG, category, message, data);
+  }
+  
+  public info(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.INFO, category, message, data);
+  }
+  
+  public warn(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.WARN, category, message, data);
+  }
+  
+  public error(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.ERROR, category, message, data);
+  }
+  
+  private log(level: LogLevel, category: LogCategory, message: string, data?: any): void {
+    // Skip if level is more detailed than current level
+    if (level > this.currentLevel) return;
+    
+    const timestamp = Date.now();
+    const timeElapsed = timestamp - this.startTime;
+    
+    const entry: LogEntry = {
+      level,
+      levelName: LogLevel[level],
+      category,
+      message,
+      data,
+      timestamp,
+      timeElapsed,
+      formattedTime: new Date(timestamp).toISOString()
+    };
+    
+    // Add to history with size limit
+    this.logsHistory.push(entry);
+    if (this.logsHistory.length > this.maxHistory) {
+      this.logsHistory.shift();
+    }
+    
+    // Send to all handlers
+    this.logHandlers.forEach(handler => handler.handleLog(entry));
+    
+    // Update visual logger if available
+    if (this.visualLogger && level <= LogLevel.WARN) {
+      this.visualLogger.addLog(entry);
+    }
+  }
+  
+  public getHistory(filter?: {
+    level?: LogLevel,
+    category?: LogCategory,
+    since?: number
+  }): LogEntry[] {
+    return this.logsHistory.filter(entry => {
+      if (filter?.level !== undefined && entry.level > filter.level) return false;
+      if (filter?.category !== undefined && entry.category !== filter.category) return false;
+      if (filter?.since !== undefined && entry.timestamp < filter.since) return false;
+      return true;
+    });
+  }
+  
+  public clearHistory(): void {
+    this.logsHistory = [];
+  }
+  
+  // Specialized performance logging
+  public logPerformance(label: string, startTime: number): void {
+    const duration = performance.now() - startTime;
+    this.log(
+      LogLevel.DEBUG,
+      LogCategory.PERFORMANCE,
+      `${label}: ${duration.toFixed(2)}ms`
+    );
+  }
+  
+  // Start performance measurement
+  public startMeasure(label: string): () => void {
+    const start = performance.now();
+    return () => this.logPerformance(label, start);
+  }
+}
+
+// Interface for log entries
+interface LogEntry {
+  level: LogLevel;
+  levelName: string;
+  category: LogCategory;
+  message: string;
+  data?: any;
+  timestamp: number;
+  timeElapsed: number;
+  formattedTime: string;
+}
+
+// Interface for log handlers
+interface LogHandler {
+  handleLog(entry: LogEntry): void;
+}
+
+// Console implementation of log handler
+class ConsoleLogHandler implements LogHandler {
+  handleLog(entry: LogEntry): void {
+    const prefix = `[${entry.formattedTime}] [${entry.levelName}] [${entry.category}]`;
+    
+    switch (entry.level) {
+      case LogLevel.ERROR:
+        console.error(`${prefix} ${entry.message}`, entry.data || '');
+        break;
+      case LogLevel.WARN:
+        console.warn(`${prefix} ${entry.message}`, entry.data || '');
+        break;
+      case LogLevel.INFO:
+        console.info(`${prefix} ${entry.message}`, entry.data || '');
+        break;
+      case LogLevel.DEBUG:
+      case LogLevel.TRACE:
+        console.debug(`${prefix} ${entry.message}`, entry.data || '');
+        break;
+    }
+  }
+}
+
+// Visual on-screen logger for Phaser
+class VisualLogger {
+  private scene: Phaser.Scene;
+  private container: Phaser.GameObjects.Container;
+  private background: Phaser.GameObjects.Rectangle;
+  private logTexts: Phaser.GameObjects.Text[] = [];
+  private maxVisibleLogs: number = 5;
+  private isVisible: boolean = false;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Create container for logs
+    this.container = scene.add.container(10, 10);
+    this.container.setDepth(1000);
+    
+    // Create semi-transparent background
+    this.background = scene.add.rectangle(0, 0, 400, 120, 0x000000, 0.7);
+    this.background.setOrigin(0, 0);
+    this.container.add(this.background);
+    
+    // Add toggle key
+    scene.input.keyboard.on('keydown-BACKTICK', () => this.toggleVisibility());
+    
+    // Hide by default
+    this.container.setVisible(false);
+  }
+  
+  addLog(entry: LogEntry): void {
+    // Only update if visible
+    if (!this.isVisible) return;
+    
+    // Create color based on log level
+    let color: string;
+    switch (entry.level) {
+      case LogLevel.ERROR:
+        color = '#ff0000';
+        break;
+      case LogLevel.WARN:
+        color = '#ffaa00';
+        break;
+      default:
+        color = '#ffffff';
+    }
+    
+    // Create log text
+    const text = this.scene.add.text(
+      10, 
+      10 + this.logTexts.length * 20,
+      `[${entry.category}] ${entry.message}`,
+      { color, fontSize: '14px', fontFamily: 'monospace' }
+    );
+    
+    // Add to container
+    this.container.add(text);
+    this.logTexts.push(text);
+    
+    // Limit visible logs
+    if (this.logTexts.length > this.maxVisibleLogs) {
+      const oldText = this.logTexts.shift();
+      if (oldText) {
+        oldText.destroy();
+      }
+      
+      // Reposition remaining texts
+      this.logTexts.forEach((text, i) => {
+        text.setY(10 + i * 20);
+      });
+    }
+    
+    // Resize background to fit
+    this.background.height = 20 + this.logTexts.length * 20;
+  }
+  
+  toggleVisibility(): void {
+    this.isVisible = !this.isVisible;
+    this.container.setVisible(this.isVisible);
+  }
+}
+
+// Usage example
+export class GameScene extends Phaser.Scene {
+  private logger: GameLogger;
+  
+  constructor() {
+    super({ key: 'GameScene' });
+    this.logger = GameLogger.getInstance();
+  }
+  
+  create(): void {
+    // Initialize visual logger in this scene
+    this.logger.initVisualLogger(this);
+    
+    this.logger.info(LogCategory.GENERAL, 'GameScene created');
+    
+    // Log level toggle for debugging
+    this.input.keyboard.on('keydown-D', () => {
+      const newLevel = this.logger.getCurrentLevel() === LogLevel.DEBUG ? 
+        LogLevel.INFO : LogLevel.DEBUG;
+      this.logger.setLevel(newLevel);
+    });
+    
+    // Performance measurement example
+    const endMeasure = this.logger.startMeasure('Level initialization');
+    this.initializeLevel();
+    endMeasure();
+  }
+  
+  private initializeLevel(): void {
+    // Simulate work
+    for (let i = 0; i < 1000; i++) {
+      // Some initialization
+    }
+    
+    this.logger.debug(LogCategory.GENERAL, 'Level initialized');
+  }
+  
+  update(time: number, delta: number): void {
+    try {
+      // Game update logic
+      this.updatePlayer(delta);
+    } catch (err) {
+      this.logger.error(
+        LogCategory.GENERAL, 
+        'Error in update loop', 
+        { error: err, time, delta }
+      );
+    }
+  }
+  
+  private updatePlayer(delta: number): void {
+    this.logger.trace(LogCategory.INPUT, 'Updating player', { delta });
+    // Player update logic
+  }
+}
+```
+This example demonstrates a comprehensive logging system with multiple verbosity levels, categorization, performance measurement, and both console and visual output. The system is configurable, supports custom handlers, and integrates with Phaser's scene lifecycle.
+</example>
+
+<example type="invalid">
+```typescript
+// Poor logging practices in a Phaser game
+export class GameWithPoorLogging extends Phaser.Scene {
+  private debugMode = true;
+  
+  constructor() {
+    super({ key: 'GameScene' });
+  }
+  
+  create() {
+    // Excessive logging that doesn't differentiate importance
+    console.log('Game scene created');
+    console.log('Player initialized');
+    console.log('Enemies initialized');
+    console.log('UI initialized');
+    
+    // No structured format, will be difficult to parse logs
+    console.log('Player position: 100, 200');
+    
+    // Hard to filter or search specific issues
+    console.log('Audio loaded');
+    console.log('Input ready');
+    
+    // Debug statements left in production code
+    if (this.debugMode) {
+      console.log('DEBUG MODE ACTIVE');
+    }
+  }
+  
+  update() {
+    // Excessive update logging will flood console and hurt performance
+    console.log('Update called');
+    
+    // Inconsistent error handling
+    try {
+      this.updatePlayer();
+    } catch (e) {
+      // No structured error information
+      console.log('Error occurred:', e);
+    }
+    
+    // Mixing log levels inappropriately
+    console.error('Player moved'); // Should be info/debug, not error
+  }
+  
+  private updatePlayer() {
+    // Direct use of console.log makes it hard to disable logs in production
+    console.log('Updating player');
+    
+    if (Math.random() < 0.001) {
+      // Critical errors don't stand out from regular logs
+      console.log('Critical player update error!');
+    }
+  }
+  
+  private handleCollision(obj1, obj2) {
+    // No structured data for important events
+    console.log('Collision between', obj1, 'and', obj2);
+    
+    // Random debug info with no context
+    console.log({
+      x1: obj1.x,
+      y1: obj1.y,
+      x2: obj2.x, 
+      y2: obj2.y
+    });
+  }
+}
+```
+This example shows poor logging practices: inconsistent log formats, no log levels, excessive logging that impacts performance, mixing error levels, and no way to easily turn off debug logs in production. The logs lack context, timestamps, and structure, making debugging difficult.
+</example>
+
+## Phaser-Specific Notes
+
+1. Integrate logging with Phaser's scene lifecycle:
+   ```typescript
+   // Add logging to key Phaser lifecycle methods
+   create() {
+     this.logger.info(LogCategory.GENERAL, 'Scene created');
+     
+     // Log transitions between game states
+     this.events.on('shutdown', () => {
+       this.logger.info(LogCategory.GENERAL, 'Scene shutting down');
+     });
+   }
+   ```
+
+2. Use Phaser's debug capabilities alongside custom logging:
+   ```typescript
+   // Enable Phaser's built-in debug features in development
+   const config = {
+     physics: {
+       default: 'arcade',
+       arcade: {
+         debug: process.env.NODE_ENV !== 'production'
+       }
+     }
+   };
+   
+   // Add custom physics debug logging
+   collider.setCallback(() => {
+     this.logger.debug(LogCategory.PHYSICS, 'Collision occurred');
+   });
+   ```
+
+3. Log performance metrics for critical game systems:
+   ```typescript
+   update(time: number, delta: number) {
+     // Track frame time for performance monitoring
+     const start = performance.now();
+     
+     // Game update logic
+     this.updateGameLogic(delta);
+     
+     // Log if frame takes too long
+     const frameDuration = performance.now() - start;
+     if (frameDuration > 16.6) { // More than 60fps frame budget
+       this.logger.warn(
+         LogCategory.PERFORMANCE, 
+         'Frame time exceeded budget', 
+         { duration: frameDuration, delta }
+       );
+     }
+   }
+   ```
+
+4. Create debug visualizations using Phaser's graphics:
+   ```typescript
+   // Debug visualization for physics or AI
+   class DebugVisualizer {
+     private scene: Phaser.Scene;
+     private graphics: Phaser.GameObjects.Graphics;
+     private enabled: boolean = false;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       this.graphics = scene.add.graphics();
+       
+       // Toggle with key press
+       scene.input.keyboard.on('keydown-V', () => {
+         this.enabled = !this.enabled;
+         this.graphics.clear();
+       });
+     }
+     
+     update(targets: Array<{x: number, y: number, radius: number}>) {
+       if (!this.enabled) return;
+       
+       this.graphics.clear();
+       this.graphics.lineStyle(1, 0x00ff00);
+       
+       targets.forEach(target => {
+         this.graphics.strokeCircle(target.x, target.y, target.radius);
+       });
+     }
+   }
+   

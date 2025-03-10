@@ -1,0 +1,528 @@
+---
+description: Leverage TypeScript's static typing system to ensure code reliability and implement robust error handling
+globs: src/**/*.{ts,tsx}
+---
+
+# Strong Type Safety and Error Handling
+
+## Context
+- When building complex games with multiple systems interacting
+- When working in a team environment on a shared codebase
+- When developing games that need to be maintainable long-term
+- When handling user input, network operations, or other failure-prone tasks
+- When implementing complex game state and data flow
+
+## Requirements
+- Enable strict TypeScript compilation options for maximum type safety
+- Create well-defined interfaces for all game entities and data structures
+- Use discriminated unions for state management and pattern matching
+- Implement proper error handling with fallbacks for all external operations
+- Avoid type assertions (`as`) and non-null assertions (`!`) when possible
+- Create custom type guards for runtime type checking when necessary
+- Add logging or telemetry for unexpected error conditions
+- Use Phaser's types properly to integrate with the framework
+
+## Examples
+
+<example>
+```typescript
+// Type-safe scene with robust error handling
+
+// Define strongly typed interfaces
+interface PlayerData {
+  health: number;
+  position: Vector2;
+  inventory: Item[];
+  activeWeapon: Weapon | null;
+}
+
+interface Vector2 {
+  x: number;
+  y: number;
+}
+
+// Use discriminated unions for complex types
+type Item = 
+  | { type: 'weapon', id: string, damage: number, range: number }
+  | { type: 'health', id: string, healing: number, uses: number }
+  | { type: 'key', id: string, color: string, doorId: string };
+
+// Weapon is based on the weapon item type
+interface Weapon extends Extract<Item, { type: 'weapon' }> {
+  ammo: number;
+  isReloading: boolean;
+}
+
+// Game state with discriminated union for different states
+type GameState = 
+  | { status: 'loading', progress: number }
+  | { status: 'mainMenu' }
+  | { status: 'playing', playerData: PlayerData, level: number }
+  | { status: 'paused', previousState: Extract<GameState, { status: 'playing' }> }
+  | { status: 'gameOver', score: number, survived: number };
+
+// Type-safe game scene
+export class TypeSafeGameScene extends Phaser.Scene {
+  private gameState: GameState;
+  private player: Phaser.Physics.Arcade.Sprite | null = null;
+  private enemies: Phaser.Physics.Arcade.Group | null = null;
+  private errorReporter: ErrorReporter;
+  
+  constructor() {
+    super({ key: 'GameScene' });
+    this.gameState = { status: 'loading', progress: 0 };
+    this.errorReporter = new ErrorReporter();
+  }
+  
+  preload(): void {
+    try {
+      this.load.image('player', 'assets/player.png');
+      this.load.image('enemy', 'assets/enemy.png');
+      
+      // Track loading progress
+      this.load.on('progress', (value: number) => {
+        this.gameState = { status: 'loading', progress: value };
+        this.updateLoadingUI();
+      });
+    } catch (error) {
+      // Report error and fall back to default assets
+      this.errorReporter.report('preload', error);
+      this.loadFallbackAssets();
+    }
+  }
+  
+  create(): void {
+    try {
+      // Create game objects in a type-safe way
+      this.createPlayer();
+      this.createEnemies();
+      
+      // Update game state
+      this.gameState = { 
+        status: 'playing', 
+        playerData: this.createInitialPlayerData(),
+        level: 1
+      };
+    } catch (error) {
+      this.errorReporter.report('create', error);
+      // Fall back to main menu on critical error
+      this.gameState = { status: 'mainMenu' };
+      this.scene.start('MainMenuScene', { error: true });
+    }
+  }
+  
+  update(time: number, delta: number): void {
+    // Type guard to ensure we're in playing state
+    if (this.gameState.status !== 'playing') return;
+    
+    try {
+      // Update based on current state
+      this.updatePlayer(delta);
+      this.updateEnemies(delta);
+      this.checkCollisions();
+    } catch (error) {
+      this.errorReporter.report('update', error);
+      // Don't transition on update errors, just log them
+    }
+  }
+  
+  private createPlayer(): void {
+    if (!this.textures.exists('player')) {
+      throw new Error('Player texture not loaded');
+    }
+    
+    this.player = this.physics.add.sprite(100, 100, 'player');
+    
+    // Null check before using
+    if (this.player) {
+      this.player.setCollideWorldBounds(true);
+    }
+  }
+  
+  private createEnemies(): void {
+    this.enemies = this.physics.add.group({
+      key: 'enemy',
+      repeat: 5,
+      setXY: { x: 100, y: 100, stepX: 70 }
+    });
+    
+    // Type safe iteration over group children
+    this.enemies.getChildren().forEach((enemy) => {
+      // Type assertion here is necessary but controlled
+      const typedEnemy = enemy as Phaser.Physics.Arcade.Sprite;
+      typedEnemy.setBounce(1);
+    });
+  }
+  
+  private createInitialPlayerData(): PlayerData {
+    return {
+      health: 100,
+      position: { x: 100, y: 100 },
+      inventory: [],
+      activeWeapon: null
+    };
+  }
+  
+  private updateLoadingUI(): void {
+    // Safe type check
+    if (this.gameState.status === 'loading') {
+      const progress = this.gameState.progress;
+      // Update UI with progress
+    }
+  }
+  
+  private updatePlayer(delta: number): void {
+    // Type safety through null checks
+    if (!this.player) return;
+    
+    // Update player based on input
+    const cursors = this.input.keyboard.createCursorKeys();
+    
+    if (cursors.left.isDown) {
+      this.player.setVelocityX(-200);
+    } else if (cursors.right.isDown) {
+      this.player.setVelocityX(200);
+    } else {
+      this.player.setVelocityX(0);
+    }
+  }
+  
+  private updateEnemies(delta: number): void {
+    // Type safety through null checks
+    if (!this.enemies) return;
+    
+    // Update enemy logic
+  }
+  
+  private checkCollisions(): void {
+    // Type safety through null checks
+    if (!this.player || !this.enemies) return;
+    
+    // Set up collisions with proper types
+    this.physics.add.collider(this.player, this.enemies, this.handlePlayerEnemyCollision, undefined, this);
+  }
+  
+  private handlePlayerEnemyCollision(
+    player: Phaser.GameObjects.GameObject, 
+    enemy: Phaser.GameObjects.GameObject
+  ): void {
+    // Type guards for runtime safety
+    if (!(player instanceof Phaser.Physics.Arcade.Sprite)) return;
+    if (!(enemy instanceof Phaser.Physics.Arcade.Sprite)) return;
+    
+    // Now we can safely use player and enemy as sprites
+    player.setTint(0xff0000);
+    
+    // Type-safe state update
+    if (this.gameState.status === 'playing') {
+      const updatedPlayerData: PlayerData = {
+        ...this.gameState.playerData,
+        health: this.gameState.playerData.health - 10
+      };
+      
+      this.gameState = {
+        ...this.gameState,
+        playerData: updatedPlayerData
+      };
+      
+      // Check for game over condition
+      if (updatedPlayerData.health <= 0) {
+        this.handleGameOver();
+      }
+    }
+  }
+  
+  private handleGameOver(): void {
+    // Type-safe state transition
+    if (this.gameState.status === 'playing') {
+      this.gameState = {
+        status: 'gameOver',
+        score: 1000, // Calculate score
+        survived: 60 // Calculate time survived
+      };
+      
+      // Show game over UI
+      this.showGameOverScreen();
+    }
+  }
+  
+  private showGameOverScreen(): void {
+    // Type guard to ensure correct state
+    if (this.gameState.status !== 'gameOver') return;
+    
+    // Use game over state to display results
+    const score = this.gameState.score;
+    const survived = this.gameState.survived;
+    
+    // Display UI
+  }
+  
+  // Type-safe event handling
+  private loadFallbackAssets(): void {
+    try {
+      // Attempt to load minimal assets
+      this.load.image('player_fallback', 'assets/fallback/player.png');
+      this.load.image('enemy_fallback', 'assets/fallback/enemy.png');
+      this.load.start();
+    } catch (error) {
+      // Critical error - can't even load fallbacks
+      this.errorReporter.report('loadFallback', error, true);
+      this.showErrorScreen('Failed to load game assets. Please refresh.');
+    }
+  }
+  
+  private showErrorScreen(message: string): void {
+    // Display error message to user
+    this.add.text(400, 300, message, { 
+      fontSize: '24px', 
+      color: '#ff0000' 
+    }).setOrigin(0.5);
+    
+    this.add.text(400, 350, 'Click to retry', { 
+      fontSize: '18px', 
+      color: '#ffffff' 
+    }).setOrigin(0.5)
+      .setInteractive()
+      .on('pointerdown', () => {
+        this.scene.restart();
+      });
+  }
+}
+
+// Helper class for error reporting
+class ErrorReporter {
+  private errors: Array<{
+    context: string;
+    error: Error | unknown;
+    timestamp: number;
+    critical: boolean;
+  }> = [];
+  
+  report(context: string, error: unknown, critical: boolean = false): void {
+    // Convert unknown error to something we can work with
+    const errorObject = error instanceof Error 
+      ? error 
+      : new Error(String(error));
+    
+    // Log the error
+    console.error(`[${context}] ${errorObject.message}`, errorObject);
+    
+    // Store for telemetry
+    this.errors.push({
+      context,
+      error: errorObject,
+      timestamp: Date.now(),
+      critical
+    });
+    
+    // In a real game, you might send telemetry to a server
+    if (critical) {
+      this.sendTelemetry();
+    }
+  }
+  
+  private sendTelemetry(): void {
+    // In a real implementation, this would send data to your server
+    // Here it just simulates the process
+    console.log('Sending error telemetry:', this.errors);
+    
+    // Clear after sending
+    this.errors = [];
+  }
+}
+```
+This example demonstrates strong type safety through proper TypeScript interfaces, discriminated unions, type guards, and careful null handling. It also shows proper error handling with fallbacks and recovery strategies, and how to track and report errors systematically.
+</example>
+
+<example type="invalid">
+```typescript
+// Unsafe TypeScript with poor error handling
+export class UnsafeGameScene extends Phaser.Scene {
+  private player: any; // Avoid using 'any'
+  private enemies;     // Missing type
+  private gameState;   // Missing type
+  
+  constructor() {
+    super({ key: 'GameScene' });
+  }
+  
+  create() {
+    // Unsafe type assertions and assumptions
+    this.player = this.physics.add.sprite(100, 100, 'player');
+    
+    // Unsafe - no check if texture exists
+    this.enemies = this.physics.add.group({
+      key: 'enemy',
+      repeat: 5
+    });
+    
+    // Using casting instead of proper typing
+    const playerSprite = <Phaser.Physics.Arcade.Sprite>this.player;
+    
+    // Unchecked property access
+    this.gameState = {
+      level: 1,
+      score: 0
+    };
+    
+    // Unsafe DOM interaction
+    document.getElementById('game-ui').innerHTML = 'Score: 0';
+    
+    // Non-null assertion when it might be null
+    const healthBar = document.getElementById('health-bar')!;
+    healthBar.style.width = '100%';
+    
+    // No error handling on potentially failing operations
+    fetch('https://api.example.com/game-config')
+      .then(response => response.json())
+      .then(config => {
+        this.applyConfig(config);
+      });
+      // Missing catch block
+    
+    this.setupPlayer();
+  }
+  
+  private setupPlayer() {
+    // No null checking
+    this.player.setCollideWorldBounds(true);
+    
+    // Improper event handler binding
+    this.input.on('pointerdown', function() {
+      // 'this' will be wrong context
+      this.player.setVelocityY(-200);
+    });
+    
+    // Using deprecated methods without checks
+    this.player.body.gravity.y = 300;
+  }
+  
+  update() {
+    // No type checking
+    for (let enemy of this.enemies.getChildren()) {
+      // This could fail if enemy doesn't have these properties
+      enemy.x += enemy.getData('direction') * 2;
+      
+      if (enemy.x > 800) {
+        enemy.setData('direction', -1);
+      } else if (enemy.x < 0) {
+        enemy.setData('direction', 1);
+      }
+    }
+    
+    // Potential null reference
+    if (this.gameState.playerData.health <= 0) {
+      this.handleGameOver();
+    }
+    
+    // No try/catch around code that might throw
+    this.updateScore();
+  }
+  
+  private updateScore() {
+    // Could throw if DOM element doesn't exist
+    document.getElementById('score').textContent = 
+      `Score: ${this.gameState.score}`;
+    
+    // No error handling
+  }
+  
+  private handleGameOver() {
+    // Direct state mutation without type safety
+    this.gameState.status = 'gameOver';
+    this.gameState.finalScore = this.gameState.score;
+    
+    // No error handling around scene transition
+    this.scene.start('GameOverScene');
+  }
+  
+  // No cleanup methods
+  // No type-safe API
+  // No error recovery strategy
+}
+```
+This implementation has several type-safety and error-handling problems: using `any` and missing types, unsafe type assertions, no texture existence checks, incorrect event handler bindings, unchecked property access, missing null checks, and no error handling for API calls or DOM operations. It would be prone to runtime errors and difficult to maintain.
+</example>
+
+## Phaser-Specific Notes
+
+1. Configure TypeScript properly for Phaser:
+   ```json
+   {
+     "compilerOptions": {
+       "target": "ES2020",
+       "module": "ESNext",
+       "strict": true,
+       "esModuleInterop": true,
+       "forceConsistentCasingInFileNames": true,
+       "noImplicitAny": true,
+       "strictNullChecks": true,
+       "noImplicitThis": true,
+       "noUnusedLocals": true,
+       "noUnusedParameters": true,
+       "sourceMap": true
+     },
+     "include": ["src/**/*"]
+   }
+   ```
+
+2. Use Phaser's type definitions effectively:
+   ```typescript
+   // Use appropriate Phaser interfaces
+   interface EnemyConfig {
+     scene: Phaser.Scene;
+     x: number;
+     y: number;
+     texture: string;
+     frame?: string | number;
+     health: number;
+     speed: number;
+   }
+   
+   class Enemy extends Phaser.Physics.Arcade.Sprite {
+     private health: number;
+     private enemySpeed: number;
+     
+     constructor(config: EnemyConfig) {
+       super(config.scene, config.x, config.y, config.texture, config.frame);
+       this.health = config.health;
+       this.enemySpeed = config.speed;
+       this.scene.add.existing(this);
+       this.scene.physics.world.enable(this);
+     }
+   }
+   ```
+
+3. Create type guards for Phaser objects:
+   ```typescript
+   // Type guard for Phaser sprite
+   function isSprite(obj: Phaser.GameObjects.GameObject): obj is Phaser.GameObjects.Sprite {
+     return obj instanceof Phaser.GameObjects.Sprite;
+   }
+   
+   // Usage
+   this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
+     if (isSprite(player) && isSprite(enemy)) {
+       // Now TypeScript knows these are sprites
+       player.setTint(0xff0000);
+       enemy.destroy();
+     }
+   });
+   ```
+
+4. Handle Phaser-specific error conditions:
+   ```typescript
+   // Handle texture loading errors
+   this.load.on('loaderror', (fileObj: Phaser.Loader.File) => {
+     console.error(`Failed to load: ${fileObj.key}`);
+     // Fall back to default texture
+     this.textures.getTextureKeys().forEach(key => {
+       console.log(`Available texture: ${key}`);
+     });
+     
+     // Add error handling UI
+     this.add.text(400, 300, `Error loading: ${fileObj.key}`, {
+       color: '#ff0000'
+     }).setOrigin(0.5);
+   });
+   

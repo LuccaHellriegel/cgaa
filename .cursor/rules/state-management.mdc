@@ -1,0 +1,379 @@
+---
+description: Structure game state and scene management in Phaser games to ensure clean transitions and maintainable code
+globs: src/**/*.{ts,tsx}
+---
+
+# Effective State and Scene Management
+
+## Context
+- When building multi-screen games with different game states (menu, gameplay, game over)
+- When managing transitions between different parts of the game
+- When handling persistent game data across scene changes
+- When implementing save/load functionality
+- When managing player progression and game flow
+
+## Requirements
+- Separate game logic into distinct Phaser.Scene classes with single responsibilities
+- Create a robust scene transition system with data passing between scenes
+- Implement a centralized game state manager for global state and persistence
+- Use type-safe interfaces for all scene data and transition parameters
+- Properly shut down and clean up resources when scenes are stopped or destroyed
+- Follow a well-defined scene lifecycle (init, preload, create, update, shutdown)
+
+## Examples
+
+<example>
+```typescript
+// Well-structured scene management system
+export class SceneManager {
+  private game: Phaser.Game;
+  private gameState: GameState;
+  
+  constructor(game: Phaser.Game) {
+    this.game = game;
+    this.gameState = new GameState();
+    
+    // Register all game scenes with their keys
+    this.registerScenes();
+  }
+  
+  private registerScenes(): void {
+    this.game.scene.add('Boot', new BootScene(this.gameState), true);
+    this.game.scene.add('Preload', new PreloadScene(this.gameState), false);
+    this.game.scene.add('MainMenu', new MainMenuScene(this.gameState), false);
+    this.game.scene.add('GameLevel', new GameLevelScene(this.gameState), false);
+    this.game.scene.add('GameOver', new GameOverScene(this.gameState), false);
+    this.game.scene.add('Pause', new PauseScene(this.gameState), false);
+  }
+  
+  // Type-safe scene transition with data
+  changeScene<T>(fromScene: Phaser.Scene, toSceneKey: string, data?: T): void {
+    fromScene.scene.start(toSceneKey, data);
+  }
+  
+  // Overlay scene on top of current scene (for pause menu, etc.)
+  showOverlay(fromScene: Phaser.Scene, overlayKey: string, data?: any): void {
+    fromScene.scene.launch(overlayKey, data);
+    fromScene.scene.pause();
+  }
+  
+  // Resume from overlay
+  hideOverlay(overlayScene: Phaser.Scene, underSceneKey: string): void {
+    const underScene = this.game.scene.getScene(underSceneKey);
+    if (underScene) {
+      underScene.scene.resume();
+    }
+    overlayScene.scene.stop();
+  }
+}
+
+// Centralized game state class with type safety
+class GameState {
+  private playerData: PlayerData = {
+    health: 100,
+    score: 0,
+    level: 1,
+    inventory: []
+  };
+  
+  private gameSettings: GameSettings = {
+    musicVolume: 0.7,
+    sfxVolume: 0.9,
+    difficulty: 'normal'
+  };
+  
+  // Simple observable pattern for state changes
+  private listeners: Map<string, Function[]> = new Map();
+  
+  // Get methods with proper types
+  getPlayerData(): Readonly<PlayerData> {
+    return { ...this.playerData }; // Return copy to prevent mutation
+  }
+  
+  getGameSettings(): Readonly<GameSettings> {
+    return { ...this.gameSettings };
+  }
+  
+  // Update methods with state change notifications
+  updatePlayerData(updates: Partial<PlayerData>): void {
+    this.playerData = { ...this.playerData, ...updates };
+    this.notifyListeners('playerData', this.playerData);
+  }
+  
+  updateSettings(updates: Partial<GameSettings>): void {
+    this.gameSettings = { ...this.gameSettings, ...updates };
+    this.notifyListeners('settings', this.gameSettings);
+    
+    // Persist settings to local storage
+    this.saveSettings();
+  }
+  
+  // Save/load methods
+  saveGame(): void {
+    localStorage.setItem('gameState', JSON.stringify(this.playerData));
+  }
+  
+  loadGame(): boolean {
+    const saved = localStorage.getItem('gameState');
+    if (saved) {
+      try {
+        this.playerData = JSON.parse(saved);
+        this.notifyListeners('playerData', this.playerData);
+        return true;
+      } catch (e) {
+        console.error('Failed to load saved game:', e);
+      }
+    }
+    return false;
+  }
+  
+  private saveSettings(): void {
+    localStorage.setItem('gameSettings', JSON.stringify(this.gameSettings));
+  }
+  
+  // Simple observer pattern
+  subscribe(key: string, callback: Function): void {
+    if (!this.listeners.has(key)) {
+      this.listeners.set(key, []);
+    }
+    this.listeners.get(key)!.push(callback);
+  }
+  
+  private notifyListeners(key: string, data: any): void {
+    const callbacks = this.listeners.get(key);
+    if (callbacks) {
+      callbacks.forEach(callback => callback(data));
+    }
+  }
+}
+
+// Example of a well-structured game scene
+class GameLevelScene extends Phaser.Scene {
+  private gameState: GameState;
+  private levelData: LevelData;
+  private player: Player;
+  private enemies: Phaser.Physics.Arcade.Group;
+  private sceneReady: boolean = false;
+  
+  constructor(gameState: GameState) {
+    super({ key: 'GameLevel' });
+    this.gameState = gameState;
+  }
+  
+  // Receive data from previous scene
+  init(data: { levelId: number }): void {
+    // Set up scene with received data
+    this.levelData = getLevelDataById(data.levelId);
+  }
+  
+  preload(): void {
+    // Level-specific assets
+    if (this.levelData.additionalAssets) {
+      this.levelData.additionalAssets.forEach(asset => {
+        this.load.image(asset.key, asset.path);
+      });
+    }
+  }
+  
+  create(): void {
+    // Create level from data
+    this.createLevel();
+    
+    // Set up player with saved state
+    const playerData = this.gameState.getPlayerData();
+    this.player = new Player(this, 100, 100, playerData);
+    
+    // Important: Handle scene interruptions properly
+    this.events.on('pause', () => {
+      // Pause physics, animations, timers
+      this.physics.pause();
+      this.anims.pauseAll();
+    });
+    
+    this.events.on('resume', () => {
+      // Resume when coming back
+      this.physics.resume();
+      this.anims.resumeAll();
+    });
+    
+    // Clean up when scene is shut down
+    this.events.once('shutdown', () => this.cleanUp());
+    
+    this.sceneReady = true;
+  }
+  
+  update(time: number, delta: number): void {
+    if (!this.sceneReady) return;
+    
+    this.player.update(time, delta);
+    
+    // Check win/lose conditions
+    if (this.player.health <= 0) {
+      // Update game state before transition
+      this.gameState.updatePlayerData({
+        health: 0,
+        level: this.levelData.id
+      });
+      
+      // Transition to game over with data
+      this.scene.start('GameOver', { 
+        cause: 'death',
+        score: this.player.score
+      });
+    }
+  }
+  
+  private cleanUp(): void {
+    // Save current state
+    this.gameState.updatePlayerData({
+      health: this.player.health,
+      score: this.player.score
+    });
+    
+    // Remove event listeners
+    this.events.off('pause');
+    this.events.off('resume');
+    
+    // Stop any ongoing processes
+    this.time.removeAllEvents();
+  }
+}
+```
+This example demonstrates a well-structured scene and state management system in Phaser. It uses a central SceneManager to handle transitions, provides a type-safe GameState for persistence, and shows proper setup and cleanup in scene lifecycle methods.
+</example>
+
+<example type="invalid">
+```typescript
+// Poorly structured game with tangled state management
+export class BadGame {
+  private currentScene: string = 'menu';
+  private score: number = 0;
+  private health: number = 100;
+  
+  constructor() {
+    this.startGame();
+  }
+  
+  startGame(): void {
+    // Global variables for game state
+    window.gameScore = 0;
+    window.playerHealth = 100;
+    window.currentLevel = 1;
+    
+    const config = {
+      // Phaser config...
+      scene: [MenuScene, GameScene, GameOverScene]
+    };
+    
+    const game = new Phaser.Game(config);
+  }
+}
+
+// Scene with direct access to global state
+class GameScene extends Phaser.Scene {
+  constructor() {
+    super({ key: 'GameScene' });
+  }
+  
+  create(): void {
+    // Directly accessing global state
+    this.add.text(10, 10, `Score: ${window.gameScore}`);
+    this.add.text(10, 30, `Health: ${window.playerHealth}`);
+    
+    // No proper state transitions
+    this.input.keyboard.on('keydown-ESC', () => {
+      // Abrupt scene change with no cleanup
+      this.scene.start('MenuScene');
+    });
+  }
+  
+  update(): void {
+    // Direct manipulation of global variables
+    window.gameScore += 1;
+    
+    if (window.playerHealth <= 0) {
+      // Transition without proper data passing
+      this.scene.start('GameOverScene');
+    }
+  }
+  
+  // No cleanup or shutdown handling
+}
+```
+This implementation has several critical flaws: using global window variables for game state, lacking proper scene transitions with data, missing resource cleanup, and no organized state management structure. It will lead to memory leaks, state inconsistencies, and code maintenance nightmares.
+</example>
+
+## Phaser-Specific Notes
+
+1. Use Phaser's scene lifecycle methods effectively:
+   ```typescript
+   // Initialize with data from previous scene
+   init(data: any): void {
+     // Set up scene with received data
+   }
+   
+   // Preload scene-specific assets
+   preload(): void {
+     // Load assets needed for this scene only
+   }
+   
+   // Set up the scene
+   create(): void {
+     // Create game objects, set up physics, etc.
+   }
+   
+   // Game loop
+   update(time: number, delta: number): void {
+     // Frame-by-frame updates
+   }
+   ```
+
+2. Handle scene transitions with data properly:
+   ```typescript
+   // Start a new scene and shut down this one
+   this.scene.start('NextScene', { level: 2, score: currentScore });
+   
+   // Start a scene in parallel (overlay)
+   this.scene.launch('PauseMenu', { returnScene: this.scene.key });
+   
+   // Put this scene to sleep (pause, but keep in memory)
+   this.scene.sleep();
+   
+   // Resume a sleeping scene
+   this.scene.wake();
+   ```
+
+3. Proper scene shutdown for resource management:
+   ```typescript
+   // Set up clean shutdown
+   this.events.once('shutdown', () => {
+     // Cancel timers
+     this.time.removeAllEvents();
+     
+     // Remove event listeners
+     this.input.keyboard.off('keydown-SPACE');
+     this.events.off('resume');
+     
+     // Destroy game objects that won't be garbage collected
+     this.tweens.killAll();
+     
+     // Stop any ongoing physics
+     this.physics.world.shutdown();
+   });
+   ```
+
+4. Use Phaser's built-in registry for simple cross-scene data:
+   ```typescript
+   // In any scene, set data
+   this.registry.set('playerScore', 1000);
+   
+   // In any other scene, get the data
+   const score = this.registry.get('playerScore');
+   
+   // Listen for registry changes
+   this.registry.events.on('changedata', (parent, key, value) => {
+     if (key === 'playerScore') {
+       this.updateScoreDisplay(value);
+     }
+   });
+   
