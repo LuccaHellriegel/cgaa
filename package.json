@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --config vite/config.dev.mjs",
+    "typecheck": "tsc --noEmit",
     "build": "vite build --config vite/config.prod.mjs",
     "test": "vitest run",
     "test:ui": "vitest --ui",

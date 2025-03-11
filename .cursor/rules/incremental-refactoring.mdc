@@ -1,0 +1,71 @@
+---
+description: Implement changes incrementally when refactoring existing functionality to maintain stability and testability
+globs: src/**/*.{ts,tsx}
+---
+
+# Incremental Refactoring
+
+## Context
+- When modifying existing functionality
+- When refactoring complex systems
+- When updating core game mechanics
+- When improving performance
+- When fixing bugs in critical components
+
+## Requirements
+- Break down large refactoring tasks into smaller, manageable changes
+- Only modify one component or subsystem at a time
+- Maintain existing functionality while making incremental improvements
+- Test each change before moving to the next modification
+- Keep original code functional until the new implementation is proven
+- Document each incremental change and its impact
+- Preserve type safety throughout the refactoring process
+
+## Examples
+
+<example>
+```typescript
+// Good: Incremental refactor of audio system
+// Step 1: Add new functionality alongside existing
+class AudioManager {
+  private sounds: Map<string, Phaser.Sound.BaseSound>;
+  private newSoundSystem: NewAudioSystem | null = null;
+
+  // Existing method remains unchanged
+  playSound(key: string): void {
+    if (this.newSoundSystem?.isEnabled) {
+      this.newSoundSystem.playSound(key);
+    } else {
+      // Original implementation remains
+      const sound = this.sounds.get(key);
+      if (sound) sound.play();
+    }
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// Bad: Complete rewrite of audio system
+// Removes all existing functionality at once
+class AudioManager {
+  private newSoundSystem: NewAudioSystem;
+
+  playSound(key: string): void {
+    // Old implementation completely removed
+    // No fallback if new system fails
+    this.newSoundSystem.playSound(key);
+  }
+}
+```
+</example>
+
+## Critical Considerations
+- Each change should be small enough to be easily reviewed and tested
+- Maintain backward compatibility during transitions
+- Keep a clear path to roll back changes if needed
+- Ensure type safety is maintained at each step
+- Consider the impact on dependent systems
+- Test both old and new functionality during transition
+- Document any breaking changes or deprecations 

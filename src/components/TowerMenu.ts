@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import { UIState } from "../controllers/UIController";
 import { GameState } from "../controllers/GameController";
 import { TowerType, TowerTypes } from "../types/TowerTypes";
 
@@ -22,7 +21,6 @@ export class TowerMenu {
   private titleText: Phaser.GameObjects.Text;
   private statsText: Phaser.GameObjects.Text;
   private sellButton: Phaser.GameObjects.Container;
-  private currentTower: TowerData | null = null;
   private selectedTower: TowerType | null = null;
   private towerTypes: Record<TowerType, TowerData> = TowerTypes;
 
@@ -109,8 +107,6 @@ export class TowerMenu {
   }
 
   public show(tower: TowerData): void {
-    this.currentTower = tower;
-
     // Position menu near the tower but ensure it stays on screen
     const screenWidth = this.scene.scale.width;
     const screenHeight = this.scene.scale.height;
@@ -147,7 +143,6 @@ export class TowerMenu {
 
   public hide(): void {
     this.container.setVisible(false);
-    this.currentTower = null;
   }
 
   public updateState(state: GameState): void {

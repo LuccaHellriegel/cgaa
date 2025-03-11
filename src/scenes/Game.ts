@@ -1,15 +1,13 @@
 import { Scene } from "phaser";
 import { Player } from "../components/Player";
-import { Enemy } from "../components/Enemy";
 import { UIController, GameMode } from "../controllers/UIController";
 import { BuildMenu } from "../components/BuildMenu";
 import { TowerMenu, TowerData } from "../components/TowerMenu";
 import { GameStatusUI, CampStatus } from "../components/GameStatusUI";
+import { WaveManager } from "../managers/WaveManager";
 
 export class Game extends Scene {
   private player: Player;
-  private enemies: Enemy[];
-  private score: number;
   private souls: number;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -19,10 +17,11 @@ export class Game extends Scene {
   private towerMenu: TowerMenu;
   private gameStatusUI: GameStatusUI;
 
+  // Game Managers
+  private waveManager: WaveManager;
+
   constructor() {
     super("Game");
-    this.enemies = [];
-    this.score = 0;
     this.souls = 0;
   }
 
@@ -46,16 +45,60 @@ export class Game extends Scene {
     this.towerMenu = new TowerMenu(this);
     this.gameStatusUI = new GameStatusUI(this);
 
+    // Initialize wave manager
+    this.waveManager = new WaveManager(this);
+
     // Setup event handlers
     this.setupEventHandlers();
 
     // Initialize game state
-    this.score = 0;
     this.souls = 100; // Start with some souls
     this.updateSouls(this.souls);
 
+    // Initialize camps
+    this.initializeCamps();
+
     // Start game loop
     this.startGameLoop();
+  }
+
+  private initializeCamps(): void {
+    // Define initial camps
+    const camps: CampStatus[] = [
+      {
+        id: "camp1",
+        position: { x: 100, y: 100 },
+        isSpawning: true,
+        isQuestTarget: false,
+        isDestroyed: false,
+        isCooperating: false,
+      },
+      {
+        id: "camp2",
+        position: { x: 700, y: 100 },
+        isSpawning: false,
+        isQuestTarget: true,
+        isDestroyed: false,
+        isCooperating: false,
+      },
+      {
+        id: "camp3",
+        position: { x: 400, y: 500 },
+        isSpawning: false,
+        isQuestTarget: false,
+        isDestroyed: false,
+        isCooperating: true,
+      },
+    ];
+
+    // Add camps to wave manager and update UI
+    camps.forEach((camp) => {
+      this.waveManager.addCamp(camp);
+      if (camp.isSpawning) {
+        this.waveManager.startWave(camp.id);
+      }
+    });
+    this.gameStatusUI.updateCampStatus(camps);
   }
 
   private setupEventHandlers(): void {
@@ -74,7 +117,7 @@ export class Game extends Scene {
       this.events.emit("playerAttack", { x: pointer.x, y: pointer.y });
     });
 
-    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+    this.input.on("pointermove", () => {
       // Handle pointer move event
       // TODO: Implement pointer move handling
     });
@@ -113,40 +156,17 @@ export class Game extends Scene {
       this.updateSouls(this.souls + (tower.sellValue ?? tower.cost / 2));
       console.log("Selling tower:", tower);
     });
-
-    // Example camp status update
-    const exampleCamps: CampStatus[] = [
-      {
-        id: "camp1",
-        position: { x: 100, y: 100 },
-        isSpawning: true,
-        isQuestTarget: false,
-        isDestroyed: false,
-        isCooperating: false,
-      },
-      {
-        id: "camp2",
-        position: { x: 700, y: 100 },
-        isSpawning: false,
-        isQuestTarget: true,
-        isDestroyed: false,
-        isCooperating: false,
-      },
-      {
-        id: "camp3",
-        position: { x: 400, y: 500 },
-        isSpawning: false,
-        isQuestTarget: false,
-        isDestroyed: false,
-        isCooperating: true,
-      },
-    ];
-    this.gameStatusUI.updateCampStatus(exampleCamps);
   }
 
   private updateSouls(amount: number): void {
+    const oldAmount = this.souls;
     this.souls = amount;
     this.uiController.updateSouls(amount);
+
+    // Play collect sound if souls increased
+    if (amount > oldAmount) {
+      this.registry.get("audioManager").playSound("collect");
+    }
   }
 
   private placeTower(towerKey: string, position: Phaser.Math.Vector2): void {
@@ -162,21 +182,18 @@ export class Game extends Scene {
       range: 150,
       attackSpeed: 1,
       cost: 100,
-      sellValue: 50,
-      position: position,
     };
 
-    // Show tower menu
-    this.towerMenu.show(towerData);
+    // Play build sound
+    this.registry.get("audioManager").playSound("build");
+
+    // Update souls
+    this.updateSouls(this.souls - towerData.cost);
   }
 
   private startGameLoop(): void {
-    // TODO: Implement game loop with:
-    // - Enemy spawning
-    // - Tower placement
-    // - Collision detection
-    // - Score tracking
-    // - Wave management
+    // Game loop is now managed by the update method
+    // Wave spawning is handled by WaveManager
   }
 
   update(time: number, delta: number): void {
@@ -198,16 +215,21 @@ export class Game extends Scene {
     }
 
     // Update game objects
-    this.player.update(time, delta);
-    this.enemies.forEach((enemy) => enemy.update(time, delta));
+    this.player.update();
+    this.waveManager.update(time, delta);
     this.checkCollisions();
   }
 
   private checkCollisions(): void {
-    // TODO: Implement collision detection between:
-    // - Player and enemies
-    // - Towers and enemies
-    // - Projectiles and enemies
+    const enemies = this.waveManager.getEnemies();
+
+    // Check collisions between player and enemies
+    enemies.forEach((enemy) => {
+      if (enemy.isCollidingWith(this.player.getSprite())) {
+        // Handle collision
+        enemy.attack(this.player);
+      }
+    });
   }
 
   public destroy(): void {
@@ -216,6 +238,7 @@ export class Game extends Scene {
     this.buildMenu.destroy();
     this.towerMenu.destroy();
     this.gameStatusUI.destroy();
+    this.waveManager.destroy();
 
     // Clean up event handlers
     this.events.off("playerAttack");

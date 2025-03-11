@@ -47,17 +47,26 @@ export class UIController {
   }
 
   private createModeIndicator(): void {
-    this.modeText = this.scene.add.text(10, 10, "Mode: Attack", {
-      fontSize: "16px",
+    this.modeText = this.scene.add.text(10, 10, "", {
+      fontSize: "20px",
+      fontStyle: "bold",
       color: "#ffffff",
       backgroundColor: "#000000",
-      padding: { x: 5, y: 5 },
+      padding: { x: 10, y: 8 },
+      fixedWidth: 200,
+      align: "center",
     });
     this.modeText.setScrollFactor(0);
     this.modeText.setDepth(100);
+    this.updateModeIndicator();
   }
 
   private toggleMode(): void {
+    const audioManager = this.scene.registry.get("audioManager");
+    if (audioManager) {
+      audioManager.playSound("ui_click");
+    }
+
     this.state.currentMode =
       this.state.currentMode === GameMode.ATTACK
         ? GameMode.INTERACTION
@@ -67,9 +76,15 @@ export class UIController {
   }
 
   private updateModeIndicator(): void {
-    const modeText =
-      this.state.currentMode === GameMode.ATTACK ? "Attack" : "Interaction";
-    this.modeText.setText(`Mode: ${modeText}`);
+    const mode =
+      this.state.currentMode === GameMode.ATTACK ? "ATTACK" : "BUILD";
+    const key = this.state.currentMode === GameMode.ATTACK ? "F" : "F";
+    this.modeText.setText(`${mode} MODE\n[${key}] to switch`);
+
+    // Update colors based on mode
+    this.modeText.setBackgroundColor(
+      this.state.currentMode === GameMode.ATTACK ? "#aa2200" : "#004422"
+    );
   }
 
   private handleClick(pointer: Phaser.Input.Pointer): void {

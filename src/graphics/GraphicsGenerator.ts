@@ -286,22 +286,23 @@ export class GraphicsGenerator {
     this.scene.registry.set("particles", particles);
   }
 
-  private generateParticleTexture(
+  public generateParticleTexture(
     key: string,
     radius: number,
     color: number,
     alpha: number = 1
   ): void {
-    const graphics = this.scene.add.graphics();
     const size = radius * 2;
+    const graphics = this.scene.add.graphics();
 
+    graphics.setAlpha(alpha);
+    graphics.fillStyle(color);
     graphics.beginPath();
-    graphics.fillStyle(color, alpha);
     graphics.arc(radius, radius, radius, 0, Math.PI * 2);
     graphics.closePath();
     graphics.fill();
 
-    const texture = graphics.generateTexture(key, size, size);
+    graphics.generateTexture(key, size, size);
     graphics.destroy();
   }
 

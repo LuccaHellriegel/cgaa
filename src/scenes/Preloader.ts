@@ -58,6 +58,7 @@ export class Preloader extends Scene {
   create() {
     // Initialize audio
     this.audioManager.create();
+    this.registry.set("audioManager", this.audioManager);
 
     // Add transition effect
     const transitionGraphics = this.add.graphics();

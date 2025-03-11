@@ -1,6 +1,5 @@
-Study @SPECS.md for functional specifications.
-Study @.cursor for technical requirements
+Study SPECS.md for functional specifications.
+Study the .cursor/rules directory for technical requirements
 Implement what is not implemented
-Create tests
-Run a "npm run test" and verify the application works
-Focus on user controls
+Run "npm run typecheck" to verify types
+Focus on one new feature at a time

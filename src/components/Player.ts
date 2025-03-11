@@ -1,4 +1,4 @@
-import { Scene, Physics } from "phaser";
+import { Physics } from "phaser";
 import { BaseComponent, ComponentConfig } from "./BaseComponent";
 
 export interface PlayerConfig extends ComponentConfig {
@@ -70,8 +70,10 @@ export class Player extends BaseComponent {
     return this.sprite;
   }
 
-  public update(time: number, delta: number): void {
-    // Handle any per-frame updates
+  public update(): void {
+    if (this.isDead) {
+      this.sprite.setVelocity(0, 0);
+    }
   }
 
   public destroy(): void {

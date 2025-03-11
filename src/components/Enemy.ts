@@ -1,4 +1,4 @@
-import { Scene, Physics } from "phaser";
+import { Physics } from "phaser";
 import { BaseComponent, ComponentConfig } from "./BaseComponent";
 
 export interface EnemyConfig extends ComponentConfig {
@@ -64,6 +64,9 @@ export class Enemy extends BaseComponent {
 
     this.health -= amount;
 
+    // Play hit sound
+    this.scene.registry.get("audioManager").playSound("hit");
+
     // Flash red
     this.sprite.setTint(0xff0000);
     this.scene.time.delayedCall(100, () => {
@@ -90,6 +93,9 @@ export class Enemy extends BaseComponent {
     this.isDead = true;
     this.sprite.setVelocity(0, 0);
     this.sprite.anims.play("enemy-death", true);
+
+    // Play death sound
+    this.scene.registry.get("audioManager").playSound("death");
 
     // Emit death particles if available
     if (this.particles?.death) {
@@ -123,7 +129,7 @@ export class Enemy extends BaseComponent {
     });
   }
 
-  public update(time: number, delta: number): void {
+  public update(): void {
     if (this.isDead) {
       this.sprite.setVelocity(0, 0);
       return;
@@ -197,6 +203,10 @@ export class Enemy extends BaseComponent {
       this.sprite.y < object.y + object.height &&
       this.sprite.y + this.sprite.height > object.y
     );
+  }
+
+  public isDestroyed(): boolean {
+    return this.isDead;
   }
 
   public destroy(): void {

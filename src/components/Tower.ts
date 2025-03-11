@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { BaseComponent, ComponentConfig } from "./BaseComponent";
+import { BaseComponent } from "./BaseComponent";
 import { Enemy } from "./Enemy";
 
 export enum TowerType {
@@ -88,58 +88,91 @@ export class Tower extends BaseComponent {
     });
   }
 
-  public update(time: number, delta: number): void {
-    if (
-      time > this.lastFireTime + this.config.fireRate &&
-      this.targets.length > 0
-    ) {
+  public update(time: number): void {
+    if (time - this.lastFireTime >= this.config.fireRate) {
       this.fire();
       this.lastFireTime = time;
     }
   }
 
   private fire(): void {
-    // Sort targets by distance and get closest
-    const target = this.targets.sort((a, b) => {
-      const spriteA = a.getSprite();
-      const spriteB = b.getSprite();
-      const distA = Phaser.Math.Distance.Between(
-        this.container.x,
-        this.container.y,
-        spriteA.x,
-        spriteA.y
-      );
-      const distB = Phaser.Math.Distance.Between(
-        this.container.x,
-        this.container.y,
-        spriteB.x,
-        spriteB.y
-      );
-      return distA - distB;
-    })[0];
+    if (this.targets.length === 0) return;
 
-    if (target) {
-      const targetSprite = target.getSprite();
-      // Visual effect
-      const line = this.scene.add.line(
-        0,
-        0,
+    if (this.config.type === TowerType.SHOOTER) {
+      // Play shoot sound
+      this.scene.registry.get("audioManager").playSound("shoot");
+
+      // Create projectile
+      const projectile = this.scene.add.circle(
+        this.container.x,
+        this.container.y,
+        3,
+        0xff0000
+      );
+
+      // Add physics to projectile
+      this.scene.physics.add.existing(projectile);
+      const body = projectile.body as Phaser.Physics.Arcade.Body;
+
+      // Calculate direction to target
+      const targetSprite = this.targets[0].getSprite();
+      const angle = Phaser.Math.Angle.Between(
         this.container.x,
         this.container.y,
         targetSprite.x,
-        targetSprite.y,
-        this.config.type === TowerType.SHOOTER ? 0xff0000 : 0x00ff00
+        targetSprite.y
       );
 
-      // Apply damage/healing
-      target.takeDamage(this.config.damage);
+      // Set velocity based on angle
+      const speed = 300;
+      body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
 
-      // Fade out effect
+      // Add collision with target
+      this.scene.physics.add.overlap(
+        projectile,
+        targetSprite,
+        () => {
+          // Deal damage to enemy
+          this.targets[0].takeDamage(this.config.damage);
+          // Destroy projectile
+          projectile.destroy();
+        },
+        undefined,
+        this
+      );
+
+      // Destroy projectile after a delay
+      this.scene.time.delayedCall(1000, () => {
+        if (projectile.active) {
+          projectile.destroy();
+        }
+      });
+    } else if (this.config.type === TowerType.HEALER) {
+      // Play heal sound
+      this.scene.registry.get("audioManager").playSound("heal");
+
+      // Create heal effect
+      const healEffect = this.scene.add.circle(
+        this.container.x,
+        this.container.y,
+        this.config.range,
+        0x00ff00,
+        0.2
+      );
+
+      // Heal all targets in range
+      this.targets.forEach((target) => {
+        target.takeDamage(this.config.damage); // Negative damage = healing
+      });
+
+      // Fade out and destroy heal effect
       this.scene.tweens.add({
-        targets: line,
+        targets: healEffect,
         alpha: 0,
-        duration: 200,
-        onComplete: () => line.destroy(),
+        duration: 500,
+        onComplete: () => {
+          healEffect.destroy();
+        },
       });
     }
   }

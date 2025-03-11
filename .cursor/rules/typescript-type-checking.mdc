@@ -1,0 +1,55 @@
+---
+description: Run type checking proactively after code changes to maintain type safety and catch potential issues early
+globs: src/**/*.{ts,tsx}
+---
+
+# TypeScript Type Checking
+
+## Context
+- After making any code changes
+- Before committing code
+- When refactoring or modifying type definitions
+- When integrating new dependencies
+- When unsure about type correctness
+
+## Requirements
+- Run `npm run typecheck` proactively after any code changes
+- Run type checks even if you think the changes are minor
+- Address all TypeScript errors and warnings before considering the task complete
+- Pay special attention to:
+  - Unused imports and variables (TS6133)
+  - Access control issues (TS2341)
+  - Type mismatches
+  - Missing type definitions
+- Document any intentional type assertions or `any` usage with explanatory comments
+- Update type definitions when modifying interfaces or class structures
+- When in doubt, run the type checker
+
+## Examples
+<example>
+// Good: Proactive type checking workflow
+✅ Implement game entity
+✅ Run type check immediately
+✅ Fix any type errors
+✅ Make additional changes to fix errors
+✅ Run type check again
+✅ Continue until all errors are resolved
+
+// Good: Documenting intentional type assertions
+// Force type assertion due to Phaser.Scene initialization requirements
+const scene = this.scene as Phaser.Scene;
+</example>
+
+<example type="invalid">
+❌ Making multiple changes without running type checks
+❌ Waiting for someone to request a type check
+❌ Ignoring TypeScript warnings about unused variables
+❌ Using `any` type without justification
+❌ Leaving private/public access violations unresolved
+
+// Bad: Ignoring type safety
+const someValue: any = getData();
+const result = processData(someValue);  // Type safety lost
+</example>
+
+<version>1.1.0</version> 
