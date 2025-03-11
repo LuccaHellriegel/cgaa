@@ -2,6 +2,38 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Enemy, EnemyConfig } from "./Enemy";
 import { Scene, Physics } from "phaser";
 
+// Helper function to create a mock scene
+const createMockScene = () => {
+  const mockSprite = {
+    setCollideWorldBounds: vi.fn().mockReturnThis(),
+    anims: {
+      create: vi.fn(),
+      play: vi.fn(),
+    },
+    x: 0,
+    y: 0,
+  };
+
+  return {
+    physics: {
+      add: {
+        sprite: vi.fn().mockReturnValue(mockSprite),
+      },
+    },
+    anims: {
+      create: vi.fn(),
+      exists: vi.fn().mockReturnValue(false),
+      generateFrameNumbers: vi.fn().mockReturnValue([]),
+    },
+    time: {
+      delayedCall: vi.fn().mockImplementation((delay, callback) => {
+        callback();
+        return {};
+      }),
+    },
+  } as unknown as Scene;
+};
+
 describe("Enemy", () => {
   let enemy: Enemy;
   let mockScene: Scene;
@@ -156,5 +188,23 @@ describe("Enemy", () => {
     enemy.update(0, 0);
     expect(mockSprite.setVelocity).toHaveBeenCalledWith(0, 0);
     expect(mockSprite.anims.play).toHaveBeenCalledWith("enemy-idle", true);
+  });
+
+  describe("constructor", () => {
+    it("should use default values when not provided", () => {
+      const mockScene = createMockScene();
+      const enemy = new Enemy({
+        scene: mockScene,
+      });
+
+      // Test default values
+      expect(enemy["speed"]).toBe(100); // Default speed
+      expect(enemy["health"]).toBe(100); // Default health
+      expect(enemy["damage"]).toBe(10); // Default damage
+      expect(enemy["target"]).toBeNull(); // Default target
+
+      // Test default position and texture
+      expect(mockScene.physics.add.sprite).toHaveBeenCalledWith(0, 0, "enemy");
+    });
   });
 });

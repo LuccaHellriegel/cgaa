@@ -2,6 +2,32 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Player, PlayerConfig } from "./Player";
 import { Scene, Physics } from "phaser";
 
+// Helper function to create a mock scene
+const createMockScene = () => {
+  const mockSprite = {
+    setCollideWorldBounds: vi.fn().mockReturnThis(),
+    anims: {
+      create: vi.fn(),
+      play: vi.fn(),
+    },
+    x: 0,
+    y: 0,
+  };
+
+  return {
+    physics: {
+      add: {
+        sprite: vi.fn().mockReturnValue(mockSprite),
+      },
+    },
+    anims: {
+      create: vi.fn(),
+      exists: vi.fn().mockReturnValue(false),
+      generateFrameNumbers: vi.fn().mockReturnValue([]),
+    },
+  } as unknown as Scene;
+};
+
 describe("Player", () => {
   let player: Player;
   let mockScene: Scene;
@@ -105,10 +131,30 @@ describe("Player", () => {
   });
 
   it("should use default values when not provided", () => {
-    const defaultPlayer = new Player({
+    const mockScene = createMockScene();
+    const player = new Player({
       scene: mockScene,
-      texture: "player",
     });
+
+    // Test default values
+    expect(player["speed"]).toBe(200); // Default speed
+
+    // Test default position and texture
     expect(mockScene.physics.add.sprite).toHaveBeenCalledWith(0, 0, "player");
+  });
+
+  describe("constructor", () => {
+    it("should use default position when not provided", () => {
+      const mockScene = createMockScene();
+      const player = new Player({
+        scene: mockScene,
+        texture: "player",
+      });
+
+      // Test default position
+      const sprite = player.getSprite();
+      expect(sprite.x).toBe(0);
+      expect(sprite.y).toBe(0);
+    });
   });
 });
