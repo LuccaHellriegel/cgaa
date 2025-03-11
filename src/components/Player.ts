@@ -23,33 +23,10 @@ export class Player extends BaseComponent {
 
     // Setup physics
     this.sprite.setCollideWorldBounds(true);
-    this.setupAnimations();
-  }
+    this.sprite.setScale(1.5); // Make the player a bit larger
 
-  private setupAnimations(): void {
-    // Add animations if they don't exist
-    if (!this.scene.anims.exists("player-idle")) {
-      this.scene.anims.create({
-        key: "player-idle",
-        frames: this.scene.anims.generateFrameNumbers("player", {
-          start: 0,
-          end: 0,
-        }),
-        frameRate: 1,
-      });
-    }
-
-    if (!this.scene.anims.exists("player-move")) {
-      this.scene.anims.create({
-        key: "player-move",
-        frames: this.scene.anims.generateFrameNumbers("player", {
-          start: 0,
-          end: 3,
-        }),
-        frameRate: 8,
-        repeat: -1,
-      });
-    }
+    // Start with idle animation
+    this.sprite.play("player_idle");
   }
 
   public setVelocity(x: number, y: number): void {
@@ -58,10 +35,13 @@ export class Player extends BaseComponent {
 
     // Update animation based on movement
     if (x !== 0 || y !== 0) {
-      this.sprite.anims.play("player-move", true);
-      this.sprite.setFlipX(x < 0);
+      this.sprite.play("player_move", true);
+      // Only flip if moving horizontally
+      if (x !== 0) {
+        this.sprite.setFlipX(x < 0);
+      }
     } else {
-      this.sprite.anims.play("player-idle", true);
+      this.sprite.play("player_idle", true);
     }
   }
 

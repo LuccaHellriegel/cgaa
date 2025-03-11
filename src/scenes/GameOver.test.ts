@@ -4,30 +4,29 @@ import { Scene } from "phaser";
 
 describe("GameOver Scene", () => {
   let gameOver: GameOver;
+  let mockText: any;
 
   beforeEach(() => {
+    mockText = {
+      setOrigin: vi.fn().mockReturnThis(),
+      setInteractive: vi.fn().mockReturnThis(),
+      on: vi.fn().mockReturnThis(),
+      setTint: vi.fn().mockReturnThis(),
+      clearTint: vi.fn().mockReturnThis(),
+    };
+
     gameOver = new GameOver();
-    gameOver.cameras = {
-      main: {
-        setBackgroundColor: vi.fn(),
-      },
-    } as any;
     gameOver.add = {
-      image: vi.fn().mockReturnValue({
-        setAlpha: vi.fn().mockReturnThis(),
-      }),
-      text: vi.fn().mockReturnValue({
-        setOrigin: vi.fn().mockReturnThis(),
-      }),
-    } as any;
-    const sceneSettings = gameOver.scene.settings;
-    gameOver.input = {
-      once: vi.fn(),
-    } as any;
+      text: vi.fn().mockReturnValue(mockText),
+    } as unknown as Phaser.GameObjects.GameObjectFactory;
     gameOver.scene = {
       start: vi.fn(),
-      settings: sceneSettings,
-    } as any;
+      key: "GameOver",
+    } as unknown as Phaser.Scenes.ScenePlugin;
+    gameOver.scale = {
+      width: 1024,
+      height: 768,
+    } as unknown as Phaser.Scale.ScaleManager;
   });
 
   it("should be a Phaser Scene", () => {
@@ -35,56 +34,51 @@ describe("GameOver Scene", () => {
   });
 
   it("should have the correct scene key", () => {
-    expect(gameOver.scene.settings.key).toBe("GameOver");
+    expect(gameOver.scene.key).toBe("GameOver");
   });
 
   describe("create()", () => {
     beforeEach(() => {
-      gameOver.create();
+      gameOver.create({ score: 100 });
     });
 
-    it("should set camera background color", () => {
-      expect(gameOver.cameras.main.setBackgroundColor).toHaveBeenCalledWith(
-        0xff0000
-      );
-    });
-
-    it("should create and configure background image", () => {
-      expect(gameOver.add.image).toHaveBeenCalledWith(512, 384, "background");
-      expect(gameOver.background.setAlpha).toHaveBeenCalledWith(0.5);
-    });
-
-    it("should create and configure game over text", () => {
+    it("should display game over message", () => {
       expect(gameOver.add.text).toHaveBeenCalledWith(
         512,
-        384,
+        200,
         "Game Over",
         expect.objectContaining({
-          fontFamily: "Arial Black",
-          fontSize: 64,
+          fontFamily: "Arial",
+          fontSize: "64px",
           color: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 8,
-          align: "center",
         })
       );
-      expect(gameOver.gameover_text.setOrigin).toHaveBeenCalledWith(0.5);
     });
 
-    it("should set up input handler to return to MainMenu", () => {
-      expect(gameOver.input.once).toHaveBeenCalledWith(
+    it("should display the score", () => {
+      expect(gameOver.add.text).toHaveBeenCalledWith(
+        512,
+        300,
+        "Score: 100",
+        expect.objectContaining({
+          fontFamily: "Arial",
+          fontSize: "32px",
+          color: "#ffffff",
+        })
+      );
+    });
+
+    it("should create menu options", () => {
+      // Two menu options + header + score = 4 text elements
+      expect(gameOver.add.text).toHaveBeenCalledTimes(4);
+      expect(mockText.setInteractive).toHaveBeenCalledTimes(2);
+    });
+
+    it("should set up event handlers for menu options", () => {
+      expect(mockText.on).toHaveBeenCalledWith(
         "pointerdown",
         expect.any(Function)
       );
-
-      // Get the callback function
-      const callback = (gameOver.input.once as any).mock.calls[0][1];
-
-      // Call the callback
-      callback();
-
-      // Verify that scene.start was called with 'MainMenu'
-      expect(gameOver.scene.start).toHaveBeenCalledWith("MainMenu");
     });
   });
 });

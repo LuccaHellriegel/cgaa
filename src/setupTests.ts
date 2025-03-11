@@ -49,6 +49,7 @@ vi.mock("phaser", () => {
     scene: any;
     load: any;
     physics: any;
+    events: any;
 
     constructor(config: string | object) {
       let key = "";
@@ -83,6 +84,16 @@ vi.mock("phaser", () => {
         rectangle: vi.fn().mockReturnValue({
           setStrokeStyle: vi.fn().mockReturnThis(),
         }),
+        circle: vi.fn().mockReturnValue({
+          setVisible: vi.fn().mockReturnThis(),
+        }),
+        container: vi.fn().mockReturnValue({
+          add: vi.fn().mockReturnThis(),
+          destroy: vi.fn(),
+        }),
+        line: vi.fn().mockReturnValue({
+          destroy: vi.fn(),
+        }),
       };
       this.cameras = {
         main: {
@@ -101,6 +112,10 @@ vi.mock("phaser", () => {
         add: {
           existing: vi.fn(),
         },
+      };
+      this.events = {
+        on: vi.fn(),
+        off: vi.fn(),
       };
     }
 
@@ -121,6 +136,11 @@ vi.mock("phaser", () => {
       FIT: "fit",
       CENTER_BOTH: "resize",
     },
+    Math: {
+      Distance: {
+        Between: vi.fn(),
+      },
+    },
     GameObjects: {
       Sprite: vi.fn().mockImplementation(() => ({
         setOrigin: vi.fn().mockReturnThis(),
@@ -129,12 +149,22 @@ vi.mock("phaser", () => {
       })),
       Image: vi.fn(),
       Text: vi.fn(),
+      Container: vi.fn().mockImplementation(() => ({
+        add: vi.fn().mockReturnThis(),
+        destroy: vi.fn(),
+      })),
+      Arc: vi.fn().mockImplementation(() => ({
+        setVisible: vi.fn().mockReturnThis(),
+      })),
     },
     Physics: {
       Arcade: {
         Sprite: vi.fn().mockImplementation(() => ({
           setVelocity: vi.fn().mockReturnThis(),
           setCollideWorldBounds: vi.fn().mockReturnThis(),
+        })),
+        Body: vi.fn().mockImplementation(() => ({
+          setCircle: vi.fn().mockReturnThis(),
         })),
       },
     },

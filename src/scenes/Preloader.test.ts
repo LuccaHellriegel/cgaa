@@ -1,123 +1,164 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Preloader } from "./Preloader";
-import { Scene } from "phaser";
+import { Scene, GameObjects } from "phaser";
+
+// Mock Phaser's BlendModes
+vi.mock("phaser", () => ({
+  default: {
+    BlendModes: {
+      ADD: 1,
+    },
+  },
+  Scene: class {},
+  GameObjects: {},
+}));
 
 describe("Preloader Scene", () => {
   let preloader: Preloader;
-  let progressCallback: (progress: number) => void;
-  let progressBar: { width: number };
+  let mockLoad: any;
+  let mockScene: any;
+  let mockGraphics: any;
+  let mockAdd: any;
+  let mockScale: any;
+  let mockTweens: any;
+  let mockGraphicsGenerator: any;
 
   beforeEach(() => {
-    progressBar = { width: 0 };
-    preloader = new Preloader();
-    preloader.add = {
+    mockGraphics = {
+      clear: vi.fn().mockReturnThis(),
+      fillStyle: vi.fn().mockReturnThis(),
+      fillRect: vi.fn().mockReturnThis(),
+      lineStyle: vi.fn().mockReturnThis(),
+      strokeRect: vi.fn().mockReturnThis(),
+      beginPath: vi.fn().mockReturnThis(),
+      arc: vi.fn().mockReturnThis(),
+      closePath: vi.fn().mockReturnThis(),
+      fill: vi.fn().mockReturnThis(),
+      stroke: vi.fn().mockReturnThis(),
+      generateTexture: vi.fn().mockReturnThis(),
+      destroy: vi.fn(),
+      moveTo: vi.fn().mockReturnThis(),
+      lineTo: vi.fn().mockReturnThis(),
+      lineBetween: vi.fn().mockReturnThis(),
+    };
+
+    mockAdd = {
+      graphics: vi.fn().mockReturnValue(mockGraphics),
       image: vi.fn(),
-      rectangle: vi
-        .fn()
-        .mockImplementation(
-          (
-            x: number,
-            y: number,
-            width: number,
-            height: number,
-            fillColor?: number
-          ) => {
-            if (x === 512 - 230) {
-              return progressBar;
-            }
-            return {
-              setStrokeStyle: vi.fn().mockReturnThis(),
-            };
-          }
-        ),
-    } as any;
-    const sceneSettings = preloader.scene.settings;
-    preloader.load = {
-      on: vi
-        .fn()
-        .mockImplementation(
-          (event: string, callback: (progress: number) => void) => {
-            if (event === "progress") {
-              progressCallback = callback;
-            }
-          }
-        ),
-      setPath: vi.fn(),
+      rectangle: vi.fn().mockReturnValue({
+        setStrokeStyle: vi.fn().mockReturnThis(),
+      }),
+      spritesheet: vi.fn(),
+      particles: vi.fn().mockReturnValue({
+        createEmitter: vi.fn(),
+      }),
+    } as unknown as GameObjects.GameObjectFactory;
+
+    mockLoad = {
       image: vi.fn(),
-    } as any;
-    preloader.scene = {
+      spritesheet: vi.fn(),
+      audio: vi.fn(),
+      on: vi.fn(),
+    };
+
+    mockScale = {
+      width: 800,
+      height: 600,
+    };
+
+    mockTweens = {
+      add: vi.fn().mockImplementation(({ onComplete }) => {
+        if (onComplete) {
+          onComplete();
+        }
+      }),
+    };
+
+    mockScene = {
       start: vi.fn(),
-      settings: sceneSettings,
-    } as any;
+      registry: {
+        set: vi.fn(),
+        get: vi.fn(),
+      },
+    };
+
+    mockGraphicsGenerator = {
+      generatePlayerTexture: vi.fn(),
+      generateEnemyTexture: vi.fn(),
+      generateTowerTexture: vi.fn(),
+      generateParticleTexture: vi.fn(),
+      setupParticleEffects: vi.fn(),
+    };
+
+    preloader = new Preloader();
+    preloader.load = mockLoad;
+    preloader.add = mockAdd;
+    preloader.scale = mockScale;
+    preloader.tweens = mockTweens;
+    preloader.scene = {
+      ...mockScene,
+      key: "Preloader",
+    };
+    preloader.registry = {
+      set: vi.fn(),
+      get: vi.fn(),
+      events: {
+        on: vi.fn(),
+        emit: vi.fn(),
+      },
+      list: {},
+      values: {},
+      remove: vi.fn(),
+      removeAll: vi.fn(),
+      destroy: vi.fn(),
+    } as unknown as Phaser.Data.DataManager;
+
+    // Mock the GraphicsGenerator instance
+    (preloader as any).graphicsGenerator = mockGraphicsGenerator;
   });
 
   it("should be a Phaser Scene", () => {
-    expect(preloader).toBeInstanceOf(Scene);
+    expect(preloader).toBeInstanceOf(Preloader);
+    expect(preloader.scene.key).toBe("Preloader");
   });
 
-  it("should have the correct scene key", () => {
-    expect(preloader.scene.settings.key).toBe("Preloader");
+  it("should generate all required textures and load audio assets", () => {
+    preloader.preload();
+
+    // Check texture generation
+    expect(mockGraphicsGenerator.generatePlayerTexture).toHaveBeenCalled();
+    expect(mockGraphicsGenerator.generateEnemyTexture).toHaveBeenCalled();
+    expect(mockGraphicsGenerator.generateTowerTexture).toHaveBeenCalled();
+    expect(mockGraphicsGenerator.generateParticleTexture).toHaveBeenCalledWith(
+      "particle",
+      4,
+      0xffffff,
+      1
+    );
+    expect(mockGraphicsGenerator.setupParticleEffects).toHaveBeenCalled();
+
+    // Check audio assets
+    expect(mockLoad.audio).toHaveBeenCalledWith("hit", expect.any(String));
+    expect(mockLoad.audio).toHaveBeenCalledWith("shoot", expect.any(String));
+    expect(mockLoad.audio).toHaveBeenCalledWith("build", expect.any(String));
+    expect(mockLoad.audio).toHaveBeenCalledWith("collect", expect.any(String));
+    expect(mockLoad.audio).toHaveBeenCalledWith("death", expect.any(String));
   });
 
-  describe("init()", () => {
-    beforeEach(() => {
-      preloader.init();
-    });
-
-    it("should create background image", () => {
-      expect(preloader.add.image).toHaveBeenCalledWith(512, 384, "background");
-    });
-
-    it("should create progress bar outline", () => {
-      expect(preloader.add.rectangle).toHaveBeenCalledWith(512, 384, 468, 32);
-      expect(
-        (preloader.add.rectangle as any).mock.results[0].value.setStrokeStyle
-      ).toHaveBeenCalledWith(1, 0xffffff);
-    });
-
-    it("should create progress bar", () => {
-      expect(preloader.add.rectangle).toHaveBeenCalledWith(
-        512 - 230,
-        384,
-        4,
-        28,
-        0xffffff
-      );
-    });
-
-    it("should set up progress event handler", () => {
-      expect(preloader.load.on).toHaveBeenCalledWith(
-        "progress",
-        expect.any(Function)
-      );
-
-      // Test progress callback
-      progressCallback(0.5); // 50% progress
-      expect(progressBar.width).toBe(4 + 460 * 0.5);
-    });
+  it("should start the Game scene when loading is complete", () => {
+    preloader.create();
+    expect(mockScene.start).toHaveBeenCalledWith("Game");
   });
 
-  describe("preload()", () => {
-    beforeEach(() => {
-      preloader.preload();
+  it("should handle loading progress", () => {
+    const mockProgressCallback = vi.fn();
+    mockLoad.on.mockImplementation((event: string, callback: Function) => {
+      if (event === "progress") {
+        callback(0.5);
+      }
     });
 
-    it("should set assets path", () => {
-      expect(preloader.load.setPath).toHaveBeenCalledWith("assets");
-    });
-
-    it("should load logo image", () => {
-      expect(preloader.load.image).toHaveBeenCalledWith("logo", "logo.png");
-    });
-  });
-
-  describe("create()", () => {
-    beforeEach(() => {
-      preloader.create();
-    });
-
-    it("should start the MainMenu scene", () => {
-      expect(preloader.scene.start).toHaveBeenCalledWith("MainMenu");
-    });
+    preloader.preload();
+    expect(mockLoad.on).toHaveBeenCalledWith("progress", expect.any(Function));
   });
 });

@@ -1,0 +1,6 @@
+Study @SPECS.md for functional specifications.
+Study @.cursor for technical requirements
+Implement what is not implemented
+Create tests
+Run a "npm run test" and verify the application works
+Focus on user controls

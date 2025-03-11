@@ -20,10 +20,17 @@ describe("Game Configuration", () => {
       width: 1024,
       height: 768,
       parent: "game-container",
-      backgroundColor: "#028af8",
+      backgroundColor: "#000000",
       scale: {
         mode: "fit",
         autoCenter: "resize",
+      },
+      physics: {
+        default: "arcade",
+        arcade: {
+          gravity: { x: 0, y: 0 },
+          debug: false,
+        },
       },
       scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
     });
@@ -31,12 +38,13 @@ describe("Game Configuration", () => {
 
   it("should have all required scenes", () => {
     const config = (game as any).config;
-    expect(config.scene).toHaveLength(5);
-    expect(config.scene).toContain(Boot);
-    expect(config.scene).toContain(Preloader);
-    expect(config.scene).toContain(MainMenu);
-    expect(config.scene).toContain(MainGame);
-    expect(config.scene).toContain(GameOver);
+    expect(config.scene).toEqual([
+      Boot,
+      Preloader,
+      MainMenu,
+      MainGame,
+      GameOver,
+    ]);
   });
 
   it("should have correct dimensions", () => {

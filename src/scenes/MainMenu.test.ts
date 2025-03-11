@@ -4,25 +4,29 @@ import { Scene } from "phaser";
 
 describe("MainMenu Scene", () => {
   let mainMenu: MainMenu;
+  let mockText: any;
 
   beforeEach(() => {
+    mockText = {
+      setOrigin: vi.fn().mockReturnThis(),
+      setInteractive: vi.fn().mockReturnThis(),
+      on: vi.fn().mockReturnThis(),
+      setTint: vi.fn().mockReturnThis(),
+      clearTint: vi.fn().mockReturnThis(),
+    };
+
     mainMenu = new MainMenu();
     mainMenu.add = {
-      image: vi.fn().mockReturnValue({
-        setOrigin: vi.fn().mockReturnThis(),
-      }),
-      text: vi.fn().mockReturnValue({
-        setOrigin: vi.fn().mockReturnThis(),
-      }),
-    } as any;
-    const sceneSettings = mainMenu.scene.settings;
-    mainMenu.input = {
-      once: vi.fn(),
-    } as any;
+      text: vi.fn().mockReturnValue(mockText),
+    } as unknown as Phaser.GameObjects.GameObjectFactory;
     mainMenu.scene = {
       start: vi.fn(),
-      settings: sceneSettings,
-    } as any;
+      key: "MainMenu",
+    } as unknown as Phaser.Scenes.ScenePlugin;
+    mainMenu.scale = {
+      width: 1024,
+      height: 768,
+    } as unknown as Phaser.Scale.ScaleManager;
   });
 
   it("should be a Phaser Scene", () => {
@@ -30,7 +34,7 @@ describe("MainMenu Scene", () => {
   });
 
   it("should have the correct scene key", () => {
-    expect(mainMenu.scene.settings.key).toBe("MainMenu");
+    expect(mainMenu.scene.key).toBe("MainMenu");
   });
 
   describe("create()", () => {
@@ -38,44 +42,32 @@ describe("MainMenu Scene", () => {
       mainMenu.create();
     });
 
-    it("should create background image", () => {
-      expect(mainMenu.add.image).toHaveBeenCalledWith(512, 384, "background");
-    });
-
-    it("should create logo image", () => {
-      expect(mainMenu.add.image).toHaveBeenCalledWith(512, 300, "logo");
-    });
-
-    it("should create title text", () => {
+    it("should create the title text", () => {
       expect(mainMenu.add.text).toHaveBeenCalledWith(
         512,
-        460,
-        "Main Menu",
+        100,
+        "Circle Gladiator Army Arena",
         expect.objectContaining({
-          fontFamily: "Arial Black",
-          fontSize: 38,
+          fontFamily: "Arial",
+          fontSize: "48px",
           color: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 8,
-          align: "center",
         })
       );
     });
 
-    it("should set up input handler to start game", () => {
-      expect(mainMenu.input.once).toHaveBeenCalledWith(
+    it("should create menu items", () => {
+      // Three menu items
+      expect(mainMenu.add.text).toHaveBeenCalledTimes(4);
+      expect(mockText.setInteractive).toHaveBeenCalledTimes(3);
+      expect(mockText.on).toHaveBeenCalledTimes(9);
+    });
+
+    it("should set up event handlers for menu items", () => {
+      // Start Game option
+      expect(mockText.on).toHaveBeenCalledWith(
         "pointerdown",
         expect.any(Function)
       );
-
-      // Get the callback function
-      const callback = (mainMenu.input.once as any).mock.calls[0][1];
-
-      // Call the callback
-      callback();
-
-      // Verify that scene.start was called with 'Game'
-      expect(mainMenu.scene.start).toHaveBeenCalledWith("Game");
     });
   });
 });

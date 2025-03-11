@@ -1,32 +1,40 @@
-import { Scene, GameObjects } from 'phaser';
+import { Scene } from "phaser";
 
-export class MainMenu extends Scene
-{
-    background: GameObjects.Image;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
+export class MainMenu extends Scene {
+  constructor() {
+    super("MainMenu");
+  }
 
-    constructor ()
-    {
-        super('MainMenu');
-    }
+  create() {
+    // Add title
+    this.add
+      .text(this.scale.width / 2, 100, "Circle Gladiator Army Arena", {
+        fontFamily: "Arial",
+        fontSize: "48px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
+    // Add menu options
+    const menuItems = [
+      { text: "Start Game", scene: "Game" },
+      { text: "How to Play", scene: "Tutorial" },
+      { text: "Options", scene: "Options" },
+    ];
 
-        this.logo = this.add.image(512, 300, 'logo');
-
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('Game');
-
-        });
-    }
+    menuItems.forEach((item, index) => {
+      const y = this.scale.height / 2 + index * 60;
+      const text = this.add
+        .text(this.scale.width / 2, y, item.text, {
+          fontFamily: "Arial",
+          fontSize: "32px",
+          color: "#ffffff",
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true })
+        .on("pointerover", () => text.setTint(0x00ff00))
+        .on("pointerout", () => text.clearTint())
+        .on("pointerdown", () => this.scene.start(item.scene));
+    });
+  }
 }
