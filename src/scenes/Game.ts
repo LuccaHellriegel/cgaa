@@ -9,7 +9,12 @@ import { WaveManager } from "../managers/WaveManager";
 export class Game extends Scene {
   private player: Player;
   private souls: number;
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private wasdKeys: {
+    W: Phaser.Input.Keyboard.Key;
+    A: Phaser.Input.Keyboard.Key;
+    S: Phaser.Input.Keyboard.Key;
+    D: Phaser.Input.Keyboard.Key;
+  };
 
   // UI Components
   private uiController: UIController;
@@ -26,10 +31,15 @@ export class Game extends Scene {
   }
 
   create() {
-    // Set up keyboard controls
-    this.cursors = (
-      this.input.keyboard as Phaser.Input.Keyboard.KeyboardPlugin
-    ).createCursorKeys();
+    // Set up WASD keys
+    if (this.input.keyboard) {
+      this.wasdKeys = this.input.keyboard.addKeys({
+        W: Phaser.Input.Keyboard.KeyCodes.W,
+        A: Phaser.Input.Keyboard.KeyCodes.A,
+        S: Phaser.Input.Keyboard.KeyCodes.S,
+        D: Phaser.Input.Keyboard.KeyCodes.D,
+      }) as any;
+    }
 
     // Initialize player
     this.player = new Player({
@@ -197,13 +207,13 @@ export class Game extends Scene {
   }
 
   update(time: number, delta: number): void {
-    if (!this.player) return;
+    if (!this.player || !this.wasdKeys) return;
 
-    // Handle player movement
+    // Handle player movement with WASD
     const moveX =
-      (this.cursors.right.isDown ? 1 : 0) - (this.cursors.left.isDown ? 1 : 0);
+      (this.wasdKeys.D.isDown ? 1 : 0) - (this.wasdKeys.A.isDown ? 1 : 0);
     const moveY =
-      (this.cursors.down.isDown ? 1 : 0) - (this.cursors.up.isDown ? 1 : 0);
+      (this.wasdKeys.S.isDown ? 1 : 0) - (this.wasdKeys.W.isDown ? 1 : 0);
 
     // Normalize diagonal movement
     if (moveX !== 0 && moveY !== 0) {

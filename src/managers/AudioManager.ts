@@ -11,19 +11,20 @@ export class AudioManager {
     this.sounds = new Map();
   }
 
-  preload(): void {
+  public loadAudio(): void {
     // Load audio with both MP3 and OGG formats for better browser compatibility
-    const audioFiles = [
-      "hit",
-      "shoot",
-      "build",
-      "collect",
-      "death",
-      "ui_hover",
-      "ui_click",
-    ];
+    const soundConfigs = {
+      hit: { volume: 0.5, rate: 1 },
+      shoot: { volume: 0.4, rate: 1 },
+      build: { volume: 0.6, rate: 1 },
+      collect: { volume: 0.5, rate: 1 },
+      death: { volume: 0.7, rate: 1 },
+      ui_hover: { volume: 0.3, rate: 1 },
+      ui_click: { volume: 0.4, rate: 1 },
+    };
 
-    audioFiles.forEach((key) => {
+    // Load audio files
+    Object.keys(soundConfigs).forEach((key) => {
       try {
         this.scene.load.audio(key, [
           `assets/audio/${key}.mp3`,
@@ -45,34 +46,23 @@ export class AudioManager {
         console.warn(`Error setting up audio load for ${key}:`, error);
       }
     });
-  }
 
-  create(): void {
-    // Initialize sounds with proper configurations
-    const soundConfigs = {
-      hit: { volume: 0.5, rate: 1 },
-      shoot: { volume: 0.4, rate: 1 },
-      build: { volume: 0.6, rate: 1 },
-      collect: { volume: 0.5, rate: 1 },
-      death: { volume: 0.7, rate: 1 },
-      ui_hover: { volume: 0.3, rate: 1 },
-      ui_click: { volume: 0.4, rate: 1 },
-    };
-
-    // Create sound instances only for successfully loaded sounds
-    Object.entries(soundConfigs).forEach(([key, config]) => {
-      try {
-        if (this.loadedSounds.has(key)) {
-          const sound = this.scene.sound.add(key, config);
-          this.sounds.set(key, sound);
-        } else {
-          console.warn(
-            `Skipping creation of sound ${key} as it was not loaded successfully`
-          );
+    // Initialize sounds when loading is complete
+    this.scene.load.on("complete", () => {
+      Object.entries(soundConfigs).forEach(([key, config]) => {
+        try {
+          if (this.loadedSounds.has(key)) {
+            const sound = this.scene.sound.add(key, config);
+            this.sounds.set(key, sound);
+          } else {
+            console.warn(
+              `Skipping creation of sound ${key} as it was not loaded successfully`
+            );
+          }
+        } catch (error) {
+          console.warn(`Failed to create sound: ${key}`, error);
         }
-      } catch (error) {
-        console.warn(`Failed to create sound: ${key}`, error);
-      }
+      });
     });
 
     // Handle game pause/resume
@@ -80,7 +70,7 @@ export class AudioManager {
     this.scene.events.on("resume", () => this.handleResume());
   }
 
-  playSound(key: string): void {
+  public playSound(key: string): void {
     if (!this.soundsEnabled) return;
 
     try {
@@ -95,7 +85,7 @@ export class AudioManager {
     }
   }
 
-  stopSound(key: string): void {
+  public stopSound(key: string): void {
     try {
       const sound = this.sounds.get(key);
       if (sound) {
@@ -106,7 +96,7 @@ export class AudioManager {
     }
   }
 
-  stopAllSounds(): void {
+  public stopAllSounds(): void {
     try {
       this.sounds.forEach((sound) => sound.stop());
     } catch (error) {
@@ -124,14 +114,14 @@ export class AudioManager {
     // Handle resume logic if needed
   }
 
-  toggleSounds(): void {
+  public toggleSounds(): void {
     this.soundsEnabled = !this.soundsEnabled;
     if (!this.soundsEnabled) {
       this.stopAllSounds();
     }
   }
 
-  destroy(): void {
+  public destroy(): void {
     this.sounds.forEach((sound) => {
       sound.destroy();
     });

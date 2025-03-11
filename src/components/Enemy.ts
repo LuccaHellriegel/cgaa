@@ -45,7 +45,7 @@ export class Enemy extends BaseComponent {
     }
 
     // Play idle animation
-    this.sprite.anims.play("enemy-idle", true);
+    this.sprite.anims.play("enemy_idle", true);
 
     // Set up animation completion listener
     this.sprite.on("animationcomplete", this.handleAnimationComplete, this);
@@ -54,7 +54,7 @@ export class Enemy extends BaseComponent {
   private handleAnimationComplete(
     animation: Phaser.Animations.Animation
   ): void {
-    if (animation.key === "enemy-death") {
+    if (animation.key === "enemy_death") {
       this.destroy();
     }
   }
@@ -92,7 +92,7 @@ export class Enemy extends BaseComponent {
   private die(): void {
     this.isDead = true;
     this.sprite.setVelocity(0, 0);
-    this.sprite.anims.play("enemy-death", true);
+    this.sprite.anims.play("enemy_death", true);
 
     // Play death sound
     this.scene.registry.get("audioManager").playSound("death");
@@ -114,7 +114,7 @@ export class Enemy extends BaseComponent {
     this.attackCooldown = 1000; // 1 second cooldown
 
     // Play attack animation
-    this.sprite.anims.play("enemy-attack", true);
+    this.sprite.anims.play("enemy_attack", true);
 
     // Deal damage after animation delay
     this.scene.time.delayedCall(500, () => {
@@ -143,7 +143,7 @@ export class Enemy extends BaseComponent {
     if (!this.target) {
       this.sprite.setVelocity(0, 0);
       if (!this.sprite.anims.isPlaying) {
-        this.sprite.anims.play("enemy-idle", true);
+        this.sprite.anims.play("enemy_idle", true);
       }
       return;
     }
@@ -163,18 +163,18 @@ export class Enemy extends BaseComponent {
       if (
         !this.sprite.anims.isPlaying ||
         (this.sprite.anims.currentAnim &&
-          this.sprite.anims.currentAnim.key !== "enemy-move")
+          this.sprite.anims.currentAnim.key !== "enemy_move")
       ) {
-        this.sprite.anims.play("enemy-move", true);
+        this.sprite.anims.play("enemy_move", true);
       }
     } else {
       this.sprite.setVelocity(0, 0);
       if (
         !this.sprite.anims.isPlaying ||
         (this.sprite.anims.currentAnim &&
-          this.sprite.anims.currentAnim.key !== "enemy-idle")
+          this.sprite.anims.currentAnim.key !== "enemy_idle")
       ) {
-        this.sprite.anims.play("enemy-idle", true);
+        this.sprite.anims.play("enemy_idle", true);
       }
     }
   }

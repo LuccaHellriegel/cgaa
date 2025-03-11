@@ -52,12 +52,11 @@ export class Preloader extends Scene {
     this.graphicsGenerator.setupParticleEffects();
 
     // Load audio assets using AudioManager
-    this.audioManager.preload();
+    this.audioManager.loadAudio();
   }
 
   create() {
     // Initialize audio
-    this.audioManager.create();
     this.registry.set("audioManager", this.audioManager);
 
     // Add transition effect
