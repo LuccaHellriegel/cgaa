@@ -29,6 +29,16 @@ From the gameplay screenshots, we can observe:
 - **Directional Indicators**: Red triangles pointing to wave sources or targets
 - **Status Indicators**: Green/blue rectangles for UI elements
 
+### UI Enhancement Requirements
+
+- **Player Representation**: Add distinctive features to player circle (eyes, direction indicator)
+- **Health Visualization**: Add health bar attached to player and enemies
+- **Souls Counter**: Add prominent souls counter with icon and numeric display
+- **Mode Indicator**: Improve visibility of mode switching, showing both current and alternative mode
+- **Tower Selection**: Add visual previews and icons to tower buttons
+- **Game Progress**: Add wave counter and objective indicators
+- **Navigation**: Consider adding minimap or directional indicators for off-screen events
+
 ### Color Coding System
 
 - **Black**: Background/negative space
@@ -37,6 +47,7 @@ From the gameplay screenshots, we can observe:
 - **Gray**: Neutral structures (walls, barriers)
 - **Red**: Warnings, enemy targets, attack indicators
 - **Green**: Interactive elements, status indicators
+- **Gold/Yellow**: Souls and resources
 
 ## Graphics Generation Approach
 
@@ -171,3 +182,58 @@ From the gameplay screenshots, we can observe:
 - **Effect Optimization**: Ensure special effects are optimized for browser performance
 - **Audio Management**: Implement proper audio pooling and management
 - **Scalability**: Design visual enhancements to scale based on device capabilities
+
+## Visual Improvement Priorities
+
+Based on user feedback and playtesting, the following visual improvements should be prioritized:
+
+### Critical Improvements (Immediate Implementation)
+
+1. **Entity Distinction**:
+
+   - Add distinctive visual cues to differentiate player, enemies, camps, and towers
+   - Implement clearer direction indicators for all moving entities
+   - Add health bars to player and enemies
+
+2. **UI Clarity**:
+
+   - Add prominent souls counter with numeric display and icon
+   - Improve mode indicator to show both current mode and how to switch
+   - Add tooltips to all interactive elements
+
+3. **Game Status Visualization**:
+   - Implement wave counter and next wave timer
+   - Add clear objective markers and directional guides
+   - Improve camp status indicators with more distinct visual states
+
+### Secondary Improvements (Next Development Phase)
+
+1. **Feedback Enhancements**:
+
+   - Add particle effects for combat, building, and soul collection
+   - Implement clearer visual feedback for successful/failed actions
+   - Improve tower range and effect visualization
+
+2. **Navigation Aids**:
+
+   - Add minimap showing key game elements
+   - Implement off-screen indicators for important events
+   - Add distance markers for objectives
+
+3. **Animation Refinements**:
+   - Improve attack and movement animations
+   - Add state transition animations for all game elements
+   - Implement environmental animations for background elements
+
+### Polish Elements (Final Development Phase)
+
+1. **Visual Consistency**:
+
+   - Ensure consistent use of colors and shapes across the game
+   - Refine animation timing and smoothness
+   - Optimize visual effects for performance
+
+2. **Accessibility Improvements**:
+   - Add alternative visual cues for colorblind players
+   - Implement scalable UI elements
+   - Ensure sufficient contrast for all important elements
