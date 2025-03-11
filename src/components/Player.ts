@@ -3,16 +3,21 @@ import { BaseComponent, ComponentConfig } from "./BaseComponent";
 
 export interface PlayerConfig extends ComponentConfig {
   speed?: number;
+  maxHealth?: number;
 }
 
 export class Player extends BaseComponent {
   private sprite: Physics.Arcade.Sprite;
   private speed: number;
   private isDead: boolean = false;
+  private health: number;
+  private maxHealth: number;
 
   constructor(config: PlayerConfig) {
     super(config);
     this.speed = config.speed || 200;
+    this.maxHealth = config.maxHealth || 100;
+    this.health = this.maxHealth;
 
     // Create player sprite
     this.sprite = this.scene.physics.add.sprite(
@@ -45,8 +50,43 @@ export class Player extends BaseComponent {
     }
   }
 
+  public getHealth(): number {
+    return this.health;
+  }
+
+  public getMaxHealth(): number {
+    return this.maxHealth;
+  }
+
+  public takeDamage(amount: number): void {
+    if (this.isDead) return;
+
+    this.health = Math.max(0, this.health - amount);
+    if (this.health === 0) {
+      this.die();
+    } else {
+      // Flash red
+      this.sprite.setTint(0xff0000);
+      this.scene.time.delayedCall(100, () => {
+        this.sprite.clearTint();
+      });
+    }
+  }
+
+  public heal(amount: number): void {
+    if (this.isDead) return;
+
+    this.health = Math.min(this.maxHealth, this.health + amount);
+    // Flash green
+    this.sprite.setTint(0x00ff00);
+    this.scene.time.delayedCall(100, () => {
+      this.sprite.clearTint();
+    });
+  }
+
   public die(): void {
     this.isDead = true;
+    this.health = 0;
     this.sprite.setVelocity(0, 0);
     this.sprite.setTint(0xff0000);
     this.emit("died");

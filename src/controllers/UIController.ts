@@ -47,17 +47,36 @@ export class UIController {
   }
 
   private createModeIndicator(): void {
-    this.modeText = this.scene.add.text(10, 10, "", {
-      fontSize: "20px",
-      fontStyle: "bold",
-      color: "#ffffff",
-      backgroundColor: "#000000",
-      padding: { x: 10, y: 8 },
-      fixedWidth: 200,
-      align: "center",
-    });
-    this.modeText.setScrollFactor(0);
-    this.modeText.setDepth(100);
+    const padding = { x: 10, y: 8 };
+    const fontSize = "16px";
+
+    // Create container for mode indicator
+    const container = this.scene.add.container(
+      10,
+      this.scene.scale.height - 50
+    );
+    container.setDepth(100);
+    container.setScrollFactor(0);
+
+    // Create background
+    const background = this.scene.add.rectangle(0, 0, 200, 40, 0x000000, 0.7);
+    background.setStrokeStyle(1, 0xffffff);
+    container.add(background);
+
+    // Create mode text
+    this.modeText = this.scene.add.text(
+      padding.x - background.width / 2,
+      -15,
+      "",
+      {
+        fontSize,
+        fontStyle: "bold",
+        color: "#ffffff",
+        padding,
+      }
+    );
+    container.add(this.modeText);
+
     this.updateModeIndicator();
   }
 
@@ -76,14 +95,19 @@ export class UIController {
   }
 
   private updateModeIndicator(): void {
-    const mode =
+    const currentMode =
       this.state.currentMode === GameMode.ATTACK ? "ATTACK" : "BUILD";
-    const key = this.state.currentMode === GameMode.ATTACK ? "F" : "F";
-    this.modeText.setText(`${mode} MODE\n[${key}] to switch`);
+    const altMode =
+      this.state.currentMode === GameMode.ATTACK ? "BUILD" : "ATTACK";
+    const key = "F";
 
-    // Update colors based on mode
-    this.modeText.setBackgroundColor(
-      this.state.currentMode === GameMode.ATTACK ? "#aa2200" : "#004422"
+    this.modeText.setText(
+      `Current: ${currentMode} MODE\n` + `Press [${key}] for ${altMode} MODE`
+    );
+
+    // Update text color based on mode
+    this.modeText.setColor(
+      this.state.currentMode === GameMode.ATTACK ? "#ff4444" : "#44ff44"
     );
   }
 

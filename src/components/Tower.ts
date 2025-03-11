@@ -15,7 +15,7 @@ export interface TowerConfig {
   cost: number;
 }
 
-const TOWER_CONFIGS: Record<TowerType, TowerConfig> = {
+export const TOWER_CONFIGS: Record<TowerType, TowerConfig> = {
   [TowerType.SHOOTER]: {
     type: TowerType.SHOOTER,
     range: 200,

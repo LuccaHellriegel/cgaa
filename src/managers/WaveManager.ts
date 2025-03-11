@@ -1,139 +1,134 @@
 import { Scene } from "phaser";
 import { Enemy } from "../components/Enemy";
-import { CampStatus } from "../components/GameStatusUI";
+import { ObjectiveMarker } from "../components/GameProgressUI";
+import { Player } from "../components/Player";
 
-interface WaveConfig {
-  campId: string;
-  enemyCount: number;
-  enemyTypes: string[];
-  spawnInterval: number;
-  targetCampId?: string; // For cooperating camps
+export interface CampStatus {
+  id: string;
+  position: { x: number; y: number };
+  isSpawning: boolean;
+  isQuestTarget: boolean;
+  isDestroyed: boolean;
+  isCooperating: boolean;
 }
 
 export class WaveManager {
   private scene: Scene;
-  private waves: Map<string, WaveConfig>;
-  private activeWaves: Map<string, { timer: number; enemiesLeft: number }>;
-  private camps: Map<string, CampStatus>;
-  private enemies: Enemy[];
+  private currentWave: number = 0;
+  private nextWaveTime: number = 30; // 30 seconds between waves
+  private waveTimer: number = 0;
+  private camps: Map<string, CampStatus> = new Map();
+  private enemies: Enemy[] = [];
+  private player: Player;
 
   constructor(scene: Scene) {
     this.scene = scene;
-    this.waves = new Map();
-    this.activeWaves = new Map();
-    this.camps = new Map();
-    this.enemies = [];
+    this.player = scene.registry.get("player") as Player;
   }
 
   public addCamp(camp: CampStatus): void {
     this.camps.set(camp.id, camp);
-
-    // Create a default wave config for this camp
-    const waveConfig: WaveConfig = {
-      campId: camp.id,
-      enemyCount: 5,
-      enemyTypes: ["basic"],
-      spawnInterval: 2000, // 2 seconds
-      targetCampId: camp.isCooperating ? undefined : undefined, // Will be set when cooperation is established
-    };
-
-    this.waves.set(camp.id, waveConfig);
-  }
-
-  public updateCamp(camp: CampStatus): void {
-    this.camps.set(camp.id, camp);
-
-    // Update wave config if camp is cooperating
-    const waveConfig = this.waves.get(camp.id);
-    if (waveConfig) {
-      waveConfig.targetCampId = camp.isCooperating ? undefined : undefined;
-    }
   }
 
   public startWave(campId: string): void {
     const camp = this.camps.get(campId);
-    const waveConfig = this.waves.get(campId);
-
-    if (!camp || !waveConfig || camp.isDestroyed) return;
-
-    // Only spawn waves from active camps
-    if (camp.isSpawning) {
-      this.activeWaves.set(campId, {
-        timer: 0,
-        enemiesLeft: waveConfig.enemyCount,
-      });
-    }
-  }
-
-  public update(_time: number, delta: number): void {
-    // Update active waves
-    this.activeWaves.forEach((wave, campId) => {
-      wave.timer += delta;
-
-      const waveConfig = this.waves.get(campId);
-      const camp = this.camps.get(campId);
-
-      if (!waveConfig || !camp) return;
-
-      // Spawn enemy if it's time and there are enemies left
-      if (wave.timer >= waveConfig.spawnInterval && wave.enemiesLeft > 0) {
-        this.spawnEnemy(waveConfig);
-        wave.timer = 0;
-        wave.enemiesLeft--;
-
-        // Remove wave if all enemies are spawned
-        if (wave.enemiesLeft <= 0) {
-          this.activeWaves.delete(campId);
-        }
-      }
-    });
-
-    // Update enemies and remove dead ones
-    this.enemies = this.enemies.filter((enemy) => !enemy.isDestroyed());
-    this.enemies.forEach((enemy) => enemy.update());
-  }
-
-  private spawnEnemy(waveConfig: WaveConfig): void {
-    const camp = this.camps.get(waveConfig.campId);
     if (!camp) return;
 
-    // Get random enemy type from the wave config
-    const enemyType =
-      waveConfig.enemyTypes[
-        Math.floor(Math.random() * waveConfig.enemyTypes.length)
-      ];
+    camp.isSpawning = true;
+    this.currentWave++;
+    this.waveTimer = 0;
 
-    // Create enemy at camp position
-    const enemy = new Enemy({
-      scene: this.scene,
-      x: camp.position.x,
-      y: camp.position.y,
-      texture: `enemy_${enemyType}`,
+    // Emit wave start event
+    this.scene.events.emit("waveStart", {
+      wave: this.currentWave,
+      camp: camp,
+    });
+  }
+
+  public update(delta: number): void {
+    // Update wave timer
+    this.waveTimer += delta / 1000; // Convert to seconds
+    const timeToNext = Math.max(0, this.nextWaveTime - this.waveTimer);
+
+    // Emit wave info update
+    this.scene.events.emit("waveUpdate", {
+      wave: this.currentWave,
+      timeToNext: timeToNext,
     });
 
-    // Set target based on camp cooperation
-    if (camp.isCooperating && waveConfig.targetCampId) {
-      const targetCamp = this.camps.get(waveConfig.targetCampId);
-      if (targetCamp) {
-        enemy.setTarget(targetCamp.position);
-      }
-    }
+    // Update enemy positions and states
+    this.enemies.forEach((enemy) => enemy.update());
 
-    this.enemies.push(enemy);
+    // Clean up destroyed enemies
+    this.enemies = this.enemies.filter((enemy) => !enemy.isDestroyed());
+
+    // Get objectives for UI
+    const objectives = this.getObjectives();
+    this.scene.events.emit("objectivesUpdate", objectives);
+  }
+
+  private getObjectives(): ObjectiveMarker[] {
+    const objectives: ObjectiveMarker[] = [];
+    const playerSprite = this.player.getSprite();
+    const playerPosition = {
+      x: playerSprite.x,
+      y: playerSprite.y,
+    };
+
+    // Add camps as objectives
+    this.camps.forEach((camp, id) => {
+      if (!camp.isDestroyed) {
+        const distance = Phaser.Math.Distance.Between(
+          playerPosition.x,
+          playerPosition.y,
+          camp.position.x,
+          camp.position.y
+        );
+
+        objectives.push({
+          id,
+          position: new Phaser.Math.Vector2(camp.position.x, camp.position.y),
+          type: camp.isQuestTarget ? "quest" : "camp",
+          distance,
+        });
+      }
+    });
+
+    // Add active enemies as objectives
+    this.enemies.forEach((enemy, index) => {
+      const enemySprite = enemy.getSprite();
+      const distance = Phaser.Math.Distance.Between(
+        playerPosition.x,
+        playerPosition.y,
+        enemySprite.x,
+        enemySprite.y
+      );
+
+      objectives.push({
+        id: `enemy_${index}`,
+        position: new Phaser.Math.Vector2(enemySprite.x, enemySprite.y),
+        type: "enemy",
+        distance,
+      });
+    });
+
+    return objectives;
   }
 
   public getEnemies(): Enemy[] {
     return this.enemies;
   }
 
+  public getCurrentWave(): number {
+    return this.currentWave;
+  }
+
+  public getTimeToNextWave(): number {
+    return Math.max(0, this.nextWaveTime - this.waveTimer);
+  }
+
   public destroy(): void {
-    // Clean up enemies
     this.enemies.forEach((enemy) => enemy.destroy());
     this.enemies = [];
-
-    // Clear maps
-    this.waves.clear();
-    this.activeWaves.clear();
-    this.camps.clear();
   }
 }

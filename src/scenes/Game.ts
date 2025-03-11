@@ -5,6 +5,9 @@ import { BuildMenu } from "../components/BuildMenu";
 import { TowerMenu, TowerData } from "../components/TowerMenu";
 import { GameStatusUI, CampStatus } from "../components/GameStatusUI";
 import { WaveManager } from "../managers/WaveManager";
+import { PlayerStatusUI } from "../components/PlayerStatusUI";
+import { Tower, TowerType, TOWER_CONFIGS } from "../components/Tower";
+import { GameProgressUI, ObjectiveMarker } from "../components/GameProgressUI";
 
 export class Game extends Scene {
   private player: Player;
@@ -21,9 +24,12 @@ export class Game extends Scene {
   private buildMenu: BuildMenu;
   private towerMenu: TowerMenu;
   private gameStatusUI: GameStatusUI;
+  private playerStatusUI: PlayerStatusUI;
+  private gameProgressUI: GameProgressUI;
 
   // Game Managers
   private waveManager: WaveManager;
+  private towerGroup: Phaser.GameObjects.Group;
 
   constructor() {
     super("Game");
@@ -48,15 +54,19 @@ export class Game extends Scene {
       y: this.scale.height / 2,
       texture: "player",
     });
+    this.registry.set("player", this.player);
 
     // Initialize UI components
     this.uiController = new UIController(this);
     this.buildMenu = new BuildMenu(this);
     this.towerMenu = new TowerMenu(this);
     this.gameStatusUI = new GameStatusUI(this);
+    this.playerStatusUI = new PlayerStatusUI(this);
+    this.gameProgressUI = new GameProgressUI(this);
 
-    // Initialize wave manager
+    // Initialize game managers
     this.waveManager = new WaveManager(this);
+    this.towerGroup = this.add.group();
 
     // Setup event handlers
     this.setupEventHandlers();
@@ -64,6 +74,7 @@ export class Game extends Scene {
     // Initialize game state
     this.souls = 100; // Start with some souls
     this.updateSouls(this.souls);
+    this.playerStatusUI.updateHealth(100, 100); // Initialize health display
 
     // Initialize camps
     this.initializeCamps();
@@ -166,12 +177,50 @@ export class Game extends Scene {
       this.updateSouls(this.souls + (tower.sellValue ?? tower.cost / 2));
       console.log("Selling tower:", tower);
     });
+
+    // Wave update events
+    this.events.on(
+      "waveUpdate",
+      (data: { wave: number; timeToNext: number }) => {
+        this.gameProgressUI.updateWaveInfo(data.wave, data.timeToNext);
+      }
+    );
+
+    // Objectives update events
+    this.events.on("objectivesUpdate", (objectives: ObjectiveMarker[]) => {
+      this.gameProgressUI.updateObjectiveMarkers(objectives);
+
+      // Update minimap positions
+      const playerSprite = this.player.getSprite();
+      this.gameProgressUI.updateMinimapPositions(
+        new Phaser.Math.Vector2(playerSprite.x, playerSprite.y),
+        objectives
+      );
+
+      // Update offscreen indicators
+      objectives.forEach((objective) => {
+        this.gameProgressUI.showOffscreenIndicator(objective);
+      });
+    });
+
+    // Wave start events
+    this.events.on(
+      "waveStart",
+      ({ wave }: { wave: number; camp: CampStatus }) => {
+        // Play wave start sound
+        this.registry.get("audioManager").playSound("wave_start");
+
+        // Flash wave counter
+        this.cameras.main.flash(500, 255, 0, 0, true);
+      }
+    );
   }
 
   private updateSouls(amount: number): void {
     const oldAmount = this.souls;
     this.souls = amount;
     this.uiController.updateSouls(amount);
+    this.playerStatusUI.updateSouls(amount, amount > oldAmount);
 
     // Play collect sound if souls increased
     if (amount > oldAmount) {
@@ -179,26 +228,34 @@ export class Game extends Scene {
     }
   }
 
-  private placeTower(towerKey: string, position: Phaser.Math.Vector2): void {
-    // TODO: Implement actual tower placement
-    console.log("Placing tower", towerKey, "at", position);
+  private placeTower(
+    towerType: TowerType,
+    position: Phaser.Math.Vector2
+  ): void {
+    const config = TOWER_CONFIGS[towerType];
+    if (!config || this.souls < config.cost) return;
 
-    // Example tower data
-    const towerData: TowerData = {
-      key: towerKey,
-      name: "Basic Tower",
-      level: 1,
-      damage: 10,
-      range: 150,
-      attackSpeed: 1,
-      cost: 100,
-    };
-
-    // Play build sound
+    // Create the tower
+    const tower = new Tower(this, position.x, position.y, towerType);
     this.registry.get("audioManager").playSound("build");
 
     // Update souls
-    this.updateSouls(this.souls - towerData.cost);
+    this.updateSouls(this.souls - config.cost);
+
+    // Create tower data for menu
+    const towerData: TowerData = {
+      name: towerType === TowerType.SHOOTER ? "Shooter Tower" : "Healer Tower",
+      damage: config.damage,
+      range: config.range,
+      attackSpeed: config.fireRate / 1000,
+      cost: config.cost,
+      position: position,
+      level: 1,
+    };
+
+    // Update UI and add tower to group
+    this.towerMenu.show(towerData);
+    this.towerGroup.add(tower);
   }
 
   private startGameLoop(): void {
@@ -248,6 +305,8 @@ export class Game extends Scene {
     this.buildMenu.destroy();
     this.towerMenu.destroy();
     this.gameStatusUI.destroy();
+    this.playerStatusUI.destroy();
+    this.gameProgressUI.destroy();
     this.waveManager.destroy();
 
     // Clean up event handlers
@@ -255,5 +314,28 @@ export class Game extends Scene {
     this.events.off("playerInteract");
     this.events.off("towerSelected");
     this.events.off("sellTower");
+    this.events.off("waveUpdate");
+    this.events.off("objectivesUpdate");
+    this.events.off("waveStart");
+  }
+
+  // Add these new methods for player health management
+  public damagePlayer(amount: number): void {
+    const currentHealth = this.player.getHealth();
+    const maxHealth = this.player.getMaxHealth();
+    this.player.takeDamage(amount);
+    this.playerStatusUI.updateHealth(currentHealth - amount, maxHealth);
+    this.playerStatusUI.showDamageEffect();
+  }
+
+  public healPlayer(amount: number): void {
+    const currentHealth = this.player.getHealth();
+    const maxHealth = this.player.getMaxHealth();
+    this.player.heal(amount);
+    this.playerStatusUI.updateHealth(
+      Math.min(currentHealth + amount, maxHealth),
+      maxHealth
+    );
+    this.playerStatusUI.showHealEffect();
   }
 }

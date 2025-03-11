@@ -1,15 +1,14 @@
 import { Scene } from "phaser";
 import { GameState } from "../controllers/GameController";
-import { TowerType } from "../types/TowerTypes";
+import { TowerType, TowerConfig, TOWER_CONFIGS } from "../components/Tower";
 
 export class BuildMenu {
   private scene: Scene;
   private container: Phaser.GameObjects.Container;
   private towerButtons: Phaser.GameObjects.Container[] = [];
-  private towerOptions: { type: TowerType; cost: number }[] = [
-    { type: "basic", cost: 50 },
-    { type: "splash", cost: 100 },
-    { type: "sniper", cost: 150 },
+  private towerOptions: TowerConfig[] = [
+    TOWER_CONFIGS[TowerType.SHOOTER],
+    TOWER_CONFIGS[TowerType.HEALER],
   ];
   private selectedTower: TowerType | null = null;
   private menuBackground: Phaser.GameObjects.Rectangle;
@@ -53,66 +52,110 @@ export class BuildMenu {
   }
 
   private createTowerButton(
-    tower: { type: TowerType; cost: number },
+    tower: TowerConfig,
     index: number
   ): Phaser.GameObjects.Container {
-    const buttonWidth = 100;
-    const buttonHeight = 40;
+    const buttonWidth = 180;
+    const buttonHeight = 60;
     const padding = 10;
-    const x = -120 + (buttonWidth + padding) * index;
-    const y = 0;
+    const x = 10;
+    const y = 10 + index * (buttonHeight + padding);
 
-    // Create button container
     const button = this.scene.add.container(x, y);
 
-    // Add button background with border
-    const buttonBg = this.scene.add.rectangle(
+    // Button background
+    const background = this.scene.add.rectangle(
       0,
       0,
       buttonWidth,
       buttonHeight,
-      0x444444
+      0x444444,
+      0.8
     );
-    buttonBg.setStrokeStyle(2, 0x666666);
-    button.add(buttonBg);
+    background.setStrokeStyle(2, 0x666666);
+    button.add(background);
 
-    // Add tower name text
-    const nameText = this.scene.add.text(0, -8, tower.type, {
-      fontSize: "14px",
+    // Tower icon (circle with distinctive features based on type)
+    const icon = this.scene.add.container(-buttonWidth / 2 + 30, 0);
+    const iconCircle = this.scene.add.circle(0, 0, 15);
+
+    switch (tower.type) {
+      case TowerType.SHOOTER:
+        iconCircle.setFillStyle(0xff0000);
+        const barrel = this.scene.add.rectangle(15, 0, 10, 4, 0x000000);
+        icon.add([iconCircle, barrel]);
+        break;
+      case TowerType.HEALER:
+        iconCircle.setFillStyle(0x00ff00);
+        const cross = this.scene.add.graphics();
+        cross.lineStyle(2, 0xffffff);
+        cross.moveTo(-5, 0);
+        cross.lineTo(5, 0);
+        cross.moveTo(0, -5);
+        cross.lineTo(0, 5);
+        icon.add([iconCircle, cross]);
+        break;
+    }
+    button.add(icon);
+
+    // Tower name
+    const nameText = this.scene.add.text(-buttonWidth / 4, -15, tower.type, {
+      fontSize: "16px",
       color: "#ffffff",
-      fontFamily: "Arial",
     });
-    nameText.setOrigin(0.5);
     button.add(nameText);
 
-    // Add cost text
-    const costText = this.scene.add.text(0, 8, `${tower.cost} souls`, {
-      fontSize: "12px",
-      color: "#ffff00",
-      fontFamily: "Arial",
-    });
-    costText.setOrigin(0.5);
+    // Tower cost
+    const costText = this.scene.add.text(
+      -buttonWidth / 4,
+      5,
+      `${tower.cost} souls`,
+      {
+        fontSize: "14px",
+        color: "#ffff00",
+      }
+    );
     button.add(costText);
 
-    // Make button interactive
-    buttonBg.setInteractive({ useHandCursor: true });
+    // Stats preview (on hover)
+    const statsContainer = this.scene.add.container(buttonWidth + 10, 0);
+    statsContainer.setVisible(false);
 
-    // Add hover effects
-    buttonBg.on("pointerover", () => {
-      buttonBg.setFillStyle(0x666666);
-      buttonBg.setStrokeStyle(2, 0x888888);
-      this.scene.registry.get("audioManager")?.playSound("ui_hover");
-    });
+    const statsBox = this.scene.add.rectangle(0, 0, 150, 100, 0x000000, 0.9);
+    statsBox.setStrokeStyle(1, 0xffffff);
 
-    buttonBg.on("pointerout", () => {
-      buttonBg.setFillStyle(0x444444);
-      buttonBg.setStrokeStyle(2, 0x666666);
-    });
+    const statsText = this.scene.add.text(
+      -70,
+      -45,
+      `Damage: ${tower.damage}\n` +
+        `Range: ${tower.range}\n` +
+        `Rate: ${tower.fireRate / 1000}/s\n` +
+        `Type: ${tower.type}`,
+      {
+        fontSize: "12px",
+        color: "#ffffff",
+      }
+    );
 
-    buttonBg.on("pointerdown", () => {
-      this.handleButtonClick(tower.type);
-      this.scene.registry.get("audioManager")?.playSound("ui_click");
-    });
+    statsContainer.add([statsBox, statsText]);
+    button.add(statsContainer);
+
+    // Hover effects
+    background
+      .setInteractive({ useHandCursor: true })
+      .on("pointerover", () => {
+        background.setFillStyle(0x666666);
+        statsContainer.setVisible(true);
+      })
+      .on("pointerout", () => {
+        if (this.selectedTower !== tower.type) {
+          background.setFillStyle(0x444444);
+        }
+        statsContainer.setVisible(false);
+      })
+      .on("pointerdown", () => {
+        this.selectTower(tower.type);
+      });
 
     return button;
   }
@@ -126,8 +169,9 @@ export class BuildMenu {
       if (!button || !button.list || button.list.length < 4) return;
 
       const buttonBg = button.list[0] as Phaser.GameObjects.Rectangle;
-      const nameText = button.list[1] as Phaser.GameObjects.Text;
-      const costText = button.list[2] as Phaser.GameObjects.Text;
+      const icon = button.list[1] as Phaser.GameObjects.Container;
+      const nameText = button.list[2] as Phaser.GameObjects.Text;
+      const costText = button.list[3] as Phaser.GameObjects.Text;
 
       const canAfford = state.souls >= tower.cost;
       const isSelected = this.selectedTower === tower.type;
@@ -136,21 +180,24 @@ export class BuildMenu {
       if (isSelected) {
         buttonBg.setFillStyle(0x00ff00, 0.5);
         buttonBg.setStrokeStyle(2, 0x00ff00);
+        icon.setAlpha(1);
       } else if (!canAfford) {
         buttonBg.setFillStyle(0x444444, 0.5);
         buttonBg.setStrokeStyle(2, 0x666666);
         nameText.setTint(0x666666);
         costText.setTint(0x666666);
+        icon.setAlpha(0.5);
       } else {
         buttonBg.setFillStyle(0x444444);
         buttonBg.setStrokeStyle(2, 0x666666);
         nameText.setTint(0xffffff);
         costText.setTint(0xffff00);
+        icon.setAlpha(1);
       }
     });
   }
 
-  private handleButtonClick(tower: TowerType): void {
+  private selectTower(tower: TowerType): void {
     // Toggle selection
     this.selectedTower = this.selectedTower === tower ? null : tower;
     this.scene.events.emit("towerSelected", tower);
