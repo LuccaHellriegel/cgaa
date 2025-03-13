@@ -1,6 +1,6 @@
 ---
 description: Implement changes incrementally when refactoring existing functionality to maintain stability and testability
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Incremental Refactoring

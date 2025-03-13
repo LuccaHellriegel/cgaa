@@ -1,6 +1,6 @@
 ---
 description: Implement robust asynchronous asset loading to ensure smooth gameplay and prevent blocking operations
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Asynchronous Asset Management

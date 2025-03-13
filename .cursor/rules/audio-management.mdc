@@ -1,6 +1,6 @@
 ---
 description: Implement efficient audio management when adding sound to enhance gameplay without performance issues
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Effective Audio Management

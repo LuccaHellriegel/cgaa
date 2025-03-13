@@ -1,6 +1,6 @@
 ---
 description: Structure game state and scene management in Phaser games to ensure clean transitions and maintainable code
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Effective State and Scene Management

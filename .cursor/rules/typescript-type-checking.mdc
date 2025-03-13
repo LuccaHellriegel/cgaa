@@ -1,6 +1,6 @@
 ---
 description: Run type checking proactively after code changes to maintain type safety and catch potential issues early
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # TypeScript Type Checking

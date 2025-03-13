@@ -1,6 +1,6 @@
 ---
 description: Implement object pooling when creating frequently used game objects to prevent performance degradation
-globs: "src/**/*.ts"
+globs: **/*.ts
 ---
 
 # Object Pooling for Game Entities

@@ -31,7 +31,7 @@ export class Game extends Scene {
   // Game Managers
   private waveManager: WaveManager;
   private towerGroup: Phaser.GameObjects.Group;
-  private audioManager: AudioManager;
+  private audioManager: AudioManager | null;
 
   constructor() {
     super("Game");
@@ -72,7 +72,12 @@ export class Game extends Scene {
     }
 
     // Initialize managers
-    this.audioManager = this.registry.get("audioManager");
+    this.audioManager = this.registry.get("audioManager") || null;
+    if (!this.audioManager) {
+      console.warn(
+        "AudioManager not found in registry, audio will be unavailable"
+      );
+    }
 
     // Initialize UI components
     this.uiController = new UIController(this);
@@ -285,23 +290,19 @@ export class Game extends Scene {
     });
 
     // Wave start events
-    this.events.on(
-      "waveStart",
-      ({ wave }: { wave: number; camp: CampStatus }) => {
-        // Try to play wave start sound, but don't crash if missing
+    this.events.on("waveStart", (_: { wave: number; camp: CampStatus }) => {
+      // Try to play wave start sound, but don't crash if missing
+      if (this.audioManager) {
         try {
-          if (this.audioManager) {
-            // Check if the sound exists before trying to play it
-            this.audioManager.playSound("wave_start");
-          }
+          this.audioManager.playSound("wave_start");
         } catch (error) {
           console.warn("Could not play wave_start sound", error);
         }
-
-        // Flash wave counter
-        this.cameras.main.flash(500, 255, 0, 0, true);
       }
-    );
+
+      // Flash wave counter
+      this.cameras.main.flash(500, 255, 0, 0, true);
+    });
   }
 
   private updateSouls(amount: number): void {
@@ -311,7 +312,7 @@ export class Game extends Scene {
     this.playerStatusUI.updateSouls(amount, amount > oldAmount);
 
     // Play collect sound if souls increased
-    if (amount > oldAmount) {
+    if (amount > oldAmount && this.audioManager) {
       this.audioManager.playSound("collect");
     }
   }
@@ -325,7 +326,9 @@ export class Game extends Scene {
 
     // Create the tower
     const tower = new Tower(this, position.x, position.y, towerType);
-    this.audioManager.playSound("build");
+    if (this.audioManager) {
+      this.audioManager.playSound("build");
+    }
 
     // Update souls
     this.updateSouls(this.souls - config.cost);

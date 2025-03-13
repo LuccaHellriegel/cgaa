@@ -7,7 +7,7 @@ export class Boot extends Scene {
 
   preload() {
     // Nothing to preload - just show a simple loading message
-    const loadingText = this.add
+    this.add
       .text(
         this.cameras.main.centerX,
         this.cameras.main.centerY,

@@ -1,6 +1,6 @@
 ---
 description: Leverage TypeScript's static typing system to ensure code reliability and implement robust error handling
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Strong Type Safety and Error Handling

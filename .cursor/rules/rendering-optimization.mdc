@@ -1,6 +1,6 @@
 ---
 description: Optimize rendering performance when creating visual elements to ensure smooth gameplay
-globs: "src/**/*.ts"
+globs: **/*.ts
 ---
 
 # Optimize Rendering for Performance

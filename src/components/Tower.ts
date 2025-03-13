@@ -88,7 +88,7 @@ export class Tower extends BaseComponent {
     });
   }
 
-  public update(time: number, delta: number): void {
+  public update(time: number, _delta: number): void {
     if (time - this.lastFireTime >= this.config.fireRate) {
       this.fire();
       this.lastFireTime = time;

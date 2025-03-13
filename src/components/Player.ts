@@ -113,7 +113,7 @@ export class Player extends BaseComponent {
     return this.sprite;
   }
 
-  public update(time: number, delta: number): void {
+  public update(_time: number, _delta: number): void {
     if (this.isDead) {
       this.sprite.setVelocity(0, 0);
     }

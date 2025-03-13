@@ -1,0 +1,174 @@
+---
+description: Apply thorough assertions when coding to detect errors early and prevent cascading failures
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+# Assertion Best Practices
+
+## Context
+- When writing functions that depend on specific input conditions
+- When implementing code with important invariants
+- At boundaries where data moves between systems or components
+- When making assumptions about the state of code
+- When implementing complex logic with multiple edge cases
+
+## Requirements
+- Assert all function arguments and return values to ensure data integrity
+- Maintain a minimum of two assertions per function for thorough validation
+- Apply paired assertions: verify the same property through different code paths (input/output)
+- Split compound assertions into individual checks for better error identification
+- Assert both expected valid states AND unexpected invalid states
+- Place assertions at trust boundaries where data validity might change
+- Include rich context in assertion failure messages to aid debugging
+- Use compile-time assertions where possible to catch errors earlier
+
+## Examples
+
+<example>
+```typescript
+// Good: Thorough assertions with both preconditions and postconditions
+function calculateArea(width: number, height: number): number {
+  // Input assertions with clear error messages and context
+  assert(typeof width === 'number', 'Width must be a number', { width });
+  assert(typeof height === 'number', 'Height must be a number', { height });
+  assert(width > 0, 'Width must be positive', { width });
+  assert(height > 0, 'Height must be positive', { height });
+  
+  const area = width * height;
+  
+  // Output/postcondition assertions
+  assert(area > 0, 'Calculated area must be positive', { 
+    width, height, area 
+  });
+  assert(area === width * height, 'Area calculation must be accurate', {
+    expected: width * height,
+    actual: area
+  });
+  
+  return area;
+}
+
+// Good: Class with invariant assertions
+class Rectangle {
+  private _width: number;
+  private _height: number;
+  
+  constructor(width: number, height: number) {
+    assert(width > 0, 'Width must be positive', { width });
+    assert(height > 0, 'Height must be positive', { height });
+    
+    this._width = width;
+    this._height = height;
+  }
+  
+  get area(): number {
+    // Invariant check
+    assert(this._width > 0 && this._height > 0, 
+      'Rectangle dimensions must remain positive', {
+        width: this._width,
+        height: this._height
+      }
+    );
+    
+    return this._width * this._height;
+  }
+  
+  scale(factor: number): void {
+    assert(factor !== 0, 'Scaling factor cannot be zero', { factor });
+    
+    const oldWidth = this._width;
+    const oldHeight = this._height;
+    
+    this._width *= factor;
+    this._height *= factor;
+    
+    // Postcondition assertions
+    assert(
+      factor > 0 ? this._width > oldWidth : this._width < oldWidth,
+      'Width scaling direction must match factor sign',
+      { oldWidth, newWidth: this._width, factor }
+    );
+    
+    // Invariant preservation
+    assert(this._width > 0, 'Width must remain positive after scaling', {
+      oldWidth,
+      newWidth: this._width,
+      factor
+    });
+  }
+}
+
+// Good: Paired assertions at system boundaries
+function saveUserData(user: UserData): void {
+  // Pre-save assertion
+  assert(isValidUser(user), 'Cannot save invalid user data', { user });
+  
+  // Save to database
+  database.save(user);
+  
+  // Post-save assertion (paired with pre-save)
+  const savedUser = database.get(user.id);
+  assert(
+    JSON.stringify(savedUser) === JSON.stringify(user),
+    'Saved user must match original user data',
+    { original: user, saved: savedUser }
+  );
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// Bad: Missing assertions on critical inputs
+function divideNumbers(a, b) {
+  // No validation of b being non-zero
+  return a / b; // Potential division by zero
+}
+
+// Bad: Using assertions for expected control flow
+function fetchUserProfile(userId) {
+  const response = api.getUser(userId);
+  // Should use conditional logic, not assertions
+  assert(response.status === 200, 'Failed to fetch user');
+  return response.data;
+}
+
+// Bad: Compound assertions that mask specific failures
+function processPayment(payment) {
+  // Too many conditions in one assertion
+  assert(
+    payment && 
+    payment.amount > 0 && 
+    payment.account && 
+    payment.account.balance >= payment.amount,
+    'Invalid payment'
+  );
+  
+  // Process payment...
+}
+
+// Bad: Assertions without context for debugging
+function validateEmail(email) {
+  assert(email.includes('@'), 'Invalid email'); // Poor message
+  // Missing context about which email failed
+}
+```
+</example>
+
+## Notes on Effective Assertion Usage
+
+1. Assertions detect programmer errors, not handle expected error conditions
+2. Use assertions to document and enforce critical assumptions
+3. Focus on catching errors early, before they propagate through the system
+4. Distinguish between:
+   - Assertions: for programmer errors (internal failures)
+   - Validation: for user input (expected external failures)
+   - Error handling: for recoverable system conditions
+5. Pair assertions to catch problems on both sides of operations:
+   - Before/after state changes
+   - Before/after external system calls
+   - Input/output of functions
+6. Make assertions informative, contextual, and as helpful as possible for debugging
+7. Consider compile-time assertions for checking assumptions during development
+
+<version>1.1.0</version> 

@@ -4,13 +4,13 @@ import { AudioManager } from "../managers/AudioManager";
 
 export class Preloader extends Scene {
   private graphicsGenerator: GraphicsGenerator;
-  private audioManager: AudioManager;
+  private audioManager: AudioManager | null = null;
   private loadingText: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: "Preloader" });
     this.graphicsGenerator = new GraphicsGenerator(this);
-    this.audioManager = new AudioManager(this);
+    // We'll initialize the AudioManager in the create method instead
   }
 
   init() {
@@ -27,9 +27,7 @@ export class Preloader extends Scene {
       .setOrigin(0.5);
 
     // Create a loading bar container with proper styling
-    const barBg = this.add
-      .rectangle(512, 384, 468, 32, 0x111111)
-      .setStrokeStyle(2, 0x444444);
+    this.add.rectangle(512, 384, 468, 32, 0x111111).setStrokeStyle(2, 0x444444);
 
     // This is the progress bar itself with a more visible color
     const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0x4287f5);
@@ -63,6 +61,12 @@ export class Preloader extends Scene {
   }
 
   create() {
+    // Initialize AudioManager now that the scene is fully initialized
+    this.audioManager = new AudioManager(this);
+
+    // Update loading text
+    this.loadingText.setText("Loading audio...");
+
     // Initialize audio and load all sounds
     this.audioManager
       .loadAudio()
@@ -71,12 +75,14 @@ export class Preloader extends Scene {
         this.registry.set("audioManager", this.audioManager);
 
         // Log audio loading status
-        const status = this.audioManager.getLoadingStatus();
-        console.log(
-          `Audio loading complete. Loaded ${status.loaded}/${status.total} sounds.`
-        );
-        if (status.missing.length > 0) {
-          console.warn("Missing sounds:", status.missing);
+        if (this.audioManager) {
+          const status = this.audioManager.getLoadingStatus();
+          console.log(
+            `Audio loading complete. Loaded ${status.loaded}/${status.total} sounds.`
+          );
+          if (status.missing.length > 0) {
+            console.warn("Missing sounds:", status.missing);
+          }
         }
 
         // Add transition effect

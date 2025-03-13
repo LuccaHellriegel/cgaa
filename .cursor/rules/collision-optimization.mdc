@@ -1,6 +1,6 @@
 ---
 description: Optimize collision detection when implementing game physics to prevent performance bottlenecks
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Efficient Collision Detection

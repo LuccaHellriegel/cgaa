@@ -1,6 +1,6 @@
 ---
 description: Implement structured logging with appropriate verbosity levels to facilitate debugging and performance monitoring
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Structured Logging for Game Development

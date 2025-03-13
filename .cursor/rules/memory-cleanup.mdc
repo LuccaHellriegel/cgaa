@@ -1,6 +1,6 @@
 ---
 description: Implement proper memory and resource cleanup to prevent memory leaks and ensure consistent performance
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Effective Memory Management

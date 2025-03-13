@@ -1,6 +1,6 @@
 ---
 description: Use programmatic asset generation when creating game elements to avoid unnecessary file loading
-globs: src/**/*.{ts,tsx}
+globs: **/*.{ts,tsx}
 ---
 
 # Programmatic Asset Generation

@@ -1,6 +1,6 @@
 ---
 description: Use Vitest instead of Jest for efficient testing of Phaser game components and logic
-globs: src/**/*.{test,spec}.{ts,tsx}
+globs: **/*.{test,spec}.{ts,tsx}
 ---
 
 # Vitest Testing for Phaser Games

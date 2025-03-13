@@ -1,6 +1,6 @@
 ---
 description: Use component-based architecture when designing game entities to improve maintainability and flexibility
-globs: "src/**/*.ts"
+globs: **/*.ts
 ---
 
 # Component-Based Game Entity Architecture

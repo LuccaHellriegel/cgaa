@@ -59,7 +59,6 @@ export class GameProgressUI {
 
   private createMinimap(): void {
     const size = Math.min(150, this.scene.scale.width * 0.15);
-    const padding = 10;
 
     this.minimap = this.scene.add.container(0, 0);
 
