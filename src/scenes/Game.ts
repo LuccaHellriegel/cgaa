@@ -8,6 +8,7 @@ import { WaveManager } from "../managers/WaveManager";
 import { PlayerStatusUI } from "../components/PlayerStatusUI";
 import { Tower, TowerType, TOWER_CONFIGS } from "../components/Tower";
 import { GameProgressUI, ObjectiveMarker } from "../components/GameProgressUI";
+import { AudioManager } from "../managers/AudioManager";
 
 export class Game extends Scene {
   private player: Player;
@@ -30,6 +31,7 @@ export class Game extends Scene {
   // Game Managers
   private waveManager: WaveManager;
   private towerGroup: Phaser.GameObjects.Group;
+  private audioManager: AudioManager;
 
   constructor() {
     super("Game");
@@ -54,7 +56,9 @@ export class Game extends Scene {
       y: this.scale.height / 2,
       texture: "player",
     });
-    this.registry.set("player", this.player);
+
+    // Initialize managers
+    this.audioManager = this.registry.get("audioManager");
 
     // Initialize UI components
     this.uiController = new UIController(this);
@@ -208,7 +212,7 @@ export class Game extends Scene {
       "waveStart",
       ({ wave }: { wave: number; camp: CampStatus }) => {
         // Play wave start sound
-        this.registry.get("audioManager").playSound("wave_start");
+        this.audioManager.playSound("wave_start");
 
         // Flash wave counter
         this.cameras.main.flash(500, 255, 0, 0, true);
@@ -224,7 +228,7 @@ export class Game extends Scene {
 
     // Play collect sound if souls increased
     if (amount > oldAmount) {
-      this.registry.get("audioManager").playSound("collect");
+      this.audioManager.playSound("collect");
     }
   }
 
@@ -237,7 +241,7 @@ export class Game extends Scene {
 
     // Create the tower
     const tower = new Tower(this, position.x, position.y, towerType);
-    this.registry.get("audioManager").playSound("build");
+    this.audioManager.playSound("build");
 
     // Update souls
     this.updateSouls(this.souls - config.cost);
@@ -255,7 +259,7 @@ export class Game extends Scene {
 
     // Update UI and add tower to group
     this.towerMenu.show(towerData);
-    this.towerGroup.add(tower);
+    this.towerGroup.add(tower.container);
   }
 
   private startGameLoop(): void {
@@ -282,7 +286,7 @@ export class Game extends Scene {
     }
 
     // Update game objects
-    this.player.update();
+    this.player.update(time, delta);
     this.waveManager.update(time, delta);
     this.checkCollisions();
   }
@@ -309,6 +313,10 @@ export class Game extends Scene {
     this.gameProgressUI.destroy();
     this.waveManager.destroy();
 
+    // Clean up game objects
+    this.towerGroup.destroy(true); // true to destroy all children
+    this.player.destroy();
+
     // Clean up event handlers
     this.events.off("playerAttack");
     this.events.off("playerInteract");
@@ -317,6 +325,15 @@ export class Game extends Scene {
     this.events.off("waveUpdate");
     this.events.off("objectivesUpdate");
     this.events.off("waveStart");
+
+    // Clean up keyboard inputs
+    if (this.input.keyboard) {
+      this.input.keyboard.removeAllKeys(true, true);
+    }
+
+    // Clean up registry entries specific to this scene
+    this.registry.set("player", null);
+    this.registry.set("audioManager", null);
   }
 
   // Add these new methods for player health management

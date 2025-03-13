@@ -45,7 +45,7 @@ export class WaveManager {
     });
   }
 
-  public update(delta: number): void {
+  public update(time: number, delta: number): void {
     // Update wave timer
     this.waveTimer += delta / 1000; // Convert to seconds
     const timeToNext = Math.max(0, this.nextWaveTime - this.waveTimer);
@@ -57,7 +57,7 @@ export class WaveManager {
     });
 
     // Update enemy positions and states
-    this.enemies.forEach((enemy) => enemy.update());
+    this.enemies.forEach((enemy) => enemy.update(time, delta));
 
     // Clean up destroyed enemies
     this.enemies = this.enemies.filter((enemy) => !enemy.isDestroyed());

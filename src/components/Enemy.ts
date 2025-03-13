@@ -129,7 +129,7 @@ export class Enemy extends BaseComponent {
     });
   }
 
-  public update(): void {
+  public update(time: number, delta: number): void {
     if (this.isDead) {
       this.sprite.setVelocity(0, 0);
       return;

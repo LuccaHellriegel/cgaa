@@ -38,7 +38,7 @@ export class Tower extends BaseComponent {
   private rangeCircle: Phaser.GameObjects.Arc;
   private targets: Enemy[] = [];
   private towerSprite: Phaser.GameObjects.Arc;
-  private container: Phaser.GameObjects.Container;
+  public container: Phaser.GameObjects.Container;
 
   constructor(scene: Scene, x: number, y: number, type: TowerType) {
     super({ scene, x, y });
@@ -88,7 +88,7 @@ export class Tower extends BaseComponent {
     });
   }
 
-  public update(time: number): void {
+  public update(time: number, delta: number): void {
     if (time - this.lastFireTime >= this.config.fireRate) {
       this.fire();
       this.lastFireTime = time;
@@ -178,8 +178,22 @@ export class Tower extends BaseComponent {
   }
 
   destroy(): void {
+    // Clean up event listeners
     this.scene.events.off("update", this.update, this);
+
+    // Clean up physics body if it exists
+    if (this.container.body) {
+      (this.container.body as Phaser.Physics.Arcade.Body).destroy();
+    }
+
+    // Clean up game objects
+    this.towerSprite.destroy();
+    this.rangeCircle.destroy();
     this.container.destroy();
+
+    // Clean up any remaining targets
+    this.targets = [];
+
     super.destroy();
   }
 }

@@ -154,9 +154,26 @@ export class UIController {
   }
 
   public destroy(): void {
+    // Clean up UI elements
     this.modeText.destroy();
-    // Clean up any event listeners
+
+    // Clean up keyboard event listeners
     this.scene.input.keyboard?.off("keydown-F");
+
+    // Clean up mouse event listeners
     this.scene.input.off("pointerdown");
+
+    // Clean up any scene event listeners
+    this.scene.events.off("soulsUpdated");
+
+    // Reset state
+    this.state = {
+      currentMode: GameMode.ATTACK,
+      souls: 0,
+      selectedTower: null,
+      showBuildMenu: false,
+      showTowerMenu: false,
+      showDiplomatMenu: false,
+    };
   }
 }
