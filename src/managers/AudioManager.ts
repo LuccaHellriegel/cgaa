@@ -5,13 +5,14 @@ export class AudioManager {
   private sounds: Map<string, Phaser.Sound.BaseSound>;
   private soundsEnabled: boolean = true;
   private loadedSounds: Set<string> = new Set();
+  private fallbackSound: Phaser.Sound.BaseSound | null = null;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.sounds = new Map();
   }
 
-  public loadAudio(): void {
+  public loadAudio(): Promise<void> {
     // Load audio with both MP3 and OGG formats for better browser compatibility
     const soundConfigs = {
       hit: { volume: 0.5, rate: 1 },
@@ -21,47 +22,99 @@ export class AudioManager {
       death: { volume: 0.7, rate: 1 },
       ui_hover: { volume: 0.3, rate: 1 },
       ui_click: { volume: 0.4, rate: 1 },
+      wave_start: { volume: 0.5, rate: 1 },
     };
 
-    // Load audio files
-    Object.keys(soundConfigs).forEach((key) => {
-      try {
-        this.scene.load.audio(key, [
-          `assets/audio/${key}.mp3`,
-          `assets/audio/${key}.ogg`,
-        ]);
+    // Create a promise to track when all sounds are loaded
+    return new Promise((resolve, reject) => {
+      // Check which audio files actually exist
+      const fileCheckPromises = Object.keys(soundConfigs).map((key) => {
+        return fetch(`assets/audio/${key}.mp3`)
+          .then((response) => {
+            if (response.ok) {
+              return { key, exists: true };
+            }
+            return { key, exists: false };
+          })
+          .catch(() => {
+            return { key, exists: false };
+          });
+      });
 
-        // Add error handler for each audio file
-        this.scene.load.on(`filecomplete-audio-${key}`, () => {
-          this.loadedSounds.add(key);
-          console.log(`Successfully loaded audio: ${key}`);
-        });
+      // Track existence of files
+      const existingFiles = new Set<string>();
 
-        this.scene.load.on(`loaderror`, (file: any) => {
-          if (file.key === key) {
-            console.warn(`Failed to load audio file: ${key}`);
-          }
-        });
-      } catch (error) {
-        console.warn(`Error setting up audio load for ${key}:`, error);
-      }
-    });
-
-    // Initialize sounds when loading is complete
-    this.scene.load.on("complete", () => {
-      Object.entries(soundConfigs).forEach(([key, config]) => {
-        try {
-          if (this.loadedSounds.has(key)) {
-            const sound = this.scene.sound.add(key, config);
-            this.sounds.set(key, sound);
+      // Process file checks and then load audio
+      Promise.all(fileCheckPromises).then((results) => {
+        results.forEach((result) => {
+          if (result.exists) {
+            existingFiles.add(result.key);
           } else {
             console.warn(
-              `Skipping creation of sound ${key} as it was not loaded successfully`
+              `Audio file '${result.key}' not found, will use fallback if needed.`
             );
           }
-        } catch (error) {
-          console.warn(`Failed to create sound: ${key}`, error);
+        });
+
+        // Skip loading if no files exist
+        if (existingFiles.size === 0) {
+          console.warn("No audio files found, skipping audio loading");
+          resolve();
+          return;
         }
+
+        // Now load only the files that exist
+        existingFiles.forEach((key) => {
+          try {
+            this.scene.load.audio(key, [
+              `assets/audio/${key}.mp3`,
+              `assets/audio/${key}.ogg`,
+            ]);
+
+            // Add success handler
+            this.scene.load.on(`filecomplete-audio-${key}`, () => {
+              this.loadedSounds.add(key);
+              console.log(`Successfully loaded audio: ${key}`);
+            });
+          } catch (error) {
+            console.warn(`Error setting up audio load for ${key}:`, error);
+          }
+        });
+
+        // Set up complete handler to resolve the promise
+        this.scene.load.on("complete", () => {
+          // Create a fallback sound if at least one sound loaded successfully
+          if (existingFiles.size > 0) {
+            const firstSoundKey = Array.from(existingFiles)[0];
+            this.fallbackSound = this.scene.sound.add(firstSoundKey, {
+              volume: 0.3,
+            });
+          }
+
+          Object.entries(soundConfigs).forEach(([key, config]) => {
+            try {
+              if (this.loadedSounds.has(key)) {
+                const sound = this.scene.sound.add(key, config);
+                this.sounds.set(key, sound);
+              } else {
+                console.warn(
+                  `Skipping creation of sound ${key} as it was not loaded successfully`
+                );
+              }
+            } catch (error) {
+              console.warn(`Failed to create sound: ${key}`, error);
+            }
+          });
+
+          console.log("All audio loaded successfully");
+          resolve();
+        });
+
+        // Handle loading error
+        this.scene.load.on("loaderror", (fileObj: any) => {
+          console.error(`Error loading audio file: ${fileObj.key}`);
+          // Do not reject the entire promise for a single file failure
+        });
       });
     });
 
@@ -78,7 +131,14 @@ export class AudioManager {
       if (sound) {
         sound.play();
       } else {
-        console.warn(`Attempted to play non-existent sound: ${key}`);
+        // Use fallback sound if the requested sound doesn't exist
+        if (this.fallbackSound && key === "wave_start") {
+          console.warn(`Using fallback sound for missing audio: ${key}`);
+          this.fallbackSound.play();
+        } else {
+          // Just log a warning but don't break the game flow
+          console.warn(`Sound not available: ${key}`);
+        }
       }
     } catch (error) {
       console.warn(`Error playing sound ${key}:`, error);
@@ -129,5 +189,24 @@ export class AudioManager {
     this.loadedSounds.clear();
     this.scene.events.off("pause", this.handlePause, this);
     this.scene.events.off("resume", this.handleResume, this);
+  }
+
+  // Get loaded sound status
+  public getLoadingStatus(): {
+    total: number;
+    loaded: number;
+    missing: string[];
+  } {
+    const allSoundKeys = Array.from(this.sounds.keys());
+    const loadedSoundKeys = Array.from(this.loadedSounds);
+    const missingSounds = allSoundKeys.filter(
+      (key) => !this.loadedSounds.has(key)
+    );
+
+    return {
+      total: allSoundKeys.length,
+      loaded: loadedSoundKeys.length,
+      missing: missingSounds,
+    };
   }
 }

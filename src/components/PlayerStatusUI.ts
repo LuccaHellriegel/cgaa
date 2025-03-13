@@ -22,14 +22,31 @@ export class PlayerStatusUI {
     this.createHealthBar();
     this.createSoulsCounter();
     this.setupParticles();
+
+    // Listen for screen resize
+    this.scene.scale.on("resize", this.updatePositions, this);
+    this.updatePositions();
+  }
+
+  private updatePositions(): void {
+    // Adjust positions based on screen size
+    const margin = 20;
+
+    if (this.healthBarContainer) {
+      this.healthBarContainer.setPosition(margin, margin);
+    }
+
+    if (this.soulsContainer) {
+      this.soulsContainer.setPosition(margin, margin + 40);
+    }
   }
 
   private createHealthBar(): void {
-    this.healthBarContainer = this.scene.add.container(10, 10);
+    this.healthBarContainer = this.scene.add.container(0, 0);
 
     // Health bar background
     this.healthBarBackground = this.scene.add.rectangle(
-      0,
+      100,
       0,
       200,
       20,
@@ -38,15 +55,15 @@ export class PlayerStatusUI {
     this.healthBarBackground.setStrokeStyle(2, 0xffffff);
 
     // Health bar
-    this.healthBar = this.scene.add.rectangle(0, 0, 200, 20, 0x00ff00);
+    this.healthBar = this.scene.add.rectangle(100, 0, 200, 20, 0x00ff00);
+    this.healthBar.setOrigin(0.5, 0.5);
 
     // Health text
-    this.healthText = this.scene.add.text(0, 0, "100/100", {
+    this.healthText = this.scene.add.text(100, 0, "100/100", {
       fontSize: "16px",
       color: "#ffffff",
     });
     this.healthText.setOrigin(0.5);
-    this.healthText.setPosition(100, 0);
 
     this.healthBarContainer.add([
       this.healthBarBackground,
@@ -57,7 +74,7 @@ export class PlayerStatusUI {
   }
 
   private createSoulsCounter(): void {
-    this.soulsContainer = this.scene.add.container(10, 40);
+    this.soulsContainer = this.scene.add.container(0, 0);
 
     // Souls icon
     this.soulsIcon = this.scene.add.circle(
@@ -157,6 +174,7 @@ export class PlayerStatusUI {
   }
 
   public destroy(): void {
+    this.scene.scale.off("resize", this.updatePositions, this);
     this.soulsParticles.destroy();
     this.container.destroy();
   }

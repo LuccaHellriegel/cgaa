@@ -5,6 +5,7 @@ import { AudioManager } from "../managers/AudioManager";
 export class Preloader extends Scene {
   private graphicsGenerator: GraphicsGenerator;
   private audioManager: AudioManager;
+  private loadingText: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: "Preloader" });
@@ -13,35 +14,42 @@ export class Preloader extends Scene {
   }
 
   init() {
-    //  We loaded this image in our Boot Scene, so we can display it here
-    this.add.image(512, 384, "background");
+    // Add a black background to ensure proper contrast
+    this.cameras.main.setBackgroundColor("#000000");
 
-    //  A simple progress bar. This is the outline of the bar.
-    this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+    // Add loading text
+    this.loadingText = this.add
+      .text(512, 340, "Loading...", {
+        fontFamily: "Arial",
+        fontSize: "24px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
 
-    //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-    const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+    // Create a loading bar container with proper styling
+    const barBg = this.add
+      .rectangle(512, 384, 468, 32, 0x111111)
+      .setStrokeStyle(2, 0x444444);
 
-    //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
+    // This is the progress bar itself with a more visible color
+    const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0x4287f5);
+
+    // Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
     this.load.on("progress", (progress: number) => {
-      //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
+      // Update the progress bar (our bar is 464px wide, so 100% = 464px)
       bar.width = 4 + 460 * progress;
+      bar.x = 512 - 230 + (460 * progress) / 2;
+
+      // Update loading text with percentage
+      this.loadingText.setText(`Loading... ${Math.floor(progress * 100)}%`);
     });
   }
 
   preload() {
-    // Display loading progress
-    const progress = this.add.graphics();
+    // All UI assets are generated programmatically, no image loading required
 
-    this.load.on("progress", (value: number) => {
-      progress.clear();
-      progress.fillStyle(0xffffff, 1);
-      progress.fillRect(0, this.scale.height / 2, this.scale.width * value, 60);
-    });
-
-    this.load.on("complete", () => {
-      progress.destroy();
-    });
+    // Generate UI assets
+    this.graphicsGenerator.generateUIAssets();
 
     // Generate game textures
     this.graphicsGenerator.generatePlayerTexture();
@@ -51,28 +59,47 @@ export class Preloader extends Scene {
     // Set up particle effects (this internally generates the particle texture)
     this.graphicsGenerator.setupParticleEffects();
 
-    // Load audio assets using AudioManager
-    this.audioManager.loadAudio();
+    // We'll handle audio loading in create() since it returns a Promise
   }
 
   create() {
-    // Initialize audio
-    this.registry.set("audioManager", this.audioManager);
+    // Initialize audio and load all sounds
+    this.audioManager
+      .loadAudio()
+      .then(() => {
+        // Store the audio manager in the registry for global access
+        this.registry.set("audioManager", this.audioManager);
 
-    // Add transition effect
-    const transitionGraphics = this.add.graphics();
-    transitionGraphics.fillStyle(0x000000, 1);
-    transitionGraphics.fillRect(0, 0, this.scale.width, this.scale.height);
+        // Log audio loading status
+        const status = this.audioManager.getLoadingStatus();
+        console.log(
+          `Audio loading complete. Loaded ${status.loaded}/${status.total} sounds.`
+        );
+        if (status.missing.length > 0) {
+          console.warn("Missing sounds:", status.missing);
+        }
 
-    this.tweens.add({
-      targets: transitionGraphics,
-      alpha: 0,
-      duration: 500,
-      ease: "Power2",
-      onComplete: () => {
-        transitionGraphics.destroy();
-        this.scene.start("Game");
-      },
-    });
+        // Add transition effect
+        const transitionGraphics = this.add.graphics();
+        transitionGraphics.fillStyle(0x000000, 1);
+        transitionGraphics.fillRect(0, 0, this.scale.width, this.scale.height);
+
+        this.tweens.add({
+          targets: transitionGraphics,
+          alpha: 0,
+          duration: 500,
+          ease: "Power2",
+          onComplete: () => {
+            transitionGraphics.destroy();
+            this.scene.start("MainMenu");
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("Error loading audio:", error);
+        // Continue to main menu even if audio loading fails
+        this.registry.set("audioManager", this.audioManager);
+        this.scene.start("MainMenu");
+      });
   }
 }

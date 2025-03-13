@@ -57,6 +57,20 @@ export class Game extends Scene {
       texture: "player",
     });
 
+    // Set player in registry for other components
+    this.registry.set("player", this.player);
+
+    // Configure world bounds and camera (moved after player creation)
+    this.configureWorldAndCamera();
+
+    // Manually emit player-ready event in case it wasn't picked up
+    this.events.emit("player-ready", this.player);
+
+    // Explicitly set camera to follow player (ensure it works even if event isn't caught)
+    if (this.player) {
+      this.cameras.main.startFollow(this.player.getSprite(), true);
+    }
+
     // Initialize managers
     this.audioManager = this.registry.get("audioManager");
 
@@ -85,6 +99,56 @@ export class Game extends Scene {
 
     // Start game loop
     this.startGameLoop();
+
+    // Set up screen resize handler
+    this.scale.on("resize", this.handleResize, this);
+  }
+
+  private configureWorldAndCamera(): void {
+    // Set world bounds to be larger than the screen (2x width and height)
+    const worldWidth = this.scale.width * 2;
+    const worldHeight = this.scale.height * 2;
+
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+
+    // Set camera bounds to match world bounds
+    this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+
+    // We'll still keep this event handler as a fallback
+    this.events.once("player-ready", () => {
+      if (this.player) {
+        this.cameras.main.startFollow(this.player.getSprite(), true);
+      }
+    });
+  }
+
+  private handleResize(): void {
+    // Update world and camera bounds when screen is resized
+    const worldWidth = this.scale.width * 2;
+    const worldHeight = this.scale.height * 2;
+
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+    this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+
+    // Re-center camera on player with offset
+    if (this.player) {
+      // We keep the player centered by NOT setting any offset
+    }
+
+    // Make sure UI elements are repositioned after resize
+    if (this.buildMenu) {
+      this.buildMenu.updatePosition();
+    }
+
+    // Force rebuild UI layouts for other components that might need repositioning
+    if (this.gameStatusUI) {
+      // Recreate or refresh UI layout as needed
+    }
+
+    if (this.gameProgressUI) {
+      // Update positions explicitly for components where needed
+      this.gameProgressUI.updatePositions();
+    }
   }
 
   private initializeCamps(): void {
@@ -161,7 +225,20 @@ export class Game extends Scene {
         // Check if we're trying to place a tower
         const selectedTower = this.buildMenu.getSelectedTower();
         if (selectedTower) {
-          this.placeTower(selectedTower, target);
+          // Convert screen coordinates to world coordinates
+          const worldX = this.cameras.main.scrollX + target.x;
+          const worldY = this.cameras.main.scrollY + target.y;
+
+          // Simple check to avoid placing towers when clicking on UI at bottom of screen
+          const uiSafeZone = 150; // Height of the bottom area where UI elements are
+          if (target.y > this.scale.height - uiSafeZone) {
+            return; // Don't place tower if clicking in UI area
+          }
+
+          this.placeTower(
+            selectedTower,
+            new Phaser.Math.Vector2(worldX, worldY)
+          );
           this.buildMenu.clearSelection();
         }
       }
@@ -211,8 +288,15 @@ export class Game extends Scene {
     this.events.on(
       "waveStart",
       ({ wave }: { wave: number; camp: CampStatus }) => {
-        // Play wave start sound
-        this.audioManager.playSound("wave_start");
+        // Try to play wave start sound, but don't crash if missing
+        try {
+          if (this.audioManager) {
+            // Check if the sound exists before trying to play it
+            this.audioManager.playSound("wave_start");
+          }
+        } catch (error) {
+          console.warn("Could not play wave_start sound", error);
+        }
 
         // Flash wave counter
         this.cameras.main.flash(500, 255, 0, 0, true);

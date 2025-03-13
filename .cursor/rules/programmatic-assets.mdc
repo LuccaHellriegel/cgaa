@@ -1,0 +1,51 @@
+---
+description: Use programmatic asset generation when creating game elements to avoid unnecessary file loading
+globs: src/**/*.{ts,tsx}
+---
+
+# Programmatic Asset Generation
+
+## Context
+- This game generates all UI elements, icons, and sprites programmatically at runtime
+- No external image files are used for game entities or UI components
+- All visual elements are created using Phaser's graphics primitives
+
+## Requirements
+- Use GraphicsGenerator methods to create textures at runtime
+- Never attempt to load UI or game entity images as external assets
+- Call generateUIAssets() in the Preloader scene
+- Generate all textures before they are needed by game objects
+- Use Phaser's graphics primitives for UI elements
+
+## Examples
+<example>
+// Generate all UI assets in Preloader
+preload() {
+  // Generate all UI assets programmatically
+  this.graphicsGenerator.generateUIAssets();
+  this.graphicsGenerator.generatePlayerTexture();
+  this.graphicsGenerator.generateEnemyTexture();
+}
+</example>
+
+<example type="invalid">
+// Don't load non-existent image files
+preload() {
+  // This is incorrect - files don't exist
+  this.load.image("button", "assets/ui/button.png");
+  this.load.image("health_bar", "assets/ui/health_bar.png");
+}
+</example>
+
+## Common GraphicsGenerator Methods
+- `generatePlayerTexture()` - Creates player character sprites
+- `generateEnemyTexture()` - Creates enemy sprites
+- `generateTowerTexture()` - Creates tower defense structures
+- `setupParticleEffects()` - Creates particle effects for various game events
+
+## Benefits
+- Reduced asset loading time
+- Smaller game file size
+- Easier to make visual changes without requiring new art assets
+- Consistent appearance across different devices and resolutions
+- Avoids issues with missing image files 

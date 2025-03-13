@@ -246,44 +246,43 @@ export class GraphicsGenerator {
     }
   }
 
-  setupParticleEffects(): void {
-    // First generate the particle texture
-    this.generateParticleTexture("particle", 4, 0xffffff, 1);
+  public setupParticleEffects(): void {
+    // Generate particle textures for various effects
+    this.generateParticleTexture("particle", 8, 0xffffff);
+    this.generateParticleTexture(
+      "soul_particle",
+      8,
+      GraphicsGenerator.Colors.SOUL,
+      0.8
+    );
+  }
 
-    // Create particle managers
-    const particles = {
-      impact: this.scene.add.particles(0, 0, "particle", {
-        speed: { min: 50, max: 100 },
-        scale: { start: 1, end: 0 },
-        blendMode: Phaser.BlendModes.ADD,
-        lifespan: 300,
-        maxParticles: 10,
-        active: false,
-      }),
+  public generateUIAssets(): void {
+    // Generate UI button textures
+    this.generateRectangleTexture("button", 200, 50, 0x444444, 0x666666, 2);
+    this.generateRectangleTexture(
+      "button_hover",
+      200,
+      50,
+      0x666666,
+      0x888888,
+      2
+    );
 
-      soul: this.scene.add.particles(0, 0, "particle", {
-        tint: [GraphicsGenerator.Colors.SOUL],
-        speed: { min: 20, max: 50 },
-        scale: { start: 0.5, end: 0 },
-        blendMode: Phaser.BlendModes.ADD,
-        lifespan: 500,
-        maxParticles: 5,
-        active: false,
-      }),
+    // Generate tower icons
+    this.generateCircleTexture("icon_shooter", 15, 0xff0000, 0x000000, 2);
+    this.generateCircleTexture("icon_healer", 15, 0x00ff00, 0x000000, 2);
 
-      heal: this.scene.add.particles(0, 0, "particle", {
-        tint: [GraphicsGenerator.Colors.HEAL],
-        speed: { min: 30, max: 60 },
-        scale: { start: 0.3, end: 0 },
-        blendMode: Phaser.BlendModes.ADD,
-        lifespan: 400,
-        maxParticles: 8,
-        active: false,
-      }),
-    };
-
-    // Store particle emitters for later use
-    this.scene.registry.set("particles", particles);
+    // Generate health bar assets
+    this.generateRectangleTexture("health_bar", 200, 20, 0x00ff00);
+    this.generateRectangleTexture(
+      "health_bar_bg",
+      200,
+      20,
+      0x000000,
+      0xffffff,
+      2
+    );
   }
 
   public generateParticleTexture(

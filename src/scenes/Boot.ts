@@ -6,11 +6,31 @@ export class Boot extends Scene {
   }
 
   preload() {
-    // Load minimal assets required for the loading screen
-    // We'll load game assets in the Preloader scene
+    // Nothing to preload - just show a simple loading message
+    const loadingText = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "Starting game...",
+        {
+          fontFamily: "Arial",
+          fontSize: "24px",
+          color: "#ffffff",
+        }
+      )
+      .setOrigin(0.5);
   }
 
   create() {
+    // Configure global game settings here
+    this.scale.fullscreenTarget = document.getElementById("game-container");
+
+    // Basic error handling setup
+    window.addEventListener("error", (e) => {
+      console.error("Game Error:", e);
+    });
+
+    // Continue to the Preloader scene
     this.scene.start("Preloader");
   }
 }

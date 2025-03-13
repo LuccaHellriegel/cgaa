@@ -15,18 +15,10 @@ const config: Types.Core.GameConfig = {
   parent: "game-container",
   backgroundColor: "#000000",
   scale: {
-    mode: Scale.FIT,
+    mode: Scale.RESIZE,
     autoCenter: Scale.CENTER_BOTH,
     width: 1024,
     height: 768,
-    min: {
-      width: 800,
-      height: 600,
-    },
-    max: {
-      width: 1600,
-      height: 1200,
-    },
   },
   physics: {
     default: "arcade",

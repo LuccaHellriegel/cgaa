@@ -172,4 +172,8 @@ export class TowerMenu {
   public destroy(): void {
     this.container.destroy();
   }
+
+  public getContainer(): Phaser.GameObjects.Container {
+    return this.container;
+  }
 }

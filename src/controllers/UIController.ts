@@ -52,14 +52,14 @@ export class UIController {
 
     // Create container for mode indicator
     const container = this.scene.add.container(
-      10,
-      this.scene.scale.height - 50
+      150,
+      this.scene.scale.height - 60
     );
     container.setDepth(100);
     container.setScrollFactor(0);
 
     // Create background
-    const background = this.scene.add.rectangle(0, 0, 200, 40, 0x000000, 0.7);
+    const background = this.scene.add.rectangle(0, 0, 240, 40, 0x000000, 0.7);
     background.setStrokeStyle(1, 0xffffff);
     container.add(background);
 
@@ -77,6 +77,11 @@ export class UIController {
     );
     container.add(this.modeText);
 
+    // Listen for screen resize
+    this.scene.scale.on("resize", () => {
+      container.setPosition(150, this.scene.scale.height - 60);
+    });
+
     this.updateModeIndicator();
   }
 
@@ -91,7 +96,12 @@ export class UIController {
         ? GameMode.INTERACTION
         : GameMode.ATTACK;
 
+    // Update build menu visibility based on current mode
+    this.state.showBuildMenu = this.state.currentMode === GameMode.INTERACTION;
+
     this.updateModeIndicator();
+    // Emit an event to notify other components about the mode change
+    this.scene.events.emit("modeChanged", this.state.currentMode);
   }
 
   private updateModeIndicator(): void {
@@ -165,6 +175,8 @@ export class UIController {
 
     // Clean up any scene event listeners
     this.scene.events.off("soulsUpdated");
+    this.scene.events.off("modeChanged");
+    this.scene.scale.off("resize");
 
     // Reset state
     this.state = {

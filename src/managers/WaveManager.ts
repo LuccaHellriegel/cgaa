@@ -23,7 +23,30 @@ export class WaveManager {
 
   constructor(scene: Scene) {
     this.scene = scene;
-    this.player = scene.registry.get("player") as Player;
+    this.initializePlayer();
+
+    // Listen for player updates
+    this.scene.events.on("playerUpdated", this.initializePlayer, this);
+
+    // Also listen for player-ready event
+    this.scene.events.on("player-ready", (player: Player) => {
+      if (player && !this.player) {
+        this.player = player;
+        console.log("Player initialized from player-ready event");
+      }
+    });
+  }
+
+  private initializePlayer(): void {
+    // Try to get player from registry
+    if (!this.player) {
+      this.player = this.scene.registry.get("player") as Player;
+      if (this.player) {
+        console.log("Player initialized from registry");
+      } else {
+        console.warn("Player not found in registry");
+      }
+    }
   }
 
   public addCamp(camp: CampStatus): void {
@@ -69,7 +92,23 @@ export class WaveManager {
 
   private getObjectives(): ObjectiveMarker[] {
     const objectives: ObjectiveMarker[] = [];
-    const playerSprite = this.player.getSprite();
+    if (!this.player) {
+      this.initializePlayer(); // Try one more time
+      if (!this.player) {
+        console.warn("Cannot get objectives: Player not initialized");
+        return objectives;
+      }
+    }
+
+    // Safely get player sprite
+    let playerSprite;
+    try {
+      playerSprite = this.player.getSprite();
+    } catch (error) {
+      console.warn("Error getting player sprite:", error);
+      return objectives;
+    }
+
     const playerPosition = {
       x: playerSprite.x,
       y: playerSprite.y,
@@ -96,20 +135,26 @@ export class WaveManager {
 
     // Add active enemies as objectives
     this.enemies.forEach((enemy, index) => {
-      const enemySprite = enemy.getSprite();
-      const distance = Phaser.Math.Distance.Between(
-        playerPosition.x,
-        playerPosition.y,
-        enemySprite.x,
-        enemySprite.y
-      );
+      try {
+        const enemySprite = enemy.getSprite();
+        if (enemySprite) {
+          const distance = Phaser.Math.Distance.Between(
+            playerPosition.x,
+            playerPosition.y,
+            enemySprite.x,
+            enemySprite.y
+          );
 
-      objectives.push({
-        id: `enemy_${index}`,
-        position: new Phaser.Math.Vector2(enemySprite.x, enemySprite.y),
-        type: "enemy",
-        distance,
-      });
+          objectives.push({
+            id: `enemy_${index}`,
+            position: new Phaser.Math.Vector2(enemySprite.x, enemySprite.y),
+            type: "enemy",
+            distance,
+          });
+        }
+      } catch (error) {
+        console.warn(`Error getting enemy sprite for enemy ${index}:`, error);
+      }
     });
 
     return objectives;
@@ -128,6 +173,8 @@ export class WaveManager {
   }
 
   public destroy(): void {
+    this.scene.events.off("playerUpdated", this.initializePlayer, this);
+    this.scene.events.off("player-ready");
     this.enemies.forEach((enemy) => enemy.destroy());
     this.enemies = [];
   }

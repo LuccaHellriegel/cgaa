@@ -17,13 +17,11 @@ export class BuildMenu {
     this.scene = scene;
 
     // Create container at the bottom center of the screen
-    this.container = this.scene.add.container(
-      this.scene.scale.width / 2,
-      this.scene.scale.height - 80
-    );
+    this.container = this.scene.add.container(0, 0);
+    this.updatePosition();
 
     // Add semi-transparent background
-    const menuWidth = 400;
+    const menuWidth = Math.min(400, this.scene.scale.width * 0.8);
     const menuHeight = 60;
     this.menuBackground = this.scene.add.rectangle(
       0,
@@ -31,16 +29,21 @@ export class BuildMenu {
       menuWidth,
       menuHeight,
       0x000000,
-      0.7
+      0.8
     );
     this.container.add(this.menuBackground);
 
     // Add title text
-    const titleText = this.scene.add.text(-180, -25, "Build Towers:", {
-      fontSize: "16px",
-      color: "#ffffff",
-      fontFamily: "Arial",
-    });
+    const titleText = this.scene.add.text(
+      -menuWidth / 2 + 20,
+      -25,
+      "Build Towers:",
+      {
+        fontSize: "16px",
+        color: "#ffffff",
+        fontFamily: "Arial",
+      }
+    );
     this.container.add(titleText);
 
     // Create tower buttons
@@ -49,6 +52,32 @@ export class BuildMenu {
       this.towerButtons.push(button);
       this.container.add(button);
     });
+
+    // Listen for screen resize
+    this.scene.scale.on("resize", this.updatePosition, this);
+
+    // Listen for mode changes
+    this.scene.events.on("modeChanged", this.handleModeChanged, this);
+
+    // Initialize as hidden
+    this.container.setVisible(false);
+  }
+
+  public updatePosition(): void {
+    if (this.container) {
+      // Position at the bottom center with adequate margin
+      const margin = 120;
+      this.container.setPosition(
+        this.scene.scale.width / 2,
+        this.scene.scale.height - margin
+      );
+
+      // Update menu background size if needed
+      const menuWidth = Math.min(400, this.scene.scale.width * 0.8);
+      if (this.menuBackground) {
+        this.menuBackground.width = menuWidth;
+      }
+    }
   }
 
   private createTowerButton(
@@ -211,7 +240,19 @@ export class BuildMenu {
     this.selectedTower = null;
   }
 
+  private handleModeChanged(mode: string): void {
+    // Show menu only when in INTERACTION mode (build mode)
+    this.container.setVisible(mode === "interaction");
+  }
+
   public destroy(): void {
+    this.scene.scale.off("resize", this.updatePosition, this);
+    this.scene.events.off("modeChanged", this.handleModeChanged, this);
     this.container.destroy();
+    this.towerButtons = [];
+  }
+
+  public getContainer(): Phaser.GameObjects.Container {
+    return this.container;
   }
 }

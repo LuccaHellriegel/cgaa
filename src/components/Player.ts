@@ -32,6 +32,9 @@ export class Player extends BaseComponent {
 
     // Start with idle animation
     this.sprite.play("player_idle");
+
+    // Emit player ready event
+    this.scene.events.emit("player-ready", this);
   }
 
   public setVelocity(x: number, y: number): void {

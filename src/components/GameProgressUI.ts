@@ -27,43 +27,41 @@ export class GameProgressUI {
 
     this.createWaveInfo();
     this.createMinimap();
+
+    // Listen for screen resize
+    this.scene.scale.on("resize", this.updatePositions, this);
   }
 
   private createWaveInfo(): void {
-    this.waveContainer = this.scene.add.container(
-      this.scene.scale.width - 200,
-      10
-    );
+    this.waveContainer = this.scene.add.container(0, 0);
 
     // Wave counter background
     const background = this.scene.add.rectangle(0, 0, 180, 50, 0x000000, 0.7);
     background.setStrokeStyle(1, 0xffffff);
 
     // Wave counter text
-    this.waveText = this.scene.add.text(-80, -20, "Wave: 1", {
+    this.waveText = this.scene.add.text(-70, -15, "Wave: 1", {
       fontSize: "18px",
       color: "#ffffff",
       fontStyle: "bold",
     });
 
     // Next wave timer
-    this.timerText = this.scene.add.text(-80, 5, "Next: 0:30", {
+    this.timerText = this.scene.add.text(-70, 10, "Next: 0:30", {
       fontSize: "14px",
       color: "#ffff00",
     });
 
     this.waveContainer.add([background, this.waveText, this.timerText]);
     this.container.add(this.waveContainer);
+    this.updatePositions();
   }
 
   private createMinimap(): void {
-    const size = 150;
+    const size = Math.min(150, this.scene.scale.width * 0.15);
     const padding = 10;
 
-    this.minimap = this.scene.add.container(
-      this.scene.scale.width - size - padding,
-      this.scene.scale.height - size - padding
-    );
+    this.minimap = this.scene.add.container(0, 0);
 
     // Minimap background
     const background = this.scene.add.rectangle(
@@ -87,6 +85,34 @@ export class GameProgressUI {
     this.minimap.add(playerMarker);
 
     this.container.add(this.minimap);
+    this.updatePositions();
+  }
+
+  public updatePositions(): void {
+    const padding = 50;
+
+    if (this.waveContainer) {
+      // Position wave info in the top-right corner with proper padding
+      this.waveContainer.setPosition(
+        this.scene.scale.width - padding - 90, // Offset by half the container width
+        padding
+      );
+    }
+
+    if (this.minimap) {
+      const size = Math.min(150, this.scene.scale.width * 0.15);
+      this.minimap.setPosition(
+        this.scene.scale.width - size / 2 - padding,
+        this.scene.scale.height - size / 2 - padding
+      );
+
+      // Resize minimap background if needed
+      const background = this.minimap.getAt(0) as Phaser.GameObjects.Rectangle;
+      if (background) {
+        background.width = size;
+        background.height = size;
+      }
+    }
   }
 
   public updateWaveInfo(wave: number, timeToNext: number): void {
@@ -110,6 +136,9 @@ export class GameProgressUI {
     // Clear old markers
     this.objectiveMarkers.forEach((marker) => marker.destroy());
     this.objectiveMarkers.clear();
+
+    // We'll let updateMinimapPositions handle the minimap markers instead of creating them here
+    // This avoids duplicate creation and removal of minimap markers
 
     objectives.forEach((objective) => {
       // Create marker container
@@ -152,11 +181,6 @@ export class GameProgressUI {
       }
 
       this.objectiveMarkers.set(objective.id, marker);
-
-      // Add to minimap
-      const minimapMarker = this.scene.add.circle(0, 0, 2, color);
-      this.minimapObjects.set(objective.id, minimapMarker);
-      this.minimap.add(minimapMarker);
     });
   }
 
@@ -164,16 +188,65 @@ export class GameProgressUI {
     playerPosition: Phaser.Math.Vector2,
     objectives: ObjectiveMarker[]
   ): void {
-    const scale = 0.1; // Scale factor for minimap positions
+    // Get minimap size from the background rectangle
+    const background = this.minimap.getAt(0) as Phaser.GameObjects.Rectangle;
+    const minimapSize = background ? background.width : 150;
+    const halfSize = minimapSize / 2;
+
+    // Adjust scale factor - using a reasonable scale for the game world
+    const scale = 0.05; // Reduced from 0.1 to avoid positions going out of bounds
+    const maxDistance = halfSize - 4; // Maximum distance from center, leaving room for marker size
+
+    // Create a set of current objective IDs to track which markers should remain
+    const currentObjectiveIds = new Set(objectives.map((obj) => obj.id));
+
+    // Remove any markers that aren't in the current objectives (cleanup old markers)
+    this.minimapObjects.forEach((marker, id) => {
+      if (!currentObjectiveIds.has(id)) {
+        marker.destroy();
+        this.minimapObjects.delete(id);
+      }
+    });
 
     objectives.forEach((objective) => {
-      const minimapMarker = this.minimapObjects.get(objective.id);
-      if (minimapMarker) {
-        // Calculate relative position to player
-        const relativeX = (objective.position.x - playerPosition.x) * scale;
-        const relativeY = (objective.position.y - playerPosition.y) * scale;
-        minimapMarker.setPosition(relativeX, relativeY);
+      let minimapMarker = this.minimapObjects.get(objective.id);
+
+      // If marker doesn't exist, create a new one
+      if (!minimapMarker) {
+        let color: number;
+        switch (objective.type) {
+          case "camp":
+            color = GraphicsGenerator.Colors.NEUTRAL;
+            break;
+          case "quest":
+            color = GraphicsGenerator.Colors.WARNING;
+            break;
+          case "enemy":
+            color = GraphicsGenerator.Colors.ENEMY;
+            break;
+        }
+
+        minimapMarker = this.scene.add.circle(0, 0, 2, color);
+        this.minimapObjects.set(objective.id, minimapMarker);
+        this.minimap.add(minimapMarker);
       }
+
+      // Calculate relative position to player
+      let relativeX = (objective.position.x - playerPosition.x) * scale;
+      let relativeY = (objective.position.y - playerPosition.y) * scale;
+
+      // Apply bounds checking to keep markers inside the minimap
+      // Calculate distance from center
+      const distance = Math.sqrt(relativeX * relativeX + relativeY * relativeY);
+
+      // If marker would be outside the minimap bounds, scale it to the edge
+      if (distance > maxDistance && distance > 0) {
+        const ratio = maxDistance / distance;
+        relativeX *= ratio;
+        relativeY *= ratio;
+      }
+
+      minimapMarker.setPosition(relativeX, relativeY);
     });
   }
 
@@ -221,6 +294,7 @@ export class GameProgressUI {
   }
 
   public destroy(): void {
+    this.scene.scale.off("resize", this.updatePositions, this);
     this.objectiveMarkers.forEach((marker) => marker.destroy());
     this.minimapObjects.forEach((marker) => marker.destroy());
     this.container.destroy();
