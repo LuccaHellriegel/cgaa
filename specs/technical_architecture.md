@@ -3,49 +3,47 @@
 ## Technology Stack
 
 - **Framework**: Phaser 3 (JavaScript/TypeScript game framework)
-- **Language**: TypeScript (converted from JavaScript during development)
+- **Language**: TypeScript
 - **Runtime Environment**: Web browser
 - **Physics Engine**: Phaser's Arcade Physics (with custom extensions)
+- **Build Tool**: Vite
+- **Type Checking**: TypeScript compiler with strict mode
+- **Testing Framework**: Vitest
 
-## Code Architecture Evolution
+## Code Architecture
 
-### Initial Architecture
+### Component-Based Architecture
 
-- **Approach**: Functional JavaScript
-- **Design Pattern**: Function composition for game map generation
-  ```
-  f() = Calculate middle points of Camps
-  g() = Calculate wall positions of Camps
-  h() = Calculate randomized building positions
-  ```
-- **Data Flow**: Passing large map objects between functions
+- **Base Component**: Abstract `BaseComponent` class implementing core functionality
+  - Event management system with add/remove/emit methods
+  - Assertion-based validation
+  - Lifecycle management (creation, update, destruction)
+- **Component Configuration**: Standardized configuration interfaces
+- **Component Types**:
+  - Game entities: Player, Enemy, Tower, Soul
+  - UI elements: TowerMenu, PlayerStatusUI, GameStatusUI
+  - World objects: CampBuilding
+- **Component Composition**: Entities can be composed of multiple components
+- **Component Communication**: Event-driven communication between components
 
-### Current Architecture
+### Utility Layer
 
-- **Approach**: Object-Oriented TypeScript
-- **Pattern**: Game objects with state and behavior
-- **Components**: Objects representing game entities with fields and methods
-- **Rationale**: Better aligns with the mental model of a real-time game with interacting units and dynamic state
+- **Assertion Utilities**: Centralized assertion function for runtime validation
+  - Context-rich error messages
+  - Type assertion capabilities
+  - Used throughout the codebase for error prevention
 
-### Hybrid Approach
-
-- **Functional Elements**: Retained for static computation (e.g., texture generation, animation frame creation)
-- **Object-Oriented Elements**: Used for dynamic game elements and state management
-
-## Scene Management
+### Scene Management
 
 - **Implementation**: Phaser scene system
 - **Organization**: Separate scenes for different game states
+- **Scene Communication**: Event-based communication between scenes
 
-## AI System
+## Game Systems
 
-### Initial AI: Finite State Machine
+### AI System
 
-- **Approach**: Informal FSM with states and transitions
-- **Issues**: Side effects between states led to bugs (e.g., units running into walls)
-- **Complexity**: Bug fixes became too complex for the use case
-
-### Current AI: Action List System
+#### Current AI: Action List System
 
 - **Approach**: Array of planned actions for each unit
 - **Processing**: Sequential execution of actions
@@ -53,52 +51,85 @@
   - New action created to handle interruption
   - Linked to interrupted action
   - Original action resumes after interruption handler completes
-- **Inspiration**: Naughty Dog's list-based action system
 
-## Physics and Collision
+### Physics and Collision
 
-### Basic Physics
-
-- **System**: Phaser's Arcade Physics
+- **Base System**: Phaser's Arcade Physics
 - **Shapes**: Circles and rectangles
-- **Limitations**: Only supports basic shapes
-
-### Extended Collision
-
-- **System**: Custom collision detection for complex shapes
-- **Implementation**: Polygon shapes for the chain-weapon
-- **Activation**: Only during attack animations
-- **Method**: Synchronizing texture position with polygon shape for collision calculation
+- **Optimization**: Custom collision strategies for performance
+- **Detection**: Polygon shapes for complex collisions (e.g., chain-weapon)
+- **Activation**: Conditional collision detection based on game state
 
 ## Performance Optimization
 
-### Line of Sight Optimization
+### Object Pooling
 
-- **Problem**: Performance bottleneck with multiple line-of-sight areas
-- **Solution**:
-  - Use one line of sight area in moving units
-  - Implement tower line of sight in the unit entry loop
-  - Reduced line of sight areas by one-third
+- **Implementation**: Pre-allocation and reuse of game objects
+- **Target Objects**:
+  - Projectiles
+  - Effects
+  - Temporary entities
+- **Pool Management**: Centralized object pool for reusable game entities
+- **Benefits**: Reduced garbage collection, stable framerate
 
-### Object Pool Implementation
+### Rendering Optimization
 
-- **Problem**: Framerate drops during object creation
-- **Solution**: Create all needed objects at game start and reuse them
-- **Implementation**: Custom object pools for game entities
-- **Result**: Stable framerate in all game states
+- **Texture Generation**: Programmatic generation of textures
+- **Animation Management**: Dynamic creation and management of animation frames
+- **Visibility Culling**: Only rendering objects in view
+- **Asset Loading**: Asynchronous asset handling
 
-## Map Generation
+### Memory Management
 
-- **Approach**: Procedural generation
-- **Components**:
-  - Camp positions
-  - Wall layouts
-  - Building placements
-  - Guardian positions
-- **Implementation**: Object-based system holding generation state
+- **Resource Cleanup**: Explicit destruction of components when no longer needed
+- **Event Listener Cleanup**: Automatic removal of event listeners on component destruction
+- **Reference Management**: Careful handling of object references to prevent memory leaks
 
-## Resource Management
+## Development Practices
 
-- **Textures**: Programmatically generated and stored
-- **Animation Frames**: Created and added to textures
-- **Object Pooling**: Pre-allocation and reuse of game objects
+### Type Safety
+
+- **Static Typing**: Comprehensive type declarations for all components
+- **Interface Definitions**: Clear interfaces for component configurations
+- **Type Assertions**: Runtime type validation through assertions
+- **Type Checking**: Regular verification with `npm run typecheck`
+
+### Code Organization
+
+- **Directory Structure**:
+  - `/src/components`: Game entity components
+  - `/src/scenes`: Game scenes
+  - `/src/utils`: Utility functions
+  - `/src/managers`: System managers
+  - `/src/types`: TypeScript type definitions
+  - `/src/events`: Event definitions and handlers
+  - `/src/controllers`: Game controllers
+  - `/src/graphics`: Graphics utilities
+
+### Modular Development
+
+- **Small Files and Functions**: Keep files under 300 lines, functions under 70 lines
+- **Single Responsibility**: Each component has a single clear purpose
+- **Reusable Code**: Utilities and common functionality extracted to shared locations
+- **Clear API Boundaries**: Well-defined interfaces between components
+
+## Future Architecture Considerations
+
+### Audio Management
+
+- **Dynamic Audio Loading**: Load audio assets as needed
+- **Audio Pooling**: Reuse audio instances for performance
+- **Volume Management**: Global and per-category volume control
+- **Spatial Audio**: Position-based audio for immersion
+
+### Testing Infrastructure
+
+- **Unit Testing**: Component-level tests with Vitest
+- **Integration Testing**: Testing component interactions
+- **Automated Testing**: CI/CD pipeline integration
+
+### Logging System
+
+- **Structured Logging**: Consistent log format with context
+- **Log Levels**: Different verbosity levels based on environment
+- **Performance Monitoring**: Track key performance metrics
