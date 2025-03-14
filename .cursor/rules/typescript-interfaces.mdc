@@ -1,0 +1,273 @@
+---
+description: Define clear interfaces for game elements to improve type safety and maintainability
+globs: **/*.ts
+---
+
+# TypeScript Interface Design
+
+## Context
+- When designing component-based game systems
+- When defining game entity types and behaviors
+- When establishing contracts between game systems
+- When developing complex game features with multiple implementations
+
+## Requirements
+- Create explicit interfaces for all major game components
+- Use interfaces to define clear contracts between systems
+- Prefer interface composition over complex inheritance hierarchies
+- Document interface contracts with JSDoc comments
+- Ensure interfaces are properly exported for reuse
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Core interface for any component that can be attached to game entities
+ */
+export interface Component {
+  /** Unique identifier for the component */
+  readonly id: string;
+  
+  /** 
+   * Called each frame to update component state
+   * @param time Current game time in ms
+   * @param delta Time since last frame in ms
+   */
+  update(time: number, delta: number): void;
+  
+  /**
+   * Clean up resources when component is removed
+   */
+  destroy(): void;
+}
+
+/**
+ * Interface for components that handle health-related functionality
+ */
+export interface HealthComponent extends Component {
+  /** Current health value */
+  readonly currentHealth: number;
+  
+  /** Maximum possible health value */
+  readonly maxHealth: number;
+  
+  /**
+   * Apply damage to this component
+   * @param amount Amount of damage to apply
+   * @param source Optional source of damage
+   * @returns Whether the entity is still alive
+   */
+  takeDamage(amount: number, source?: Entity): boolean;
+  
+  /**
+   * Heal this component
+   * @param amount Amount to heal
+   * @returns Amount actually healed (may be capped)
+   */
+  heal(amount: number): number;
+  
+  /**
+   * Check if entity is alive
+   */
+  isAlive(): boolean;
+  
+  /**
+   * Register callback for health changes
+   * @param callback Function to call when health changes
+   */
+  onHealthChanged(callback: (current: number, max: number) => void): void;
+}
+
+/**
+ * Interface for components that work with animation
+ */
+export interface AnimationComponent extends Component {
+  /**
+   * Play a named animation
+   * @param key Animation key
+   * @param ignoreIfPlaying Don't restart if already playing
+   */
+  play(key: string, ignoreIfPlaying?: boolean): void;
+  
+  /**
+   * Stop current animation
+   */
+  stop(): void;
+  
+  /**
+   * Add animation to this component
+   * @param key Animation identifier
+   * @param frames Frame configuration
+   * @param frameRate Frames per second
+   */
+  addAnimation(key: string, frames: AnimationFrameConfig[], frameRate: number): void;
+}
+
+/**
+ * Interface for event-driven game systems
+ */
+export interface GameSystem {
+  /**
+   * Initialize the system
+   * @param scene The scene this system belongs to
+   */
+  initialize(scene: Phaser.Scene): void;
+  
+  /**
+   * Update the system state
+   * @param time Current game time
+   * @param delta Time since last frame
+   */
+  update(time: number, delta: number): void;
+  
+  /**
+   * Clean up system resources
+   */
+  shutdown(): void;
+  
+  /**
+   * Subscribe to system events
+   * @param event Event name
+   * @param callback Callback function
+   */
+  on<T>(event: string, callback: (data: T) => void): void;
+  
+  /**
+   * Unsubscribe from system events
+   * @param event Event name
+   * @param callback Callback function
+   */
+  off<T>(event: string, callback: (data: T) => void): void;
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Loosely typed game components without interfaces
+class Player {
+  // Properties without proper types
+  health: any;
+  inventory: any;
+  position: any;
+  
+  // Methods without proper parameter or return types
+  move(direction) {
+    // Implementation
+  }
+  
+  attack(target) {
+    // Implementation
+  }
+  
+  // No clear contract for how this should be used
+  update(dt) {
+    // Implementation
+  }
+}
+
+// BAD: No interfaces for systems to implement
+class CombatSystem {
+  // No defined contract for what makes a valid entity
+  registerEntity(entity) {
+    // Implementation
+  }
+  
+  // No clear type for what damage means
+  applyDamage(source, target, amount) {
+    // Implementation
+  }
+  
+  // No interface contract for events
+  on(event, callback) {
+    // Implementation
+  }
+}
+
+// BAD: Loose typing with generic object types
+function processGameState(state: object): object {
+  // No clarity on what state contains or what is returned
+  return { ...state, processed: true };
+}
+```
+</example>
+
+## Interface Design Patterns
+
+1. **Component Interfaces**:
+   ```typescript
+   // Core component interface
+   interface Component {
+     readonly entity: Entity;
+     update(time: number, delta: number): void;
+     destroy(): void;
+   }
+   
+   // Specialized component interfaces
+   interface MovementComponent extends Component {
+     readonly velocity: Phaser.Math.Vector2;
+     moveTo(x: number, y: number, speed: number): void;
+     stopMovement(): void;
+   }
+   
+   interface CollisionComponent extends Component {
+     readonly collider: Phaser.Physics.Arcade.Body;
+     onCollide(callback: (other: CollisionComponent) => void): void;
+     setCollisionCategories(categories: number[]): void;
+   }
+   ```
+
+2. **Interface Composition**:
+   ```typescript
+   // Interfaces for different aspects of an entity
+   interface Damageable {
+     takeDamage(amount: number): void;
+     readonly currentHealth: number;
+   }
+   
+   interface Interactive {
+     interact(actor: Entity): void;
+     readonly isInteractable: boolean;
+   }
+   
+   interface Renderable {
+     readonly sprite: Phaser.GameObjects.Sprite;
+     setVisible(visible: boolean): void;
+   }
+   
+   // Combine interfaces for complex entities
+   class Chest implements Interactive, Renderable {
+     // Implementation
+   }
+   
+   class Enemy implements Damageable, Renderable {
+     // Implementation
+   }
+   ```
+
+3. **Event Interfaces**:
+   ```typescript
+   // Define payload types for events
+   interface DamageEvent {
+     readonly target: Entity;
+     readonly amount: number;
+     readonly source?: Entity;
+     readonly damageType: DamageType;
+   }
+   
+   interface LevelCompleteEvent {
+     readonly timeElapsed: number;
+     readonly score: number;
+     readonly bonuses: Record<string, number>;
+   }
+   
+   // Type-safe event emitter
+   interface TypedEventEmitter {
+     emit<T>(event: string, data: T): void;
+     on<T>(event: string, callback: (data: T) => void): void;
+     off<T>(event: string, callback: (data: T) => void): void;
+   }
+   ```
+
+<version>1.0.0</version> 

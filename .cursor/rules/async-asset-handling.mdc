@@ -1,386 +1,612 @@
 ---
 description: Implement robust asynchronous asset loading to ensure smooth gameplay and prevent blocking operations
-globs: **/*.{ts,tsx}
+globs: **/*.ts
 ---
 
-# Asynchronous Asset Management
+# Asynchronous Asset Handling
 
 ## Context
-- When loading game assets (images, audio, data) without blocking the main thread
-- When implementing loading screens with progress indicators
-- When handling asset load failures gracefully
-- When structuring asset loading across different scenes
-- When optimizing asset loading for different platforms and network conditions
+- When loading assets such as images, audio, or data files
+- When transitioning between game scenes that require different assets
+- When developing games with large asset requirements
+- When targeting web platforms with varying bandwidth considerations
 
 ## Requirements
-- Use dedicated Phaser loading scenes for managing asset pipelines
-- Structure asset loading to prioritize critical resources first
-- Implement progress tracking and visual feedback during loading
-- Handle load errors properly with fallbacks and user feedback
-- Use asset caching effectively to improve performance
-- Implement lazy loading for non-critical assets
-- Consider platform limitations and network variability
+- Implement loading screens to display progress while assets load
+- Preload assets before they are needed to prevent stuttering
+- Use asynchronous loading patterns to prevent UI blocking
+- Implement dynamic asset loading for large games
+- Unload unused assets to free memory when they're no longer needed
+- Handle loading errors gracefully with fallbacks
 
 ## Examples
 
 <example>
 ```typescript
-// Well-structured asset loading system
-export class AssetManager {
+/**
+ * Asset manager for handling asynchronous loading and unloading
+ */
+class AssetManager {
   private scene: Phaser.Scene;
-  private assetPacks: Map<string, AssetPack> = new Map();
-  private loadedPacks: Set<string> = new Set();
+  private loadedAssets: Set<string> = new Set();
+  private loadingPromises: Map<string, Promise<void>> = new Map();
   
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.registerAssetPacks();
   }
   
-  // Register all asset packs with metadata
-  private registerAssetPacks(): void {
-    // Core assets needed immediately
-    this.assetPacks.set('core', {
-      name: 'Core Assets',
-      priority: 1,
-      assets: [
-        { type: 'image', key: 'logo', path: 'assets/images/logo.png' },
-        { type: 'image', key: 'ui_buttons', path: 'assets/images/ui_buttons.png' },
-        { type: 'audio', key: 'ui_click', path: 'assets/audio/ui_click.mp3' }
-      ]
-    });
-    
-    // Game assets needed for gameplay
-    this.assetPacks.set('gameplay', {
-      name: 'Gameplay Assets',
-      priority: 2,
-      assets: [
-        { type: 'spritesheet', key: 'player', path: 'assets/sprites/player.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
-        { type: 'spritesheet', key: 'enemies', path: 'assets/sprites/enemies.png', frameConfig: { frameWidth: 32, frameHeight: 32 } },
-        { type: 'atlas', key: 'items', path: 'assets/sprites/items.png', jsonPath: 'assets/sprites/items.json' }
-      ]
-    });
-    
-    // Level-specific assets
-    this.assetPacks.set('level1', {
-      name: 'Level 1 Assets',
-      priority: 3,
-      assets: [
-        { type: 'tilemapTiledJSON', key: 'level1_map', path: 'assets/maps/level1.json' },
-        { type: 'image', key: 'level1_tiles', path: 'assets/tiles/level1_tiles.png' },
-        { type: 'audio', key: 'level1_music', path: 'assets/audio/level1_music.mp3' }
-      ]
-    });
-    
-    // Optional assets
-    this.assetPacks.set('extras', {
-      name: 'Extra Features',
-      priority: 4,
-      assets: [
-        { type: 'image', key: 'particles', path: 'assets/images/particles.png' },
-        { type: 'audio', key: 'ambient_sounds', path: 'assets/audio/ambient.mp3' }
-      ]
-    });
-  }
-  
-  // Load multiple packs in sequence with priority order
-  loadPacks(packIds: string[]): Promise<void> {
-    // Sort packs by priority
-    const packsToLoad = packIds
-      .filter(id => this.assetPacks.has(id) && !this.loadedPacks.has(id))
-      .map(id => this.assetPacks.get(id)!)
-      .sort((a, b) => a.priority - b.priority);
-    
-    if (packsToLoad.length === 0) {
+  /**
+   * Preload a set of assets asynchronously with progress tracking
+   * @param assets Array of asset descriptors to load
+   * @returns Promise that resolves when all assets are loaded
+   */
+  async preloadAssets(
+    assets: Array<{
+      key: string;
+      type: 'image' | 'spritesheet' | 'audio' | 'json';
+      url: string;
+      config?: any;
+    }>,
+    onProgress?: (progress: number) => void
+  ): Promise<void> {
+    // Skip if no assets to load
+    if (assets.length === 0) {
       return Promise.resolve();
     }
     
-    return new Promise((resolve, reject) => {
-      // Set up loading events
-      this.scene.load.on('complete', () => {
-        packIds.forEach(id => this.loadedPacks.add(id));
-        this.scene.load.off('complete');
-        this.scene.load.off('progress');
-        this.scene.load.off('filecomplete');
-        this.scene.load.off('loaderror');
+    // Create a loader plugin if not already in a loading scene
+    const loader = this.scene.load;
+    
+    // Track loaded and total files
+    let loaded = 0;
+    const total = assets.length;
+    
+    // Set up progress callback
+    if (onProgress) {
+      loader.on('progress', (value: number) => {
+        onProgress(value);
+      });
+    }
+    
+    // Create a promise that resolves when loading completes
+    return new Promise<void>((resolve, reject) => {
+      // Set up completion handlers
+      loader.once('complete', () => {
+        // Add all keys to our loaded assets set
+        assets.forEach(asset => this.loadedAssets.add(asset.key));
         resolve();
       });
       
-      this.scene.load.on('loaderror', (file: Phaser.Loader.File) => {
+      loader.once('loaderror', (file: Phaser.Loader.File) => {
         console.error(`Error loading asset: ${file.key}`);
-        // Continue loading other assets rather than rejecting
-        // For critical assets, you might want to reject here
+        reject(new Error(`Failed to load asset: ${file.key}`));
       });
       
-      // Load all assets from the packs
-      for (const pack of packsToLoad) {
-        for (const asset of pack.assets) {
-          this.loadAsset(asset);
+      // Add all assets to the loader queue
+      assets.forEach(asset => {
+        switch (asset.type) {
+          case 'image':
+            loader.image(asset.key, asset.url);
+            break;
+          case 'spritesheet':
+            loader.spritesheet(asset.key, asset.url, asset.config);
+            break;
+          case 'audio':
+            loader.audio(asset.key, asset.url);
+            break;
+          case 'json':
+            loader.json(asset.key, asset.url);
+            break;
         }
-      }
+      });
       
       // Start loading
-      this.scene.load.start();
+      loader.start();
     });
   }
   
-  // Dynamically load a single asset with proper typing
-  loadAsset(asset: AssetDescriptor): void {
-    switch (asset.type) {
-      case 'image':
-        this.scene.load.image(asset.key, asset.path);
-        break;
-        
-      case 'spritesheet':
-        this.scene.load.spritesheet(asset.key, asset.path, asset.frameConfig);
-        break;
-        
-      case 'atlas':
-        this.scene.load.atlas(asset.key, asset.path, asset.jsonPath);
-        break;
-        
-      case 'audio':
-        this.scene.load.audio(asset.key, asset.path);
-        break;
-        
-      case 'tilemapTiledJSON':
-        this.scene.load.tilemapTiledJSON(asset.key, asset.path);
-        break;
-        
-      // Add other asset types as needed
+  /**
+   * Check if a specific asset is loaded
+   * @param key The asset key to check
+   */
+  isLoaded(key: string): boolean {
+    return this.loadedAssets.has(key);
+  }
+  
+  /**
+   * Load a specific asset if not already loaded
+   * @param asset The asset to load
+   * @returns Promise that resolves when the asset is loaded
+   */
+  async loadAsset(
+    asset: {
+      key: string;
+      type: 'image' | 'spritesheet' | 'audio' | 'json';
+      url: string;
+      config?: any;
     }
-  }
-  
-  // Check if a pack is already loaded
-  isPackLoaded(packId: string): boolean {
-    return this.loadedPacks.has(packId);
-  }
-  
-  // Get list of registered packs
-  getPackIds(): string[] {
-    return Array.from(this.assetPacks.keys());
-  }
-}
-
-// Loading scene with progress display
-export class LoadingScene extends Phaser.Scene {
-  private assetManager: AssetManager;
-  private progressBar: Phaser.GameObjects.Graphics;
-  private progressText: Phaser.GameObjects.Text;
-  private nextScene: string;
-  private packsToLoad: string[];
-  
-  constructor() {
-    super({ key: 'LoadingScene' });
-  }
-  
-  init(data: { nextScene: string, packs: string[] }): void {
-    this.nextScene = data.nextScene || 'MainMenu';
-    this.packsToLoad = data.packs || ['core'];
-  }
-  
-  preload(): void {
-    // Create loading UI first
-    this.createLoadingUI();
+  ): Promise<void> {
+    // Return immediately if already loaded
+    if (this.isLoaded(asset.key)) {
+      return Promise.resolve();
+    }
     
-    // Initialize asset manager
-    this.assetManager = new AssetManager(this);
+    // Return existing promise if already loading
+    if (this.loadingPromises.has(asset.key)) {
+      return this.loadingPromises.get(asset.key);
+    }
     
-    // Set up progress tracking
-    this.load.on('progress', (value: number) => {
-      this.updateProgressBar(value);
-      this.progressText.setText(`Loading: ${Math.floor(value * 100)}%`);
+    // Create new loading promise
+    const loadPromise = this.preloadAssets([asset]);
+    this.loadingPromises.set(asset.key, loadPromise);
+    
+    // Clean up promise map after loading
+    loadPromise.finally(() => {
+      this.loadingPromises.delete(asset.key);
     });
     
-    this.load.on('filecomplete', (key: string, type: string, data: any) => {
-      // You could show what file was just loaded
-      console.log(`Loaded: ${key}`);
-    });
-    
-    // Handle load errors
-    this.load.on('loaderror', (file: Phaser.Loader.File) => {
-      console.error(`Failed to load: ${file.key}`);
-      // Add user-visible error handling here
-      this.add.text(this.cameras.main.centerX - 150, this.cameras.main.centerY + 100, 
-        `Failed to load: ${file.key}. Retrying...`, 
-        { fontSize: '14px', color: '#ff0000' });
+    return loadPromise;
+  }
+  
+  /**
+   * Unload specific assets to free memory
+   * @param keys Array of asset keys to unload
+   */
+  unloadAssets(keys: string[]): void {
+    keys.forEach(key => {
+      if (this.loadedAssets.has(key)) {
+        // Remove from texture cache if it's a texture
+        if (this.scene.textures.exists(key)) {
+          this.scene.textures.remove(key);
+        }
         
-      // Attempt retry after delay
-      this.time.delayedCall(2000, () => {
-        this.load.image(file.key, file.url);
-        this.load.start(); // Resume loading
-      });
+        // Remove from cache based on type
+        if (this.scene.cache.json.exists(key)) {
+          this.scene.cache.json.remove(key);
+        }
+        
+        if (this.scene.cache.audio.exists(key)) {
+          this.scene.sound.remove(key);
+        }
+        
+        // Remove from loaded assets tracking
+        this.loadedAssets.delete(key);
+      }
     });
   }
   
-  create(): void {
-    // Start loading assets
-    this.assetManager.loadPacks(this.packsToLoad)
-      .then(() => {
-        // Transition to next scene when loading is complete
-        this.scene.start(this.nextScene);
-      })
-      .catch(error => {
-        // Handle loading failure
-        console.error('Failed to load required assets:', error);
-        this.add.text(this.cameras.main.centerX - 150, this.cameras.main.centerY, 
-          'Failed to load game assets.\nPlease check your connection and refresh.', 
-          { fontSize: '18px', color: '#ff0000' });
+  /**
+   * Create a loading scene that preloads assets before transitioning
+   * @param targetScene The scene to transition to after loading
+   * @param assets Assets to preload before starting the target scene
+   */
+  static createLoadingScene(
+    targetScene: string,
+    assets: Array<{
+      key: string;
+      type: 'image' | 'spritesheet' | 'audio' | 'json';
+      url: string;
+      config?: any;
+    }>
+  ): typeof Phaser.Scene {
+    return class LoadingScene extends Phaser.Scene {
+      constructor() {
+        super({ key: 'LoadingScene' });
+      }
+      
+      preload(): void {
+        // Create loading UI
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
         
-        // Add retry button
-        const retryButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 
-          'RETRY', { fontSize: '24px', color: '#ffffff' })
-          .setOrigin(0.5)
-          .setInteractive({ useHandCursor: true })
-          .on('pointerdown', () => {
-            this.scene.restart();
-          });
-      });
-  }
-  
-  private createLoadingUI(): void {
-    const width = this.cameras.main.width;
-    const height = this.cameras.main.height;
-    
-    // Loading background
-    this.add.rectangle(width/2, height/2, width, height, 0x000000, 0.7);
-    
-    // Progress bar background
-    this.add.rectangle(width/2, height/2, 400, 30, 0x666666);
-    
-    // Progress bar
-    this.progressBar = this.add.graphics();
-    
-    // Progress text
-    this.progressText = this.add.text(width/2, height/2 + 50, 'Loading: 0%', { 
-      fontSize: '24px', 
-      color: '#ffffff' 
-    }).setOrigin(0.5);
-    
-    // Game title or logo
-    this.add.text(width/2, height/2 - 100, 'GAME TITLE', {
-      fontSize: '48px',
-      color: '#ffffff'
-    }).setOrigin(0.5);
-  }
-  
-  private updateProgressBar(value: number): void {
-    this.progressBar.clear();
-    this.progressBar.fillStyle(0x00ff00, 1);
-    this.progressBar.fillRect(
-      this.cameras.main.width/2 - 200,
-      this.cameras.main.height/2 - 15,
-      400 * value,
-      30
-    );
+        // Add loading text
+        const loadingText = this.add.text(
+          width / 2,
+          height / 2 - 50,
+          'Loading...',
+          {
+            fontSize: '32px',
+            color: '#FFFFFF'
+          }
+        ).setOrigin(0.5);
+        
+        // Create progress bar background
+        const progressBarBg = this.add.rectangle(
+          width / 2, 
+          height / 2,
+          400,
+          30,
+          0x222222
+        ).setOrigin(0.5);
+        
+        // Create progress bar fill
+        const progressBar = this.add.rectangle(
+          width / 2 - 195,
+          height / 2,
+          5,
+          20,
+          0x00FF00
+        ).setOrigin(0, 0.5);
+        
+        // Update progress bar as loading progresses
+        this.load.on('progress', (value: number) => {
+          progressBar.width = 390 * value;
+        });
+        
+        // Add all assets to the loader
+        assets.forEach(asset => {
+          switch (asset.type) {
+            case 'image':
+              this.load.image(asset.key, asset.url);
+              break;
+            case 'spritesheet':
+              this.load.spritesheet(asset.key, asset.url, asset.config);
+              break;
+            case 'audio':
+              this.load.audio(asset.key, asset.url);
+              break;
+            case 'json':
+              this.load.json(asset.key, asset.url);
+              break;
+          }
+        });
+      }
+      
+      create(): void {
+        // Transition to target scene when loading is complete
+        this.scene.start(targetScene);
+      }
+    };
   }
 }
-
-// Type definitions for asset management
-interface AssetPack {
-  name: string;
-  priority: number;
-  assets: AssetDescriptor[];
-}
-
-type AssetDescriptor = 
-  | { type: 'image', key: string, path: string }
-  | { type: 'spritesheet', key: string, path: string, frameConfig: Phaser.Types.Loader.FileTypes.SpriteSheetFileConfig }
-  | { type: 'atlas', key: string, path: string, jsonPath: string }
-  | { type: 'audio', key: string, path: string }
-  | { type: 'tilemapTiledJSON', key: string, path: string };
 ```
-This example demonstrates a robust asset management system with prioritized loading, strong typing, progress tracking, error handling, and retry mechanisms. It separates assets into logical packs and provides user feedback during the loading process.
 </example>
 
 <example type="invalid">
 ```typescript
-// Poor asset loading practices
-export class GameScene extends Phaser.Scene {
+// BAD: Blocking asset loading without progress indication
+class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene' });
   }
   
-  create(): void {
-    // Loading assets in create() method - will cause freezing
+  preload(): void {
+    // Loading assets synchronously during scene initialization
+    // without progress tracking or error handling
     this.load.image('player', 'assets/player.png');
-    this.load.audio('music', 'assets/music.mp3');
-    this.load.start();
-    
-    // Attempting to use assets immediately without waiting for load
-    const player = this.add.sprite(100, 100, 'player');
-    this.sound.play('music');
-    
-    // No error handling or loading feedback
-    
-    // Loading large assets on demand without warning
-    this.input.keyboard.on('keydown-SPACE', () => {
-      // Will cause game to freeze when pressed
-      this.load.image('huge_background', 'assets/huge_background.png');
-      this.load.start();
-      this.add.image(0, 0, 'huge_background');
+    this.load.image('enemy', 'assets/enemy.png');
+    this.load.image('background', 'assets/large-background.png');
+    this.load.spritesheet('explosion', 'assets/explosion.png', {
+      frameWidth: 64,
+      frameHeight: 64
     });
+    this.load.audio('music', ['assets/music.mp3']);
+    this.load.audio('explosion', ['assets/explosion.mp3']);
+    
+    // No handling for load errors or timeouts
+    // No progress indication for the user
+    // Game appears frozen while loading
   }
   
-  // No dedicated loading screen
-  // No progress indication
-  // No error handling
-  // No asset organization
+  create(): void {
+    // Game freezes or glitches if assets aren't fully loaded
+    const background = this.add.image(0, 0, 'background');
+    const player = this.add.sprite(100, 100, 'player');
+    
+    // No checks to see if assets loaded successfully
+    this.sound.play('music');
+  }
 }
 ```
-This implementation incorrectly loads assets in the create() method instead of preload(), attempts to use assets before they're loaded, provides no loading feedback to the user, and causes frame rate drops by loading large assets on demand. It also lacks any error handling for failed asset loads.
 </example>
 
-## Phaser-Specific Notes
+## Loading Pattern Implementations
 
-1. Use Phaser's preload method for primary asset loading:
+1. **Dynamic Asset Loading Based on Game Level**:
    ```typescript
-   preload(): void {
-     // Always load critical assets in preload
-     this.load.image('player', 'assets/player.png');
-     this.load.spritesheet('explosion', 'assets/explosion.png', { 
-       frameWidth: 64, frameHeight: 64 
-     });
-   }
-   ```
-
-2. Leverage Phaser's loading events for progress tracking:
-   ```typescript
-   // Set up loading events
-   this.load.on('progress', (value: number) => {
-     // Update progress bar with percentage
-     progressBar.clear();
-     progressBar.fillRect(x, y, width * value, height);
-   });
-   
-   this.load.on('complete', () => {
-     // Loading complete, clean up listeners
-     progressBar.destroy();
-     this.load.off('progress');
-   });
-   ```
-
-3. Use Phaser's built-in cache for efficient resource management:
-   ```typescript
-   // Check if asset is already in cache
-   if (this.textures.exists('enemy')) {
-     // Use existing texture
-   } else {
-     // Load it
-     this.load.image('enemy', 'assets/enemy.png');
-   }
-   
-   // Access cached data
-   const cachedTexture = this.textures.get('player');
-   ```
-
-4. For dynamic loading after game start, use loader in separate scenes:
-   ```typescript
-   // Show loading scene for mid-game asset loading
-   this.scene.launch('DynamicLoader', { 
-     assets: ['level2_map', 'level2_enemies'],
-     onComplete: () => {
-       this.scene.stop('DynamicLoader');
-       this.startLevel2();
+   /**
+    * Level manager that dynamically loads assets as needed
+    */
+   class LevelManager {
+     private scene: Phaser.Scene;
+     private assetManager: AssetManager;
+     private currentLevel: number = 0;
+     private levelData: Map<number, {
+       assets: Array<{key: string, type: string, url: string, config?: any}>,
+       unload: string[]
+     }> = new Map();
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       this.assetManager = new AssetManager(scene);
+       
+       // Define assets for each level
+       this.levelData.set(1, {
+         assets: [
+           { key: 'level1_bg', type: 'image', url: 'assets/levels/level1/background.png' },
+           { key: 'level1_tiles', type: 'image', url: 'assets/levels/level1/tiles.png' },
+           { key: 'level1_enemies', type: 'spritesheet', url: 'assets/levels/level1/enemies.png', 
+             config: { frameWidth: 32, frameHeight: 32 } },
+           { key: 'level1_music', type: 'audio', url: 'assets/levels/level1/music.mp3' }
+         ],
+         unload: [] // Nothing to unload for the first level
+       });
+       
+       this.levelData.set(2, {
+         assets: [
+           { key: 'level2_bg', type: 'image', url: 'assets/levels/level2/background.png' },
+           { key: 'level2_tiles', type: 'image', url: 'assets/levels/level2/tiles.png' },
+           { key: 'level2_enemies', type: 'spritesheet', url: 'assets/levels/level2/enemies.png',
+             config: { frameWidth: 32, frameHeight: 32 } },
+           { key: 'level2_music', type: 'audio', url: 'assets/levels/level2/music.mp3' }
+         ],
+         unload: ['level1_bg', 'level1_tiles', 'level1_enemies', 'level1_music']
+       });
      }
-   });
+     
+     /**
+      * Load a level with a loading screen
+      * @param levelNumber The level number to load
+      */
+     async loadLevel(levelNumber: number): Promise<void> {
+       // Create a loading screen scene
+       const loadingScene = this.scene.scene.add('loading', new LoadingScene(), true);
+       
+       // Hide current scene
+       this.scene.scene.pause();
+       
+       try {
+         // Get level data
+         const levelInfo = this.levelData.get(levelNumber);
+         if (!levelInfo) {
+           throw new Error(`Level ${levelNumber} data not found`);
+         }
+         
+         // Unload assets from previous level to free memory
+         if (levelInfo.unload.length > 0) {
+           this.assetManager.unloadAssets(levelInfo.unload);
+         }
+         
+         // Load assets for this level
+         await this.assetManager.preloadAssets(
+           levelInfo.assets,
+           (progress) => {
+             // Update loading scene progress
+             loadingScene.events.emit('loadProgress', progress);
+           }
+         );
+         
+         // Update current level
+         this.currentLevel = levelNumber;
+         
+         // Resume game scene with new level
+         this.scene.scene.resume();
+         this.scene.events.emit('levelLoaded', levelNumber);
+         
+         // Remove loading scene
+         this.scene.scene.remove('loading');
+       } catch (error) {
+         console.error('Failed to load level:', error);
+         
+         // Show error in loading scene
+         loadingScene.events.emit('loadError', error);
+       }
+     }
+     
+     /**
+      * Preload the next level in the background while playing current level
+      */
+     preloadNextLevel(): void {
+       const nextLevel = this.currentLevel + 1;
+       const nextLevelData = this.levelData.get(nextLevel);
+       
+       if (nextLevelData) {
+         // Load in background without visual indicators
+         this.assetManager.preloadAssets(nextLevelData.assets)
+           .then(() => {
+             console.log(`Successfully preloaded assets for level ${nextLevel}`);
+           })
+           .catch(error => {
+             console.error(`Failed to preload level ${nextLevel}:`, error);
+           });
+       }
+     }
+   }
    
+   /**
+    * Simple loading scene implementation
+    */
+   class LoadingScene extends Phaser.Scene {
+     private progressBar: Phaser.GameObjects.Rectangle;
+     private progressText: Phaser.GameObjects.Text;
+     private errorText: Phaser.GameObjects.Text;
+     
+     constructor() {
+       super({ key: 'LoadingScene' });
+     }
+     
+     create(): void {
+       const width = this.cameras.main.width;
+       const height = this.cameras.main.height;
+       
+       // Add loading text
+       this.progressText = this.add.text(
+         width / 2,
+         height / 2 - 50,
+         'Loading...',
+         {
+           fontSize: '32px',
+           color: '#FFFFFF'
+         }
+       ).setOrigin(0.5);
+       
+       // Create progress bar background
+       const progressBarBg = this.add.rectangle(
+         width / 2, 
+         height / 2,
+         400,
+         30,
+         0x222222
+       ).setOrigin(0.5);
+       
+       // Create progress bar fill
+       this.progressBar = this.add.rectangle(
+         width / 2 - 195,
+         height / 2,
+         5,
+         20,
+         0x00FF00
+       ).setOrigin(0, 0.5);
+       
+       // Add error text (initially hidden)
+       this.errorText = this.add.text(
+         width / 2,
+         height / 2 + 50,
+         '',
+         {
+           fontSize: '16px',
+           color: '#FF0000'
+         }
+       ).setOrigin(0.5).setVisible(false);
+       
+       // Listen for progress updates
+       this.events.on('loadProgress', (value: number) => {
+         this.progressBar.width = 390 * value;
+         this.progressText.setText(`Loading... ${Math.floor(value * 100)}%`);
+       });
+       
+       // Listen for error events
+       this.events.on('loadError', (error: Error) => {
+         this.errorText.setText(`Error: ${error.message}\nTap to retry`);
+         this.errorText.setVisible(true);
+         this.progressText.setText('Loading Failed');
+         this.progressBar.fillColor = 0xFF0000;
+         
+         // Add retry functionality
+         this.input.once('pointerdown', () => {
+           this.scene.start('MainMenu');
+         });
+       });
+     }
+   }
+   ```
+
+2. **Texture Atlas Optimization**:
+   ```typescript
+   /**
+    * Asset preloader that optimizes loading by using texture atlases
+    */
+   class OptimizedAssetPreloader {
+     private scene: Phaser.Scene;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+     }
+     
+     /**
+      * Preload game assets using texture atlases for efficient memory usage
+      */
+     preloadGameAssets(): Promise<void> {
+       return new Promise<void>((resolve, reject) => {
+         // Display loading progress
+         const progressBar = this.createProgressBar();
+         
+         // Use a single atlas for multiple sprites
+         this.scene.load.atlas(
+           'gameSprites', 
+           'assets/atlases/game-sprites.png', 
+           'assets/atlases/game-sprites.json'
+         );
+         
+         // Use a single atlas for UI elements
+         this.scene.load.atlas(
+           'uiElements', 
+           'assets/atlases/ui-elements.png', 
+           'assets/atlases/ui-elements.json'
+         );
+         
+         // Use audio sprite for sound effects
+         this.scene.load.audioSprite(
+           'sfx',
+           'assets/audio/sfx.json',
+           ['assets/audio/sfx.ogg', 'assets/audio/sfx.mp3']
+         );
+         
+         // Handle loading events
+         this.scene.load.on('progress', (value: number) => {
+           progressBar.update(value);
+         });
+         
+         this.scene.load.on('complete', () => {
+           progressBar.destroy();
+           resolve();
+         });
+         
+         this.scene.load.on('loaderror', () => {
+           progressBar.showError();
+           reject(new Error('Failed to load game assets'));
+         });
+         
+         // Start loading
+         this.scene.load.start();
+       });
+     }
+     
+     /**
+      * Create a loading progress bar
+      */
+     private createProgressBar() {
+       const width = this.scene.cameras.main.width;
+       const height = this.scene.cameras.main.height;
+       
+       const progressBg = this.scene.add.rectangle(
+         width / 2,
+         height / 2,
+         400,
+         30,
+         0x222222
+       );
+       
+       const progressFill = this.scene.add.rectangle(
+         width / 2 - 195,
+         height / 2,
+         5,
+         20,
+         0x00FF00
+       ).setOrigin(0, 0.5);
+       
+       const progressText = this.scene.add.text(
+         width / 2,
+         height / 2 - 50,
+         'Loading...',
+         { fontSize: '24px', color: '#FFFFFF' }
+       ).setOrigin(0.5);
+       
+       const errorText = this.scene.add.text(
+         width / 2,
+         height / 2 + 50,
+         'Error loading assets. Check console for details.',
+         { fontSize: '16px', color: '#FF0000' }
+       ).setOrigin(0.5).setVisible(false);
+       
+       return {
+         update: (progress: number) => {
+           progressFill.width = 390 * progress;
+           progressText.setText(`Loading... ${Math.floor(progress * 100)}%`);
+         },
+         destroy: () => {
+           progressBg.destroy();
+           progressFill.destroy();
+           progressText.destroy();
+           errorText.destroy();
+         },
+         showError: () => {
+           errorText.setVisible(true);
+           progressFill.setFillStyle(0xFF0000);
+         }
+       };
+     }
+   }
+   ```
+
+<version>1.0.0</version>

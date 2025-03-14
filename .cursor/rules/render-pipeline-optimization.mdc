@@ -1,0 +1,253 @@
+---
+description: Optimize WebGL rendering pipelines to reduce state changes and improve performance in Phaser games
+globs: **/*.ts
+---
+
+# WebGL Pipeline Optimization
+
+## Context
+- When implementing custom rendering pipelines
+- When handling many different visual objects in a scene
+- When optimizing render state management for WebGL
+- When batching similar rendering operations
+
+## Requirements
+- Minimize WebGL state changes during rendering
+- Implement proper batching for similar visual elements
+- Create optimized custom pipelines for specialized effects
+- Manage texture bindings efficiently
+- Implement renderer-level culling strategies
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Optimized render pipeline manager with batching and state management
+ */
+class RenderPipelineManager {
+  private scene: Phaser.Scene;
+  private game: Phaser.Game;
+  private customPipelines: Map<string, Phaser.Renderer.WebGL.WebGLPipeline> = new Map();
+  private batchGroups: Map<string, Phaser.GameObjects.GameObject[]> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.game = scene.game;
+    
+    // Set up batching groups for common object types
+    this.batchGroups.set('sprites', []);
+    this.batchGroups.set('particles', []);
+    this.batchGroups.set('lights', []);
+    
+    // Register renderer event hooks
+    this.scene.events.once('boot', this.registerPipelines, this);
+    this.scene.events.on('prerender', this.optimizeRenderOrder, this);
+    
+    // Clean up on shutdown
+    this.scene.events.once('shutdown', this.cleanup, this);
+  }
+  
+  /**
+   * Register custom pipelines with the renderer
+   */
+  private registerPipelines(): void {
+    const renderer = this.game.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+    
+    // Custom multi-texture pipeline with optimized state handling
+    const multiBatchPipeline = new Phaser.Renderer.WebGL.Pipelines.MultiPipeline({
+      game: this.game,
+      renderer: renderer,
+      fragShader: `
+        precision mediump float;
+        uniform sampler2D uMainSampler[%count%];
+        uniform int uTextureIndex;
+        varying vec2 outTexCoord;
+        varying float outTextureId;
+        varying vec4 outTint;
+        
+        void main() {
+          vec4 color;
+          // Use optimized texture lookup with fewer branches
+          int textureId = int(outTextureId);
+          %forloop%
+          gl_FragColor = color * outTint;
+        }
+      `.replace('%count%', renderer.maxTextures.toString())
+       .replace('%forloop%', this.generateTextureLoopCode(renderer.maxTextures))
+    });
+    
+    // Register pipeline with renderer
+    renderer.pipelines.add('multiBatch', multiBatchPipeline);
+    this.customPipelines.set('multiBatch', multiBatchPipeline);
+    
+    // Effects pipeline with pre-pass optimization
+    const effectsPipeline = this.createEffectsPipeline();
+    renderer.pipelines.add('effects', effectsPipeline);
+    this.customPipelines.set('effects', effectsPipeline);
+  }
+  
+  /**
+   * Generate optimized texture lookup code
+   */
+  private generateTextureLoopCode(maxTextures: number): string {
+    let code = '';
+    for (let i = 0; i < maxTextures; i++) {
+      if (i > 0) {
+        code += 'else ';
+      }
+      code += `if (textureId == ${i}) {
+        color = texture2D(uMainSampler[${i}], outTexCoord);
+      }`;
+      if (i < maxTextures - 1) {
+        code += '\n      ';
+      }
+    }
+    return code;
+  }
+  
+  /**
+   * Create a specialized effects pipeline
+   */
+  private createEffectsPipeline(): Phaser.Renderer.WebGL.WebGLPipeline {
+    // Implementation details...
+    return new Phaser.Renderer.WebGL.Pipelines.PostFXPipeline({
+      // Configuration...
+      game: this.game
+    });
+  }
+  
+  /**
+   * Optimize render order to minimize state changes
+   */
+  private optimizeRenderOrder(): void {
+    // Clear previous batch groups
+    this.batchGroups.forEach(group => group.length = 0);
+    
+    // Collect visible objects
+    const displayList = this.scene.sys.displayList;
+    displayList.getChildren().forEach(obj => {
+      if (!obj.visible) return;
+      
+      // Group by type for efficient batching
+      if (obj.type === 'Sprite') {
+        this.batchGroups.get('sprites').push(obj);
+      } else if (obj.type === 'ParticleEmitter') {
+        this.batchGroups.get('particles').push(obj);
+      } else if (obj.type === 'Light') {
+        this.batchGroups.get('lights').push(obj);
+      }
+    });
+    
+    // Sort sprite batch by texture to reduce bindings
+    this.batchGroups.get('sprites').sort((a, b) => {
+      const spriteA = a as Phaser.GameObjects.Sprite;
+      const spriteB = b as Phaser.GameObjects.Sprite;
+      return spriteA.texture.key.localeCompare(spriteB.texture.key);
+    });
+    
+    // Apply pipeline settings for the frame
+    const renderer = this.game.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+    const multiBatchPipeline = this.customPipelines.get('multiBatch');
+    
+    // Configure pipeline for optimal state management
+    multiBatchPipeline?.setFloat2('uResolution', this.game.config.width, this.game.config.height);
+  }
+  
+  /**
+   * Clean up resources
+   */
+  private cleanup(): void {
+    // Clean up event listeners
+    this.scene.events.off('prerender', this.optimizeRenderOrder, this);
+    
+    // Clear batch groups
+    this.batchGroups.forEach(group => group.length = 0);
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Inefficient rendering with many state changes
+class EffectsRenderer {
+  private scene: Phaser.Scene;
+  private effects: Phaser.GameObjects.GameObject[] = [];
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  // Apply multiple post-processing effects, each with separate pipeline and state changes
+  applyEffects(): void {
+    // Each effect changes shader, sets uniforms, and processes individually
+    this.effects.forEach(effect => {
+      // Get effect configuration
+      const config = (effect as any).config;
+      
+      // For each effect, change the active pipeline
+      this.scene.cameras.main.setRenderToTexture(config.pipelineName);
+      
+      // Set new uniforms for each effect, causing many state changes
+      const pipeline = this.scene.cameras.main.pipeline;
+      Object.keys(config.uniforms).forEach(key => {
+        pipeline.setUniform(key, config.uniforms[key]);
+      });
+      
+      // Bind new textures for each effect
+      if (config.textures) {
+        config.textures.forEach((texture, i) => {
+          pipeline.setTexture(i, texture);
+        });
+      }
+      
+      // Process and render each effect separately
+      pipeline.render();
+      
+      // Reset pipeline state after each effect
+      pipeline.flush();
+    });
+  }
+  
+  // Apply a new filter on top of existing ones
+  addFilter(filterType: string): void {
+    const effect = this.scene.add.shader(filterType);
+    
+    // No batching or state optimization
+    this.effects.push(effect);
+    
+    // Recreate pipeline with new effect
+    this.applyEffects();
+  }
+}
+```
+</example>
+
+## Optimization Techniques
+
+1. **Pipeline Batching Strategies**:
+   - Group objects by pipeline to minimize pipeline switches
+   - Sort objects by depth, then by texture to optimize batching
+   - Use multi-texture batching to reduce draw calls
+   - Implement custom z-indexing for predictable render order
+
+2. **State Change Minimization**:
+   - Reduce GL state changes by grouping similar operations
+   - Cache uniform values to avoid redundant updates
+   - Use uniform buffers for shared values across objects
+   - Sort render operations to minimize texture binding changes
+
+3. **Custom Pipeline Implementation**:
+   - Create specialized pipelines for common effects
+   - Implement material-based batching for similar visual elements
+   - Optimize pipeline shaders for specific use cases
+   - Implement view frustum culling at the pipeline level
+
+4. **WebGL Context Optimization**:
+   - Use vertex array objects (VAOs) when available
+   - Implement instanced rendering for repeated objects
+   - Optimize attribute layouts to reduce memory bandwidth
+   - Minimize canvas resizing and context recreation
+
+<version>1.0.0</version> 

@@ -1,6 +1,8 @@
 import { Scene } from "phaser";
 import { BaseComponent } from "./BaseComponent";
 import { WaveDirectionComponent } from "./WaveDirectionComponent";
+import { WaveSpawningComponent } from "./WaveSpawningComponent";
+import { assert } from "../utils/assert";
 
 export enum BuildingSize {
   SMALL = "small",
@@ -49,6 +51,7 @@ export class CampBuilding extends BaseComponent {
   private cooperationMarker: Phaser.GameObjects.Text | null = null;
   private id: string;
   private waveDirectionComponent: WaveDirectionComponent;
+  private waveSpawningComponent: WaveSpawningComponent;
 
   constructor(scene: Scene, x: number, y: number, size: BuildingSize) {
     super({ scene, x, y });
@@ -56,14 +59,114 @@ export class CampBuilding extends BaseComponent {
     this.config = BUILDING_CONFIGS[size];
     this.health = this.config.health;
     this.waveDirectionComponent = new WaveDirectionComponent(scene, this);
+    this.waveSpawningComponent = new WaveSpawningComponent(scene, this);
 
-    // Create building sprite
+    // Create building sprite with unique visuals based on size
     const width =
       size === BuildingSize.SMALL ? 30 : size === BuildingSize.MEDIUM ? 45 : 60;
     const height =
       size === BuildingSize.SMALL ? 30 : size === BuildingSize.MEDIUM ? 45 : 60;
 
-    this.sprite = scene.add.rectangle(x, y, width, height, 0x666666);
+    // Create a container for the camp visuals
+    const container = scene.add.container(x, y);
+
+    // Create base building shape
+    this.sprite = scene.add.rectangle(
+      0,
+      0,
+      width,
+      height,
+      this.getCampColor(size)
+    );
+    container.add(this.sprite);
+
+    // Add decorative elements based on size
+    if (size === BuildingSize.SMALL) {
+      // Small camp: Simple watchtower
+      const tower = scene.add.rectangle(
+        -width / 4,
+        -height / 4,
+        width / 4,
+        height / 2,
+        0x444444
+      );
+      container.add(tower);
+    } else if (size === BuildingSize.MEDIUM) {
+      // Medium camp: Fortified walls
+      const wallThickness = 4;
+      const walls = [
+        scene.add.rectangle(
+          -width / 2,
+          -height / 2,
+          width,
+          wallThickness,
+          0x444444
+        ), // Top
+        scene.add.rectangle(
+          -width / 2,
+          height / 2,
+          width,
+          wallThickness,
+          0x444444
+        ), // Bottom
+        scene.add.rectangle(
+          -width / 2,
+          -height / 2,
+          wallThickness,
+          height,
+          0x444444
+        ), // Left
+        scene.add.rectangle(
+          width / 2,
+          -height / 2,
+          wallThickness,
+          height,
+          0x444444
+        ), // Right
+      ];
+      container.add(walls);
+    } else {
+      // Large camp: Fortress with towers and gate
+      const towerSize = { width: width / 5, height: height / 3 };
+      const towers = [
+        scene.add.rectangle(
+          -width / 2,
+          -height / 2,
+          towerSize.width,
+          towerSize.height,
+          0x444444
+        ), // Top left
+        scene.add.rectangle(
+          width / 2 - towerSize.width,
+          -height / 2,
+          towerSize.width,
+          towerSize.height,
+          0x444444
+        ), // Top right
+        scene.add.rectangle(
+          -width / 2,
+          height / 2 - towerSize.height,
+          towerSize.width,
+          towerSize.height,
+          0x444444
+        ), // Bottom left
+        scene.add.rectangle(
+          width / 2 - towerSize.width,
+          height / 2 - towerSize.height,
+          towerSize.width,
+          towerSize.height,
+          0x444444
+        ), // Bottom right
+      ];
+      const gate = scene.add.rectangle(
+        0,
+        height / 2 - towerSize.height / 2,
+        width / 3,
+        towerSize.height / 2,
+        0x8b4513
+      );
+      container.add([...towers, gate]);
+    }
 
     // Add physics
     scene.physics.add.existing(this.sprite, true);
@@ -73,27 +176,43 @@ export class CampBuilding extends BaseComponent {
     // Create health bar
     const barWidth = width;
     const barHeight = 5;
-    const barY = y - height / 2 - barHeight - 2;
+    const barY = -height / 2 - barHeight - 2;
 
     this.healthBarBackground = scene.add.rectangle(
-      x,
+      0,
       barY,
       barWidth,
       barHeight,
       0x000000
     );
     this.healthBar = scene.add.rectangle(
-      x,
+      0,
       barY,
       barWidth,
       barHeight,
       0x00ff00
     );
+    container.add([this.healthBarBackground, this.healthBar]);
     this.updateHealthBar();
 
-    // TODO: Add unique visuals for different camp sizes and types
-    // Current camps are just differently sized rectangles
-    // Should have distinctive appearances based on size and type
+    // Make camp interactive
+    this.sprite.setInteractive();
+    this.sprite.on("pointerdown", () => {
+      this.scene.events.emit("showDiplomatMenu", this);
+    });
+  }
+
+  private getCampColor(size: BuildingSize): number {
+    switch (size) {
+      case BuildingSize.SMALL:
+        return 0x8b8b8b; // Light gray for small camps
+      case BuildingSize.MEDIUM:
+        return 0x707070; // Medium gray for medium camps
+      case BuildingSize.LARGE:
+        return 0x555555; // Dark gray for large camps
+      default:
+        return 0x666666;
+    }
   }
 
   public markAsQuestTarget(): void {
@@ -116,38 +235,49 @@ export class CampBuilding extends BaseComponent {
   }
 
   public setCooperating(value: boolean): void {
-    this.isCooperating = value;
+    if (this.isCooperating !== value) {
+      this.isCooperating = value;
 
-    // Update building appearance
-    if (value) {
-      this.sprite.setFillStyle(0x44ff44); // Green tint for cooperating camps
+      // Update building appearance
+      if (value) {
+        this.sprite.setFillStyle(0x44ff44); // Green tint for cooperating camps
 
-      // Create cooperation marker
-      if (!this.cooperationMarker) {
-        this.cooperationMarker = this.scene.add.text(
-          this.sprite.x,
-          this.sprite.y - this.sprite.height / 2 - 20,
-          "C",
-          {
-            fontSize: "24px",
-            color: "#44ff44",
-            backgroundColor: "#000000",
-            padding: { x: 4, y: 2 },
-          }
-        );
-        this.cooperationMarker.setOrigin(0.5);
-        this.cooperationMarker.setDepth(5);
+        // Create cooperation marker
+        if (!this.cooperationMarker) {
+          this.cooperationMarker = this.scene.add.text(
+            this.sprite.x,
+            this.sprite.y - this.sprite.height / 2 - 20,
+            "C",
+            {
+              fontSize: "24px",
+              color: "#44ff44",
+              backgroundColor: "#000000",
+              padding: { x: 4, y: 2 },
+            }
+          );
+          this.cooperationMarker.setOrigin(0.5);
+          this.cooperationMarker.setDepth(5);
+        }
+
+        // Play cooperation sound
+        const audioManager = this.scene.registry.get("audioManager");
+        if (audioManager) {
+          audioManager.playSound("cooperation");
+        }
+      } else {
+        this.sprite.setFillStyle(0x666666); // Reset to default color
+        if (this.cooperationMarker) {
+          this.cooperationMarker.destroy();
+          this.cooperationMarker = null;
+        }
+        // Clear wave target when cooperation ends
+        this.setWaveTarget(null);
       }
-    } else {
-      this.sprite.setFillStyle(0x666666); // Reset to default color
-      if (this.cooperationMarker) {
-        this.cooperationMarker.destroy();
-        this.cooperationMarker = null;
-      }
+
+      // TODO: Add effects/animation when camp changes to cooperating state
+      // Currently cooperation state changes without fanfare or clear feedback
+      this.emit("stateChanged");
     }
-
-    // TODO: Add effects/animation when camp changes to cooperating state
-    // Currently cooperation state changes without fanfare or clear feedback
   }
 
   public isCooperatingState(): boolean {
@@ -175,7 +305,9 @@ export class CampBuilding extends BaseComponent {
       }
     });
 
-    if (this.health <= 0) {
+    if (this.health <= 0 && !this.isDestroyed) {
+      this.isDestroyed = true;
+      this.emit("stateChanged");
       this.destroy();
     }
   }
@@ -223,12 +355,9 @@ export class CampBuilding extends BaseComponent {
       );
     }
 
-    // Update wave direction component
+    // Update components
     this.waveDirectionComponent.update(time, delta);
-
-    // TODO: Implement wave spawning based on camp state
-    // Camps need to generate waves at appropriate intervals
-    // Should hook into main wave system
+    this.waveSpawningComponent.update(time, delta);
   }
 
   public destroy(): void {
@@ -275,6 +404,7 @@ export class CampBuilding extends BaseComponent {
       this.cooperationMarker.destroy();
     }
     this.waveDirectionComponent.destroy();
+    this.waveSpawningComponent.destroy();
     this.sprite.destroy();
   }
 
@@ -291,14 +421,24 @@ export class CampBuilding extends BaseComponent {
   }
 
   public setWaveTarget(camp: CampBuilding | null): void {
-    this.waveDirectionComponent.setTargetCamp(camp);
+    assert(
+      camp === null || camp instanceof CampBuilding,
+      "Wave target must be a CampBuilding or null"
+    );
 
-    // TODO: Connect this with the wave spawning system
-    // This method only updates the visual direction component
-    // Need to ensure waves actually target the chosen camp
+    // Update wave direction component
+    this.waveDirectionComponent.setTargetCamp(camp);
   }
 
   public getWaveTarget(): CampBuilding | null {
     return this.waveDirectionComponent.getTargetCamp();
+  }
+
+  public on(event: string, callback: Function): void {
+    this.addListener(event, callback);
+  }
+
+  public off(event: string, callback: Function): void {
+    this.removeListener(event, callback);
   }
 }

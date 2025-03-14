@@ -1,0 +1,218 @@
+---
+description: Implement culling strategies to avoid rendering off-screen objects and improve performance
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+# Render Culling Optimization
+
+## Context
+- When working with large game worlds with many objects
+- When experiencing performance drops due to rendering too many objects
+- When only a small portion of the game world is visible at once
+- When targeting mobile or low-powered devices
+
+## Requirements
+- Implement camera culling to avoid rendering off-screen objects
+- Set up visibility checks for game objects
+- Organize objects into render layers with appropriate culling
+- Implement distance-based culling for far-away objects
+- Ensure culled objects don't consume CPU time for updates
+
+## Examples
+
+<example>
+```typescript
+// GOOD: Camera culling implementation
+export class CullingManager {
+  private scene: Phaser.Scene;
+  private camera: Phaser.Cameras.Scene2D.Camera;
+  private cullPadding: number;
+  private cullableObjects: Phaser.GameObjects.GameObject[];
+  
+  constructor(scene: Phaser.Scene, cullPadding: number = 100) {
+    this.scene = scene;
+    this.camera = scene.cameras.main;
+    this.cullPadding = cullPadding;
+    this.cullableObjects = [];
+    
+    // Set up event for camera movement
+    this.camera.on('camerafadeincomplete', () => this.updateCulling());
+    
+    // Update culling on scene update
+    this.scene.events.on('update', () => this.updateCulling());
+  }
+  
+  registerForCulling(gameObject: Phaser.GameObjects.GameObject): void {
+    this.cullableObjects.push(gameObject);
+  }
+  
+  unregisterFromCulling(gameObject: Phaser.GameObjects.GameObject): void {
+    const index = this.cullableObjects.indexOf(gameObject);
+    if (index !== -1) {
+      this.cullableObjects.splice(index, 1);
+    }
+  }
+  
+  updateCulling(): void {
+    // Get camera view rectangle (with padding)
+    const cameraView = new Phaser.Geom.Rectangle(
+      this.camera.worldView.x - this.cullPadding,
+      this.camera.worldView.y - this.cullPadding,
+      this.camera.worldView.width + (this.cullPadding * 2),
+      this.camera.worldView.height + (this.cullPadding * 2)
+    );
+    
+    // Check each object against camera view
+    this.cullableObjects.forEach(obj => {
+      // Skip if object has no getBounds method
+      if (!obj.getBounds) return;
+      
+      const bounds = obj.getBounds();
+      
+      // Check if object bounds intersect with camera view
+      const isVisible = Phaser.Geom.Rectangle.Overlaps(cameraView, bounds);
+      
+      // Only update visibility if it's changing
+      if (obj.visible !== isVisible) {
+        obj.visible = isVisible;
+        
+        // If the object has a setActive method (e.g., physics objects), also use it
+        if (obj.setActive) {
+          obj.setActive(isVisible);
+        }
+      }
+    });
+  }
+  
+  destroy(): void {
+    this.camera.off('camerafadeincomplete');
+    this.scene.events.off('update', this.updateCulling);
+    this.cullableObjects = [];
+  }
+}
+
+// Usage
+const cullingManager = new CullingManager(this);
+
+// Register objects for culling
+cullingManager.registerForCulling(enemy);
+cullingManager.registerForCulling(building);
+
+// Unregister when objects are destroyed
+enemy.on('destroy', () => {
+  cullingManager.unregisterFromCulling(enemy);
+});
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: No culling implementation - everything renders and updates
+export class IneffientRenderer {
+  private scene: Phaser.Scene;
+  private gameObjects: Phaser.GameObjects.GameObject[] = [];
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  update(): void {
+    // Inefficient update with no culling
+    this.gameObjects.forEach(object => {
+      // Always update and render everything, regardless of visibility
+      object.update();
+      
+      // No culling logic, so off-screen objects still consume resources
+      if (object instanceof Phaser.GameObjects.Sprite) {
+        object.rotation += 0.01;
+      }
+    });
+  }
+  
+  createManyObjects(count: number): void {
+    for (let i = 0; i < count; i++) {
+      // Create objects across a large world
+      const x = Math.random() * 5000;
+      const y = Math.random() * 5000;
+      
+      const object = this.scene.add.sprite(x, y, 'texture');
+      
+      // Add to list without any culling consideration
+      this.gameObjects.push(object);
+    }
+  }
+}
+```
+This approach doesn't implement any culling, causing all objects to be rendered and updated even when off-screen, leading to poor performance, especially with large game worlds.
+</example>
+
+## Culling Techniques
+
+1. **Camera Culling**:
+   ```typescript
+   // Enable built-in camera culling
+   this.cameras.main.useCulling = true;
+   
+   // Add objects to camera's cull list
+   this.cameras.main.cullItems = this.physics.world.staticBodies;
+   
+   // Set cull padding to prevent pop-in
+   this.cameras.main.cullPadding = 100;
+   ```
+
+2. **Layered Culling by Distance**:
+   ```typescript
+   // Group objects by distance layers
+   const objectLayers = {
+     near: [], // Always render and update
+     mid: [],  // Render when within medium distance
+     far: []   // Only render when close to camera
+   };
+   
+   // Check distance from camera center to object
+   function updateDistanceCulling(camera, objects) {
+     const camX = camera.scrollX + camera.width / 2;
+     const camY = camera.scrollY + camera.height / 2;
+     
+     objects.far.forEach(obj => {
+       const distance = Phaser.Math.Distance.Between(
+         camX, camY, obj.x, obj.y
+       );
+       
+       // Far objects only visible when close
+       obj.visible = distance < 1000;
+       
+       // Mid-distance objects with reduced update frequency
+       if (obj.visible && distance > 500) {
+         // Update only every 3 frames
+         obj.skipUpdates = (obj.skipUpdates || 0) + 1;
+         if (obj.skipUpdates > 3) {
+           obj.update();
+           obj.skipUpdates = 0;
+         }
+       }
+     });
+   }
+   ```
+
+3. **Quadtree-Based Culling**:
+   ```typescript
+   // Initialize quadtree
+   const quadtree = new Phaser.Structs.QuadTree(0, 0, worldWidth, worldHeight);
+   
+   // Add objects to quadtree
+   function updateQuadtree(objects) {
+     quadtree.clear();
+     objects.forEach(obj => {
+       quadtree.insert(obj);
+     });
+   }
+   
+   // Efficiently retrieve only visible objects
+   function getCulledObjects(camera) {
+     const visibleBounds = camera.worldView;
+     return quadtree.search(visibleBounds);
+   }
+   ```
+
+<version>1.0.0</version> 

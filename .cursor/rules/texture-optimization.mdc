@@ -1,0 +1,188 @@
+---
+description: Optimize texture usage for better performance in Phaser games
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+# Texture Optimization
+
+## Context
+- When loading and managing game textures and sprites
+- When experiencing performance issues related to texture handling
+- When targeting memory-constrained devices
+- When working with games that have many visual assets
+
+## Requirements
+- Use texture atlases and sprite sheets instead of individual images
+- Implement proper texture memory management
+- Optimize texture dimensions for GPU compatibility
+- Reuse textures across multiple game objects
+- Generate and cache procedural textures efficiently
+
+## Examples
+
+<example>
+```typescript
+// GOOD: Using texture atlases for efficient rendering
+export class TextureManager {
+  constructor(private scene: Phaser.Scene) {}
+
+  preloadAssets(): void {
+    // Load a texture atlas instead of individual sprites
+    this.scene.load.atlas(
+      'gameSprites',
+      'assets/spritesheet.png',
+      'assets/spritesheet.json'
+    );
+    
+    // Set up animations from atlas
+    this.scene.load.once('complete', () => {
+      this.setupAnimations();
+    });
+  }
+  
+  private setupAnimations(): void {
+    // Create animations using the atlas frames
+    this.scene.anims.create({
+      key: 'player_walk',
+      frames: this.scene.anims.generateFrameNames('gameSprites', {
+        prefix: 'player/walk_',
+        start: 0,
+        end: 7,
+        zeroPad: 2
+      }),
+      frameRate: 10,
+      repeat: -1
+    });
+    
+    // More animations...
+  }
+
+  // Create a reusable texture from shapes once and reuse many times
+  createShapeTexture(key: string, drawFunction: (graphics: Phaser.GameObjects.Graphics) => void): string {
+    // Check if texture already exists
+    if (this.scene.textures.exists(key)) {
+      return key;
+    }
+    
+    // Create a reusable texture from shapes
+    const graphics = this.scene.make.graphics({});
+    drawFunction(graphics);
+    
+    // Generate a texture that can be reused with sprites
+    graphics.generateTexture(key, graphics.width, graphics.height);
+    graphics.destroy();
+    
+    return key;
+  }
+  
+  createCircleTexture(key: string, radius: number, fillColor: number): string {
+    return this.createShapeTexture(key, (graphics) => {
+      graphics.fillStyle(fillColor);
+      graphics.fillCircle(radius, radius, radius);
+      graphics.lineStyle(2, 0x000000);
+      graphics.strokeCircle(radius, radius, radius);
+    });
+  }
+}
+
+// Usage
+const manager = new TextureManager(scene);
+manager.preloadAssets();
+
+// Create sprite using atlas
+const playerSprite = scene.add.sprite(100, 100, 'gameSprites', 'player/idle');
+playerSprite.play('player_walk');
+
+// Reuse generated texture for multiple objects
+const textureKey = manager.createCircleTexture('redBall', 10, 0xff0000);
+for (let i = 0; i < 100; i++) {
+  scene.add.image(Math.random() * 800, Math.random() * 600, textureKey);
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Loading many individual images instead of atlases
+export class IneffientTextureLoader {
+  constructor(private scene: Phaser.Scene) {}
+  
+  loadAssets(): void {
+    // Loading many individual images separately
+    this.scene.load.image('player_idle', 'assets/player_idle.png');
+    this.scene.load.image('player_walk_1', 'assets/player_walk_1.png');
+    this.scene.load.image('player_walk_2', 'assets/player_walk_2.png');
+    this.scene.load.image('player_walk_3', 'assets/player_walk_3.png');
+    this.scene.load.image('player_walk_4', 'assets/player_walk_4.png');
+    this.scene.load.image('player_walk_5', 'assets/player_walk_5.png');
+    this.scene.load.image('player_walk_6', 'assets/player_walk_6.png');
+    this.scene.load.image('player_walk_7', 'assets/player_walk_7.png');
+    this.scene.load.image('player_walk_8', 'assets/player_walk_8.png');
+    // Dozens more individual images...
+  }
+  
+  // BAD: Creating new Graphics object for EVERY entity
+  createEnemy(x: number, y: number): Phaser.GameObjects.Sprite {
+    // Create a new Graphics object for EVERY enemy
+    const graphics = this.scene.add.graphics();
+    graphics.fillStyle(0xff0000);
+    graphics.fillCircle(0, 0, 20);
+    
+    // Each enemy gets unique texture - terrible for performance
+    const uniqueKey = 'enemy_' + Date.now() + '_' + Math.random();
+    graphics.generateTexture(uniqueKey, 40, 40);
+    graphics.destroy();
+    
+    // Create sprite with the just-generated unique texture
+    return this.scene.add.sprite(x, y, uniqueKey);
+  }
+}
+```
+This approach creates performance issues by loading many individual textures and generating new textures for each entity, leading to excessive memory use and draw calls.
+</example>
+
+## Best Practices
+
+1. **Texture Atlases**:
+   ```typescript
+   // In your preloader scene
+   this.load.atlas('spritesheet', 'assets/spritesheet.png', 'assets/spritesheet.json');
+   
+   // Create sprites from atlas later
+   const sprite = this.add.sprite(x, y, 'spritesheet', 'player_idle');
+   ```
+
+2. **Power-of-Two Textures**:
+   - Use texture dimensions that are powers of two (256, 512, 1024, etc.)
+   - This optimizes GPU memory usage and compatibility
+   - Example: Resize source art to 512×512 instead of 500×500
+
+3. **Trim Sprite Sheets**:
+   - Remove transparent borders around sprites in your atlas
+   - Most atlas packers offer trimming options
+   - Maintain original size/positioning with frame data
+
+4. **Generate Procedural Textures Once**:
+   ```typescript
+   // Generate texture once at startup
+   function createParticleTextures() {
+     const colors = [0xff0000, 0x00ff00, 0x0000ff];
+     
+     colors.forEach(color => {
+       const key = `particle_${color.toString(16)}`;
+       const graphics = this.make.graphics();
+       graphics.fillStyle(color, 1);
+       graphics.fillCircle(8, 8, 8);
+       graphics.generateTexture(key, 16, 16);
+       graphics.destroy();
+     });
+   }
+   ```
+
+5. **Texture Management**:
+   ```typescript
+   // Remove textures when no longer needed
+   this.textures.remove('unusedTexture');
+   ```
+
+<version>1.0.0</version> 

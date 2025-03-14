@@ -1,0 +1,729 @@
+---
+description: Implement thorough resource cleanup to prevent memory leaks in Phaser games
+globs: **/*.ts
+---
+
+# Resource Cleanup
+
+## Context
+- When scene transitions occur
+- When game objects are destroyed
+- When releasing event listeners or callbacks
+- When managing WebGL resources
+- When implementing component lifecycle methods
+
+## Requirements
+- Implement proper destroy methods that release all resources
+- Remove event listeners when components are destroyed
+- Clear cached data when no longer needed
+- Cancel scheduled tasks and timers on cleanup
+- Release WebGL resources (textures, shaders, buffers)
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Scene with proper resource cleanup
+ */
+class GameScene extends Phaser.Scene {
+  private enemies: Enemy[] = [];
+  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager;
+  private worldMap: WorldMap;
+  private uiLayer: UILayer;
+  private musicTrack: Phaser.Sound.BaseSound;
+  private globalListeners: { event: string, callback: Function }[] = [];
+  
+  create() {
+    // Create game resources
+    this.particles = this.add.particles('particle-texture');
+    this.worldMap = new WorldMap(this);
+    this.uiLayer = new UILayer(this);
+    this.musicTrack = this.sound.add('background-music');
+    this.musicTrack.play({ loop: true });
+    
+    // Add global event listeners with tracking
+    const resizeHandler = () => this.handleResize();
+    window.addEventListener('resize', resizeHandler);
+    this.globalListeners.push({
+      event: 'resize',
+      callback: resizeHandler
+    });
+    
+    // Set up scene events
+    this.events.on('pause', this.handlePause, this);
+    this.events.once('shutdown', this.cleanupResources, this);
+  }
+  
+  /**
+   * Create an enemy with proper cleanup tracking
+   */
+  spawnEnemy(x: number, y: number): Enemy {
+    const enemy = new Enemy(this, x, y);
+    this.enemies.push(enemy);
+    return enemy;
+  }
+  
+  /**
+   * Remove enemy and its resources
+   */
+  removeEnemy(enemy: Enemy): void {
+    const index = this.enemies.indexOf(enemy);
+    if (index >= 0) {
+      // Call destroy to release the enemy's resources
+      enemy.destroy();
+      this.enemies.splice(index, 1);
+    }
+  }
+  
+  /**
+   * Comprehensive resource cleanup
+   */
+  cleanupResources(): void {
+    console.log('Cleaning up scene resources');
+    
+    // Clean up enemies
+    this.enemies.forEach(enemy => enemy.destroy());
+    this.enemies = [];
+    
+    // Clean up particles
+    if (this.particles) {
+      this.particles.destroy();
+      this.particles = null;
+    }
+    
+    // Clean up map
+    if (this.worldMap) {
+      this.worldMap.destroy();
+      this.worldMap = null;
+    }
+    
+    // Clean up UI
+    if (this.uiLayer) {
+      this.uiLayer.destroy();
+      this.uiLayer = null;
+    }
+    
+    // Stop and release audio
+    if (this.musicTrack) {
+      this.musicTrack.stop();
+      this.musicTrack = null;
+    }
+    
+    // Remove global event listeners
+    this.globalListeners.forEach(({ event, callback }) => {
+      window.removeEventListener(event, callback as EventListener);
+    });
+    this.globalListeners = [];
+    
+    // Clean up scene events
+    this.events.off('pause', this.handlePause, this);
+    
+    // Clear any timers
+    this.time.removeAllEvents();
+    
+    // Clear tweens
+    this.tweens.killAll();
+    
+    console.log('Scene cleanup complete');
+  }
+  
+  /**
+   * Automatically called by Phaser on scene shutdown
+   */
+  shutdown() {
+    // Already handled by cleanupResources event
+    // but can be used as a fallback
+    if (this.enemies && this.enemies.length > 0) {
+      console.warn('Resources were not properly cleaned up before shutdown');
+      this.cleanupResources();
+    }
+  }
+}
+
+/**
+ * Game entity with proper resource management
+ */
+class Enemy extends Phaser.GameObjects.Container {
+  private healthBar: Phaser.GameObjects.Graphics;
+  private sprite: Phaser.GameObjects.Sprite;
+  private emitter: Phaser.GameObjects.Particles.ParticleEmitter;
+  private updateListener: Function;
+  private timers: Phaser.Time.TimerEvent[] = [];
+  
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y);
+    scene.add.existing(this);
+    
+    // Create components
+    this.sprite = scene.add.sprite(0, 0, 'enemy');
+    this.add(this.sprite);
+    
+    this.healthBar = scene.add.graphics();
+    this.drawHealthBar(100);
+    this.add(this.healthBar);
+    
+    // Create particle effect
+    const particles = scene.add.particles('particle');
+    this.emitter = particles.createEmitter({
+      speed: 20,
+      scale: { start: 1, end: 0 },
+      blendMode: 'ADD'
+    });
+    this.emitter.startFollow(this);
+    
+    // Add update listener
+    this.updateListener = () => this.update();
+    scene.events.on('update', this.updateListener);
+    
+    // Create periodic effect with timer
+    this.timers.push(
+      scene.time.addEvent({
+        delay: 2000,
+        callback: this.playEffect,
+        callbackScope: this,
+        loop: true
+      })
+    );
+  }
+  
+  /**
+   * Draw the health bar
+   */
+  private drawHealthBar(health: number): void {
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x00ff00, 1);
+    this.healthBar.fillRect(-30, -40, health / 100 * 60, 8);
+    this.healthBar.lineStyle(2, 0xffffff, 1);
+    this.healthBar.strokeRect(-30, -40, 60, 8);
+  }
+  
+  /**
+   * Play a special effect
+   */
+  private playEffect(): void {
+    if (!this.active) return;
+    
+    // Create temporary effect
+    const effect = this.scene.add.sprite(this.x, this.y, 'effect');
+    effect.play('effect-animation');
+    effect.once('animationcomplete', () => {
+      effect.destroy();
+    });
+  }
+  
+  /**
+   * Update logic
+   */
+  update(): void {
+    // Do something every frame
+    if (!this.active) return;
+    
+    // Animation logic here
+  }
+  
+  /**
+   * Comprehensive resource cleanup
+   */
+  destroy(): void {
+    if (!this.scene) return; // Already destroyed
+    
+    // Stop timers
+    this.timers.forEach(timer => timer.destroy());
+    this.timers = [];
+    
+    // Remove update listener
+    this.scene.events.off('update', this.updateListener);
+    
+    // Stop particle emitter
+    if (this.emitter) {
+      this.emitter.stop();
+      this.emitter.manager.destroy();
+    }
+    
+    // Call super.destroy() to remove from scene
+    super.destroy();
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Scene with memory leaks
+class LeakyScene extends Phaser.Scene {
+  private enemies = [];
+  private particles;
+  private music;
+  private resizeHandler;
+  
+  create() {
+    // Create resources without tracking them
+    this.particles = this.add.particles('particles');
+    this.createParticleEffects();
+    
+    // Play music without storing reference for cleanup
+    this.sound.play('music', { loop: true });
+    
+    // Global listener not removed on cleanup
+    this.resizeHandler = () => this.handleResize();
+    window.addEventListener('resize', this.resizeHandler);
+    
+    // Spawn enemies without proper tracking
+    for (let i = 0; i < 10; i++) {
+      const enemy = new LeakyEnemy(this, i * 100, 300);
+      // Not tracking for cleanup
+    }
+  }
+  
+  // Creating effects without any way to clean them up
+  createParticleEffects() {
+    for (let i = 0; i < 5; i++) {
+      const emitter = this.particles.createEmitter({
+        // ... configuration
+      });
+      
+      // No reference saved for cleanup
+      emitter.setPosition(i * 100, 200);
+      emitter.start();
+    }
+  }
+  
+  // No proper cleanup method
+  shutdown() {
+    // Missing cleanup for:
+    // - Particle effects
+    // - Enemies
+    // - Music/sounds
+    // - Event listeners
+    // - Timers
+    
+    // Incomplete cleanup
+    this.enemies = [];
+  }
+}
+
+// BAD: Game object without proper cleanup
+class LeakyEnemy {
+  private sprite;
+  private timers = [];
+  private scene;
+  
+  constructor(scene, x, y) {
+    this.scene = scene;
+    this.sprite = scene.add.sprite(x, y, 'enemy');
+    
+    // Set up recurring timer but not tracking for cleanup
+    scene.time.addEvent({
+      delay: 1000,
+      callback: this.shootProjectile,
+      callbackScope: this,
+      loop: true
+    });
+    
+    // Attach events but not cleaning up
+    scene.events.on('update', this.update, this);
+  }
+  
+  shootProjectile() {
+    // Create projectile
+    const projectile = this.scene.add.sprite(
+      this.sprite.x, 
+      this.sprite.y, 
+      'projectile'
+    );
+    
+    // Move it
+    this.scene.tweens.add({
+      targets: projectile,
+      x: '+= 500',
+      duration: 2000,
+      onComplete: () => {
+        // This cleanup only works if the tween completes
+        projectile.destroy();
+      }
+    });
+    
+    // If scene changes before tween completes, projectile is leaked
+  }
+  
+  update() {
+    // Update logic
+    this.sprite.x += 1;
+  }
+  
+  // Incomplete destroy method
+  destroy() {
+    // Only removing sprite, not other resources
+    this.sprite.destroy();
+    
+    // Not removing event listeners
+    // Not stopping timers
+    // Not cleaning up projectiles
+  }
+}
+```
+</example>
+
+## Cleanup Patterns
+
+1. **Lifecycle Hooks Pattern**:
+   ```typescript
+   /**
+    * Base class with lifecycle hooks for proper cleanup
+    */
+   abstract class GameComponent {
+     protected scene: Phaser.Scene;
+     protected eventListeners: { target: any, event: string, callback: Function }[] = [];
+     protected timers: Phaser.Time.TimerEvent[] = [];
+     protected tweens: Phaser.Tweens.Tween[] = [];
+     protected isDestroyed = false;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       
+       // Auto-register for scene shutdown
+       this.scene.events.once('shutdown', this.onSceneShutdown, this);
+     }
+     
+     /**
+      * Listen to an event with automatic cleanup tracking
+      */
+     protected listenTo(target: any, event: string, callback: Function, context?: any): void {
+       target.on(event, callback, context || this);
+       this.eventListeners.push({ target, event, callback });
+     }
+     
+     /**
+      * Create a timer with automatic cleanup tracking
+      */
+     protected createTimer(config: Phaser.Types.Time.TimerEventConfig): Phaser.Time.TimerEvent {
+       const timer = this.scene.time.addEvent(config);
+       this.timers.push(timer);
+       return timer;
+     }
+     
+     /**
+      * Create a tween with automatic cleanup tracking
+      */
+     protected createTween(config: Phaser.Types.Tweens.TweenBuilderConfig): Phaser.Tweens.Tween {
+       const tween = this.scene.tweens.add(config);
+       this.tweens.push(tween);
+       return tween;
+     }
+     
+     /**
+      * Called when the component is about to be destroyed
+      * Override in subclasses to add custom cleanup
+      */
+     protected onDestroy(): void {}
+     
+     /**
+      * Called when the scene is shutting down
+      */
+     private onSceneShutdown(): void {
+       this.destroy();
+     }
+     
+     /**
+      * Clean up all resources
+      */
+     public destroy(): void {
+       if (this.isDestroyed) return;
+       
+       // Call subclass cleanup first
+       this.onDestroy();
+       
+       // Clean up event listeners
+       this.eventListeners.forEach(({ target, event, callback }) => {
+         target.off(event, callback, this);
+       });
+       this.eventListeners = [];
+       
+       // Clean up timers
+       this.timers.forEach(timer => timer.destroy());
+       this.timers = [];
+       
+       // Clean up tweens
+       this.tweens.forEach(tween => tween.stop());
+       this.tweens = [];
+       
+       // Remove scene shutdown listener
+       if (this.scene) {
+         this.scene.events.off('shutdown', this.onSceneShutdown, this);
+       }
+       
+       this.isDestroyed = true;
+     }
+   }
+   ```
+
+2. **Resource Registry Pattern**:
+   ```typescript
+   /**
+    * Registry for tracking resources that need cleanup
+    */
+   class ResourceRegistry {
+     private resources: Map<string, any[]> = new Map();
+     private cleanupHandlers: Map<string, (resource: any) => void> = new Map();
+     
+     /**
+      * Register a cleanup handler for a resource type
+      */
+     registerCleanupHandler(type: string, handler: (resource: any) => void): void {
+       this.cleanupHandlers.set(type, handler);
+     }
+     
+     /**
+      * Track a resource for later cleanup
+      */
+     track<T>(type: string, resource: T): T {
+       if (!this.resources.has(type)) {
+         this.resources.set(type, []);
+       }
+       
+       this.resources.get(type).push(resource);
+       return resource;
+     }
+     
+     /**
+      * Release a specific resource
+      */
+     release(type: string, resource: any): boolean {
+       if (!this.resources.has(type)) {
+         return false;
+       }
+       
+       const resources = this.resources.get(type);
+       const index = resources.indexOf(resource);
+       
+       if (index === -1) {
+         return false;
+       }
+       
+       // Call cleanup handler if registered
+       const handler = this.cleanupHandlers.get(type);
+       if (handler) {
+         handler(resource);
+       }
+       
+       // Remove from tracked list
+       resources.splice(index, 1);
+       return true;
+     }
+     
+     /**
+      * Clean up all resources of a specific type
+      */
+     cleanupByType(type: string): void {
+       if (!this.resources.has(type)) {
+         return;
+       }
+       
+       const resources = this.resources.get(type);
+       const handler = this.cleanupHandlers.get(type);
+       
+       if (handler) {
+         resources.forEach(resource => handler(resource));
+       }
+       
+       this.resources.set(type, []);
+     }
+     
+     /**
+      * Clean up all tracked resources
+      */
+     cleanupAll(): void {
+       for (const type of this.resources.keys()) {
+         this.cleanupByType(type);
+       }
+     }
+   }
+
+   /**
+    * Example usage in a scene
+    */
+   class GameScene extends Phaser.Scene {
+     private registry = new ResourceRegistry();
+     
+     constructor() {
+       super({ key: 'GameScene' });
+       
+       // Register cleanup handlers
+       this.registry.registerCleanupHandler('sprite', sprite => sprite.destroy());
+       this.registry.registerCleanupHandler('timer', timer => timer.destroy());
+       this.registry.registerCleanupHandler('tween', tween => tween.stop());
+       this.registry.registerCleanupHandler('sound', sound => sound.stop());
+     }
+     
+     create() {
+       // Track sprites for cleanup
+       const player = this.registry.track('sprite', 
+         this.add.sprite(400, 300, 'player')
+       );
+       
+       // Track timers
+       const timer = this.registry.track('timer',
+         this.time.addEvent({
+           delay: 1000,
+           loop: true,
+           callback: this.spawnEnemy,
+           callbackScope: this
+         })
+       );
+       
+       // Track sounds
+       const music = this.registry.track('sound',
+         this.sound.add('music')
+       );
+       music.play();
+       
+       // Auto cleanup on shutdown
+       this.events.once('shutdown', () => {
+         this.registry.cleanupAll();
+       });
+     }
+     
+     spawnEnemy() {
+       // Automatically tracked for cleanup
+       const enemy = this.registry.track('sprite',
+         this.add.sprite(Math.random() * 800, 0, 'enemy')
+       );
+       
+       // Track the tween for cleanup
+       this.registry.track('tween',
+         this.tweens.add({
+           targets: enemy,
+           y: 600,
+           duration: 2000
+         })
+       );
+     }
+   }
+   ```
+
+3. **Disposable Pattern**:
+   ```typescript
+   /**
+    * Interface for resources that need cleanup
+    */
+   interface Disposable {
+     dispose(): void;
+   }
+
+   /**
+    * A class that manages disposable resources
+    */
+   class DisposableManager implements Disposable {
+     private disposables: Disposable[] = [];
+     
+     /**
+      * Add a disposable resource to manage
+      */
+     add<T extends Disposable>(disposable: T): T {
+       this.disposables.push(disposable);
+       return disposable;
+     }
+     
+     /**
+      * Remove a disposable from management
+      */
+     remove(disposable: Disposable): boolean {
+       const index = this.disposables.indexOf(disposable);
+       if (index !== -1) {
+         this.disposables.splice(index, 1);
+         return true;
+       }
+       return false;
+     }
+     
+     /**
+      * Dispose of all managed resources
+      */
+     dispose(): void {
+       // Dispose in reverse order (most recently added first)
+       // This helps with dependency relationships
+       for (let i = this.disposables.length - 1; i >= 0; i--) {
+         this.disposables[i].dispose();
+       }
+       this.disposables = [];
+     }
+   }
+
+   /**
+    * Example game component using the disposable pattern
+    */
+   class EnemyManager implements Disposable {
+     private scene: Phaser.Scene;
+     private enemies: Enemy[] = [];
+     private disposables = new DisposableManager();
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       
+       // Create a spawner timer that's managed
+       this.disposables.add({
+         dispose: () => {
+           this.scene.time.removeEvent(spawnTimer);
+         }
+       });
+       
+       const spawnTimer = this.scene.time.addEvent({
+         delay: 1000,
+         callback: this.spawnEnemy,
+         callbackScope: this,
+         loop: true
+       });
+     }
+     
+     spawnEnemy(): void {
+       const enemy = new Enemy(this.scene, Math.random() * 800, 0);
+       this.enemies.push(enemy);
+       
+       // When we're disposed, dispose all enemies too
+       this.disposables.add(enemy);
+     }
+     
+     dispose(): void {
+       this.disposables.dispose();
+       this.enemies = [];
+     }
+   }
+
+   /**
+    * Enemy class that implements Disposable
+    */
+   class Enemy implements Disposable {
+     private sprite: Phaser.GameObjects.Sprite;
+     private disposables = new DisposableManager();
+     
+     constructor(scene: Phaser.Scene, x: number, y: number) {
+       this.sprite = scene.add.sprite(x, y, 'enemy');
+       
+       // Track any resources that need cleanup
+       const moveDownTween = scene.tweens.add({
+         targets: this.sprite,
+         y: 600,
+         duration: 3000
+       });
+       
+       // Add tween to disposables
+       this.disposables.add({
+         dispose: () => moveDownTween.stop()
+       });
+     }
+     
+     dispose(): void {
+       // Cleanup all tracked resources
+       this.disposables.dispose();
+       
+       // Destroy the sprite
+       if (this.sprite) {
+         this.sprite.destroy();
+         this.sprite = null;
+       }
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

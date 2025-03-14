@@ -1,0 +1,675 @@
+---
+description: Implement visual debugging overlays to monitor game performance and state in real-time
+globs: **/*.ts
+---
+
+# Diagnostic Overlays
+
+## Context
+- When debugging visual game elements or physics interactions in real-time
+- When optimizing performance and seeking to identify bottlenecks
+- When developing complex game systems that require visual feedback
+- When testing on devices where console logs are inaccessible
+- When analyzing spatial relationships between game objects
+
+## Requirements
+- Create togglable visual overlays to display debugging information
+- Implement performance monitors to track frame rates and execution times
+- Display collision bounds, paths, and other physics information
+- Visualize AI decision-making and pathfinding
+- Ensure overlays can be easily toggled on/off by developers
+- Design overlays to be minimally invasive to gameplay
+- Include text displays for important numeric values and states
+- Use color-coding for diagnostic clarity
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Visual debugging system for Phaser games
+ */
+class VisualDebugger {
+  private scene: Phaser.Scene;
+  private isEnabled: boolean = false;
+  private debugGraphics: Phaser.GameObjects.Graphics;
+  private debugTexts: Map<string, Phaser.GameObjects.Text> = new Map();
+  private fpsDisplay: Phaser.GameObjects.Text;
+  private memoryDisplay: Phaser.GameObjects.Text;
+  private perfMetrics: {
+    fps: number[];
+    frameTime: number[];
+    maxSamples: number;
+  };
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.debugGraphics = scene.add.graphics();
+    this.debugGraphics.setDepth(9999); // Ensure it's on top
+    
+    // Initialize performance metrics storage
+    this.perfMetrics = {
+      fps: [],
+      frameTime: [],
+      maxSamples: 60 // Store 1 second at 60fps
+    };
+    
+    // Create FPS counter
+    this.fpsDisplay = this.scene.add.text(10, 10, 'FPS: 0', {
+      fontSize: '16px',
+      color: '#00ff00',
+      backgroundColor: '#00000080'
+    });
+    this.fpsDisplay.setScrollFactor(0).setDepth(10000).setVisible(false);
+    
+    // Create memory usage display
+    this.memoryDisplay = this.scene.add.text(10, 30, 'Memory: 0 MB', {
+      fontSize: '16px',
+      color: '#00ff00',
+      backgroundColor: '#00000080'
+    });
+    this.memoryDisplay.setScrollFactor(0).setDepth(10000).setVisible(false);
+    
+    // Setup toggle key
+    this.scene.input.keyboard.on('keydown-BACKTICK', this.toggleDebug, this);
+    
+    // Subscribe to scene update
+    this.scene.events.on('update', this.update, this);
+  }
+  
+  /**
+   * Toggle debug overlay visibility
+   */
+  toggleDebug(): void {
+    this.isEnabled = !this.isEnabled;
+    
+    // Toggle visibility of all debug elements
+    this.debugGraphics.setVisible(this.isEnabled);
+    this.fpsDisplay.setVisible(this.isEnabled);
+    this.memoryDisplay.setVisible(this.isEnabled);
+    
+    this.debugTexts.forEach(text => {
+      text.setVisible(this.isEnabled);
+    });
+    
+    // Clear graphics when enabling to start fresh
+    if (this.isEnabled) {
+      this.debugGraphics.clear();
+    }
+  }
+  
+  /**
+   * Update the debug overlay each frame
+   */
+  update(time: number, delta: number): void {
+    if (!this.isEnabled) return;
+    
+    // Clear previous frame graphics
+    this.debugGraphics.clear();
+    
+    // Update FPS counter
+    const fps = Math.round(1000 / delta);
+    this.perfMetrics.fps.push(fps);
+    if (this.perfMetrics.fps.length > this.perfMetrics.maxSamples) {
+      this.perfMetrics.fps.shift();
+    }
+    
+    const avgFps = this.perfMetrics.fps.reduce((sum, value) => sum + value, 0) / 
+                   this.perfMetrics.fps.length;
+    
+    this.fpsDisplay.setText(`FPS: ${Math.round(avgFps)} (${fps})`);
+    this.fpsDisplay.setColor(fps < 30 ? '#ff0000' : fps < 50 ? '#ffff00' : '#00ff00');
+    
+    // Update memory usage if supported
+    if (window.performance && window.performance.memory) {
+      const memory = Math.round(window.performance.memory.usedJSHeapSize / (1024 * 1024));
+      this.memoryDisplay.setText(`Memory: ${memory} MB`);
+      this.memoryDisplay.setColor(memory > 100 ? '#ff0000' : '#00ff00');
+    }
+    
+    // Draw any registered debug visualizations
+    this.drawColliders();
+    this.drawPaths();
+  }
+  
+  /**
+   * Draw physics colliders and bounds
+   */
+  private drawColliders(): void {
+    const bodies = this.scene.physics.world.bodies.getArray();
+    
+    bodies.forEach(body => {
+      // Different colors based on body properties
+      const isStatic = body.immovable;
+      const isAwake = body.sleeping;
+      
+      let color = 0x00ff00; // Green for normal bodies
+      if (isStatic) color = 0x0000ff; // Blue for static bodies
+      if (!isAwake) color = 0x999999; // Gray for sleeping bodies
+      
+      this.debugGraphics.lineStyle(1, color, 0.8);
+      
+      // Draw the body bounds
+      this.debugGraphics.strokeRect(
+        body.x - body.halfWidth, 
+        body.y - body.halfHeight,
+        body.width,
+        body.height
+      );
+      
+      // Draw velocity vector
+      if (body.velocity.length() > 0) {
+        const velScale = 0.1; // Scale velocity for visualization
+        this.debugGraphics.lineStyle(2, 0xff0000, 0.8);
+        this.debugGraphics.beginPath();
+        this.debugGraphics.moveTo(body.x, body.y);
+        this.debugGraphics.lineTo(
+          body.x + body.velocity.x * velScale,
+          body.y + body.velocity.y * velScale
+        );
+        this.debugGraphics.closePath();
+        this.debugGraphics.strokePath();
+      }
+    });
+  }
+  
+  /**
+   * Draw AI paths and waypoints
+   */
+  private drawPaths(): void {
+    // Draw any registered AI paths or waypoints
+    // Would be implemented in a game-specific way
+  }
+  
+  /**
+   * Add a value to be monitored in the debug display
+   * @param key Unique identifier for this value
+   * @param getValue Function that returns the current value
+   * @param position Screen position {x, y} for the text
+   * @param options Text formatting options
+   */
+  addMonitoredValue(
+    key: string,
+    getValue: () => any,
+    position: { x: number, y: number },
+    options: { fontSize?: string, color?: string } = {}
+  ): void {
+    const text = this.scene.add.text(
+      position.x,
+      position.y,
+      `${key}: ${getValue()}`,
+      {
+        fontSize: options.fontSize || '16px',
+        color: options.color || '#ffffff',
+        backgroundColor: '#00000080'
+      }
+    );
+    
+    text.setScrollFactor(0).setDepth(10000).setVisible(this.isEnabled);
+    this.debugTexts.set(key, text);
+    
+    // Update this value each frame
+    this.scene.events.on('update', () => {
+      if (!this.isEnabled) return;
+      text.setText(`${key}: ${getValue()}`);
+    });
+  }
+  
+  /**
+   * Clean up resources when scene is destroyed
+   */
+  destroy(): void {
+    this.scene.events.off('update', this.update, this);
+    this.scene.input.keyboard.off('keydown-BACKTICK', this.toggleDebug, this);
+    
+    this.debugGraphics.destroy();
+    this.fpsDisplay.destroy();
+    this.memoryDisplay.destroy();
+    
+    this.debugTexts.forEach(text => text.destroy());
+    this.debugTexts.clear();
+    
+    this.scene = null;
+    this.debugGraphics = null;
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Hardcoded debugging visuals without proper toggling or structure
+class Game extends Phaser.Scene {
+  private player: Phaser.Physics.Arcade.Sprite;
+  private enemies: Phaser.Physics.Arcade.Group;
+  private debugMode = true; // Hard-coded debug flag
+  
+  create() {
+    // Game setup...
+    this.player = this.physics.add.sprite(100, 100, 'player');
+    this.enemies = this.physics.add.group();
+    
+    // Add some enemies
+    for (let i = 0; i < 5; i++) {
+      const enemy = this.physics.add.sprite(
+        Math.random() * 800,
+        Math.random() * 600,
+        'enemy'
+      );
+      this.enemies.add(enemy);
+    }
+    
+    // Debug text scattered through code
+    this.add.text(10, 10, 'Debug Mode', { color: '#ff0000' });
+  }
+  
+  update() {
+    // Game logic...
+    
+    // Debugging code mixed with game logic
+    if (this.debugMode) {
+      // Draw directly without cleanup from previous frame
+      const graphics = this.add.graphics();
+      
+      // Manually draw player bounds
+      graphics.lineStyle(2, 0xff0000);
+      graphics.strokeRect(
+        this.player.x - this.player.width/2,
+        this.player.y - this.player.height/2,
+        this.player.width,
+        this.player.height
+      );
+      
+      // Hard-coded FPS counter with no smoothing
+      const fps = Math.round(this.game.loop.actualFps);
+      this.add.text(700, 10, `FPS: ${fps}`, { color: '#00ff00' });
+      // This creates a new text object every frame!
+      
+      // Draw enemy paths - inefficient approach
+      this.enemies.getChildren().forEach((enemy: any) => {
+        graphics.lineStyle(1, 0x0000ff);
+        graphics.lineBetween(
+          enemy.x, 
+          enemy.y, 
+          this.player.x, 
+          this.player.y
+        );
+      });
+    }
+  }
+}
+```
+</example>
+
+## Diagnostic Overlay Patterns
+
+1. **Frame Rate Analysis Chart**:
+   ```typescript
+   /**
+    * Visual performance analysis chart
+    */
+   class PerformanceChart {
+     private scene: Phaser.Scene;
+     private graphics: Phaser.GameObjects.Graphics;
+     private fpsData: number[] = [];
+     private frameTimeData: number[] = [];
+     private gcTimings: number[] = [];
+     private maxSamples: number = 100;
+     private visible: boolean = false;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       this.graphics = scene.add.graphics();
+       this.graphics.setScrollFactor(0).setDepth(10000).setVisible(false);
+       
+       // Background panel
+       const width = 300;
+       const height = 150;
+       const x = scene.cameras.main.width - width - 10;
+       const y = 10;
+       
+       const background = scene.add.rectangle(
+         x + width/2, 
+         y + height/2, 
+         width, 
+         height, 
+         0x000000, 
+         0.7
+       );
+       background.setScrollFactor(0).setDepth(9999).setVisible(false);
+       
+       // Monitor for GC events using frame time spikes
+       let lastFrameTime = 0;
+       scene.events.on('update', (time, delta) => {
+         // Record FPS and frame time
+         if (this.visible) {
+           this.fpsData.push(1000 / delta);
+           this.frameTimeData.push(delta);
+           
+           // Limit data points
+           if (this.fpsData.length > this.maxSamples) {
+             this.fpsData.shift();
+             this.frameTimeData.shift();
+           }
+           
+           // Check for potential GC pauses
+           if (delta > 50 && lastFrameTime < 20) {
+             this.gcTimings.push(time);
+           }
+           
+           lastFrameTime = delta;
+           this.drawChart();
+         }
+       });
+       
+       // Toggle visibility with key
+       scene.input.keyboard.on('keydown-P', () => {
+         this.visible = !this.visible;
+         this.graphics.setVisible(this.visible);
+         background.setVisible(this.visible);
+       });
+     }
+     
+     /**
+      * Draw the performance chart
+      */
+     private drawChart(): void {
+       this.graphics.clear();
+       
+       const width = 280;
+       const height = 120;
+       const x = this.scene.cameras.main.width - width - 20;
+       const y = 20;
+       
+       // Draw axes
+       this.graphics.lineStyle(1, 0xffffff, 0.5);
+       this.graphics.beginPath();
+       this.graphics.moveTo(x, y);
+       this.graphics.lineTo(x, y + height);
+       this.graphics.lineTo(x + width, y + height);
+       this.graphics.strokePath();
+       
+       // Draw FPS target line (60fps)
+       this.graphics.lineStyle(1, 0x00ff00, 0.3);
+       this.graphics.beginPath();
+       this.graphics.moveTo(x, y + height - (height * 60 / 70));
+       this.graphics.lineTo(x + width, y + height - (height * 60 / 70));
+       this.graphics.strokePath();
+       
+       // Draw FPS data
+       if (this.fpsData.length > 1) {
+         const fpsMax = 70; // Max value
+         this.graphics.lineStyle(1, 0x00ff00, 0.8);
+         this.graphics.beginPath();
+         
+         // Draw each data point connected by lines
+         this.fpsData.forEach((fps, index) => {
+           const pointX = x + (index / this.maxSamples) * width;
+           const pointY = y + height - (Math.min(fps, fpsMax) / fpsMax) * height;
+           
+           if (index === 0) {
+             this.graphics.moveTo(pointX, pointY);
+           } else {
+             this.graphics.lineTo(pointX, pointY);
+           }
+         });
+         this.graphics.strokePath();
+         
+         // Draw significant frame time spikes
+         this.graphics.lineStyle(2, 0xff0000, 0.8);
+         this.frameTimeData.forEach((time, index) => {
+           if (time > 30) { // Over 30ms (under 33fps)
+             const pointX = x + (index / this.maxSamples) * width;
+             this.graphics.beginPath();
+             this.graphics.moveTo(pointX, y + height);
+             this.graphics.lineTo(pointX, y);
+             this.graphics.strokePath();
+           }
+         });
+         
+         // Add text for latest values
+         const currentFps = this.fpsData[this.fpsData.length - 1];
+         const currentFrameTime = this.frameTimeData[this.frameTimeData.length - 1];
+         
+         const statsText = this.scene.add.text(
+           x, 
+           y - 15, 
+           `FPS: ${Math.round(currentFps)} - Frame Time: ${currentFrameTime.toFixed(1)}ms`, 
+           { fontSize: '12px', color: '#ffffff' }
+         );
+         statsText.setScrollFactor(0).setDepth(10000);
+         
+         // Remove after a brief delay
+         this.scene.time.delayedCall(1000, () => {
+           statsText.destroy();
+         });
+       }
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       this.scene.events.off('update');
+       this.scene.input.keyboard.off('keydown-P');
+       this.graphics.destroy();
+     }
+   }
+   ```
+
+2. **Entity Inspector**:
+   ```typescript
+   /**
+    * Interactive inspector for game objects
+    */
+   class EntityInspector {
+     private scene: Phaser.Scene;
+     private inspectableEntities: Map<string, Phaser.GameObjects.GameObject> = new Map();
+     private graphics: Phaser.GameObjects.Graphics;
+     private infoPanel: Phaser.GameObjects.Container;
+     private selectedEntity: string = null;
+     private isActive: boolean = false;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       this.graphics = scene.add.graphics();
+       this.graphics.setDepth(9000);
+       
+       // Create info panel container
+       this.infoPanel = scene.add.container(10, 10);
+       this.infoPanel.setDepth(9001);
+       this.infoPanel.setScrollFactor(0);
+       this.infoPanel.setVisible(false);
+       
+       // Toggle inspector with I key
+       scene.input.keyboard.on('keydown-I', this.toggleInspector, this);
+       
+       // Click handler for selecting entities
+       scene.input.on('pointerdown', this.handleClick, this);
+       
+       // Update each frame
+       scene.events.on('update', this.update, this);
+     }
+     
+     /**
+      * Add an entity that can be inspected
+      */
+     registerEntity(id: string, entity: Phaser.GameObjects.GameObject): void {
+       this.inspectableEntities.set(id, entity);
+     }
+     
+     /**
+      * Toggle inspector visibility
+      */
+     toggleInspector(): void {
+       this.isActive = !this.isActive;
+       this.graphics.setVisible(this.isActive);
+       
+       if (!this.isActive) {
+         this.selectedEntity = null;
+         this.infoPanel.setVisible(false);
+       }
+     }
+     
+     /**
+      * Handle mouse clicks to select entities
+      */
+     private handleClick(pointer: Phaser.Input.Pointer): void {
+       if (!this.isActive) return;
+       
+       // Check if click hits any registered entity
+       let clickedEntity: string = null;
+       
+       this.inspectableEntities.forEach((entity, id) => {
+         if (entity instanceof Phaser.GameObjects.Sprite) {
+           if (Phaser.Geom.Rectangle.Contains(
+             entity.getBounds(), 
+             pointer.worldX, 
+             pointer.worldY
+           )) {
+             clickedEntity = id;
+           }
+         }
+       });
+       
+       if (clickedEntity) {
+         this.selectedEntity = clickedEntity;
+         this.updateInfoPanel();
+       } else {
+         this.selectedEntity = null;
+         this.infoPanel.setVisible(false);
+       }
+     }
+     
+     /**
+      * Update highlighting and info every frame
+      */
+     private update(): void {
+       if (!this.isActive) return;
+       
+       this.graphics.clear();
+       
+       // Highlight all inspectable entities
+       this.inspectableEntities.forEach((entity, id) => {
+         if (entity instanceof Phaser.GameObjects.Sprite) {
+           const bounds = entity.getBounds();
+           
+           // Highlight selected entity with a different color
+           const color = (id === this.selectedEntity) ? 0xffff00 : 0x00ffff;
+           const lineWidth = (id === this.selectedEntity) ? 2 : 1;
+           
+           this.graphics.lineStyle(lineWidth, color, 0.8);
+           this.graphics.strokeRect(
+             bounds.x, 
+             bounds.y, 
+             bounds.width, 
+             bounds.height
+           );
+           
+           // Draw entity name above
+           if (id === this.selectedEntity) {
+             const namePos = {
+               x: bounds.centerX,
+               y: bounds.y - 15
+             };
+             
+             // Add a small indicator line
+             this.graphics.lineBetween(
+               bounds.centerX,
+               bounds.y,
+               namePos.x,
+               namePos.y
+             );
+           }
+         }
+       });
+       
+       // Update info panel if entity is selected
+       if (this.selectedEntity && this.infoPanel.visible) {
+         this.updateInfoPanel();
+       }
+     }
+     
+     /**
+      * Update the information panel for selected entity
+      */
+     private updateInfoPanel(): void {
+       // Clear previous contents
+       this.infoPanel.removeAll(true);
+       
+       const entity = this.inspectableEntities.get(this.selectedEntity);
+       if (!entity) return;
+       
+       // Create background
+       const background = this.scene.add.rectangle(0, 0, 300, 200, 0x000000, 0.8);
+       background.setOrigin(0, 0);
+       this.infoPanel.add(background);
+       
+       // Title
+       const title = this.scene.add.text(10, 10, this.selectedEntity, { 
+         fontSize: '18px', 
+         color: '#ffffff',
+         fontStyle: 'bold'
+       });
+       this.infoPanel.add(title);
+       
+       // Entity properties
+       let yPos = 40;
+       const properties: string[] = [];
+       
+       // Position
+       properties.push(`Position: x=${Math.round(entity.x)}, y=${Math.round(entity.y)}`);
+       
+       // Type-specific properties
+       if (entity instanceof Phaser.GameObjects.Sprite) {
+         properties.push(`Size: ${entity.width}x${entity.height}`);
+         properties.push(`Visible: ${entity.visible}`);
+         properties.push(`Alpha: ${entity.alpha.toFixed(2)}`);
+         properties.push(`Angle: ${Math.round(entity.angle)}°`);
+         properties.push(`Origin: ${entity.originX.toFixed(2)}, ${entity.originY.toFixed(2)}`);
+         
+         // Physics properties if available
+         const body = (entity.body as Phaser.Physics.Arcade.Body);
+         if (body) {
+           properties.push('--- Physics ---');
+           properties.push(`Velocity: x=${Math.round(body.velocity.x)}, y=${Math.round(body.velocity.y)}`);
+           properties.push(`Speed: ${Math.round(body.speed)}`);
+           properties.push(`Immovable: ${body.immovable}`);
+           properties.push(`Collides: ${!body.checkCollision.none}`);
+         }
+       }
+       
+       // Add property texts
+       properties.forEach(prop => {
+         const text = this.scene.add.text(15, yPos, prop, {
+           fontSize: '14px', 
+           color: '#cccccc'
+         });
+         this.infoPanel.add(text);
+         yPos += 20;
+       });
+       
+       // Resize background to fit content
+       background.height = yPos + 10;
+       
+       // Show the panel
+       this.infoPanel.setVisible(true);
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       this.scene.input.keyboard.off('keydown-I', this.toggleInspector, this);
+       this.scene.input.off('pointerdown', this.handleClick, this);
+       this.scene.events.off('update', this.update, this);
+       
+       this.graphics.destroy();
+       this.infoPanel.destroy();
+       
+       this.inspectableEntities.clear();
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

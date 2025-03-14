@@ -1,0 +1,305 @@
+---
+description: Use type guards and assertions to ensure runtime type safety in TypeScript games
+globs: **/*.ts
+---
+
+# TypeScript Type Guards and Assertions
+
+## Context
+- When handling data from external sources (APIs, user input)
+- When working with union types or type hierarchies
+- When needing runtime type validation
+- When implementing complex type narrowing
+
+## Requirements
+- Implement custom type guards for complex or polymorphic types
+- Use type predicates (`x is Type`) to create reliable type guards
+- Create assertion functions that validate at runtime and throw errors
+- Avoid unnecessary type assertions with `as` keyword
+- Apply exhaustive checking with discriminated unions
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Type guard to check if an object is a valid game entity
+ * @param obj Object to check
+ * @returns True if object is a GameEntity
+ */
+function isGameEntity(obj: unknown): obj is GameEntity {
+  return (
+    obj !== null &&
+    typeof obj === 'object' &&
+    'id' in obj &&
+    typeof (obj as any).id === 'string' &&
+    'position' in obj &&
+    typeof (obj as any).position === 'object' &&
+    'update' in obj &&
+    typeof (obj as any).update === 'function'
+  );
+}
+
+/**
+ * Type guard for checking if a component is a MovementComponent
+ * @param component Component to check
+ * @returns True if component is a MovementComponent
+ */
+function isMovementComponent(component: Component): component is MovementComponent {
+  return (
+    'velocity' in component &&
+    'moveTo' in component &&
+    typeof component.moveTo === 'function'
+  );
+}
+
+/**
+ * Assert that a value is not null or undefined
+ * @param value Value to check
+ * @param message Error message if assertion fails
+ * @returns Non-null value
+ * @throws Error if value is null or undefined
+ */
+function assertNotNull<T>(value: T | null | undefined, message = 'Value cannot be null'): T {
+  if (value === null || value === undefined) {
+    throw new Error(message);
+  }
+  return value;
+}
+
+/**
+ * Assert that a value matches a given type guard
+ * @param value Value to check
+ * @param guard Type guard function
+ * @param message Error message if assertion fails
+ * @returns Value with narrowed type
+ * @throws Error if value does not match type guard
+ */
+function assertType<T, U extends T>(
+  value: T,
+  guard: (val: T) => val is U,
+  message = 'Value does not match expected type'
+): U {
+  if (!guard(value)) {
+    throw new Error(message);
+  }
+  return value;
+}
+
+// Example usage of type guards
+function processEntity(entity: unknown): void {
+  if (isGameEntity(entity)) {
+    // TypeScript knows entity is GameEntity here
+    entity.update(0, 0);
+    
+    // Check for specific component types
+    const components = entity.getComponents();
+    for (const component of components) {
+      if (isMovementComponent(component)) {
+        // TypeScript knows component is MovementComponent
+        component.moveTo(100, 100, 5);
+      }
+    }
+  }
+}
+
+// Example usage of type assertions
+function getPlayerData(playerId: string): Player {
+  const data = gameState.players[playerId];
+  
+  // Will throw if data is null/undefined
+  const player = assertNotNull(data, `Player with ID ${playerId} not found`);
+  
+  // Will throw if player doesn't match Player type
+  return assertType(player, isPlayer, `Invalid player data for ID ${playerId}`);
+}
+
+// Exhaustive checking with discriminated unions
+type GameEvent = 
+  | { type: 'PLAYER_DAMAGE', target: string, amount: number }
+  | { type: 'ITEM_PICKUP', item: string, player: string }
+  | { type: 'LEVEL_COMPLETE', score: number };
+
+function handleGameEvent(event: GameEvent): void {
+  switch (event.type) {
+    case 'PLAYER_DAMAGE':
+      applyDamage(event.target, event.amount);
+      break;
+    case 'ITEM_PICKUP':
+      addItemToInventory(event.player, event.item);
+      break;
+    case 'LEVEL_COMPLETE':
+      updateScore(event.score);
+      break;
+    default:
+      // Exhaustiveness check
+      const _exhaustiveCheck: never = event;
+      throw new Error(`Unhandled event type: ${(event as any).type}`);
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Excessive use of type assertions
+function processInput(input: any) {
+  // Unsafe - no actual validation
+  const player = input as Player;
+  player.health -= 10; // May cause runtime error if not a Player
+  
+  // Multiple unsafe casts with no validation
+  const position = (input as any).position as Position;
+  const inventory = (input as any).inventory as Inventory;
+  
+  // Returning potentially invalid data
+  return {
+    player: player,
+    position: position,
+    inventory: inventory
+  };
+}
+
+// BAD: No type guards or validation
+function handleMessage(message: unknown) {
+  // Unsafe - assumes structure without checking
+  const messageType = (message as any).type;
+  
+  if (messageType === 'damage') {
+    // May cause runtime errors if properties don't exist
+    applyDamage(
+      (message as any).targetId,
+      (message as any).amount
+    );
+  }
+}
+
+// BAD: Manual null checks without reusable assertions
+function getComponent(entity: Entity, componentId: string) {
+  const component = entity.getComponent(componentId);
+  
+  // Repetitive null checking
+  if (!component) {
+    throw new Error(`Component ${componentId} not found`);
+  }
+  
+  return component;
+}
+
+// BAD: No exhaustiveness checking
+function handleEvent(event: GameEvent) {
+  switch (event.type) {
+    case 'PLAYER_DAMAGE':
+      applyDamage(event.target, event.amount);
+      break;
+    case 'ITEM_PICKUP':
+      addItemToInventory(event.player, event.item);
+      break;
+    // If a new event type is added, no error will occur
+    // Missing LEVEL_COMPLETE case
+  }
+}
+```
+</example>
+
+## Type Guard Patterns
+
+1. **Property-based Type Guards**:
+   ```typescript
+   interface Enemy {
+     type: 'enemy';
+     health: number;
+     damage: number;
+   }
+   
+   interface Pickup {
+     type: 'pickup';
+     itemId: string;
+     value: number;
+   }
+   
+   type GameObject = Enemy | Pickup;
+   
+   // Type guards using discriminated union
+   function isEnemy(obj: GameObject): obj is Enemy {
+     return obj.type === 'enemy';
+   }
+   
+   function isPickup(obj: GameObject): obj is Pickup {
+     return obj.type === 'pickup';
+   }
+   
+   function processGameObject(obj: GameObject): void {
+     if (isEnemy(obj)) {
+       // TypeScript knows obj is Enemy
+       console.log(`Enemy with ${obj.health} health`);
+     } else if (isPickup(obj)) {
+       // TypeScript knows obj is Pickup
+       console.log(`Pickup worth ${obj.value} points`);
+     }
+   }
+   ```
+
+2. **Assertion Functions**:
+   ```typescript
+   // Assertion function that throws if validation fails
+   function assertIsEnemy(obj: GameObject): asserts obj is Enemy {
+     if (obj.type !== 'enemy') {
+       throw new Error('Not an enemy!');
+     }
+   }
+   
+   function attackEnemy(obj: GameObject): void {
+     assertIsEnemy(obj); // Throws if not an enemy
+     // TypeScript now knows obj is Enemy
+     obj.health -= 10;
+   }
+   
+   // Generic assertion function
+   function assertExists<T>(
+     value: T | null | undefined,
+     message: string
+   ): asserts value is T {
+     if (value === null || value === undefined) {
+       throw new Error(message);
+     }
+   }
+   
+   function usePlayer(player: Player | null): void {
+     assertExists(player, 'Player must exist');
+     // TypeScript now knows player is not null
+     player.takeDamage(10);
+   }
+   ```
+
+3. **Complex Type Narrowing**:
+   ```typescript
+   interface BasicEnemy {
+     id: string;
+     health: number;
+   }
+   
+   interface FlyingEnemy extends BasicEnemy {
+     canFly: true;
+     altitude: number;
+   }
+   
+   interface GroundEnemy extends BasicEnemy {
+     canFly: false;
+     speed: number;
+   }
+   
+   type Enemy = FlyingEnemy | GroundEnemy;
+   
+   function processEnemy(enemy: Enemy): void {
+     if (enemy.canFly) {
+       // TypeScript knows enemy is FlyingEnemy
+       console.log(`Flying at altitude ${enemy.altitude}`);
+     } else {
+       // TypeScript knows enemy is GroundEnemy
+       console.log(`Moving at speed ${enemy.speed}`);
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

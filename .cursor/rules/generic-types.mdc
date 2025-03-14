@@ -1,0 +1,404 @@
+---
+description: Use generics and type utilities to create flexible, reusable, and type-safe code components
+globs: **/*.ts
+---
+
+# Generic Types and Type Utilities
+
+## Context
+- When creating reusable components, containers, or utilities
+- When implementing collections or data structures 
+- When designing APIs with consistent interfaces
+- When building systems that need to handle multiple data types
+
+## Requirements
+- Use generic type parameters to create reusable components
+- Apply constraints on generic types with `extends` where appropriate
+- Utilize TypeScript utility types (Partial, Record, Pick, etc.)
+- Create custom mapped types for complex transformations
+- Document generic type parameters with JSDoc comments
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Generic resource manager for game assets
+ * @template T The type of resource being managed
+ */
+class ResourceManager<T> {
+  private resources: Map<string, T> = new Map();
+  
+  /**
+   * Add a resource to the manager
+   * @param id Unique identifier for the resource
+   * @param resource The resource to add
+   * @returns The resource that was added
+   */
+  add(id: string, resource: T): T {
+    this.resources.set(id, resource);
+    return resource;
+  }
+  
+  /**
+   * Get a resource by id
+   * @param id The resource identifier
+   * @returns The resource or undefined if not found
+   */
+  get(id: string): T | undefined {
+    return this.resources.get(id);
+  }
+  
+  /**
+   * Check if a resource exists
+   * @param id The resource identifier
+   */
+  has(id: string): boolean {
+    return this.resources.has(id);
+  }
+  
+  /**
+   * Remove a resource
+   * @param id The resource identifier
+   * @returns True if the resource was removed
+   */
+  remove(id: string): boolean {
+    return this.resources.delete(id);
+  }
+  
+  /**
+   * Get all resource ids
+   */
+  getIds(): string[] {
+    return Array.from(this.resources.keys());
+  }
+  
+  /**
+   * Execute a function for each resource
+   * @param callback Function to execute for each resource
+   */
+  forEach(callback: (resource: T, id: string) => void): void {
+    this.resources.forEach((resource, id) => {
+      callback(resource, id);
+    });
+  }
+}
+
+/**
+ * Event emitter with typed events
+ * @template EventMap Map of event names to event data types
+ */
+class TypedEventEmitter<EventMap extends Record<string, any>> {
+  private listeners: { [K in keyof EventMap]?: Array<(data: EventMap[K]) => void> } = {};
+  
+  /**
+   * Register an event listener
+   * @param event Event name
+   * @param callback Callback function
+   */
+  on<K extends keyof EventMap>(event: K, callback: (data: EventMap[K]) => void): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event]?.push(callback);
+  }
+  
+  /**
+   * Remove an event listener
+   * @param event Event name
+   * @param callback Callback function to remove
+   */
+  off<K extends keyof EventMap>(event: K, callback: (data: EventMap[K]) => void): void {
+    const eventListeners = this.listeners[event];
+    if (eventListeners) {
+      const index = eventListeners.indexOf(callback);
+      if (index !== -1) {
+        eventListeners.splice(index, 1);
+      }
+    }
+  }
+  
+  /**
+   * Emit an event with data
+   * @param event Event name
+   * @param data Event data
+   */
+  emit<K extends keyof EventMap>(event: K, data: EventMap[K]): void {
+    const eventListeners = this.listeners[event];
+    if (eventListeners) {
+      eventListeners.forEach(callback => callback(data));
+    }
+  }
+}
+
+/**
+ * Component factory with type safety
+ * @template T The base component type
+ */
+class ComponentFactory<T extends Component> {
+  private constructors: Record<string, new (...args: any[]) => T> = {};
+  
+  /**
+   * Register a component constructor
+   * @param type Component type name
+   * @param constructor Constructor function
+   */
+  register<U extends T>(type: string, constructor: new (...args: any[]) => U): void {
+    this.constructors[type] = constructor;
+  }
+  
+  /**
+   * Create a component instance
+   * @param type Component type name
+   * @param args Constructor arguments
+   * @returns New component instance
+   */
+  create<U extends T>(type: string, ...args: any[]): U {
+    const Constructor = this.constructors[type] as new (...args: any[]) => U;
+    if (!Constructor) {
+      throw new Error(`Unknown component type: ${type}`);
+    }
+    return new Constructor(...args);
+  }
+  
+  /**
+   * Check if a component type is registered
+   * @param type Component type name
+   */
+  hasType(type: string): boolean {
+    return type in this.constructors;
+  }
+  
+  /**
+   * Get all registered component types
+   */
+  getTypes(): string[] {
+    return Object.keys(this.constructors);
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Not using generics for reusable components
+class TextureManager {
+  private textures: Map<string, Texture> = new Map();
+  
+  add(id: string, texture: Texture): void {
+    this.textures.set(id, texture);
+  }
+  
+  get(id: string): Texture | undefined {
+    return this.textures.get(id);
+  }
+}
+
+// Duplicate code for similar manager
+class SoundManager {
+  private sounds: Map<string, Sound> = new Map();
+  
+  add(id: string, sound: Sound): void {
+    this.sounds.set(id, sound);
+  }
+  
+  get(id: string): Sound | undefined {
+    return this.sounds.get(id);
+  }
+}
+
+// BAD: Untyped event system
+class EventSystem {
+  private listeners: { [key: string]: Function[] } = {};
+  
+  on(event: string, callback: Function): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(callback);
+  }
+  
+  emit(event: string, ...args: any[]): void {
+    const callbacks = this.listeners[event] || [];
+    callbacks.forEach(callback => callback(...args));
+  }
+}
+
+// BAD: Type unsafety with any
+function processObjects(objects: any[]): any[] {
+  return objects.map(obj => {
+    return {
+      ...obj,
+      processed: true
+    };
+  });
+}
+```
+</example>
+
+## Generic Type Patterns
+
+1. **Generic Collections**:
+   ```typescript
+   /**
+    * Type-safe object pool
+    * @template T Type of objects in the pool
+    */
+   class ObjectPool<T> {
+     private available: T[] = [];
+     private inUse: Set<T> = new Set();
+     
+     constructor(
+       private factory: () => T,
+       private reset: (obj: T) => void,
+       initialSize = 0
+     ) {
+       // Pre-allocate initial objects
+       for (let i = 0; i < initialSize; i++) {
+         this.available.push(this.factory());
+       }
+     }
+     
+     /**
+      * Get an object from the pool or create a new one
+      */
+     acquire(): T {
+       const obj = this.available.pop() || this.factory();
+       this.inUse.add(obj);
+       return obj;
+     }
+     
+     /**
+      * Return an object to the pool
+      */
+     release(obj: T): void {
+       if (this.inUse.has(obj)) {
+         this.inUse.delete(obj);
+         this.reset(obj);
+         this.available.push(obj);
+       }
+     }
+     
+     /**
+      * Get count of available objects
+      */
+     get availableCount(): number {
+       return this.available.length;
+     }
+     
+     /**
+      * Get count of in-use objects
+      */
+     get inUseCount(): number {
+       return this.inUse.size;
+     }
+   }
+   ```
+
+2. **Typed State Management**:
+   ```typescript
+   /**
+    * Type-safe state container with actions
+    * @template S State type
+    * @template A Actions type map
+    */
+   class Store<S, A extends Record<string, (...args: any[]) => Partial<S>>> {
+     private listeners: Set<(state: S) => void> = new Set();
+     
+     constructor(
+       private state: S,
+       private actions: A
+     ) {}
+     
+     /**
+      * Get current state
+      */
+     getState(): Readonly<S> {
+       return { ...this.state };
+     }
+     
+     /**
+      * Dispatch an action to update state
+      */
+     dispatch<K extends keyof A>(
+       actionType: K,
+       ...args: Parameters<A[K]>
+     ): void {
+       const action = this.actions[actionType];
+       const updates = action(...args);
+       this.state = { ...this.state, ...updates };
+       this.notifyListeners();
+     }
+     
+     /**
+      * Subscribe to state changes
+      */
+     subscribe(listener: (state: S) => void): () => void {
+       this.listeners.add(listener);
+       return () => this.listeners.delete(listener);
+     }
+     
+     private notifyListeners(): void {
+       const state = this.getState();
+       this.listeners.forEach(listener => listener(state));
+     }
+   }
+   ```
+
+3. **Component Registry with Constraints**:
+   ```typescript
+   /**
+    * Base component interface
+    */
+   interface BaseComponent {
+     readonly id: string;
+     initialize(): void;
+     update(delta: number): void;
+   }
+   
+   /**
+    * Component registry with type constraints
+    * @template T Component type extending BaseComponent
+    */
+   class ComponentRegistry<T extends BaseComponent> {
+     private components = new Map<string, T>();
+     
+     /**
+      * Add component with type checking
+      */
+     register<U extends T>(id: string, component: U): U {
+       this.components.set(id, component);
+       return component;
+     }
+     
+     /**
+      * Get component with type checking
+      */
+     get<U extends T>(id: string): U | undefined {
+       return this.components.get(id) as U | undefined;
+     }
+     
+     /**
+      * Remove component
+      */
+     unregister(id: string): boolean {
+       return this.components.delete(id);
+     }
+     
+     /**
+      * Update all components
+      */
+     updateAll(delta: number): void {
+       this.components.forEach(component => component.update(delta));
+     }
+     
+     /**
+      * Get all components matching a type predicate
+      */
+     getByType<U extends T>(predicate: (component: T) => component is U): U[] {
+       return Array.from(this.components.values()).filter(predicate);
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

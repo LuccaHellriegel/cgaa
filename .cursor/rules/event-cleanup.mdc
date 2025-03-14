@@ -1,0 +1,455 @@
+---
+description: Implement proper event listener cleanup to prevent memory leaks in event-driven applications
+globs: **/*.ts
+---
+
+# Event Listener Cleanup
+
+## Context
+- When working with DOM events, game events, or custom event emitters
+- When implementing components that listen to events during their lifecycle
+- When developing scenes with multiple event subscriptions
+- When using third-party libraries that emit events
+
+## Requirements
+- Remove all event listeners when they are no longer needed
+- Track event listeners to ensure complete cleanup
+- Implement proper cleanup in component destruction/scene transitions
+- Use appropriate event listener options (like `{once: true}` when applicable)
+- Ensure event handlers have proper garbage collection references
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Component with proper event listener management
+ */
+class EventAwareComponent {
+  private scene: Phaser.Scene;
+  private eventHandlers: Map<string, Function> = new Map();
+  private domEventHandlers: Array<{
+    element: HTMLElement;
+    event: string;
+    handler: EventListener;
+  }> = [];
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Initialize events with tracking for later cleanup
+    this.setupEvents();
+  }
+  
+  /**
+   * Set up event listeners with tracking
+   */
+  private setupEvents(): void {
+    // Register a game event with tracking
+    const onSceneEvent = (data: any) => {
+      console.log('Scene event received:', data);
+    };
+    
+    // Store reference to handler for later removal
+    this.eventHandlers.set('sceneEvent', onSceneEvent);
+    this.scene.events.on('custom-event', onSceneEvent);
+    
+    // Register DOM event with tracking
+    const onWindowResize = () => {
+      this.handleResize();
+    };
+    
+    window.addEventListener('resize', onWindowResize);
+    this.domEventHandlers.push({
+      element: window as unknown as HTMLElement,
+      event: 'resize',
+      handler: onWindowResize
+    });
+    
+    // Use Phaser's time events with automatic cleanup
+    this.scene.time.addEvent({
+      delay: 1000,
+      callback: this.onTimerTick,
+      callbackScope: this,
+      loop: true
+    });
+    
+    // Use once option for one-time events that clean up automatically
+    this.scene.events.once('scene-complete', this.onSceneComplete, this);
+  }
+  
+  /**
+   * Handle window resize event
+   */
+  private handleResize(): void {
+    // Resize logic...
+  }
+  
+  /**
+   * Handle timer tick
+   */
+  private onTimerTick(): void {
+    // Timer logic...
+  }
+  
+  /**
+   * Handle scene completion
+   */
+  private onSceneComplete(): void {
+    // Scene complete logic...
+  }
+  
+  /**
+   * Clean up all registered event listeners
+   */
+  destroy(): void {
+    // Clean up Phaser event listeners
+    this.eventHandlers.forEach((handler, event) => {
+      this.scene.events.off(event, handler);
+    });
+    this.eventHandlers.clear();
+    
+    // Clean up DOM event listeners
+    this.domEventHandlers.forEach(({element, event, handler}) => {
+      element.removeEventListener(event, handler);
+    });
+    this.domEventHandlers = [];
+    
+    // Clean up any remaining references
+    this.scene = null;
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Component with memory leaks due to uncleaned event listeners
+class LeakyComponent {
+  private scene: Phaser.Scene;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Adding event listeners without tracking or cleanup plan
+    this.scene.events.on('update', this.onUpdate, this);
+    this.scene.events.on('custom-event', this.onCustomEvent, this);
+    
+    // DOM event without tracking for removal
+    window.addEventListener('resize', this.onResize);
+    
+    // Keyboard events without tracking
+    this.scene.input.keyboard.on('keydown', this.onKeyDown, this);
+    
+    // Adding a repeating timer without reference storage
+    this.scene.time.addEvent({
+      delay: 100,
+      callback: this.onTimerTick,
+      callbackScope: this,
+      loop: true
+    });
+  }
+  
+  onUpdate(): void {
+    // Update logic...
+  }
+  
+  onCustomEvent(data: any): void {
+    // Handle custom event...
+  }
+  
+  onResize(): void {
+    // Resize logic...
+  }
+  
+  onKeyDown(event: KeyboardEvent): void {
+    // Handle key press...
+  }
+  
+  onTimerTick(): void {
+    // Timer logic...
+  }
+  
+  // Incomplete destroy method missing several listener cleanups
+  destroy(): void {
+    // Only removing one event listener, forgetting the others
+    this.scene.events.off('update', this.onUpdate, this);
+    
+    // Forgot to remove:
+    // - custom-event listener
+    // - window resize listener
+    // - keyboard event listener
+    // - timer (which keeps running)
+    
+    this.scene = null;
+  }
+}
+```
+</example>
+
+## Event Cleanup Patterns
+
+1. **Event Tracking with Map**:
+   ```typescript
+   /**
+    * Event manager for centralized event handling
+    */
+   class EventManager {
+     private emitter: Phaser.Events.EventEmitter;
+     private listeners: Map<string, Array<{callback: Function, context: any}>> = new Map();
+     
+     constructor(emitter: Phaser.Events.EventEmitter) {
+       this.emitter = emitter;
+     }
+     
+     /**
+      * Add an event listener with tracking
+      * @param event Event name
+      * @param callback Callback function
+      * @param context Context to bind to callback
+      */
+     on(event: string, callback: Function, context?: any): void {
+       // Add to emitter
+       this.emitter.on(event, callback, context);
+       
+       // Track for cleanup
+       if (!this.listeners.has(event)) {
+         this.listeners.set(event, []);
+       }
+       
+       this.listeners.get(event).push({
+         callback,
+         context
+       });
+     }
+     
+     /**
+      * Add one-time event listener with tracking
+      * @param event Event name
+      * @param callback Callback function
+      * @param context Context to bind to callback
+      */
+     once(event: string, callback: Function, context?: any): void {
+       // For 'once' events, we need to create a wrapper that will
+       // remove the event from our tracking after it fires
+       const wrappedCallback = (...args: any[]) => {
+         // Call original callback
+         callback.apply(context, args);
+         
+         // Remove from our tracking
+         this.removeFromTracking(event, callback, context);
+       };
+       
+       // Store original callback for reference
+       (wrappedCallback as any).originalCallback = callback;
+       
+       // Add to emitter as once
+       this.emitter.once(event, wrappedCallback, context);
+       
+       // Track for cleanup
+       if (!this.listeners.has(event)) {
+         this.listeners.set(event, []);
+       }
+       
+       this.listeners.get(event).push({
+         callback: wrappedCallback,
+         context
+       });
+     }
+     
+     /**
+      * Remove a specific event listener
+      * @param event Event name
+      * @param callback Callback function
+      * @param context Context bound to callback
+      */
+     off(event: string, callback: Function, context?: any): void {
+       // Remove from emitter
+       this.emitter.off(event, callback, context);
+       
+       // Remove from tracking
+       this.removeFromTracking(event, callback, context);
+     }
+     
+     /**
+      * Remove all event listeners for a specific event
+      * @param event Event name to remove all listeners for
+      */
+     removeAllListeners(event?: string): void {
+       if (event) {
+         // Remove specific event
+         this.emitter.removeAllListeners(event);
+         this.listeners.delete(event);
+       } else {
+         // Remove all events
+         this.emitter.removeAllListeners();
+         this.listeners.clear();
+       }
+     }
+     
+     /**
+      * Remove specific callback from tracking
+      */
+     private removeFromTracking(event: string, callback: Function, context?: any): void {
+       if (!this.listeners.has(event)) return;
+       
+       const eventListeners = this.listeners.get(event);
+       const index = eventListeners.findIndex(listener => {
+         // Check for wrapped callbacks (from once)
+         const cb = (listener.callback as any).originalCallback || listener.callback;
+         return cb === callback && listener.context === context;
+       });
+       
+       if (index !== -1) {
+         eventListeners.splice(index, 1);
+         
+         // Clean up empty arrays
+         if (eventListeners.length === 0) {
+           this.listeners.delete(event);
+         }
+       }
+     }
+     
+     /**
+      * Clean up all tracked event listeners
+      */
+     destroy(): void {
+       // Remove all tracked listeners
+       this.listeners.forEach((listeners, event) => {
+         listeners.forEach(({callback, context}) => {
+           this.emitter.off(event, callback, context);
+         });
+       });
+       
+       // Clear tracking
+       this.listeners.clear();
+       this.emitter = null;
+     }
+   }
+   ```
+
+2. **Scene Event Cleanup**:
+   ```typescript
+   /**
+    * Game scene with proper event cleanup
+    */
+   class GameScene extends Phaser.Scene {
+     private objectsWithEvents: Array<{destroy: () => void}> = [];
+     private timers: Phaser.Time.TimerEvent[] = [];
+     private domListeners: Array<{
+       element: HTMLElement;
+       event: string;
+       handler: EventListener;
+     }> = [];
+     
+     constructor() {
+       super({ key: 'GameScene' });
+     }
+     
+     create(): void {
+       // Create game objects and track them for cleanup
+       const player = this.createPlayer();
+       this.objectsWithEvents.push(player);
+       
+       const enemies = this.createEnemies();
+       this.objectsWithEvents.push(...enemies);
+       
+       // Set up scene-level events
+       this.events.on('pause', this.onPause, this);
+       this.events.on('resume', this.onResume, this);
+       
+       // Create timers with tracking
+       const spawner = this.time.addEvent({
+         delay: 2000,
+         callback: this.spawnEnemy,
+         callbackScope: this,
+         loop: true
+       });
+       this.timers.push(spawner);
+       
+       // Add DOM events with tracking
+       const resizeHandler = () => this.handleResize();
+       window.addEventListener('resize', resizeHandler);
+       this.domListeners.push({
+         element: window as unknown as HTMLElement,
+         event: 'resize',
+         handler: resizeHandler
+       });
+     }
+     
+     /**
+      * Create player with event handlers
+      */
+     private createPlayer(): any {
+       // Implement player creation
+       return { destroy: () => { /* player cleanup */ } };
+     }
+     
+     /**
+      * Create enemies with event handlers
+      */
+     private createEnemies(): any[] {
+       // Implement enemy creation
+       return [
+         { destroy: () => { /* enemy 1 cleanup */ } },
+         { destroy: () => { /* enemy 2 cleanup */ } }
+       ];
+     }
+     
+     /**
+      * Handle scene pause
+      */
+     private onPause(): void {
+       // Pause logic
+     }
+     
+     /**
+      * Handle scene resume
+      */
+     private onResume(): void {
+       // Resume logic
+     }
+     
+     /**
+      * Handle resize event
+      */
+     private handleResize(): void {
+       // Resize logic
+     }
+     
+     /**
+      * Spawn new enemy
+      */
+     private spawnEnemy(): void {
+       // Enemy spawning logic
+     }
+     
+     /**
+      * Clean up all event listeners when scene shuts down
+      */
+     shutdown(): void {
+       // Call destroy on all tracked objects
+       this.objectsWithEvents.forEach(obj => obj.destroy());
+       this.objectsWithEvents = [];
+       
+       // Clean up all timers
+       this.timers.forEach(timer => timer.destroy());
+       this.timers = [];
+       
+       // Remove DOM event listeners
+       this.domListeners.forEach(({element, event, handler}) => {
+         element.removeEventListener(event, handler);
+       });
+       this.domListeners = [];
+       
+       // Remove scene events
+       this.events.off('pause', this.onPause, this);
+       this.events.off('resume', this.onResume, this);
+       
+       // Call parent
+       super.shutdown();
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

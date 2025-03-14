@@ -1,0 +1,253 @@
+---
+description: Use batch rendering techniques to reduce draw calls and improve performance
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+# Batch Rendering Optimization
+
+## Context
+- When rendering many similar game objects
+- When experiencing performance bottlenecks from too many draw calls
+- When frame rate drops as scene complexity increases
+- When targeting hardware with limited GPU capabilities
+
+## Requirements
+- Batch similar rendering operations to reduce GPU draw calls
+- Use container hierarchies to optimize transforms
+- Implement static compound textures for unchanging elements
+- Group objects with the same texture/shader for efficient rendering
+- Minimize state changes during rendering
+
+## Examples
+
+<example>
+```typescript
+// GOOD: Batched rendering implementation
+export class BatchRenderer {
+  private scene: Phaser.Scene;
+  private layers: Map<string, Phaser.GameObjects.Container>;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.layers = new Map();
+    
+    // Create rendering layers with appropriate depths
+    this.setupLayers();
+  }
+  
+  private setupLayers(): void {
+    // Create layers with increasing depth
+    this.createLayer('background', 0);
+    this.createLayer('terrain', 10);
+    this.createLayer('enemies', 20);
+    this.createLayer('player', 30);
+    this.createLayer('effects', 40);
+    this.createLayer('ui', 100);
+  }
+  
+  private createLayer(name: string, depth: number): void {
+    const container = this.scene.add.container(0, 0);
+    container.setDepth(depth);
+    this.layers.set(name, container);
+  }
+  
+  addToLayer(name: string, gameObject: Phaser.GameObjects.GameObject): void {
+    const layer = this.layers.get(name);
+    if (layer) {
+      layer.add(gameObject);
+    } else {
+      console.warn(`Layer "${name}" does not exist`);
+      this.scene.add.existing(gameObject as any);
+    }
+  }
+  
+  optimizeStaticElements(): void {
+    // Convert static elements to a single texture for better performance
+    const staticLayer = this.layers.get('terrain');
+    if (staticLayer && staticLayer.length > 0) {
+      // Create a render texture of the current size
+      const renderTexture = this.scene.add.renderTexture(
+        0, 0, 
+        this.scene.cameras.main.width,
+        this.scene.cameras.main.height
+      );
+      
+      // Draw all static elements into the texture
+      renderTexture.draw(staticLayer);
+      
+      // Clear the original container
+      const originalPosition = { x: staticLayer.x, y: staticLayer.y };
+      staticLayer.removeAll(true);
+      
+      // Add the texture back to the container
+      staticLayer.setPosition(originalPosition.x, originalPosition.y);
+      staticLayer.add(renderTexture);
+    }
+  }
+  
+  createParticleBatch(
+    texture: string, 
+    frame: string, 
+    maxParticles: number, 
+    layerName: string = 'effects'
+  ): Phaser.GameObjects.Particles.ParticleEmitterManager {
+    // Create a particle manager for the batch
+    const particles = this.scene.add.particles(texture, frame);
+    
+    // Add to appropriate layer
+    this.addToLayer(layerName, particles);
+    
+    // Return the manager for creating emitters
+    return particles;
+  }
+}
+
+// Usage
+const renderer = new BatchRenderer(this);
+
+// Add objects to appropriate layers
+renderer.addToLayer('terrain', tree);
+renderer.addToLayer('enemies', enemy);
+renderer.addToLayer('player', player);
+
+// Create optimized particle batches
+const explosionParticles = renderer.createParticleBatch('atlas', 'explosion_particle', 100);
+explosionParticles.createEmitter({
+  speed: { min: 100, max: 200 },
+  scale: { start: 1, end: 0 },
+  lifespan: 800
+});
+
+// Optimize static elements after level is loaded
+renderer.optimizeStaticElements();
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Inefficient rendering with individual draw calls
+export class IneffientRenderer {
+  private scene: Phaser.Scene;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  createForest(treeCount: number): void {
+    // Creating individual trees without batching
+    for (let i = 0; i < treeCount; i++) {
+      const x = Math.random() * this.scene.cameras.main.width;
+      const y = Math.random() * this.scene.cameras.main.height;
+      
+      // Each tree is a separate game object with its own draw call
+      const tree = this.scene.add.sprite(x, y, 'tree');
+      
+      // Each tree might use a different frame from atlas
+      const frame = Math.floor(Math.random() * 3);
+      tree.setFrame('tree_' + frame);
+      
+      // Trees have varying depths instead of using a container
+      tree.setDepth(10 + Math.random() * 5);
+    }
+  }
+  
+  createExplosions(): void {
+    // Creating separate particle emitters for each explosion
+    for (let i = 0; i < 10; i++) {
+      const x = 100 + i * 50;
+      const y = 100 + i * 30;
+      
+      // Each explosion has its own particle system - inefficient
+      const particles = this.scene.add.particles('explosion');
+      
+      // Individual emitter for each explosion location
+      particles.createEmitter({
+        x: x,
+        y: y,
+        speed: 200,
+        scale: { start: 1, end: 0 },
+        blendMode: Phaser.BlendModes.ADD
+      });
+    }
+  }
+}
+```
+This approach creates separate draw calls for each object instead of batching, resulting in poor performance as scene complexity increases.
+</example>
+
+## Batching Techniques
+
+1. **Container Hierarchies**:
+   ```typescript
+   // Create hierarchy of containers
+   const worldContainer = scene.add.container(0, 0);
+   const enemyContainer = scene.add.container(0, 0);
+   worldContainer.add(enemyContainer);
+   
+   // Add multiple enemies to the container
+   for (let i = 0; i < 50; i++) {
+     const enemy = scene.add.sprite(x, y, 'enemies', 'goblin');
+     enemyContainer.add(enemy);
+   }
+   
+   // Move all enemies with a single transform
+   enemyContainer.x += 10;
+   ```
+
+2. **Render Textures for Static Elements**:
+   ```typescript
+   // Create a render texture
+   const levelTexture = scene.add.renderTexture(0, 0, width, height);
+   
+   // Draw multiple static objects to the texture
+   staticObjects.forEach(obj => {
+     levelTexture.draw(obj);
+     obj.visible = false; // Hide original
+   });
+   
+   // Now only one draw call for all static objects
+   ```
+
+3. **Particle Batching**:
+   ```typescript
+   // Create a single particle manager for all fire effects
+   const fireParticles = scene.add.particles('fire_atlas');
+   
+   // Create multiple emitters using the same manager
+   const campfire1 = fireParticles.createEmitter({
+     x: 100,
+     y: 200,
+     frame: 'flame',
+     // other settings
+   });
+   
+   const campfire2 = fireParticles.createEmitter({
+     x: 400,
+     y: 300,
+     frame: 'flame',
+     // other settings
+   });
+   ```
+
+4. **Group Objects by Texture**:
+   ```typescript
+   // Organize game objects by texture
+   const textureGroups = new Map<string, Phaser.GameObjects.GameObject[]>();
+   
+   function addObject(obj: Phaser.GameObjects.GameObject, textureName: string) {
+     if (!textureGroups.has(textureName)) {
+       textureGroups.set(textureName, []);
+     }
+     textureGroups.get(textureName)!.push(obj);
+   }
+   
+   // Add to scene in batches by texture
+   function addToScene() {
+     textureGroups.forEach(group => {
+       // Objects with same texture are added together
+       scene.add.existing(group);
+     });
+   }
+   ```
+
+<version>1.0.0</version> 

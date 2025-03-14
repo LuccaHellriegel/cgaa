@@ -13,17 +13,17 @@ The following table shows the current implementation status of key game features
 | Feature                  | Status                   | Notes                                                                 |
 | ------------------------ | ------------------------ | --------------------------------------------------------------------- |
 | Player Character         | ✅ Implemented           | Basic movement, health, and collision implemented                     |
-| Enemy Types              | ⚠️ Partially Implemented | Basic enemy structure exists but needs additional types and behaviors |
+| Enemy Types              | ⚠️ Partially Implemented | Basic enemy structure exists with object pooling, needs more types    |
 | Tower System             | ⚠️ Partially Implemented | Basic structure exists but targeting and upgrades need completion     |
 | Camp System              | ⚠️ Partially Implemented | Basic camp structures exist but destruction mechanics need completion |
 | Soul Economy             | ⚠️ Partially Implemented | Base collection mechanics exist but usage needs integration           |
 | UI Elements              | ⚠️ Partially Implemented | Basic UI exists but needs integration with game systems               |
-| Diplomacy System         | ⚠️ Partially Implemented | Framework exists but core functionality incomplete                    |
-| Wave System              | ⚠️ Partially Implemented | Basic wave structure exists but needs integration with other systems  |
+| Diplomacy System         | ✅ Implemented           | Wave direction control and camp targeting fully implemented           |
+| Wave System              | ✅ Implemented           | Wave spawning and direction control integrated with camps             |
 | Combat Mechanics         | ⚠️ Partially Implemented | Basic combat exists but needs refinement and advanced mechanics       |
 | Game Progression         | ⚠️ Partially Implemented | Camp conquest exists but king boss fight needs completion             |
 | Sound System             | ⚠️ Partially Implemented | Audio manager exists but integration with game events is minimal      |
-| Performance Optimization | ⚠️ Partially Implemented | Framework added but not fully utilized across all game systems        |
+| Performance Optimization | ⚠️ Partially Implemented | Enemy object pooling implemented, other systems need optimization     |
 
 ## Specifications
 
@@ -38,7 +38,7 @@ The following specifications outline the various components, mechanics, and feat
 | Combat                   | Combat mechanics                   | ⚠️ Partially Implemented | [Combat](specs/combat.md)                                     |
 | Towers                   | Tower types and functionality      | ⚠️ Partially Implemented | [Towers](specs/towers.md)                                     |
 | Camps                    | Camp mechanics and interactions    | ⚠️ Partially Implemented | [Camps](specs/camps.md)                                       |
-| Diplomacy                | Cooperation and quest systems      | ⚠️ Partially Implemented | [Diplomacy](specs/diplomacy.md)                               |
+| Diplomacy                | Cooperation and quest systems      | ✅ Implemented           | [Diplomacy](specs/diplomacy.md)                               |
 | Graphics and Visuals     | Visual style and implementation    | ⚠️ Partially Implemented | [Graphics and Visuals](specs/graphics_visuals.md)             |
 | Technical Architecture   | Technical implementation details   | ⚠️ Partially Implemented | [Technical Architecture](specs/technical_architecture.md)     |
 | Performance Optimization | Performance considerations         | ⚠️ Partially Implemented | [Performance Optimization](specs/performance_optimization.md) |
@@ -50,8 +50,8 @@ Based on the current state of implementation, the following features should be p
 
 1. **Complete Core Systems**
 
-   - Finish implementing wave system integration with camps
-   - Complete the diplomacy system's wave direction control
+   - ✅ Finish implementing wave system integration with camps
+   - ✅ Complete the diplomacy system's wave direction control
    - Finalize camp conquest mechanics
    - Add full king boss battle mechanics
 
@@ -135,7 +135,6 @@ The following specific implementation gaps have been identified and should be ad
 
 1. **Diplomacy System**
 
-   - The `findNearbyCamps` method in DiplomatMenu is empty with a comment "This should be implemented"
    - Wave direction control UI exists but isn't fully connected to the actual wave targeting system
 
 2. **Audio System**
@@ -145,13 +144,12 @@ The following specific implementation gaps have been identified and should be ad
 
 3. **Wave System**
 
-   - Wave direction control from cooperating camps needs implementation
-   - Visual indicators for wave paths need to be added
+   - ✅ Object pooling implemented for enemy spawning
 
 4. **Performance Optimization**
 
-   - Object pooling framework exists but isn't applied to most game objects
-   - Need to implement pooling for frequently created objects like enemies
+   - ✅ Object pooling implemented for enemies
+   - Need to implement pooling for other frequently created objects
 
 5. **King Boss Battle**
    - Basic structure exists but the actual battle mechanics need implementation

@@ -1,0 +1,599 @@
+---
+description: Structure game state and scene management in Phaser games to ensure clean transitions and maintainable code
+globs: **/*.ts
+---
+
+# Lifecycle Management
+
+## Context
+- When implementing scene transitions in Phaser games
+- When creating reusable game components with their own lifecycles
+- When managing complex game states with multiple dependencies
+- When implementing pause/resume functionality
+- When handling game object creation and destruction
+
+## Requirements
+- Implement proper initialization and cleanup in scene lifecycle methods
+- Create component classes with clear lifecycle hooks
+- Handle scene transitions with appropriate state preservation
+- Implement proper shutdown and destroy methods
+- Ensure all resources are released when no longer needed
+- Maintain separation of concerns in lifecycle methods
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Scene with proper lifecycle management
+ */
+class GameScene extends Phaser.Scene {
+  private player: Player;
+  private enemies: Enemy[] = [];
+  private ui: UIManager;
+  private levelData: LevelData;
+  private isPaused: boolean = false;
+  
+  constructor() {
+    super({ key: 'GameScene' });
+  }
+  
+  /**
+   * Initialize scene with data
+   */
+  init(data: { level: number }): void {
+    console.log(`Initializing level ${data.level}`);
+    
+    // Reset state for scene reuse
+    this.enemies = [];
+    this.isPaused = false;
+  }
+  
+  /**
+   * Preload assets needed for this scene
+   */
+  preload(): void {
+    // Load level-specific assets
+    this.load.json('level-data', `assets/levels/level${this.registry.get('currentLevel')}.json`);
+  }
+  
+  /**
+   * Create game objects and set up the scene
+   */
+  create(): void {
+    // Load level data
+    this.levelData = this.cache.json.get('level-data');
+    
+    // Create player
+    this.player = new Player(this, 100, 100);
+    
+    // Create enemies from level data
+    this.levelData.enemies.forEach(enemyData => {
+      const enemy = new Enemy(this, enemyData.x, enemyData.y, enemyData.type);
+      this.enemies.push(enemy);
+    });
+    
+    // Create UI
+    this.ui = new UIManager(this);
+    
+    // Set up input handlers
+    this.input.keyboard.on('keydown-P', this.togglePause, this);
+    this.input.keyboard.on('keydown-ESC', this.exitToMenu, this);
+    
+    // Listen for game events
+    this.events.on('player-died', this.handlePlayerDeath, this);
+    this.events.on('level-complete', this.handleLevelComplete, this);
+    
+    // Set up collision detection
+    this.physics.add.collider(this.player, this.enemies, this.handlePlayerEnemyCollision, null, this);
+    
+    // Start background music
+    this.sound.play('level-music', { loop: true });
+    
+    // Emit scene ready event
+    this.events.emit('scene-ready');
+  }
+  
+  /**
+   * Update game state
+   */
+  update(time: number, delta: number): void {
+    if (this.isPaused) return;
+    
+    // Update player
+    this.player.update(time, delta);
+    
+    // Update enemies
+    this.enemies.forEach(enemy => enemy.update(time, delta));
+    
+    // Update UI
+    this.ui.update(time, delta);
+  }
+  
+  /**
+   * Toggle pause state
+   */
+  private togglePause(): void {
+    this.isPaused = !this.isPaused;
+    
+    if (this.isPaused) {
+      // Pause physics, animations, and timers
+      this.physics.pause();
+      this.anims.pauseAll();
+      this.time.paused = true;
+      
+      // Show pause menu
+      this.ui.showPauseMenu();
+      
+      // Emit pause event
+      this.events.emit('scene-paused');
+    } else {
+      // Resume physics, animations, and timers
+      this.physics.resume();
+      this.anims.resumeAll();
+      this.time.paused = false;
+      
+      // Hide pause menu
+      this.ui.hidePauseMenu();
+      
+      // Emit resume event
+      this.events.emit('scene-resumed');
+    }
+  }
+  
+  /**
+   * Exit to main menu
+   */
+  private exitToMenu(): void {
+    // Stop music
+    this.sound.stopAll();
+    
+    // Transition to menu scene
+    this.scene.start('MenuScene');
+  }
+  
+  /**
+   * Handle player death
+   */
+  private handlePlayerDeath(): void {
+    // Show game over UI
+    this.ui.showGameOver();
+    
+    // Stop gameplay
+    this.physics.pause();
+    this.time.paused = true;
+    
+    // Restart after delay
+    this.time.delayedCall(3000, () => {
+      this.scene.restart();
+    });
+  }
+  
+  /**
+   * Handle level completion
+   */
+  private handleLevelComplete(): void {
+    // Show level complete UI
+    this.ui.showLevelComplete();
+    
+    // Increment level in registry
+    const currentLevel = this.registry.get('currentLevel');
+    this.registry.set('currentLevel', currentLevel + 1);
+    
+    // Transition to next level after delay
+    this.time.delayedCall(2000, () => {
+      this.scene.restart();
+    });
+  }
+  
+  /**
+   * Handle collision between player and enemy
+   */
+  private handlePlayerEnemyCollision(player: Player, enemy: Enemy): void {
+    player.takeDamage(enemy.getDamage());
+  }
+  
+  /**
+   * Called when scene is put to sleep
+   */
+  sleep(): void {
+    // Pause gameplay but keep scene alive
+    this.isPaused = true;
+    this.physics.pause();
+    this.anims.pauseAll();
+    this.time.paused = true;
+    
+    // Emit sleep event
+    this.events.emit('scene-sleep');
+  }
+  
+  /**
+   * Called when scene is woken up
+   */
+  wake(): void {
+    // Resume gameplay
+    this.isPaused = false;
+    this.physics.resume();
+    this.anims.resumeAll();
+    this.time.paused = false;
+    
+    // Emit wake event
+    this.events.emit('scene-wake');
+  }
+  
+  /**
+   * Called when scene is shut down (but not destroyed)
+   */
+  shutdown(): void {
+    // Clean up input handlers
+    this.input.keyboard.off('keydown-P', this.togglePause, this);
+    this.input.keyboard.off('keydown-ESC', this.exitToMenu, this);
+    
+    // Clean up event listeners
+    this.events.off('player-died', this.handlePlayerDeath, this);
+    this.events.off('level-complete', this.handleLevelComplete, this);
+    
+    // Stop all sounds
+    this.sound.stopAll();
+    
+    // Clean up UI
+    this.ui.destroy();
+    
+    // Clean up enemies
+    this.enemies.forEach(enemy => enemy.destroy());
+    this.enemies = [];
+    
+    // Clean up player
+    this.player.destroy();
+    
+    // Emit shutdown event
+    this.events.emit('scene-shutdown');
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Scene with poor lifecycle management
+class BadGameScene extends Phaser.Scene {
+  private player;
+  private enemies = [];
+  private music;
+  
+  constructor() {
+    super({ key: 'BadGameScene' });
+  }
+  
+  create() {
+    // Create player without proper encapsulation
+    this.player = this.physics.add.sprite(100, 100, 'player');
+    this.player.setCollideWorldBounds(true);
+    
+    // Create enemies without tracking for cleanup
+    for (let i = 0; i < 10; i++) {
+      const enemy = this.physics.add.sprite(
+        Math.random() * 800,
+        Math.random() * 600,
+        'enemy'
+      );
+      // No tracking of enemies for later cleanup
+    }
+    
+    // Set up input without tracking for removal
+    this.input.keyboard.on('keydown-SPACE', this.fireWeapon);
+    
+    // Start music without tracking for stopping
+    this.music = this.sound.add('background');
+    this.music.play({ loop: true });
+    
+    // Add event listener without tracking for removal
+    this.events.on('custom-event', this.handleCustomEvent);
+    
+    // Create timer without tracking for cleanup
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+      loop: true
+    });
+  }
+  
+  fireWeapon() {
+    // Method reference issues - 'this' context will be wrong
+    console.log('Fire weapon');
+  }
+  
+  handleCustomEvent() {
+    // Another method with 'this' context issues
+    console.log('Custom event handled');
+  }
+  
+  spawnEnemy() {
+    const enemy = this.physics.add.sprite(
+      Math.random() * 800,
+      Math.random() * 600,
+      'enemy'
+    );
+    // Continuously creating enemies without cleanup
+  }
+  
+  // Missing shutdown/destroy methods
+  // No cleanup of event listeners, timers, or sounds
+  // No handling of scene transitions
+}
+```
+</example>
+
+## Component Lifecycle Patterns
+
+1. **Reusable Game Component Base Class**:
+   ```typescript
+   /**
+    * Base class for game components with lifecycle management
+    */
+   abstract class GameComponent {
+     protected scene: Phaser.Scene;
+     protected eventListeners: Array<{
+       target: Phaser.Events.EventEmitter;
+       event: string;
+       callback: Function;
+     }> = [];
+     protected timers: Phaser.Time.TimerEvent[] = [];
+     protected tweens: Phaser.Tweens.Tween[] = [];
+     protected isDestroyed: boolean = false;
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       
+       // Listen for scene shutdown to auto-cleanup
+       this.addEventListenerInternal(
+         this.scene.events,
+         'shutdown',
+         this.onSceneShutdown,
+         this
+       );
+     }
+     
+     /**
+      * Initialize the component
+      * Override in subclasses
+      */
+     public init(): void {}
+     
+     /**
+      * Update component state
+      * Override in subclasses
+      */
+     public update(time: number, delta: number): void {}
+     
+     /**
+      * Add an event listener with automatic cleanup tracking
+      */
+     protected addEventListener(
+       target: Phaser.Events.EventEmitter,
+       event: string,
+       callback: Function
+     ): void {
+       this.addEventListenerInternal(target, event, callback, this);
+     }
+     
+     /**
+      * Internal method to add event listener with specified context
+      */
+     private addEventListenerInternal(
+       target: Phaser.Events.EventEmitter,
+       event: string,
+       callback: Function,
+       context: any
+     ): void {
+       target.on(event, callback, context);
+       this.eventListeners.push({ target, event, callback });
+     }
+     
+     /**
+      * Create a timer with automatic cleanup tracking
+      */
+     protected createTimer(config: Phaser.Types.Time.TimerEventConfig): Phaser.Time.TimerEvent {
+       const timer = this.scene.time.addEvent(config);
+       this.timers.push(timer);
+       return timer;
+     }
+     
+     /**
+      * Create a tween with automatic cleanup tracking
+      */
+     protected createTween(config: Phaser.Types.Tweens.TweenBuilderConfig): Phaser.Tweens.Tween {
+       const tween = this.scene.tweens.add(config);
+       this.tweens.push(tween);
+       return tween;
+     }
+     
+     /**
+      * Called when the component is about to be destroyed
+      * Override in subclasses to add custom cleanup
+      */
+     protected onDestroy(): void {}
+     
+     /**
+      * Called when the scene is shutting down
+      */
+     private onSceneShutdown(): void {
+       this.destroy();
+     }
+     
+     /**
+      * Clean up all resources
+      */
+     public destroy(): void {
+       if (this.isDestroyed) return;
+       
+       // Call subclass cleanup first
+       this.onDestroy();
+       
+       // Clean up event listeners
+       this.eventListeners.forEach(({ target, event, callback }) => {
+         target.off(event, callback, this);
+       });
+       this.eventListeners = [];
+       
+       // Clean up timers
+       this.timers.forEach(timer => timer.destroy());
+       this.timers = [];
+       
+       // Clean up tweens
+       this.tweens.forEach(tween => tween.stop());
+       this.tweens = [];
+       
+       // Mark as destroyed
+       this.isDestroyed = true;
+     }
+   }
+   ```
+
+2. **Scene Manager with State Preservation**:
+   ```typescript
+   /**
+    * Scene manager with state preservation between scene transitions
+    */
+   class GameSceneManager {
+     private game: Phaser.Game;
+     private persistentData: Map<string, any> = new Map();
+     private activeScenes: Set<string> = new Set();
+     private sceneTransitionInProgress: boolean = false;
+     
+     constructor(game: Phaser.Game) {
+       this.game = game;
+       
+       // Listen for scene events
+       this.game.events.on('prestep', this.update, this);
+     }
+     
+     /**
+      * Start a scene and optionally stop other scenes
+      * @param key Scene key to start
+      * @param data Data to pass to the scene
+      * @param stopOthers Whether to stop other active scenes
+      */
+     startScene(key: string, data: any = {}, stopOthers: boolean = false): void {
+       if (this.sceneTransitionInProgress) {
+         console.warn('Scene transition already in progress, ignoring request');
+         return;
+       }
+       
+       this.sceneTransitionInProgress = true;
+       
+       // Merge persistent data with scene-specific data
+       const mergedData = { ...data };
+       this.persistentData.forEach((value, key) => {
+         if (!(key in mergedData)) {
+           mergedData[key] = value;
+         }
+       });
+       
+       // Start the new scene
+       if (stopOthers) {
+         // Stop all current scenes and start the new one
+         const activeSceneKeys = Array.from(this.activeScenes);
+         
+         // Create a counter to track when all scenes have shut down
+         let scenesToStop = activeSceneKeys.length;
+         
+         if (scenesToStop > 0) {
+           // Set up one-time listener for each scene's shutdown event
+           activeSceneKeys.forEach(sceneKey => {
+             const scene = this.game.scene.getScene(sceneKey);
+             
+             // Listen for shutdown completion
+             scene.events.once('shutdown', () => {
+               scenesToStop--;
+               
+               // When all scenes are stopped, start the new scene
+               if (scenesToStop === 0) {
+                 this.game.scene.start(key, mergedData);
+                 this.activeScenes.clear();
+                 this.activeScenes.add(key);
+                 this.sceneTransitionInProgress = false;
+               }
+             });
+             
+             // Stop the scene
+             this.game.scene.stop(sceneKey);
+           });
+         } else {
+           // No scenes to stop, just start the new one
+           this.game.scene.start(key, mergedData);
+           this.activeScenes.add(key);
+           this.sceneTransitionInProgress = false;
+         }
+       } else {
+         // Start the new scene without stopping others
+         this.game.scene.start(key, mergedData);
+         this.activeScenes.add(key);
+         this.sceneTransitionInProgress = false;
+       }
+     }
+     
+     /**
+      * Store data that persists between scene transitions
+      * @param key Data identifier
+      * @param value Data value
+      */
+     setPersistentData(key: string, value: any): void {
+       this.persistentData.set(key, value);
+     }
+     
+     /**
+      * Get persistent data
+      * @param key Data identifier
+      * @param defaultValue Default value if key doesn't exist
+      */
+     getPersistentData<T>(key: string, defaultValue?: T): T {
+       return this.persistentData.has(key)
+         ? this.persistentData.get(key)
+         : defaultValue;
+     }
+     
+     /**
+      * Clear all persistent data
+      */
+     clearPersistentData(): void {
+       this.persistentData.clear();
+     }
+     
+     /**
+      * Check if a scene is currently active
+      * @param key Scene key
+      */
+     isSceneActive(key: string): boolean {
+       return this.activeScenes.has(key);
+     }
+     
+     /**
+      * Update method called each frame
+      */
+     private update(): void {
+       // Update active scenes tracking
+       const activeScenes = new Set<string>();
+       
+       this.game.scene.scenes.forEach(scene => {
+         if (scene.scene.isActive()) {
+           activeScenes.add(scene.scene.key);
+         }
+       });
+       
+       this.activeScenes = activeScenes;
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       this.game.events.off('prestep', this.update, this);
+       this.persistentData.clear();
+       this.activeScenes.clear();
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

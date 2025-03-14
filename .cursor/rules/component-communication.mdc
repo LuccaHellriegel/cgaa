@@ -1,0 +1,188 @@
+---
+description: Implement effective component communication patterns to ensure loose coupling in component-based architecture
+globs: **/*.ts
+---
+
+# Component Communication Patterns
+
+## Context
+- When implementing component-based entity systems
+- When components need to interact with each other
+- When maintaining loose coupling between components is important
+- When designing event-driven gameplay systems
+
+## Requirements
+- Keep components decoupled using appropriate communication patterns
+- Use event systems for indirect communication between components
+- Implement clear interfaces for direct component interactions
+- Avoid tight coupling between unrelated components
+- Ensure component communication patterns are consistent across the codebase
+
+## Examples
+
+<example>
+```typescript
+// GOOD: Event-based communication between components
+class HealthComponent implements Component {
+  private entity: Entity;
+  private currentHealth: number;
+  private maxHealth: number;
+  
+  constructor(entity: Entity, maxHealth: number) {
+    this.entity = entity;
+    this.maxHealth = maxHealth;
+    this.currentHealth = maxHealth;
+  }
+
+  takeDamage(amount: number): void {
+    this.currentHealth = Math.max(0, this.currentHealth - amount);
+    
+    // Emit a Phaser event that can be listened to by other components
+    this.entity.scene.events.emit('entityDamaged', this.entity, amount);
+    
+    if (this.currentHealth <= 0) {
+      this.entity.scene.events.emit('entityDied', this.entity);
+    }
+  }
+
+  update(time: number, delta: number): void {
+    // Component update logic
+  }
+
+  destroy(): void {
+    // Clean up any listeners if needed
+  }
+}
+
+// Component listening for events from others
+class EffectsComponent implements Component {
+  private entity: Entity;
+  
+  constructor(entity: Entity) {
+    this.entity = entity;
+    
+    // Listen for events from other components
+    this.entity.scene.events.on('entityDamaged', this.onEntityDamaged, this);
+    this.entity.scene.events.on('entityDied', this.onEntityDied, this);
+  }
+  
+  onEntityDamaged(damagedEntity: Entity, amount: number): void {
+    // Only respond if it's our entity
+    if (damagedEntity === this.entity) {
+      // Create damage effects
+      this.createDamageEffect(amount);
+    }
+  }
+  
+  onEntityDied(deadEntity: Entity): void {
+    if (deadEntity === this.entity) {
+      this.createDeathEffect();
+    }
+  }
+  
+  createDamageEffect(amount: number): void {
+    // Visual feedback for damage
+  }
+  
+  createDeathEffect(): void {
+    // Death animation logic
+  }
+  
+  update(time: number, delta: number): void {
+    // Component update logic
+  }
+  
+  destroy(): void {
+    // Important: Clean up event listeners
+    this.entity.scene.events.off('entityDamaged', this.onEntityDamaged, this);
+    this.entity.scene.events.off('entityDied', this.onEntityDied, this);
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Tightly coupled components with direct references
+class HealthComponent implements Component {
+  private entity: Entity;
+  private currentHealth: number;
+  private maxHealth: number;
+  private effectsComponent: EffectsComponent; // Direct reference
+  private soundComponent: SoundComponent; // Direct reference
+  
+  constructor(entity: Entity, maxHealth: number) {
+    this.entity = entity;
+    this.maxHealth = maxHealth;
+    this.currentHealth = maxHealth;
+    
+    // Directly fetching other components - tight coupling
+    this.effectsComponent = entity.getComponent<EffectsComponent>('effects')!;
+    this.soundComponent = entity.getComponent<SoundComponent>('sound')!;
+  }
+
+  takeDamage(amount: number): void {
+    this.currentHealth = Math.max(0, this.currentHealth - amount);
+    
+    // Direct method calls to other components
+    this.effectsComponent.createDamageEffect(amount);
+    this.soundComponent.playSound('damage');
+    
+    if (this.currentHealth <= 0) {
+      this.effectsComponent.createDeathEffect();
+      this.soundComponent.playSound('death');
+    }
+  }
+  
+  // Other methods...
+}
+```
+This example shows poor component communication with tight coupling between components. The HealthComponent directly depends on and calls methods of other components, making it impossible to use independently and difficult to test.
+</example>
+
+## Communication Patterns
+
+1. **Event-Based Communication**:
+   ```typescript
+   // Publishing component
+   this.entity.scene.events.emit('eventName', this.entity, additionalData);
+   
+   // Subscribing component
+   this.entity.scene.events.on('eventName', this.handleEvent, this);
+   
+   // Always clean up in destroy
+   this.entity.scene.events.off('eventName', this.handleEvent, this);
+   ```
+
+2. **Component Registry Lookups**:
+   ```typescript
+   // Get component only when needed, not stored as property
+   update(time: number, delta: number): void {
+     // Only when needed, look up other components
+     const movementComponent = this.entity.getComponent<MovementComponent>('movement');
+     if (movementComponent && this.shouldAdjustMovement()) {
+       movementComponent.adjustSpeed(this.speedFactor);
+     }
+   }
+   ```
+
+3. **Message Passing with Command Pattern**:
+   ```typescript
+   interface Command {
+     execute(): void;
+   }
+   
+   // Component sends a command without knowing who handles it
+   this.entity.sendCommand(new ApplyDamageCommand(10));
+   
+   // Entity distributes to appropriate component
+   sendCommand(command: Command): void {
+     this.components.forEach(component => {
+       if ('handleCommand' in component) {
+         (component as any).handleCommand(command);
+       }
+     });
+   }
+   ```
+
+<version>1.0.0</version> 

@@ -16,3 +16,19 @@ export function assert(
     throw new Error(errorMsg);
   }
 }
+
+/**
+ * Utility function to assert a value is not null and return it
+ * @param value - The value to check for null/undefined
+ * @param message - Error message if value is null/undefined
+ * @returns The non-null value
+ */
+export function assertNotNull<T>(
+  value: T | null | undefined,
+  message: string
+): T {
+  if (value === null || value === undefined) {
+    throw new Error(`Assertion failed: ${message}`);
+  }
+  return value;
+}

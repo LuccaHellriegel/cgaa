@@ -15,6 +15,7 @@ export class QuestSystem {
   private scene: Scene;
   private quests: Map<string, Quest> = new Map();
   private activeQuests: Set<string> = new Set();
+  private nextQuestId: number = 1;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -27,13 +28,17 @@ export class QuestSystem {
     });
   }
 
+  public startQuest(sourceCamp: CampBuilding, targetCamp: CampBuilding): void {
+    const quest = this.createQuest(sourceCamp, targetCamp);
+    this.activateQuest(quest.id);
+  }
+
   public createQuest(
     sourceCamp: CampBuilding,
     targetCamp: CampBuilding
   ): Quest {
-    const questId = `quest_${Date.now()}_${sourceCamp.getId()}_${targetCamp.getId()}`;
     const quest: Quest = {
-      id: questId,
+      id: `quest_${this.nextQuestId++}`,
       sourceCamp,
       targetCamp,
       isActive: false,
@@ -41,7 +46,7 @@ export class QuestSystem {
       timestamp: Date.now(),
     };
 
-    this.quests.set(questId, quest);
+    this.quests.set(quest.id, quest);
     return quest;
   }
 
@@ -56,6 +61,13 @@ export class QuestSystem {
     this.activeQuests.add(questId);
     quest.targetCamp.markAsQuestTarget();
 
+    // Set up event listeners for quest completion
+    this.scene.events.on(GameEvents.CAMP_DESTROYED, (camp: CampBuilding) => {
+      if (camp === quest.targetCamp && !quest.isCompleted) {
+        this.completeQuest(questId);
+      }
+    });
+
     return true;
   }
 
@@ -69,10 +81,25 @@ export class QuestSystem {
     }
   }
 
+  private completeQuest(questId: string): void {
+    const quest = this.quests.get(questId);
+    if (!quest || quest.isCompleted) return;
+
+    quest.isCompleted = true;
+    this.activeQuests.delete(questId);
+    quest.isActive = false;
+    quest.targetCamp.unmarkAsQuestTarget();
+
+    // Emit quest completion event
+    this.scene.events.emit(GameEvents.QUEST_COMPLETED, quest);
+  }
+
   public getActiveQuestsForCamp(camp: CampBuilding): Quest[] {
     return Array.from(this.activeQuests)
       .map((id) => this.quests.get(id)!)
-      .filter((quest) => quest.sourceCamp === camp);
+      .filter(
+        (quest) => quest.sourceCamp === camp || quest.targetCamp === camp
+      );
   }
 
   public getAllQuestsForCamp(camp: CampBuilding): Quest[] {
@@ -85,12 +112,7 @@ export class QuestSystem {
     // Complete any quests targeting this camp
     for (const [questId, quest] of this.quests) {
       if (quest.targetCamp === camp && quest.isActive) {
-        quest.isCompleted = true;
-        quest.isActive = false;
-        this.activeQuests.delete(questId);
-
-        // Emit quest completion event
-        this.scene.events.emit(GameEvents.QUEST_COMPLETED, quest);
+        this.completeQuest(questId);
       }
     }
   }

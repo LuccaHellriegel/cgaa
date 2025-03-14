@@ -1,9 +1,8 @@
-import { Scene, Physics } from "phaser";
+import { Scene, Physics, GameObjects } from "phaser";
 import { GameEvents } from "../events/GameEvents";
 import { assert } from "../utils/assert";
 
-export class Enemy {
-  protected scene: Scene;
+export class Enemy extends GameObjects.GameObject {
   private sprite: Physics.Arcade.Sprite;
   private health: number;
   private maxHealth: number;
@@ -11,7 +10,7 @@ export class Enemy {
   private speed: number;
   private target: Phaser.Math.Vector2 | null;
   private healthBar: Phaser.GameObjects.Graphics;
-  private type: string;
+  private enemyType: string;
 
   constructor(
     scene: Scene,
@@ -24,6 +23,8 @@ export class Enemy {
       type?: string;
     } = {}
   ) {
+    super(scene, "Enemy");
+
     assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
       providedType: typeof scene,
       isScene: scene instanceof Scene,
@@ -31,13 +32,12 @@ export class Enemy {
     assert(typeof x === "number", "X position must be a number");
     assert(typeof y === "number", "Y position must be a number");
 
-    this.scene = scene;
     this.maxHealth = config.health || 100;
     this.health = this.maxHealth;
     this.damage = config.damage || 10;
     this.speed = config.speed || 100;
     this.target = null;
-    this.type = config.type || "basic";
+    this.enemyType = config.type || "basic";
 
     // Create sprite
     this.sprite = scene.physics.add.sprite(x, y, "enemy");
@@ -55,7 +55,20 @@ export class Enemy {
   }
 
   public getType(): string {
-    return this.type;
+    return this.enemyType;
+  }
+
+  public setType(type: string): void {
+    assert(typeof type === "string", "Enemy type must be a string");
+    this.enemyType = type;
+
+    // Update sprite texture based on type if needed
+    // TODO: Add different textures for different enemy types
+    this.sprite.setTexture("enemy");
+  }
+
+  public getSpeed(): number {
+    return this.speed;
   }
 
   public getSprite(): Physics.Arcade.Sprite {
@@ -136,10 +149,54 @@ export class Enemy {
     // Enemies should have attack animations and behaviors when near targets
   }
 
-  public destroy(): void {
-    this.healthBar.destroy();
-    this.sprite.destroy();
+  public preUpdate(): void {
+    if (this.active) {
+      this.update();
+    }
+  }
 
-    // TODO: Return to object pool instead of destroying
+  public reset(
+    x: number,
+    y: number,
+    config: {
+      health?: number;
+      damage?: number;
+      speed?: number;
+      type?: string;
+    } = {}
+  ): void {
+    // Reset state for object pooling
+    this.maxHealth = config.health || 100;
+    this.health = this.maxHealth;
+    this.damage = config.damage || 10;
+    this.speed = config.speed || 100;
+    this.target = null;
+    this.enemyType = config.type || "basic";
+
+    // Reset sprite
+    this.sprite.setPosition(x, y);
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setActive(true);
+    this.sprite.setVisible(true);
+
+    // Reset health bar
+    this.updateHealthBar();
+  }
+
+  public kill(): void {
+    this.sprite.setActive(false);
+    this.sprite.setVisible(false);
+    this.healthBar.setVisible(false);
+    this.setActive(false);
+  }
+
+  public destroy(fromScene?: boolean): void {
+    if (fromScene) {
+      super.destroy();
+      this.healthBar.destroy();
+      this.sprite.destroy();
+    } else {
+      this.kill();
+    }
   }
 }

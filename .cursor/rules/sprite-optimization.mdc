@@ -1,0 +1,446 @@
+---
+description: Optimize sprite rendering to improve game performance and maintain high frame rates
+globs: **/*.ts
+---
+
+# Sprite Rendering Optimization
+
+## Context
+- When working with numerous sprites in a game scene
+- When implementing animated or frequently updated visual elements
+- When targeting mobile or low-power devices
+- When scenes contain complex or layered sprite arrangements
+
+## Requirements
+- Use sprite sheets instead of individual image files
+- Apply appropriate sprite compression and size optimization
+- Implement sprite culling for off-screen elements
+- Utilize sprite pooling for frequently created/destroyed objects
+- Set appropriate sprite depths to minimize overdraw
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Optimized sprite factory with pooling for commonly used sprites
+ */
+class OptimizedSpriteFactory {
+  private spritePool: Map<string, Phaser.GameObjects.Sprite[]> = new Map();
+  private scene: Phaser.Scene;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  /**
+   * Preload a texture atlas for sprites
+   * @param key Atlas key
+   * @param textureURL Path to the texture
+   * @param atlasURL Path to the atlas JSON
+   */
+  preloadAtlas(key: string, textureURL: string, atlasURL: string): void {
+    this.scene.load.atlas(key, textureURL, atlasURL);
+  }
+  
+  /**
+   * Create or reuse a sprite from the pool
+   * @param x X position
+   * @param y Y position
+   * @param texture Texture key
+   * @param frame Frame name
+   * @returns The created or reused sprite
+   */
+  getSprite(x: number, y: number, texture: string, frame?: string): Phaser.GameObjects.Sprite {
+    const key = `${texture}${frame ? ':' + frame : ''}`;
+    let sprites = this.spritePool.get(key);
+    
+    // Create the pool if it doesn't exist
+    if (!sprites) {
+      sprites = [];
+      this.spritePool.set(key, sprites);
+    }
+    
+    // Get a sprite from the pool or create a new one
+    let sprite: Phaser.GameObjects.Sprite;
+    if (sprites.length > 0) {
+      sprite = sprites.pop()!;
+      sprite.setActive(true);
+      sprite.setVisible(true);
+      sprite.setPosition(x, y);
+    } else {
+      sprite = this.scene.add.sprite(x, y, texture, frame);
+      
+      // Set up culling bounds for automatic off-screen optimization
+      sprite.setScrollFactor(1);
+      this.setupAutoCulling(sprite);
+    }
+    
+    return sprite;
+  }
+  
+  /**
+   * Return a sprite to the pool
+   * @param sprite The sprite to release
+   */
+  releaseSprite(sprite: Phaser.GameObjects.Sprite): void {
+    const key = `${sprite.texture.key}${sprite.frame.name ? ':' + sprite.frame.name : ''}`;
+    let sprites = this.spritePool.get(key);
+    
+    if (!sprites) {
+      sprites = [];
+      this.spritePool.set(key, sprites);
+    }
+    
+    // Reset and hide the sprite
+    sprite.setActive(false);
+    sprite.setVisible(false);
+    
+    // Add to pool
+    sprites.push(sprite);
+  }
+  
+  /**
+   * Setup automatic culling for sprites outside the camera view
+   * @param sprite The sprite to setup culling for
+   */
+  private setupAutoCulling(sprite: Phaser.GameObjects.Sprite): void {
+    // Add 20% padding to the culling area to prevent pop-in
+    const padding = 0.2;
+    
+    sprite.setCullCallback(() => {
+      const camera = this.scene.cameras.main;
+      const bounds = sprite.getBounds();
+      
+      // Calculate expanded camera bounds with padding
+      const cameraWidth = camera.width * (1 + padding);
+      const cameraHeight = camera.height * (1 + padding);
+      const cameraBounds = new Phaser.Geom.Rectangle(
+        camera.scrollX - (camera.width * padding / 2),
+        camera.scrollY - (camera.height * padding / 2),
+        cameraWidth,
+        cameraHeight
+      );
+      
+      // Only render if within the expanded camera bounds
+      return Phaser.Geom.Rectangle.Overlaps(cameraBounds, bounds);
+    });
+  }
+  
+  /**
+   * Clear all pooled sprites
+   */
+  clearPools(): void {
+    this.spritePool.forEach(sprites => {
+      sprites.forEach(sprite => sprite.destroy());
+      sprites.length = 0;
+    });
+    this.spritePool.clear();
+  }
+}
+
+/**
+ * Optimized sprite animation manager
+ */
+class SpriteAnimationManager {
+  private scene: Phaser.Scene;
+  private animationData: Record<string, AnimationConfig> = {};
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  /**
+   * Load animation data from a JSON file
+   * @param key Key for the JSON file
+   */
+  preloadAnimations(key: string): void {
+    this.scene.load.json(key, `assets/animations/${key}.json`);
+  }
+  
+  /**
+   * Create animations from loaded data
+   * @param key Key of the loaded JSON file
+   */
+  createAnimations(key: string): void {
+    const data = this.scene.cache.json.get(key);
+    
+    if (!data || !data.animations) {
+      console.error(`Animation data for ${key} not found or invalid`);
+      return;
+    }
+    
+    // Store for later reference
+    this.animationData = { ...this.animationData, ...data.animations };
+    
+    // Create each animation
+    Object.entries(data.animations).forEach(([animKey, config]: [string, any]) => {
+      // Skip if already exists
+      if (this.scene.anims.exists(animKey)) {
+        return;
+      }
+      
+      this.scene.anims.create({
+        key: animKey,
+        frames: this.scene.anims.generateFrameNames(config.spritesheet, {
+          prefix: config.prefix || '',
+          start: config.startFrame,
+          end: config.endFrame,
+          zeroPad: config.zeroPad || 0,
+          suffix: config.suffix || ''
+        }),
+        frameRate: config.frameRate || 24,
+        repeat: config.repeat || 0
+      });
+    });
+  }
+  
+  /**
+   * Play an animation on a sprite with optimized settings
+   * @param sprite The sprite to animate
+   * @param key Animation key
+   * @param ignoreIfPlaying Don't restart if already playing
+   */
+  playOptimized(sprite: Phaser.GameObjects.Sprite, key: string, ignoreIfPlaying = false): void {
+    // Don't animate if off-screen
+    const camera = this.scene.cameras.main;
+    if (!this.isInCameraView(sprite, camera)) {
+      // Just set to the first frame if off-screen
+      const config = this.animationData[key];
+      if (config) {
+        sprite.setTexture(
+          config.spritesheet, 
+          `${config.prefix || ''}${config.startFrame}${config.suffix || ''}`
+        );
+      }
+      return;
+    }
+    
+    // Play the animation normally if on-screen
+    sprite.play(key, ignoreIfPlaying);
+  }
+  
+  /**
+   * Check if a sprite is in the camera view
+   * @param sprite The sprite to check
+   * @param camera The camera to check against
+   * @returns True if the sprite is in view
+   */
+  private isInCameraView(sprite: Phaser.GameObjects.Sprite, camera: Phaser.Cameras.Scene2D.Camera): boolean {
+    const bounds = sprite.getBounds();
+    const cameraBounds = new Phaser.Geom.Rectangle(
+      camera.scrollX,
+      camera.scrollY,
+      camera.width,
+      camera.height
+    );
+    
+    return Phaser.Geom.Rectangle.Overlaps(cameraBounds, bounds);
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Inefficient sprite creation and management
+class GameScene extends Phaser.Scene {
+  private enemies: Phaser.GameObjects.Sprite[] = [];
+  
+  create() {
+    // Loading individual images instead of sprite sheets
+    this.load.image('enemy1', 'assets/enemy1.png');
+    this.load.image('enemy2', 'assets/enemy2.png');
+    this.load.image('enemy3', 'assets/enemy3.png');
+    
+    // Creating sprites without pooling
+    for (let i = 0; i < 100; i++) {
+      const x = Math.random() * 2000;
+      const y = Math.random() * 2000;
+      
+      // Creating new sprite instances every time
+      const enemy = this.add.sprite(x, y, 'enemy1');
+      
+      // No culling for off-screen objects
+      this.enemies.push(enemy);
+    }
+  }
+  
+  // Creating new sprites instead of reusing them
+  spawnEnemy(x: number, y: number) {
+    const type = Math.floor(Math.random() * 3) + 1;
+    const enemy = this.add.sprite(x, y, `enemy${type}`);
+    this.enemies.push(enemy);
+    
+    // No cleanup or pooling for destroyed sprites
+    this.time.delayedCall(5000, () => {
+      const index = this.enemies.indexOf(enemy);
+      if (index >= 0) {
+        this.enemies.splice(index, 1);
+      }
+      enemy.destroy();
+    });
+  }
+  
+  update() {
+    // Updating all sprites regardless of visibility
+    for (const enemy of this.enemies) {
+      enemy.x += Math.random() * 2 - 1;
+      enemy.y += Math.random() * 2 - 1;
+      
+      // No visibility culling
+      enemy.rotation += 0.01;
+    }
+  }
+}
+```
+</example>
+
+## Sprite Optimization Techniques
+
+1. **Sprite Sheet Generation**:
+   ```typescript
+   // Using TexturePacker or similar tools, create sprite sheets with JSON atlas
+   preload() {
+     this.load.atlas(
+       'game-sprites',
+       'assets/sprites/game-sprites.png',
+       'assets/sprites/game-sprites.json'
+     );
+     
+     // Load multiple sprite sheets for different categories to keep sizes manageable
+     this.load.atlas(
+       'enemies',
+       'assets/sprites/enemies.png',
+       'assets/sprites/enemies.json'
+     );
+     
+     this.load.atlas(
+       'environment',
+       'assets/sprites/environment.png',
+       'assets/sprites/environment.json'
+     );
+   }
+   
+   create() {
+     // Create sprite from atlas
+     const player = this.add.sprite(400, 300, 'game-sprites', 'player/idle/0001');
+     
+     // Create animation using frames from the atlas
+     this.anims.create({
+       key: 'player-run',
+       frames: this.anims.generateFrameNames('game-sprites', {
+         prefix: 'player/run/',
+         start: 1,
+         end: 8,
+         zeroPad: 4
+       }),
+       frameRate: 12,
+       repeat: -1
+     });
+     
+     player.play('player-run');
+   }
+   ```
+
+2. **Dynamic Sprite Culling**:
+   ```typescript
+   class CullingManager {
+     private sprites: Phaser.GameObjects.Sprite[] = [];
+     private scene: Phaser.Scene;
+     private camera: Phaser.Cameras.Scene2D.Camera;
+     private cullPadding = 100; // Pixels of padding around camera
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       this.camera = scene.cameras.main;
+     }
+     
+     /**
+      * Add a sprite to be managed for culling
+      */
+     add(sprite: Phaser.GameObjects.Sprite): void {
+       this.sprites.push(sprite);
+     }
+     
+     /**
+      * Update visibility of all sprites
+      */
+     update(): void {
+       // Create camera bounds with padding
+       const bounds = new Phaser.Geom.Rectangle(
+         this.camera.scrollX - this.cullPadding,
+         this.camera.scrollY - this.cullPadding,
+         this.camera.width + (this.cullPadding * 2),
+         this.camera.height + (this.cullPadding * 2)
+       );
+       
+       // Update visibility of each sprite based on camera bounds
+       for (const sprite of this.sprites) {
+         const spriteVisible = Phaser.Geom.Rectangle.Overlaps(
+           bounds,
+           new Phaser.Geom.Rectangle(
+             sprite.x - (sprite.width / 2),
+             sprite.y - (sprite.height / 2),
+             sprite.width,
+             sprite.height
+           )
+         );
+         
+         // Only update visibility if it's changing
+         if (sprite.visible !== spriteVisible) {
+           sprite.setVisible(spriteVisible);
+         }
+       }
+     }
+   }
+   ```
+
+3. **Sprite Depth Management**:
+   ```typescript
+   /**
+    * Utility for managing sprite depths to minimize overdraw
+    */
+   class DepthManager {
+     // Depth constants
+     static readonly BACKGROUND = 0;
+     static readonly TERRAIN = 10;
+     static readonly ITEMS = 20;
+     static readonly ENEMIES = 30;
+     static readonly PLAYER = 40;
+     static readonly EFFECTS = 50;
+     static readonly UI = 100;
+     
+     /**
+      * Set depth by category with sub-index for sorting
+      * @param sprite Sprite to set depth for
+      * @param category Base depth category
+      * @param index Sub-index within category (0-999)
+      */
+     static setDepth(sprite: Phaser.GameObjects.Sprite, category: number, index = 0): void {
+       // Ensure index is within range
+       index = Math.min(Math.max(index, 0), 999);
+       
+       // Calculate final depth (category.index)
+       const depth = category + (index / 1000);
+       sprite.setDepth(depth);
+     }
+     
+     /**
+      * Set y-sorting within a category
+      * @param sprite Sprite to set depth for
+      * @param category Base depth category
+      */
+     static setYSorted(sprite: Phaser.GameObjects.Sprite, category: number): void {
+       // Update depth on each frame based on y position
+       sprite.scene.events.on('postupdate', () => {
+         // Map y position to a 0-999 range based on scene height
+         const height = sprite.scene.cameras.main.height;
+         const normalizedY = Math.min(Math.max(sprite.y / height * 999, 0), 999);
+         DepthManager.setDepth(sprite, category, normalizedY);
+       });
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

@@ -1,0 +1,568 @@
+---
+description: Implement lazy instantiation for memory-intensive objects to improve performance
+globs: **/*.ts
+---
+
+# Lazy Instantiation
+
+## Context
+- When working with memory-intensive game objects or resources
+- When optimizing initial loading times and memory usage
+- When implementing complex game scenes with many potential objects
+- When targeting memory-constrained platforms
+- When building games with dynamic content loading
+
+## Requirements
+- Create objects only when they are actually needed
+- Implement factories or builders for deferred object creation
+- Use proxies or placeholders for expensive resources
+- Apply just-in-time initialization for game elements
+- Implement progressive loading for large game worlds
+- Balance memory usage with CPU cost of instantiation
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Lazy loading manager for game resources
+ */
+class LazyResourceManager {
+  private scene: Phaser.Scene;
+  private factories: Map<string, () => any> = new Map();
+  private instances: Map<string, any> = new Map();
+  private loadingPromises: Map<string, Promise<any>> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  /**
+   * Register a factory function for a resource
+   * @param key Unique identifier for the resource
+   * @param factory Function that creates the resource
+   */
+  register<T>(key: string, factory: () => T): void {
+    this.factories.set(key, factory);
+  }
+  
+  /**
+   * Get a resource, creating it if it doesn't exist
+   * @param key The resource identifier
+   * @returns The requested resource
+   */
+  get<T>(key: string): T {
+    // Return existing instance if available
+    if (this.instances.has(key)) {
+      return this.instances.get(key) as T;
+    }
+    
+    // Check if we have a factory for this resource
+    if (!this.factories.has(key)) {
+      throw new Error(`No factory registered for resource: ${key}`);
+    }
+    
+    // Create the resource
+    const factory = this.factories.get(key);
+    const instance = factory();
+    
+    // Store for future use
+    this.instances.set(key, instance);
+    
+    return instance as T;
+  }
+  
+  /**
+   * Asynchronously get a resource, with loading indicator
+   * @param key The resource identifier
+   * @returns Promise that resolves to the requested resource
+   */
+  async getAsync<T>(key: string): Promise<T> {
+    // Return existing instance if available
+    if (this.instances.has(key)) {
+      return Promise.resolve(this.instances.get(key) as T);
+    }
+    
+    // Return existing promise if already loading
+    if (this.loadingPromises.has(key)) {
+      return this.loadingPromises.get(key) as Promise<T>;
+    }
+    
+    // Check if we have a factory for this resource
+    if (!this.factories.has(key)) {
+      throw new Error(`No factory registered for resource: ${key}`);
+    }
+    
+    // Create loading promise
+    const loadPromise = new Promise<T>((resolve, reject) => {
+      try {
+        // Show loading indicator
+        const loadingText = this.scene.add.text(
+          this.scene.cameras.main.centerX,
+          this.scene.cameras.main.centerY,
+          `Loading ${key}...`,
+          { fontSize: '24px', color: '#ffffff' }
+        ).setOrigin(0.5);
+        
+        // Create the resource (possibly async)
+        const factory = this.factories.get(key);
+        const instance = factory();
+        
+        // Store for future use
+        this.instances.set(key, instance);
+        
+        // Remove loading indicator and resolve
+        loadingText.destroy();
+        resolve(instance as T);
+      } catch (error) {
+        reject(error);
+      }
+    });
+    
+    // Store promise and clean up when done
+    this.loadingPromises.set(key, loadPromise);
+    loadPromise.finally(() => {
+      this.loadingPromises.delete(key);
+    });
+    
+    return loadPromise;
+  }
+  
+  /**
+   * Check if a resource is already instantiated
+   * @param key The resource identifier
+   * @returns True if the resource exists
+   */
+  has(key: string): boolean {
+    return this.instances.has(key);
+  }
+  
+  /**
+   * Release a resource to free memory
+   * @param key The resource identifier
+   */
+  release(key: string): void {
+    if (this.instances.has(key)) {
+      const instance = this.instances.get(key);
+      
+      // Call destroy method if available
+      if (instance && typeof instance.destroy === 'function') {
+        instance.destroy();
+      }
+      
+      this.instances.delete(key);
+    }
+  }
+  
+  /**
+   * Release all resources
+   */
+  releaseAll(): void {
+    for (const key of this.instances.keys()) {
+      this.release(key);
+    }
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Eager loading of all game elements regardless of need
+class GameWorld {
+  private scene: Phaser.Scene;
+  private allEnemies: Enemy[] = [];
+  private allItems: Item[] = [];
+  private allNPCs: NPC[] = [];
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Eagerly create all possible game objects at startup
+    this.createAllEnemies();
+    this.createAllItems();
+    this.createAllNPCs();
+  }
+  
+  private createAllEnemies(): void {
+    // Create every possible enemy type, even those not needed yet
+    for (let i = 0; i < 50; i++) {
+      this.allEnemies.push(new Enemy(this.scene, 'goblin', 0, 0));
+      this.allEnemies.push(new Enemy(this.scene, 'orc', 0, 0));
+      this.allEnemies.push(new Enemy(this.scene, 'dragon', 0, 0));
+    }
+  }
+  
+  private createAllItems(): void {
+    // Create every possible item, even those not needed yet
+    for (let i = 0; i < 100; i++) {
+      this.allItems.push(new Item(this.scene, 'potion', 0, 0));
+      this.allItems.push(new Item(this.scene, 'sword', 0, 0));
+      this.allItems.push(new Item(this.scene, 'shield', 0, 0));
+    }
+  }
+  
+  private createAllNPCs(): void {
+    // Create every possible NPC, even those not needed yet
+    for (let i = 0; i < 30; i++) {
+      this.allNPCs.push(new NPC(this.scene, 'villager', 0, 0));
+      this.allNPCs.push(new NPC(this.scene, 'merchant', 0, 0));
+      this.allNPCs.push(new NPC(this.scene, 'guard', 0, 0));
+    }
+  }
+  
+  // Game logic that only uses a small subset of created objects...
+}
+```
+</example>
+
+## Lazy Instantiation Patterns
+
+1. **Proxy-Based Lazy Loading**:
+   ```typescript
+   /**
+    * Proxy-based lazy loading for expensive game resources
+    */
+   class LazyLoadProxy<T> {
+     private factory: () => T;
+     private instance: T = null;
+     
+     constructor(factory: () => T) {
+       this.factory = factory;
+     }
+     
+     /**
+      * Get the resource, creating it if needed
+      */
+     get(): T {
+       if (this.instance === null) {
+         this.instance = this.factory();
+       }
+       return this.instance;
+     }
+     
+     /**
+      * Check if the resource has been instantiated
+      */
+     isInstantiated(): boolean {
+       return this.instance !== null;
+     }
+     
+     /**
+      * Release the resource
+      */
+     release(): void {
+       if (this.instance !== null) {
+         // Call destroy if available
+         if (typeof (this.instance as any).destroy === 'function') {
+           (this.instance as any).destroy();
+         }
+         this.instance = null;
+       }
+     }
+   }
+   
+   // Usage example
+   class GameScene extends Phaser.Scene {
+     private bossEnemy: LazyLoadProxy<BossEnemy>;
+     private specialEffects: LazyLoadProxy<SpecialEffects>;
+     
+     constructor() {
+       super({ key: 'GameScene' });
+       
+       // Create proxies but not the actual resources
+       this.bossEnemy = new LazyLoadProxy(() => 
+         new BossEnemy(this, this.cameras.main.width / 2, 100)
+       );
+       
+       this.specialEffects = new LazyLoadProxy(() => 
+         new SpecialEffects(this)
+       );
+     }
+     
+     create() {
+       // Game setup without loading boss or effects yet
+       
+       // Only when player reaches boss area
+       this.input.keyboard.on('keydown-B', () => {
+         // Boss is created only when needed
+         const boss = this.bossEnemy.get();
+         boss.activate();
+       });
+       
+       // Only when special effects are needed
+       this.input.keyboard.on('keydown-E', () => {
+         // Effects are created only when needed
+         const effects = this.specialEffects.get();
+         effects.playExplosion(400, 300);
+       });
+     }
+   }
+   ```
+
+2. **Progressive Level Loading**:
+   ```typescript
+   /**
+    * Progressive level loader that loads sections as needed
+    */
+   class ProgressiveLevelLoader {
+     private scene: Phaser.Scene;
+     private levelData: any;
+     private loadedSections: Set<string> = new Set();
+     private activeSections: Set<string> = new Set();
+     private sectionFactories: Map<string, () => LevelSection> = new Map();
+     private sectionInstances: Map<string, LevelSection> = new Map();
+     private playerPosition: Phaser.Math.Vector2;
+     private sectionSize: number = 1000; // Size of each section in pixels
+     
+     constructor(scene: Phaser.Scene, levelData: any) {
+       this.scene = scene;
+       this.levelData = levelData;
+       this.playerPosition = new Phaser.Math.Vector2(0, 0);
+       
+       // Register section factories
+       this.registerSectionFactories();
+       
+       // Update active sections when player moves
+       this.scene.events.on('update', this.updateActiveSections, this);
+     }
+     
+     /**
+      * Register factories for each level section
+      */
+     private registerSectionFactories(): void {
+       // Process level data to create section factories
+       for (const section of this.levelData.sections) {
+         this.sectionFactories.set(section.id, () => {
+           return new LevelSection(
+             this.scene,
+             section.id,
+             section.x,
+             section.y,
+             section.data
+           );
+         });
+       }
+     }
+     
+     /**
+      * Update player position
+      */
+     updatePlayerPosition(x: number, y: number): void {
+       this.playerPosition.set(x, y);
+     }
+     
+     /**
+      * Update which sections should be active based on player position
+      */
+     private updateActiveSections(): void {
+       // Calculate which sections should be active based on player position
+       const activeSectionIds = this.getSectionsInRange(
+         this.playerPosition.x,
+         this.playerPosition.y,
+         2 // Load sections within 2 section distances
+       );
+       
+       // Load new sections that should be active
+       for (const sectionId of activeSectionIds) {
+         if (!this.activeSections.has(sectionId)) {
+           this.loadSection(sectionId);
+           this.activeSections.add(sectionId);
+         }
+       }
+       
+       // Unload sections that should no longer be active
+       for (const sectionId of this.activeSections) {
+         if (!activeSectionIds.includes(sectionId)) {
+           this.unloadSection(sectionId);
+           this.activeSections.delete(sectionId);
+         }
+       }
+     }
+     
+     /**
+      * Get section IDs within range of a position
+      */
+     private getSectionsInRange(x: number, y: number, range: number): string[] {
+       const result: string[] = [];
+       
+       // Calculate section coordinates from position
+       const centerSectionX = Math.floor(x / this.sectionSize);
+       const centerSectionY = Math.floor(y / this.sectionSize);
+       
+       // Get sections in range
+       for (let dx = -range; dx <= range; dx++) {
+         for (let dy = -range; dy <= range; dy++) {
+           const sectionX = centerSectionX + dx;
+           const sectionY = centerSectionY + dy;
+           const sectionId = `section_${sectionX}_${sectionY}`;
+           
+           // Only include sections that exist in level data
+           if (this.sectionFactories.has(sectionId)) {
+             result.push(sectionId);
+           }
+         }
+       }
+       
+       return result;
+     }
+     
+     /**
+      * Load a specific section
+      */
+     private loadSection(sectionId: string): void {
+       if (this.sectionInstances.has(sectionId)) {
+         // Section already loaded, just activate it
+         const section = this.sectionInstances.get(sectionId);
+         section.activate();
+       } else if (this.sectionFactories.has(sectionId)) {
+         // Create new section
+         console.log(`Loading section: ${sectionId}`);
+         const factory = this.sectionFactories.get(sectionId);
+         const section = factory();
+         
+         // Store and activate
+         this.sectionInstances.set(sectionId, section);
+         section.activate();
+         
+         // Track as loaded
+         this.loadedSections.add(sectionId);
+       }
+     }
+     
+     /**
+      * Unload a specific section
+      */
+     private unloadSection(sectionId: string): void {
+       if (this.sectionInstances.has(sectionId)) {
+         console.log(`Unloading section: ${sectionId}`);
+         const section = this.sectionInstances.get(sectionId);
+         
+         // Deactivate but keep instance for quick reloading
+         section.deactivate();
+       }
+     }
+     
+     /**
+      * Completely remove a section from memory
+      */
+     private destroySection(sectionId: string): void {
+       if (this.sectionInstances.has(sectionId)) {
+         const section = this.sectionInstances.get(sectionId);
+         section.destroy();
+         this.sectionInstances.delete(sectionId);
+         this.loadedSections.delete(sectionId);
+       }
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       this.scene.events.off('update', this.updateActiveSections, this);
+       
+       // Destroy all sections
+       for (const section of this.sectionInstances.values()) {
+         section.destroy();
+       }
+       
+       this.sectionInstances.clear();
+       this.loadedSections.clear();
+       this.activeSections.clear();
+     }
+   }
+   
+   /**
+    * Represents a section of the game level
+    */
+   class LevelSection {
+     private scene: Phaser.Scene;
+     private id: string;
+     private x: number;
+     private y: number;
+     private data: any;
+     private gameObjects: Phaser.GameObjects.GameObject[] = [];
+     private isActive: boolean = false;
+     
+     constructor(scene: Phaser.Scene, id: string, x: number, y: number, data: any) {
+       this.scene = scene;
+       this.id = id;
+       this.x = x;
+       this.y = y;
+       this.data = data;
+     }
+     
+     /**
+      * Activate this section
+      */
+     activate(): void {
+       if (this.isActive) return;
+       
+       // Create game objects from section data
+       this.createGameObjects();
+       this.isActive = true;
+     }
+     
+     /**
+      * Deactivate this section
+      */
+     deactivate(): void {
+       if (!this.isActive) return;
+       
+       // Hide or disable game objects but don't destroy
+       this.gameObjects.forEach(obj => {
+         obj.setActive(false);
+         obj.setVisible(false);
+       });
+       
+       this.isActive = false;
+     }
+     
+     /**
+      * Create game objects for this section
+      */
+     private createGameObjects(): void {
+       // Process section data to create game objects
+       // This would be implemented based on your game's specific needs
+       
+       // Example: Create platforms
+       if (this.data.platforms) {
+         for (const platform of this.data.platforms) {
+           const obj = this.scene.add.rectangle(
+             this.x + platform.x,
+             this.y + platform.y,
+             platform.width,
+             platform.height,
+             0x00ff00
+           );
+           this.scene.physics.add.existing(obj, true);
+           this.gameObjects.push(obj);
+         }
+       }
+       
+       // Example: Create collectibles
+       if (this.data.collectibles) {
+         for (const collectible of this.data.collectibles) {
+           const obj = this.scene.add.sprite(
+             this.x + collectible.x,
+             this.y + collectible.y,
+             'collectible'
+           );
+           this.scene.physics.add.existing(obj);
+           this.gameObjects.push(obj);
+         }
+       }
+     }
+     
+     /**
+      * Destroy all resources
+      */
+     destroy(): void {
+       this.gameObjects.forEach(obj => obj.destroy());
+       this.gameObjects = [];
+       this.isActive = false;
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

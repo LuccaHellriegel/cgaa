@@ -1,147 +1,422 @@
 ---
-description: Implement object pooling when creating frequently used game objects to prevent performance degradation
+description: Implement object pooling for frequently created/destroyed objects to prevent performance degradation
 globs: **/*.ts
 ---
 
-# Object Pooling for Game Entities
+# Object Pooling
 
 ## Context
-- When developing games with frequent object creation/destruction (bullets, enemies, particles)
-- When experiencing frame rate drops during intense gameplay moments
-- When garbage collection pauses are noticeable during gameplay
+- When developing games with frequently created and destroyed objects
+- When targeting mobile or memory-constrained platforms
+- When experiencing performance spikes due to garbage collection
+- When working with particle systems, projectiles, or other short-lived objects
 
 ## Requirements
-- Use Phaser's built-in Group and GroupConfig for object pooling
-- Pre-allocate objects for frequently created entities
-- Properly reset object state when recycling from the pool
-- Implement custom pools when Phaser's built-in options are insufficient
+- Create reusable pools for frequently instantiated game objects
+- Implement proper object reset and reuse mechanisms
+- Apply pool growth and shrinking strategies based on demand
+- Track object usage to optimize pool size
+- Dispose of pooled objects when no longer needed
 
 ## Examples
 
 <example>
 ```typescript
-// Using Phaser's built-in Group for pooling bullets
-export class BulletManager {
-  private bulletPool: Phaser.GameObjects.Group;
+/**
+ * Generic object pool for reusing game objects
+ * @template T The type of object to pool
+ */
+class ObjectPool<T> {
+  private available: T[] = [];
+  private inUse: Set<T> = new Set();
+  private factory: () => T;
+  private reset: (obj: T) => void;
+  private dispose: (obj: T) => void;
+  private maxSize: number;
   
-  constructor(scene: Phaser.Scene) {
-    // Create a bullet pool with Phaser's Group
-    this.bulletPool = scene.add.group({
-      classType: Bullet,
-      maxSize: 30,
-      runChildUpdate: true,
-      createCallback: (bullet: Bullet) => {
-        bullet.setActive(false);
-        bullet.setVisible(false);
-      }
-    });
-  }
-  
-  fireBullet(x: number, y: number, direction: number): Bullet | null {
-    // Get a bullet from the pool
-    const bullet = this.bulletPool.get(x, y) as Bullet;
+  /**
+   * Create a new object pool
+   * @param factory Function to create new objects
+   * @param reset Function to reset objects before reuse
+   * @param dispose Function to dispose objects when pool is destroyed
+   * @param initialSize Number of objects to pre-allocate
+   * @param maxSize Maximum pool size (0 for unlimited)
+   */
+  constructor(
+    factory: () => T,
+    reset: (obj: T) => void,
+    dispose: (obj: T) => void,
+    initialSize = 0,
+    maxSize = 0
+  ) {
+    this.factory = factory;
+    this.reset = reset;
+    this.dispose = dispose;
+    this.maxSize = maxSize;
     
-    // No bullets left in pool
-    if (!bullet) return null;
-    
-    // Reset and initialize the bullet
-    bullet.fire(x, y, direction);
-    return bullet;
+    // Pre-allocate initial objects
+    this.preAllocate(initialSize);
   }
   
-  returnBullet(bullet: Bullet): void {
-    // Return bullet to pool
-    bullet.reset();
-    this.bulletPool.killAndHide(bullet);
-  }
-}
-
-// The bullet class
-class Bullet extends Phaser.GameObjects.Sprite {
-  private speed: number = 300;
-  
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, 'bullet');
-    this.setActive(false);
-    this.setVisible(false);
-  }
-  
-  fire(x: number, y: number, direction: number): void {
-    this.setPosition(x, y);
-    this.setActive(true);
-    this.setVisible(true);
-    
-    // Set velocity based on direction
-    this.scene.physics.velocityFromAngle(direction, this.speed, this.body.velocity);
-  }
-  
-  reset(): void {
-    this.setActive(false);
-    this.setVisible(false);
-    this.body.reset(0, 0);
-  }
-  
-  update(time: number, delta: number): void {
-    // Check if bullet is out of bounds
-    if (this.x < -50 || this.x > this.scene.game.config.width + 50 ||
-        this.y < -50 || this.y > this.scene.game.config.height + 50) {
-      this.reset();
-      this.scene.events.emit('bulletKilled', this);
+  /**
+   * Pre-allocate objects to the pool
+   * @param count Number of objects to allocate
+   */
+  preAllocate(count: number): void {
+    for (let i = 0; i < count; i++) {
+      this.available.push(this.factory());
     }
+  }
+  
+  /**
+   * Get an object from the pool
+   * @returns A pooled object
+   */
+  get(): T {
+    let obj: T;
+    
+    if (this.available.length > 0) {
+      obj = this.available.pop();
+    } else {
+      obj = this.factory();
+    }
+    
+    this.inUse.add(obj);
+    return obj;
+  }
+  
+  /**
+   * Return an object to the pool
+   * @param obj The object to return
+   */
+  release(obj: T): void {
+    if (this.inUse.has(obj)) {
+      this.inUse.delete(obj);
+      
+      // Reset object state
+      this.reset(obj);
+      
+      // Add to available pool if under size limit
+      if (this.maxSize === 0 || this.available.length < this.maxSize) {
+        this.available.push(obj);
+      } else {
+        // Dispose if over size limit
+        this.dispose(obj);
+      }
+    }
+  }
+  
+  /**
+   * Release all objects currently in use
+   */
+  releaseAll(): void {
+    this.inUse.forEach(obj => this.release(obj));
+  }
+  
+  /**
+   * Get count of available objects
+   */
+  get availableCount(): number {
+    return this.available.length;
+  }
+  
+  /**
+   * Get count of in-use objects
+   */
+  get inUseCount(): number {
+    return this.inUse.size;
+  }
+  
+  /**
+   * Clear the pool and dispose all objects
+   */
+  clear(): void {
+    // Dispose all objects
+    this.available.forEach(obj => this.dispose(obj));
+    this.inUse.forEach(obj => this.dispose(obj));
+    
+    // Clear collections
+    this.available = [];
+    this.inUse.clear();
   }
 }
 ```
-Using Phaser's Group for object pooling leverages the engine's built-in recycling system, providing efficient performance while keeping code clean. The bullet pool pre-allocates objects and reuses them instead of creating new instances.
 </example>
 
 <example type="invalid">
 ```typescript
-// Creating new objects every time without pooling
-export class BadBulletManager {
+// BAD: Creating and destroying objects continuously
+class BulletManager {
   private scene: Phaser.Scene;
   
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
   
-  fireBullet(x: number, y: number, direction: number): void {
-    // Creates a new bullet instance every time
-    const bullet = new Bullet(this.scene, x, y);
-    bullet.fire(direction);
+  // Creates a new bullet every time
+  fireBullet(x: number, y: number, velocity: Phaser.Math.Vector2): void {
+    // Creating new objects for each bullet instead of reusing
+    const bullet = this.scene.add.sprite(x, y, 'bullet');
     
-    // No recycling mechanism, objects are left for garbage collection
-    this.scene.time.delayedCall(3000, () => {
+    // Adding physics to each bullet
+    this.scene.physics.add.existing(bullet);
+    const body = bullet.body as Phaser.Physics.Arcade.Body;
+    
+    // Setting velocity
+    body.setVelocity(velocity.x, velocity.y);
+    
+    // Destroy after 2 seconds or on leaving screen
+    this.scene.time.delayedCall(2000, () => {
       bullet.destroy();
     });
   }
+  
+  // Creates many bullets at once, causing GC spikes
+  fireSpread(x: number, y: number, count: number): void {
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const vx = Math.cos(angle) * 200;
+      const vy = Math.sin(angle) * 200;
+      
+      this.fireBullet(x, y, new Phaser.Math.Vector2(vx, vy));
+    }
+  }
 }
 ```
-This approach creates a new bullet object every time one is fired, leading to frequent garbage collection pauses that harm performance, especially during intense gameplay when many bullets are created in a short time.
 </example>
 
-## Phaser-Specific Notes
+## Object Pooling Implementations
 
-1. Phaser provides several built-in pooling mechanisms:
-   - `Phaser.GameObjects.Group` with `maxSize` for basic pooling
-   - `Phaser.GameObjects.Group.createMultiple()` for pre-populating pools
-   - `Phaser.Actions` for manipulating multiple objects efficiently
-   
-2. For particle effects, use Phaser's Particle Emitter Manager which handles pooling internally:
+1. **Sprite Pooling**:
    ```typescript
-   const particles = scene.add.particles('flare');
-   const emitter = particles.createEmitter({
-     maxParticles: 30,
-     lifespan: 2000,
-     // Other configuration
-   });
+   /**
+    * Pool for reusing Phaser sprites
+    */
+   class SpritePool {
+     private scene: Phaser.Scene;
+     private pools: Map<string, Phaser.GameObjects.Sprite[]> = new Map();
+     private activeSprites: Set<Phaser.GameObjects.Sprite> = new Set();
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+     }
+     
+     /**
+      * Get a sprite from the pool or create a new one
+      */
+     get(texture: string, frame?: string): Phaser.GameObjects.Sprite {
+       const key = `${texture}:${frame || ''}`;
+       
+       if (!this.pools.has(key)) {
+         this.pools.set(key, []);
+       }
+       
+       const pool = this.pools.get(key);
+       let sprite: Phaser.GameObjects.Sprite;
+       
+       if (pool.length > 0) {
+         sprite = pool.pop();
+         sprite.setActive(true);
+         sprite.setVisible(true);
+       } else {
+         sprite = this.scene.add.sprite(0, 0, texture, frame);
+       }
+       
+       this.activeSprites.add(sprite);
+       return sprite;
+     }
+     
+     /**
+      * Release a sprite back to the pool
+      */
+     release(sprite: Phaser.GameObjects.Sprite): void {
+       if (this.activeSprites.has(sprite)) {
+         this.activeSprites.delete(sprite);
+         
+         // Reset sprite properties
+         sprite.setActive(false);
+         sprite.setVisible(false);
+         sprite.setPosition(0, 0);
+         sprite.setRotation(0);
+         sprite.setScale(1, 1);
+         sprite.setAlpha(1);
+         sprite.setTint(0xffffff);
+         
+         // Add to pool
+         const key = `${sprite.texture.key}:${sprite.frame.name || ''}`;
+         if (!this.pools.has(key)) {
+           this.pools.set(key, []);
+         }
+         this.pools.get(key).push(sprite);
+       }
+     }
+     
+     /**
+      * Clear all pools and destroy sprites
+      */
+     clear(): void {
+       // Destroy all active sprites
+       this.activeSprites.forEach(sprite => {
+         sprite.destroy();
+       });
+       this.activeSprites.clear();
+       
+       // Destroy all pooled sprites
+       this.pools.forEach(pool => {
+         pool.forEach(sprite => {
+           sprite.destroy();
+         });
+         pool.length = 0;
+       });
+       
+       this.pools.clear();
+     }
+   }
    ```
 
-3. When using pools with physics objects, remember to properly reset physics bodies:
+2. **Particle Pooling**:
    ```typescript
-   reset() {
-     this.body.reset(0, 0);
-     this.setVelocity(0, 0);
-     this.setAngularVelocity(0);
-     this.setAcceleration(0, 0);
+   /**
+    * Particle manager with object pooling
+    */
+   class ParticleManager {
+     private scene: Phaser.Scene;
+     private particlePool: ObjectPool<Phaser.GameObjects.Sprite>;
+     private activeParticles: Phaser.GameObjects.Sprite[] = [];
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       
+       // Create pool with factory, reset and dispose functions
+       this.particlePool = new ObjectPool<Phaser.GameObjects.Sprite>(
+         // Factory function to create new particles
+         () => {
+           const particle = scene.add.sprite(0, 0, 'particle');
+           particle.setActive(false);
+           particle.setVisible(false);
+           return particle;
+         },
+         // Reset function to prepare particle for reuse
+         (particle) => {
+           particle.setActive(false);
+           particle.setVisible(false);
+           particle.setPosition(0, 0);
+           particle.setScale(1, 1);
+           particle.setAlpha(1);
+           particle.setAngle(0);
+           particle.setTint(0xffffff);
+         },
+         // Dispose function for when particles are removed from pool
+         (particle) => {
+           particle.destroy();
+         },
+         // Pre-allocate 100 particles
+         100,
+         // Maximum pool size of 500
+         500
+       );
+       
+       // Update active particles each frame
+       scene.events.on('update', this.updateParticles, this);
+     }
+     
+     /**
+      * Create a particle effect
+      */
+     createEffect(
+       x: number, 
+       y: number, 
+       count: number,
+       config: {
+         speed?: number,
+         scale?: number,
+         alpha?: number,
+         lifespan?: number,
+         tint?: number
+       } = {}
+     ): void {
+       const speed = config.speed || 100;
+       const scale = config.scale || 1;
+       const alpha = config.alpha || 1;
+       const lifespan = config.lifespan || 1000;
+       const tint = config.tint || 0xffffff;
+       
+       for (let i = 0; i < count; i++) {
+         // Get particle from pool
+         const particle = this.particlePool.get();
+         
+         // Configure particle
+         particle.setPosition(x, y);
+         particle.setActive(true);
+         particle.setVisible(true);
+         particle.setScale(scale);
+         particle.setAlpha(alpha);
+         particle.setTint(tint);
+         
+         // Set random velocity
+         const angle = Math.random() * Math.PI * 2;
+         const velocity = {
+           x: Math.cos(angle) * speed * (0.5 + Math.random()),
+           y: Math.sin(angle) * speed * (0.5 + Math.random())
+         };
+         
+         // Store velocity and lifespan on particle
+         (particle as any).velocity = velocity;
+         (particle as any).remainingLife = lifespan;
+         
+         // Add to active list
+         this.activeParticles.push(particle);
+       }
+     }
+     
+     /**
+      * Update all active particles
+      */
+     private updateParticles(time: number, delta: number): void {
+       for (let i = this.activeParticles.length - 1; i >= 0; i--) {
+         const particle = this.activeParticles[i];
+         
+         // Update position based on velocity
+         particle.x += (particle as any).velocity.x * (delta / 1000);
+         particle.y += (particle as any).velocity.y * (delta / 1000);
+         
+         // Update lifespan
+         (particle as any).remainingLife -= delta;
+         
+         // Fade out near end of life
+         const lifeRatio = Math.max(0, (particle as any).remainingLife / 1000);
+         if (lifeRatio < 0.3) {
+           particle.setAlpha(lifeRatio / 0.3);
+         }
+         
+         // Check if particle should be retired
+         if ((particle as any).remainingLife <= 0) {
+           // Return to pool
+           this.particlePool.release(particle);
+           
+           // Remove from active list
+           this.activeParticles.splice(i, 1);
+         }
+       }
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       // Release all active particles
+       this.activeParticles.forEach(particle => {
+         this.particlePool.release(particle);
+       });
+       this.activeParticles = [];
+       
+       // Clear the pool
+       this.particlePool.clear();
+       
+       // Remove update listener
+       this.scene.events.off('update', this.updateParticles, this);
+     }
    }
-   ``` 
+   ```
+
+<version>1.0.0</version> 

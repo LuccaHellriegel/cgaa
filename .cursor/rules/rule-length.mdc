@@ -1,0 +1,80 @@
+---
+description: Keep rules under 200 lines to enhance clarity and maintainability
+globs: .cursor/rules/*.mdc
+---
+
+# Rule Length Limitation
+
+## Context
+- When creating or updating any Cursor rule files
+- When rules begin to grow in complexity
+- When rules cover multiple related concerns
+
+## Requirements
+- Limit all rule files to a maximum of 200 lines
+- Break complex rules into multiple focused rules if they exceed the limit
+- Ensure examples are concise and directly illustrate the rule
+- Remove redundant content or verbose explanations
+- Maintain high information density while respecting the line limit
+
+## Examples
+
+<example>
+```markdown
+---
+description: Format code consistently to improve readability
+globs: **/*.{js,ts}
+---
+
+# Code Formatting
+
+## Context
+- When writing or modifying source code
+- When establishing project conventions
+
+## Requirements
+- Use consistent indentation (2 spaces)
+- Limit line length to 80 characters
+- Use semicolons consistently
+- Place opening braces on the same line
+
+## Examples
+// Concise, focused examples showing good formatting
+
+<version>1.0.0</version>
+```
+This rule is focused, concise, and well under the 200 line limit while still providing clear guidance.
+</example>
+
+<example type="invalid">
+```markdown
+---
+description: A rule that tries to cover too many concerns in one file
+globs: **/*.{js,ts,jsx,tsx}
+---
+
+# Programming Standards
+
+## Context
+- When writing any code
+
+## Requirements
+- Use consistent formatting (extremely detailed formatting rules taking dozens of lines)
+- Follow naming conventions (dozens of lines on naming different constructs)
+- Structure classes properly (detailed class structure rules)
+- Implement error handling (extensive error handling guidelines)
+- Manage performance (detailed performance optimization rules)
+- Document code properly (detailed documentation standards)
+- Write tests appropriately (detailed testing standards)
+
+## Examples
+// Many extremely long and detailed examples
+// Covering every aspect mentioned above
+// Resulting in a file that's hundreds of lines long
+
+<version>1.0.0</version>
+```
+This example breaks the 200-line limit by trying to cover too many concerns in a single rule. Each section (formatting, naming, class structure, etc.) should be a separate, focused rule.
+</example>
+
+<version>1.0.0</version> 

@@ -1,0 +1,402 @@
+---
+description: Implement structured logging with appropriate verbosity levels to facilitate debugging and monitoring
+globs: **/*.ts
+---
+
+# Structured Logging
+
+## Context
+- When debugging complex game mechanics and interactions
+- When tracking user behavior and game progression
+- When troubleshooting issues across different platforms
+- When collaborating in a team with varied debugging needs
+- When developing systems that require detailed logging for diagnostics
+
+## Requirements
+- Create a centralized logging system with configurable verbosity levels
+- Categorize logs by system component (physics, audio, UI, etc.)
+- Include timestamps and contextual data in log messages
+- Implement conditional logging based on build environment (dev/prod)
+- Ensure logging has minimal performance impact in production
+- Support remote logging/telemetry for production diagnostics
+- Allow runtime adjustment of logging verbosity
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Structured logging system with categories and levels
+ */
+// Log levels in order of verbosity
+enum LogLevel {
+  NONE = 0,   // No logging
+  ERROR = 1,  // Critical errors
+  WARN = 2,   // Warnings
+  INFO = 3,   // Important information
+  DEBUG = 4,  // Debugging information
+  TRACE = 5   // Detailed tracing
+}
+
+// Log categories for different game systems
+enum LogCategory {
+  GENERAL = 'GENERAL',
+  PHYSICS = 'PHYSICS',
+  AUDIO = 'AUDIO',
+  INPUT = 'INPUT',
+  RENDER = 'RENDER',
+  ASSETS = 'ASSETS',
+  NETWORK = 'NETWORK',
+  AI = 'AI',
+  PERFORMANCE = 'PERFORMANCE'
+}
+
+// Interface for log handlers
+interface LogHandler {
+  handle(entry: LogEntry): void;
+}
+
+// Log entry structure
+interface LogEntry {
+  timestamp: number;
+  level: LogLevel;
+  category: LogCategory;
+  message: string;
+  data?: any;
+  timeElapsed?: number;  // Time since game start
+}
+
+/**
+ * Main logger class using singleton pattern
+ */
+class GameLogger {
+  private static instance: GameLogger;
+  private currentLevel: LogLevel = LogLevel.INFO;
+  private logsHistory: LogEntry[] = [];
+  private maxHistory: number = 1000;
+  private logHandlers: LogHandler[] = [];
+  private startTime: number = Date.now();
+  private categoryLevels: Map<LogCategory, LogLevel> = new Map();
+  
+  // Singleton pattern
+  public static getInstance(): GameLogger {
+    if (!GameLogger.instance) {
+      GameLogger.instance = new GameLogger();
+    }
+    return GameLogger.instance;
+  }
+  
+  private constructor() {
+    // Add default console handler
+    this.addHandler(new ConsoleLogHandler());
+    
+    // Set appropriate level based on environment
+    if (process.env.NODE_ENV === 'production') {
+      this.setLevel(LogLevel.ERROR);
+    } else {
+      this.setLevel(LogLevel.DEBUG);
+    }
+  }
+  
+  // Add a new log handler
+  public addHandler(handler: LogHandler): void {
+    this.logHandlers.push(handler);
+  }
+  
+  // Set global log level
+  public setLevel(level: LogLevel): void {
+    this.currentLevel = level;
+  }
+  
+  // Set log level for a specific category
+  public setCategoryLevel(category: LogCategory, level: LogLevel): void {
+    this.categoryLevels.set(category, level);
+  }
+  
+  // Get effective log level for a category
+  private getEffectiveLevel(category: LogCategory): LogLevel {
+    return this.categoryLevels.get(category) || this.currentLevel;
+  }
+  
+  // Core logging method
+  private log(level: LogLevel, category: LogCategory, message: string, data?: any): void {
+    // Skip if level is too verbose for current settings
+    if (level > this.getEffectiveLevel(category)) {
+      return;
+    }
+    
+    const entry: LogEntry = {
+      timestamp: Date.now(),
+      timeElapsed: Date.now() - this.startTime,
+      level,
+      category,
+      message,
+      data
+    };
+    
+    // Add to history (with size limit)
+    this.logsHistory.push(entry);
+    if (this.logsHistory.length > this.maxHistory) {
+      this.logsHistory.shift();
+    }
+    
+    // Pass to all handlers
+    this.logHandlers.forEach(handler => handler.handle(entry));
+  }
+  
+  // Convenience methods for different log levels
+  public error(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.ERROR, category, message, data);
+  }
+  
+  public warn(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.WARN, category, message, data);
+  }
+  
+  public info(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.INFO, category, message, data);
+  }
+  
+  public debug(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.DEBUG, category, message, data);
+  }
+  
+  public trace(category: LogCategory, message: string, data?: any): void {
+    this.log(LogLevel.TRACE, category, message, data);
+  }
+  
+  // Get logs history
+  public getHistory(): LogEntry[] {
+    return [...this.logsHistory];
+  }
+  
+  // Get logs for specific category
+  public getHistoryByCategory(category: LogCategory): LogEntry[] {
+    return this.logsHistory.filter(entry => entry.category === category);
+  }
+  
+  // Clear log history
+  public clearHistory(): void {
+    this.logsHistory = [];
+  }
+}
+
+/**
+ * Default console log handler
+ */
+class ConsoleLogHandler implements LogHandler {
+  private levelColors = {
+    [LogLevel.ERROR]: 'color: red; font-weight: bold',
+    [LogLevel.WARN]: 'color: orange',
+    [LogLevel.INFO]: 'color: blue',
+    [LogLevel.DEBUG]: 'color: green',
+    [LogLevel.TRACE]: 'color: gray'
+  };
+  
+  public handle(entry: LogEntry): void {
+    const timestamp = new Date(entry.timestamp).toISOString();
+    const levelName = LogLevel[entry.level];
+    const color = this.levelColors[entry.level];
+    const elapsed = entry.timeElapsed ? `+${Math.floor(entry.timeElapsed / 1000)}s` : '';
+    
+    // Format: [TIME][LEVEL][CATEGORY] Message
+    const logString = `[${timestamp}][${levelName}][${entry.category}]${elapsed} ${entry.message}`;
+    
+    switch (entry.level) {
+      case LogLevel.ERROR:
+        console.error(`%c${logString}`, color, entry.data || '');
+        break;
+      case LogLevel.WARN:
+        console.warn(`%c${logString}`, color, entry.data || '');
+        break;
+      case LogLevel.INFO:
+        console.info(`%c${logString}`, color, entry.data || '');
+        break;
+      case LogLevel.DEBUG:
+      case LogLevel.TRACE:
+      default:
+        console.log(`%c${logString}`, color, entry.data || '');
+        break;
+    }
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Inconsistent logging with console.log calls scattered throughout code
+class BadGameSystem {
+  private isDebug = true;
+  
+  constructor() {
+    console.log('Game system initialized');
+  }
+  
+  loadAssets(assets: string[]): void {
+    // Direct console.log without level or consistent format
+    console.log('Loading assets:', assets);
+    
+    assets.forEach(asset => {
+      try {
+        // Some asset loading logic
+        console.log(`Loaded ${asset}`);
+      } catch (e) {
+        // Error logging inconsistently formatted
+        console.error('Failed to load: ' + asset, e);
+      }
+    });
+  }
+  
+  update(delta: number): void {
+    // Conditional debug logging with no organization
+    if (this.isDebug) {
+      console.log(`Delta time: ${delta}`);
+    }
+    
+    // Game logic...
+    
+    // Performance logging mixed with regular logs
+    if (delta > 16) {
+      console.warn('Frame took too long: ' + delta + 'ms');
+    }
+  }
+  
+  // Log messages with no context or category
+  private someMethod(): void {
+    console.log('Entering method');
+    // Method logic...
+    console.log('Exiting method');
+  }
+}
+```
+</example>
+
+## Logging Implementation Patterns
+
+1. **Remote Telemetry Handler**:
+   ```typescript
+   /**
+    * Handler that sends logs to a remote server for telemetry
+    */
+   class RemoteLogHandler implements LogHandler {
+     private apiEndpoint: string;
+     private batchSize: number = 50;
+     private logQueue: LogEntry[] = [];
+     private isUploading = false;
+     
+     constructor(apiEndpoint: string) {
+       this.apiEndpoint = apiEndpoint;
+       
+       // Flush logs on window unload to prevent data loss
+       window.addEventListener('beforeunload', () => this.flushLogs());
+       
+       // Set up regular flush interval
+       setInterval(() => this.flushLogs(), 30000);
+     }
+     
+     public handle(entry: LogEntry): void {
+       // Only send ERROR and WARN logs to the server
+       if (entry.level <= LogLevel.WARN) {
+         this.logQueue.push(entry);
+         
+         // Flush immediately on errors, or when batch size is reached
+         if (entry.level === LogLevel.ERROR || this.logQueue.length >= this.batchSize) {
+           this.flushLogs();
+         }
+       }
+     }
+     
+     private async flushLogs(): Promise<void> {
+       if (this.isUploading || this.logQueue.length === 0) {
+         return;
+       }
+       
+       try {
+         this.isUploading = true;
+         const logsToSend = [...this.logQueue];
+         this.logQueue = [];
+         
+         // Send logs to server
+         await fetch(this.apiEndpoint, {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({
+             logs: logsToSend,
+             clientInfo: {
+               userAgent: navigator.userAgent,
+               timestamp: Date.now()
+             }
+           })
+         });
+       } catch (error) {
+         // If send fails, push back into queue for retry
+         this.logQueue.unshift(...this.logQueue);
+         
+         // But limit size to prevent memory issues
+         if (this.logQueue.length > this.batchSize * 3) {
+           this.logQueue = this.logQueue.slice(0, this.batchSize * 3);
+         }
+       } finally {
+         this.isUploading = false;
+       }
+     }
+   }
+   ```
+
+2. **Local Storage Handler**:
+   ```typescript
+   /**
+    * Handler that stores logs in local storage for persistence
+    */
+   class LocalStorageLogHandler implements LogHandler {
+     private storageKey: string;
+     private maxEntries: number;
+     
+     constructor(storageKey: string = 'game_logs', maxEntries: number = 200) {
+       this.storageKey = storageKey;
+       this.maxEntries = maxEntries;
+     }
+     
+     public handle(entry: LogEntry): void {
+       try {
+         // Get existing logs or initialize empty array
+         const existingLogsJson = localStorage.getItem(this.storageKey) || '[]';
+         const existingLogs = JSON.parse(existingLogsJson) as LogEntry[];
+         
+         // Add new entry
+         existingLogs.push(entry);
+         
+         // Limit size
+         if (existingLogs.length > this.maxEntries) {
+           existingLogs.shift();
+         }
+         
+         // Save back to storage
+         localStorage.setItem(this.storageKey, JSON.stringify(existingLogs));
+       } catch (e) {
+         // Fail silently - local storage might be disabled
+         console.error('Failed to store log in local storage', e);
+       }
+     }
+     
+     // Get stored logs
+     public getLogs(): LogEntry[] {
+       try {
+         const logsJson = localStorage.getItem(this.storageKey) || '[]';
+         return JSON.parse(logsJson) as LogEntry[];
+       } catch (e) {
+         return [];
+       }
+     }
+     
+     // Clear stored logs
+     public clearLogs(): void {
+       localStorage.removeItem(this.storageKey);
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

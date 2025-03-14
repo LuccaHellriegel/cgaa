@@ -16,9 +16,6 @@ export class WaveDirectionComponent implements Component {
   public setTargetCamp(camp: CampBuilding | null): void {
     this.targetCamp = camp;
     this.updateDirectionIndicator();
-
-    // TODO: Connect this wave targeting with the actual wave spawning system
-    // Currently, the visual indicators work, but they don't affect where waves are sent
   }
 
   private updateDirectionIndicator(): void {

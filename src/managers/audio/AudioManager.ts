@@ -3,6 +3,7 @@ import { SoundLoader } from "./SoundLoader";
 import { SoundPool } from "./SoundPool";
 import { SoundPlayer } from "./SoundPlayer";
 import { assert } from "../../utils/assert";
+import { GameEvents } from "../../events/GameEvents";
 
 interface SoundConfig {
   volume: number;
@@ -69,11 +70,12 @@ export class AudioManager {
       music_defeat: { volume: 0.4, rate: 1 },
     };
 
-    // TODO: Connect sound triggers with game events
-    // Currently most sound effects are defined but not triggered by game events
-
     // Listen for game state changes
-    scene.events.on("gameStateChanged", this.handleGameStateChange, this);
+    scene.events.on(
+      GameEvents.GAME_STATE_CHANGED,
+      this.handleGameStateChange,
+      this
+    );
   }
 
   public async loadAudio(): Promise<void> {
@@ -103,37 +105,33 @@ export class AudioManager {
     });
 
     // Start with menu music
-    this.playMusic(GameState.MENU);
+    this.playMusic("menu");
 
     // TODO: Add error handling for missing audio files
     // Current implementation silently fails if audio files aren't available
   }
 
-  private handleGameStateChange(newState: GameState): void {
-    assert(Object.values(GameState).includes(newState), "Invalid game state", {
+  private handleGameStateChange(newState: string): void {
+    assert(typeof newState === "string", "Game state must be a string", {
       newState,
-      validStates: Object.values(GameState),
     });
 
-    this.currentGameState = newState;
+    this.currentGameState = newState as GameState;
     this.playMusic(newState);
 
     // Handle ambient sounds based on state
-    if (newState === GameState.EXPLORATION) {
+    if (newState === "exploration") {
       this.player.playSound("ambient_wind", { loop: true });
-    } else if (newState === GameState.DIPLOMACY) {
+    } else if (newState === "diplomacy") {
       this.player.playSound("ambient_crowd", { loop: true });
     }
-
-    // TODO: Implement transitions between game states
-    // Need smoother transitions with cross-fading and state-specific audio
   }
 
   public getCurrentGameState(): GameState {
     return this.currentGameState;
   }
 
-  private playMusic(state: GameState): void {
+  private playMusic(state: string): void {
     const musicKey = `music_${state.toLowerCase()}`;
     if (this.currentMusic === musicKey) return;
 
@@ -143,7 +141,7 @@ export class AudioManager {
     }
 
     // Update current state and music
-    this.currentGameState = state;
+    this.currentGameState = state as GameState;
     this.currentMusic = musicKey;
     this.player.fadeInSound(musicKey, this.musicFadeTime, { loop: true });
 

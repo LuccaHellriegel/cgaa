@@ -1,0 +1,137 @@
+---
+description: Design game entities using component-based architecture to improve maintainability and flexibility
+globs: **/*.ts
+---
+
+# Component-Based Entity Architecture
+
+## Context
+- When creating complex game entities with multiple behaviors
+- When code reuse across different entity types is important
+- When entity behavior needs to be modified at runtime
+- When working on medium to large Phaser game projects
+
+## Requirements
+- Extend Phaser.GameObjects with component-based design
+- Separate entity behaviors into individual components
+- Design components to be reusable across different entity types
+- Ensure components can be added/removed dynamically
+- Components should follow single responsibility principle
+
+## Examples
+
+<example>
+```typescript
+// Component interface compatible with Phaser's lifecycle
+interface Component {
+  update(time: number, delta: number): void;
+  destroy(): void;
+}
+
+// Base entity class that integrates with Phaser's GameObject system
+class Entity extends Phaser.GameObjects.Container {
+  private components: Map<string, Component> = new Map();
+
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y);
+    scene.add.existing(this);
+    scene.sys.updateList.add(this);
+  }
+
+  addComponent(name: string, component: Component): this {
+    this.components.set(name, component);
+    return this;
+  }
+
+  getComponent<T extends Component>(name: string): T | undefined {
+    return this.components.get(name) as T;
+  }
+
+  removeComponent(name: string): boolean {
+    const component = this.components.get(name);
+    if (component) {
+      component.destroy();
+      return this.components.delete(name);
+    }
+    return false;
+  }
+
+  update(time: number, delta: number): void {
+    // Update all components
+    this.components.forEach(component => component.update(time, delta));
+  }
+
+  destroy(fromScene?: boolean): void {
+    // Clean up all components
+    this.components.forEach(component => component.destroy());
+    this.components.clear();
+    super.destroy(fromScene);
+  }
+}
+
+// Basic usage
+const createEnemy = (scene: Phaser.Scene, x: number, y: number): Entity => {
+  const enemy = new Entity(scene, x, y);
+  
+  // Add sprite as a child of the container
+  const sprite = scene.add.sprite(0, 0, 'enemy');
+  enemy.add(sprite);
+  
+  return enemy;
+};
+```
+</example>
+
+<example type="invalid">
+```typescript
+// Monolithic entity class with mixed responsibilities
+class Enemy extends Phaser.GameObjects.Sprite {
+  private health: number = 100;
+  private speed: number = 150;
+  private attackDamage: number = 10;
+  
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, 'enemy');
+    scene.add.existing(this);
+    scene.physics.world.enable(this);
+  }
+  
+  update(): void {
+    // Movement, attacks, health, and animations all mixed together
+    // No separation of concerns
+    // Hard to reuse code across different entity types
+  }
+  
+  // Many methods handling different aspects of behavior
+  // Tightly coupled and difficult to modify
+}
+```
+This monolithic class mixes multiple responsibilities, making it difficult to extend, test, or reuse. Adding new features requires modifying the entire class, increasing complexity and the risk of bugs.
+</example>
+
+## Phaser-Specific Implementation Tips
+
+1. Use Phaser.GameObjects.Container as a base class for entities:
+   - Containers can hold multiple child GameObjects
+   - Allows grouping visual elements with component logic
+   - Provides consistent positioning for all components
+
+2. Integrate with Phaser's update loop:
+   ```typescript
+   // Add entity to update list
+   scene.sys.updateList.add(entityInstance);
+   
+   // Remove when no longer needed
+   scene.sys.updateList.remove(entityInstance);
+   ```
+
+3. For physics entities, add the physics body to the container:
+   ```typescript
+   // Enable physics on the container
+   scene.physics.world.enable(entityContainer);
+   
+   // Access the body for physics operations
+   const body = entityContainer.body as Phaser.Physics.Arcade.Body;
+   ```
+
+<version>1.0.0</version> 

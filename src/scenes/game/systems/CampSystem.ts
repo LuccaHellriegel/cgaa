@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { CampBuilding, BuildingSize } from "../../../components/CampBuilding";
 import { Diplomat } from "../../../components/Diplomat";
+import { Guardian } from "../../../components/Guardian";
 import {
   DiplomatMenu,
   DiplomatMenuConfig,
@@ -11,6 +12,7 @@ import { Quest, QuestSystem } from "../../../systems/QuestSystem";
 interface CampData {
   camp: CampBuilding;
   diplomat: Diplomat;
+  guardians: Guardian[];
   targetCamp: CampBuilding | null;
 }
 
@@ -50,9 +52,27 @@ export class CampSystem {
     const camp = new CampBuilding(this.scene, x, y, size);
     const diplomat = new Diplomat(this.scene, x + 30, y);
 
+    // Create guardians based on camp size
+    const guardians: Guardian[] = [];
+    const guardianCount =
+      size === BuildingSize.SMALL ? 1 : size === BuildingSize.MEDIUM ? 2 : 3;
+
+    for (let i = 0; i < guardianCount; i++) {
+      const angle = (i / guardianCount) * Math.PI * 2;
+      const radius = 60; // Distance from camp center
+      const guardianX = x + Math.cos(angle) * radius;
+      const guardianY = y + Math.sin(angle) * radius;
+
+      const guardian = new Guardian(this.scene, guardianX, guardianY, camp, {
+        patrolRadius: radius,
+      });
+      guardians.push(guardian);
+    }
+
     this.camps.set(camp, {
       camp,
       diplomat,
+      guardians,
       targetCamp: null,
     });
 
@@ -60,76 +80,76 @@ export class CampSystem {
   }
 
   public showDiplomatMenu(camp: CampBuilding): void {
-    const campData = this.camps.get(camp);
-    if (!campData) return;
-
-    // Create menu if it doesn't exist
-    if (!this.diplomatMenu) {
-      const config: DiplomatMenuConfig = {
-        scene: this.scene,
-        diplomat: campData.diplomat,
-        camp: camp,
-        questSystem: this.questSystem,
-        onClose: () => {
-          this.diplomatMenu = null;
-        },
-      };
-      this.diplomatMenu = new DiplomatMenu(config);
+    if (this.diplomatMenu) {
+      this.diplomatMenu.destroy();
     }
 
-    // Find nearby camps
-    const nearbyCamps = this.findNearbyCamps(camp, 200);
+    // Get nearby camps for quest targets
+    const nearbyCamps = Array.from(this.camps.keys()).filter(
+      (otherCamp) => otherCamp !== camp
+    );
+
+    // Create menu config
+    const config: DiplomatMenuConfig = {
+      x: camp.getSprite().x + 100,
+      y: camp.getSprite().y,
+      width: 200,
+      height: 300,
+    };
+
+    this.diplomatMenu = new DiplomatMenu(this.scene, config, this.questSystem);
     this.diplomatMenu.show(camp, nearbyCamps);
   }
 
-  private findNearbyCamps(camp: CampBuilding, radius: number): CampBuilding[] {
-    const nearbyCamps: CampBuilding[] = [];
-    const campSprite = camp.getSprite();
-
-    for (const [otherCamp, _] of this.camps) {
-      if (otherCamp === camp) continue;
-
-      const otherSprite = otherCamp.getSprite();
-      const distance = Phaser.Math.Distance.Between(
-        campSprite.x,
-        campSprite.y,
-        otherSprite.x,
-        otherSprite.y
-      );
-
-      if (distance <= radius) {
-        nearbyCamps.push(otherCamp);
-      }
-    }
-
-    return nearbyCamps;
-  }
-
   public handleCampDestruction(camp: CampBuilding): void {
-    // Remove camp from system
-    this.camps.delete(camp);
+    const campData = this.camps.get(camp);
+    if (campData) {
+      // Destroy all guardians
+      campData.guardians.forEach((guardian) => guardian.destroy());
+
+      // Remove camp from system
+      this.camps.delete(camp);
+    }
   }
 
   public update(time: number, delta: number): void {
-    // Update all camps and their diplomats
+    // Update all camps and their components
     for (const [camp, data] of this.camps) {
-      if (!camp.isDestroyedState()) {
-        camp.update(time, delta);
-        data.diplomat.update(time, delta);
-      }
-    }
-
-    // Update diplomat menu if visible
-    if (this.diplomatMenu && this.diplomatMenu.isMenuVisible()) {
-      this.diplomatMenu.update();
+      camp.update(time, delta);
+      data.diplomat.update(time, delta);
+      data.guardians.forEach((guardian) => guardian.update());
     }
   }
 
+  public isPlayerNearCamp(): boolean {
+    const player = this.scene.registry.get("player");
+    if (!player) return false;
+
+    const interactionDistance = 100; // Distance in pixels to consider "near"
+
+    for (const [camp] of this.camps) {
+      const campSprite = camp.getSprite();
+      const distance = Phaser.Math.Distance.Between(
+        player.x,
+        player.y,
+        campSprite.x,
+        campSprite.y
+      );
+
+      if (distance <= interactionDistance) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public destroy(): void {
-    // Clean up all camps and diplomats
+    // Clean up all camps and their components
     for (const [camp, data] of this.camps) {
       camp.destroy();
       data.diplomat.destroy();
+      data.guardians.forEach((guardian) => guardian.destroy());
     }
     this.camps.clear();
 

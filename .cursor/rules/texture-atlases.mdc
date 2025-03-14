@@ -1,0 +1,672 @@
+---
+description: Use texture atlases to reduce memory fragmentation and improve rendering performance
+globs: **/*.ts
+---
+
+# Texture Atlases
+
+## Context
+- When working with many small textures or sprite frames
+- When optimizing memory usage and reducing texture switches
+- When targeting mobile or memory-constrained platforms
+- When experiencing performance issues due to texture fragmentation
+- When implementing sprite-heavy games with many animations
+
+## Requirements
+- Combine multiple textures into a single atlas texture
+- Use texture packing tools to optimize atlas layout
+- Implement proper atlas loading and management
+- Apply consistent naming conventions for atlas frames
+- Consider memory vs. performance tradeoffs when creating atlases
+- Implement dynamic atlas generation for procedural content
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Texture atlas manager for efficient sprite rendering
+ */
+class TextureAtlasManager {
+  private scene: Phaser.Scene;
+  private atlases: Map<string, AtlasInfo> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+  
+  /**
+   * Load a texture atlas
+   * @param key Atlas identifier
+   * @param textureURL Path to atlas image
+   * @param atlasURL Path to atlas JSON data
+   * @returns Promise that resolves when atlas is loaded
+   */
+  loadAtlas(key: string, textureURL: string, atlasURL: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      // Skip if already loaded
+      if (this.scene.textures.exists(key)) {
+        resolve();
+        return;
+      }
+      
+      // Load the atlas
+      this.scene.load.atlas(key, textureURL, atlasURL);
+      
+      // Handle completion
+      this.scene.load.once('complete', () => {
+        // Get atlas data
+        const frames = this.scene.textures.get(key).getFrameNames();
+        
+        // Store atlas info
+        this.atlases.set(key, {
+          key,
+          frames,
+          textureURL,
+          atlasURL
+        });
+        
+        console.log(`Loaded atlas: ${key} with ${frames.length} frames`);
+        resolve();
+      });
+      
+      // Handle error
+      this.scene.load.once('loaderror', (file: any) => {
+        if (file.key === key) {
+          console.error(`Failed to load atlas: ${key}`);
+          reject(new Error(`Failed to load atlas: ${key}`));
+        }
+      });
+      
+      // Start loading
+      this.scene.load.start();
+    });
+  }
+  
+  /**
+   * Create a sprite from an atlas frame
+   * @param atlasKey Atlas identifier
+   * @param frameName Frame name within the atlas
+   * @param x X position
+   * @param y Y position
+   * @returns The created sprite
+   */
+  createSprite(
+    atlasKey: string,
+    frameName: string,
+    x: number = 0,
+    y: number = 0
+  ): Phaser.GameObjects.Sprite {
+    if (!this.atlases.has(atlasKey)) {
+      throw new Error(`Atlas not loaded: ${atlasKey}`);
+    }
+    
+    const atlas = this.atlases.get(atlasKey);
+    if (!atlas.frames.includes(frameName)) {
+      throw new Error(`Frame not found in atlas: ${frameName}`);
+    }
+    
+    return this.scene.add.sprite(x, y, atlasKey, frameName);
+  }
+  
+  /**
+   * Create an animation from atlas frames
+   * @param animKey Animation identifier
+   * @param atlasKey Atlas identifier
+   * @param frameNames Array of frame names or pattern
+   * @param frameRate Frames per second
+   * @param repeat Number of times to repeat (-1 for infinite)
+   * @returns The animation key
+   */
+  createAnimation(
+    animKey: string,
+    atlasKey: string,
+    frameNames: string[] | string,
+    frameRate: number = 24,
+    repeat: number = 0
+  ): string {
+    if (!this.atlases.has(atlasKey)) {
+      throw new Error(`Atlas not loaded: ${atlasKey}`);
+    }
+    
+    // Create animation config
+    const config: Phaser.Types.Animations.Animation = {
+      key: animKey,
+      frames: this.scene.anims.generateFrameNames(atlasKey, {
+        // If frameNames is a string, treat it as a pattern
+        ...(typeof frameNames === 'string'
+          ? { prefix: frameNames, end: this.getPatternFrameCount(atlasKey, frameNames) }
+          : { frames: frameNames }
+        )
+      }),
+      frameRate,
+      repeat
+    };
+    
+    // Create the animation
+    this.scene.anims.create(config);
+    return animKey;
+  }
+  
+  /**
+   * Get the number of frames matching a pattern
+   */
+  private getPatternFrameCount(atlasKey: string, pattern: string): number {
+    const atlas = this.atlases.get(atlasKey);
+    let count = 0;
+    
+    for (const frame of atlas.frames) {
+      if (frame.startsWith(pattern)) {
+        count++;
+      }
+    }
+    
+    return count;
+  }
+  
+  /**
+   * Get all frame names for an atlas
+   * @param atlasKey Atlas identifier
+   * @returns Array of frame names
+   */
+  getFrameNames(atlasKey: string): string[] {
+    if (!this.atlases.has(atlasKey)) {
+      throw new Error(`Atlas not loaded: ${atlasKey}`);
+    }
+    
+    return [...this.atlases.get(atlasKey).frames];
+  }
+  
+  /**
+   * Unload an atlas to free memory
+   * @param atlasKey Atlas identifier
+   */
+  unloadAtlas(atlasKey: string): void {
+    if (this.atlases.has(atlasKey)) {
+      // Remove from texture manager
+      this.scene.textures.remove(atlasKey);
+      
+      // Remove from our tracking
+      this.atlases.delete(atlasKey);
+      
+      console.log(`Unloaded atlas: ${atlasKey}`);
+    }
+  }
+  
+  /**
+   * Clean up resources
+   */
+  destroy(): void {
+    // Unload all atlases
+    for (const key of this.atlases.keys()) {
+      this.unloadAtlas(key);
+    }
+    
+    this.atlases.clear();
+  }
+}
+
+/**
+ * Information about a loaded texture atlas
+ */
+interface AtlasInfo {
+  key: string;
+  frames: string[];
+  textureURL: string;
+  atlasURL: string;
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Using individual textures for each sprite
+class SpriteManager {
+  private scene: Phaser.Scene;
+  private sprites: Map<string, Phaser.GameObjects.Sprite> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Load individual textures for each sprite
+    this.scene.load.image('player_idle', 'assets/player/idle.png');
+    this.scene.load.image('player_run1', 'assets/player/run1.png');
+    this.scene.load.image('player_run2', 'assets/player/run2.png');
+    this.scene.load.image('player_run3', 'assets/player/run3.png');
+    this.scene.load.image('player_run4', 'assets/player/run4.png');
+    this.scene.load.image('player_jump', 'assets/player/jump.png');
+    this.scene.load.image('player_fall', 'assets/player/fall.png');
+    
+    this.scene.load.image('enemy1_idle', 'assets/enemies/enemy1_idle.png');
+    this.scene.load.image('enemy1_attack', 'assets/enemies/enemy1_attack.png');
+    this.scene.load.image('enemy2_idle', 'assets/enemies/enemy2_idle.png');
+    this.scene.load.image('enemy2_attack', 'assets/enemies/enemy2_attack.png');
+    
+    this.scene.load.image('coin1', 'assets/items/coin1.png');
+    this.scene.load.image('coin2', 'assets/items/coin2.png');
+    this.scene.load.image('coin3', 'assets/items/coin3.png');
+    this.scene.load.image('heart', 'assets/items/heart.png');
+    this.scene.load.image('key', 'assets/items/key.png');
+  }
+  
+  createPlayerAnimation(): void {
+    // Create animation by switching textures
+    this.scene.anims.create({
+      key: 'player_run',
+      frames: [
+        { key: 'player_run1' },
+        { key: 'player_run2' },
+        { key: 'player_run3' },
+        { key: 'player_run4' }
+      ],
+      frameRate: 10,
+      repeat: -1
+    });
+    
+    // Each animation frame uses a different texture
+    // This causes texture switching overhead during rendering
+  }
+  
+  createCoinAnimation(): void {
+    // Another animation with individual textures
+    this.scene.anims.create({
+      key: 'coin_spin',
+      frames: [
+        { key: 'coin1' },
+        { key: 'coin2' },
+        { key: 'coin3' },
+        { key: 'coin2' }
+      ],
+      frameRate: 8,
+      repeat: -1
+    });
+  }
+  
+  // Creates many individual sprites with separate textures
+  createEnemies(count: number): void {
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * 800;
+      const y = Math.random() * 600;
+      
+      // Each enemy type uses its own texture
+      const type = Math.random() > 0.5 ? 'enemy1' : 'enemy2';
+      const sprite = this.scene.add.sprite(x, y, `${type}_idle`);
+      
+      this.sprites.set(`enemy_${i}`, sprite);
+    }
+  }
+}
+```
+</example>
+
+## Texture Atlas Implementation Patterns
+
+1. **Dynamic Runtime Atlas Generation**:
+   ```typescript
+   /**
+    * Dynamic texture atlas generator for runtime-created textures
+    */
+   class DynamicAtlasGenerator {
+     private scene: Phaser.Scene;
+     private atlasKey: string;
+     private atlasSize: number;
+     private padding: number;
+     private renderTexture: Phaser.GameObjects.RenderTexture;
+     private frameData: Map<string, Phaser.Types.Textures.SpriteSheetConfig> = new Map();
+     private nextPosition: { x: number, y: number } = { x: 0, y: 0 };
+     private rowHeight: number = 0;
+     
+     constructor(scene: Phaser.Scene, key: string, size: number = 2048, padding: number = 2) {
+       this.scene = scene;
+       this.atlasKey = key;
+       this.atlasSize = size;
+       this.padding = padding;
+       
+       // Create a render texture to serve as our atlas
+       this.renderTexture = scene.add.renderTexture(0, 0, size, size);
+       
+       // Save the render texture as a texture that can be used by sprites
+       this.renderTexture.saveTexture(key);
+       
+       console.log(`Created dynamic atlas: ${key} (${size}x${size})`);
+     }
+     
+     /**
+      * Add a texture to the dynamic atlas
+      * @param key Unique identifier for the frame
+      * @param textureKey Source texture key
+      * @param frameKey Optional frame within source texture
+      * @returns True if added successfully, false if atlas is full
+      */
+     addTexture(key: string, textureKey: string, frameKey?: string): boolean {
+       // Get the source texture
+       const sourceTexture = this.scene.textures.get(textureKey);
+       const frame = frameKey 
+         ? sourceTexture.get(frameKey) 
+         : sourceTexture.get();
+       
+       const width = frame.width + this.padding * 2;
+       const height = frame.height + this.padding * 2;
+       
+       // Check if we need to move to the next row
+       if (this.nextPosition.x + width > this.atlasSize) {
+         this.nextPosition.x = 0;
+         this.nextPosition.y += this.rowHeight + this.padding;
+         this.rowHeight = 0;
+       }
+       
+       // Check if we've run out of space
+       if (this.nextPosition.y + height > this.atlasSize) {
+         console.warn(`Dynamic atlas ${this.atlasKey} is full, cannot add ${key}`);
+         return false;
+       }
+       
+       // Draw the texture to our atlas
+       this.renderTexture.draw(
+         textureKey, 
+         this.nextPosition.x + this.padding, 
+         this.nextPosition.y + this.padding,
+         undefined,
+         undefined,
+         undefined,
+         frameKey
+       );
+       
+       // Store the frame data
+       this.frameData.set(key, {
+         frameWidth: frame.width,
+         frameHeight: frame.height,
+         frameX: this.nextPosition.x + this.padding,
+         frameY: this.nextPosition.y + this.padding
+       });
+       
+       // Update position tracking
+       this.rowHeight = Math.max(this.rowHeight, height);
+       this.nextPosition.x += width + this.padding;
+       
+       // Update the texture's frame data
+       this.updateFrameData();
+       
+       return true;
+     }
+     
+     /**
+      * Add multiple textures to the atlas
+      * @param textures Array of textures to add
+      * @returns Number of textures successfully added
+      */
+     addTextures(textures: Array<{
+       key: string, 
+       textureKey: string, 
+       frameKey?: string
+     }>): number {
+       let added = 0;
+       
+       for (const texture of textures) {
+         if (this.addTexture(texture.key, texture.textureKey, texture.frameKey)) {
+           added++;
+         } else {
+           break; // Atlas is full
+         }
+       }
+       
+       return added;
+     }
+     
+     /**
+      * Update the frame data in the texture
+      */
+     private updateFrameData(): void {
+       const frames: Record<string, Phaser.Types.Textures.SpriteSheetConfig> = {};
+       
+       this.frameData.forEach((frame, key) => {
+         frames[key] = frame;
+       });
+       
+       // Add the frames to the texture
+       this.scene.textures.get(this.atlasKey).add(
+         Object.keys(frames).map(name => ({
+           name,
+           frame: {
+             x: frames[name].frameX,
+             y: frames[name].frameY,
+             width: frames[name].frameWidth,
+             height: frames[name].frameHeight
+           }
+         }))
+       );
+     }
+     
+     /**
+      * Get all frame keys in this atlas
+      */
+     getFrameKeys(): string[] {
+       return Array.from(this.frameData.keys());
+     }
+     
+     /**
+      * Check if the atlas contains a specific frame
+      */
+     hasFrame(key: string): boolean {
+       return this.frameData.has(key);
+     }
+     
+     /**
+      * Create a sprite using a frame from this atlas
+      */
+     createSprite(frameKey: string, x: number = 0, y: number = 0): Phaser.GameObjects.Sprite {
+       if (!this.hasFrame(frameKey)) {
+         throw new Error(`Frame not found in atlas: ${frameKey}`);
+       }
+       
+       return this.scene.add.sprite(x, y, this.atlasKey, frameKey);
+     }
+     
+     /**
+      * Get the percentage of atlas space used
+      */
+     getUsagePercentage(): number {
+       const totalPixels = this.atlasSize * this.atlasSize;
+       let usedPixels = 0;
+       
+       this.frameData.forEach(frame => {
+         usedPixels += frame.frameWidth * frame.frameHeight;
+       });
+       
+       return (usedPixels / totalPixels) * 100;
+     }
+     
+     /**
+      * Destroy the atlas and free memory
+      */
+     destroy(): void {
+       this.renderTexture.destroy();
+       this.scene.textures.remove(this.atlasKey);
+       this.frameData.clear();
+     }
+   }
+   ```
+
+2. **Multi-Resolution Atlas Management**:
+   ```typescript
+   /**
+    * Multi-resolution atlas manager for different device capabilities
+    */
+   class MultiResAtlasManager {
+     private scene: Phaser.Scene;
+     private atlases: Map<string, Map<string, AtlasInfo>> = new Map();
+     private currentResolution: string;
+     private resolutions: Record<string, { scale: number, suffix: string }> = {
+       low: { scale: 0.5, suffix: '_low' },
+       medium: { scale: 1.0, suffix: '_med' },
+       high: { scale: 2.0, suffix: '_high' }
+     };
+     
+     constructor(scene: Phaser.Scene) {
+       this.scene = scene;
+       
+       // Determine appropriate resolution based on device
+       this.currentResolution = this.determineResolution();
+       
+       // Initialize atlas collections
+       Object.keys(this.resolutions).forEach(res => {
+         this.atlases.set(res, new Map());
+       });
+       
+       console.log(`Using ${this.currentResolution} resolution atlases`);
+     }
+     
+     /**
+      * Determine the appropriate resolution based on device capabilities
+      */
+     private determineResolution(): string {
+       // Get device pixel ratio
+       const pixelRatio = window.devicePixelRatio || 1;
+       
+       // Get device memory if available
+       const deviceMemory = (navigator as any).deviceMemory || 4;
+       
+       // Check if we're on a mobile device
+       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+         .test(navigator.userAgent);
+       
+       // Determine resolution based on device capabilities
+       if (pixelRatio >= 2 && deviceMemory >= 4 && !isMobile) {
+         return 'high';
+       } else if (pixelRatio >= 1.5 || deviceMemory >= 2) {
+         return 'medium';
+       } else {
+         return 'low';
+       }
+     }
+     
+     /**
+      * Load an atlas with multiple resolution versions
+      * @param key Base atlas identifier
+      * @param basePath Base path to atlas files
+      * @returns Promise that resolves when the appropriate atlas is loaded
+      */
+     loadAtlas(key: string, basePath: string): Promise<void> {
+       const resolution = this.resolutions[this.currentResolution];
+       const atlasKey = `${key}${resolution.suffix}`;
+       const texturePath = `${basePath}${resolution.suffix}.png`;
+       const atlasPath = `${basePath}${resolution.suffix}.json`;
+       
+       return new Promise<void>((resolve, reject) => {
+         // Skip if already loaded
+         if (this.scene.textures.exists(atlasKey)) {
+           resolve();
+           return;
+         }
+         
+         // Load the atlas
+         this.scene.load.atlas(atlasKey, texturePath, atlasPath);
+         
+         // Handle completion
+         this.scene.load.once('complete', () => {
+           // Get atlas data
+           const frames = this.scene.textures.get(atlasKey).getFrameNames();
+           
+           // Store atlas info
+           this.atlases.get(this.currentResolution).set(key, {
+             key: atlasKey,
+             frames,
+             textureURL: texturePath,
+             atlasURL: atlasPath
+           });
+           
+           console.log(`Loaded ${this.currentResolution} atlas: ${key} with ${frames.length} frames`);
+           resolve();
+         });
+         
+         // Handle error
+         this.scene.load.once('loaderror', (file: any) => {
+           if (file.key === atlasKey) {
+             console.error(`Failed to load atlas: ${atlasKey}`);
+             reject(new Error(`Failed to load atlas: ${atlasKey}`));
+           }
+         });
+         
+         // Start loading
+         this.scene.load.start();
+       });
+     }
+     
+     /**
+      * Create a sprite from an atlas frame
+      * @param atlasKey Base atlas identifier
+      * @param frameName Frame name within the atlas
+      * @param x X position
+      * @param y Y position
+      * @returns The created sprite
+      */
+     createSprite(
+       atlasKey: string,
+       frameName: string,
+       x: number = 0,
+       y: number = 0
+     ): Phaser.GameObjects.Sprite {
+       const resAtlases = this.atlases.get(this.currentResolution);
+       
+       if (!resAtlases.has(atlasKey)) {
+         throw new Error(`Atlas not loaded: ${atlasKey}`);
+       }
+       
+       const atlas = resAtlases.get(atlasKey);
+       if (!atlas.frames.includes(frameName)) {
+         throw new Error(`Frame not found in atlas: ${frameName}`);
+       }
+       
+       return this.scene.add.sprite(x, y, atlas.key, frameName);
+     }
+     
+     /**
+      * Get the current resolution being used
+      */
+     getCurrentResolution(): string {
+       return this.currentResolution;
+     }
+     
+     /**
+      * Manually set the resolution to use
+      * Note: This won't affect already loaded atlases
+      */
+     setResolution(resolution: 'low' | 'medium' | 'high'): void {
+       if (this.resolutions[resolution]) {
+         this.currentResolution = resolution;
+         console.log(`Switched to ${resolution} resolution atlases`);
+       }
+     }
+     
+     /**
+      * Unload all atlases for a specific resolution
+      */
+     unloadResolution(resolution: string): void {
+       const resAtlases = this.atlases.get(resolution);
+       
+       if (resAtlases) {
+         resAtlases.forEach((atlas, key) => {
+           // Remove from texture manager
+           this.scene.textures.remove(atlas.key);
+         });
+         
+         resAtlases.clear();
+         console.log(`Unloaded all ${resolution} resolution atlases`);
+       }
+     }
+     
+     /**
+      * Clean up resources
+      */
+     destroy(): void {
+       // Unload all atlases for all resolutions
+       this.atlases.forEach((resAtlases, resolution) => {
+         this.unloadResolution(resolution);
+       });
+       
+       this.atlases.clear();
+     }
+   }
+   ```
+
+<version>1.0.0</version> 

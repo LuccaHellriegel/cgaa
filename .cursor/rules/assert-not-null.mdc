@@ -1,0 +1,70 @@
+---
+description: Store assertNotNull results in local variables to avoid redundant assertions and improve type safety
+globs: **/*.{ts,tsx,js,jsx}
+---
+
+# Proper assertNotNull Usage
+
+## Context
+- When validating non-null values in TypeScript code
+- When accessing potentially null class properties
+- When working with method return values that could be null
+
+## Requirements
+- Capture assertNotNull results in descriptive local variables
+- NEVER call assertNotNull multiple times on the same object
+- Use the returned non-null value throughout the function scope
+- Provide specific error messages that include context
+- Use assertNotNull early in functions to validate preconditions
+
+## Examples
+
+<example>
+```typescript
+// CORRECT: Capture result in a local variable
+function processGameState(game: Game): void {
+  // Assert once and store in a descriptive variable
+  const player = assertNotNull(game.player, "Player must be initialized");
+  
+  // Use the non-null player variable throughout the function
+  player.updatePosition();
+  player.checkCollisions();
+  player.render();
+}
+
+// CORRECT: Multiple assertions stored in well-named variables
+function initializeGameSystems(scene: Scene): void {
+  const worldSystem = assertNotNull(scene.worldSystem, "World system required");
+  const inputSystem = assertNotNull(scene.inputSystem, "Input system required");
+  const renderSystem = assertNotNull(scene.renderSystem, "Render system required");
+  
+  worldSystem.generateMap();
+  inputSystem.bindControls();
+  renderSystem.initialize();
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// INCORRECT: Redundant assertions on the same object
+function updatePlayerState(game: Game): void {
+  assertNotNull(game.player, "Player required").updatePosition();
+  assertNotNull(game.player, "Player required").applyPhysics();
+  assertNotNull(game.player, "Player required").render();
+}
+
+// INCORRECT: Reassigning class property
+class GameManager {
+  private player: Player | null = null;
+  
+  init(): void {
+    this.player = new Player();
+    // Bad: Redundant assertion and reassignment
+    this.player = assertNotNull(this.player, "Player init failed");
+  }
+}
+```
+</example>
+
+<version>1.0.0</version> 
