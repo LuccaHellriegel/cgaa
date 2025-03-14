@@ -11,6 +11,7 @@ export class Enemy {
   private speed: number;
   private target: Phaser.Math.Vector2 | null;
   private healthBar: Phaser.GameObjects.Graphics;
+  private type: string;
 
   constructor(
     scene: Scene,
@@ -20,6 +21,7 @@ export class Enemy {
       health?: number;
       damage?: number;
       speed?: number;
+      type?: string;
     } = {}
   ) {
     assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
@@ -35,6 +37,7 @@ export class Enemy {
     this.damage = config.damage || 10;
     this.speed = config.speed || 100;
     this.target = null;
+    this.type = config.type || "basic";
 
     // Create sprite
     this.sprite = scene.physics.add.sprite(x, y, "enemy");
@@ -43,6 +46,10 @@ export class Enemy {
     // Create health bar
     this.healthBar = scene.add.graphics();
     this.updateHealthBar();
+  }
+
+  public getType(): string {
+    return this.type;
   }
 
   public getSprite(): Physics.Arcade.Sprite {

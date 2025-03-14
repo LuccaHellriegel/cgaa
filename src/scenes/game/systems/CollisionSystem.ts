@@ -3,6 +3,7 @@ import { Player } from "../../../components/Player";
 import { Soul } from "../../../components/Soul";
 import { Enemy } from "../../../components/Enemy";
 import { Tower } from "../../../components/Tower";
+import { CampBuilding } from "../../../components/CampBuilding";
 import { GameEvents } from "../../../events/GameEvents";
 import { assert } from "../../../utils/assert";
 
@@ -12,6 +13,7 @@ export class CollisionSystem {
   private souls: Soul[] = [];
   private enemies: Enemy[] = [];
   private towers: Tower[] = [];
+  private camps: CampBuilding[] = [];
 
   constructor(scene: Scene) {
     assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
@@ -102,9 +104,52 @@ export class CollisionSystem {
         }
       }
     );
+
+    // Player interacts with camps
+    this.scene.physics.add.overlap(
+      playerSprite,
+      this.camps.map((camp) => camp.getSprite()),
+      (_, campSprite) => {
+        const camp = this.camps.find((c) => c.getSprite() === campSprite);
+        if (camp) {
+          // Only emit interaction event if player presses the interaction key
+          const keys = this.scene.registry.get("wasdKeys");
+          if (keys && keys.E.isDown) {
+            this.scene.events.emit("playerInteractWithCamp", camp);
+          }
+        }
+      }
+    );
   }
 
-  public update(): void {
+  public registerCamp(camp: CampBuilding): void {
+    assert(
+      camp instanceof CampBuilding,
+      "Must provide a valid CampBuilding instance"
+    );
+    this.camps.push(camp);
+    this.setupCampCollisions(camp);
+  }
+
+  private setupCampCollisions(camp: CampBuilding): void {
+    assert(this.scene.physics !== undefined, "Scene must have physics system", {
+      sceneKey: this.scene.sys.settings.key,
+    });
+
+    // Add collision detection between camp and enemies
+    this.scene.physics.add.overlap(
+      camp.getSprite(),
+      this.enemies.map((enemy) => enemy.getSprite()),
+      (_, enemySprite) => {
+        const enemy = this.enemies.find((e) => e.getSprite() === enemySprite);
+        if (enemy) {
+          camp.takeDamage(enemy.getDamage());
+        }
+      }
+    );
+  }
+
+  public update(time: number, delta: number): void {
     // Update tower-enemy collisions
     this.towers.forEach((tower) => {
       const towerRange = tower.getRange();
@@ -122,6 +167,11 @@ export class CollisionSystem {
         }
       });
     });
+
+    // Update camp states
+    this.camps.forEach((camp) => {
+      camp.update(time, delta);
+    });
   }
 
   public destroy(): void {
@@ -138,6 +188,7 @@ export class CollisionSystem {
     this.souls = [];
     this.enemies = [];
     this.towers = [];
+    this.camps = [];
     this.player = null;
   }
 }

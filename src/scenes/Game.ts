@@ -3,16 +3,19 @@ import { Player } from "../components/Player";
 import { InputSystem } from "./game/systems/InputSystem";
 import { WorldSystem } from "./game/systems/WorldSystem";
 import { CollisionSystem } from "./game/systems/CollisionSystem";
+import { CampSystem } from "./game/systems/CampSystem";
 import { GameState } from "../controllers/GameController";
 import { GameEvents } from "../events/GameEvents";
 import { Soul } from "../components/Soul";
 import { assert } from "../utils/assert";
+import { BuildingSize } from "../components/CampBuilding";
 
 export class Game extends Scene {
   private player: Player | null = null;
   private inputSystem: InputSystem | null = null;
   private worldSystem: WorldSystem | null = null;
   private collisionSystem: CollisionSystem | null = null;
+  private campSystem: CampSystem | null = null;
   private gameState: GameState | null = null;
 
   constructor() {
@@ -40,6 +43,9 @@ export class Game extends Scene {
       "Collision system must be initialized"
     );
 
+    this.campSystem = new CampSystem(this);
+    assert(this.campSystem !== null, "Camp system must be initialized");
+
     // Create player
     this.player = new Player(this);
     assert(this.player !== null, "Player must be initialized");
@@ -54,11 +60,50 @@ export class Game extends Scene {
     const wasdKeys = this.inputSystem.getWASDKeys();
     this.registry.set("wasdKeys", wasdKeys);
 
+    // Create initial camps
+    this.createInitialCamps();
+
     // Emit player ready event for systems to register
     this.events.emit(GameEvents.PLAYER_READY, this.player);
 
     // Setup event handlers
     this.setupEventHandlers();
+  }
+
+  private createInitialCamps(): void {
+    assert(this.worldSystem !== null, "World system must be initialized");
+    assert(this.campSystem !== null, "Camp system must be initialized");
+
+    const worldDimensions = this.worldSystem.getWorldDimensions();
+    const margin = 100;
+
+    // Create camps at strategic positions
+    const campPositions = [
+      { x: margin, y: margin, size: BuildingSize.SMALL },
+      {
+        x: worldDimensions.width - margin,
+        y: margin,
+        size: BuildingSize.MEDIUM,
+      },
+      {
+        x: margin,
+        y: worldDimensions.height - margin,
+        size: BuildingSize.MEDIUM,
+      },
+      {
+        x: worldDimensions.width - margin,
+        y: worldDimensions.height - margin,
+        size: BuildingSize.LARGE,
+      },
+    ];
+
+    campPositions.forEach(({ x, y, size }) => {
+      const camp = this.campSystem!.createCamp(x, y, size);
+      // Add camp to collision system
+      if (this.collisionSystem) {
+        this.collisionSystem.registerCamp(camp);
+      }
+    });
   }
 
   private setupEventHandlers(): void {
@@ -89,17 +134,36 @@ export class Game extends Scene {
         this.gameState.gold += amount;
       }
     });
+
+    // Handle camp destruction
+    this.events.on(GameEvents.CAMP_DESTROYED, (camp: any) => {
+      if (this.campSystem) {
+        this.campSystem.handleCampDestruction(camp);
+      }
+    });
+
+    // Handle player interaction with camps
+    this.events.on("playerInteractWithCamp", (camp: any) => {
+      if (this.campSystem) {
+        this.campSystem.showDiplomatMenu(camp);
+      }
+    });
   }
 
-  public update(): void {
+  public update(time: number, delta: number): void {
     // Update player
     if (this.player) {
-      this.player.update();
+      this.player.update(time, delta);
     }
 
     // Update collision system
     if (this.collisionSystem) {
-      this.collisionSystem.update();
+      this.collisionSystem.update(time, delta);
+    }
+
+    // Update camp system
+    if (this.campSystem) {
+      this.campSystem.update(time, delta);
     }
   }
 
@@ -120,6 +184,11 @@ export class Game extends Scene {
       this.collisionSystem = null;
     }
 
+    if (this.campSystem) {
+      this.campSystem.destroy();
+      this.campSystem = null;
+    }
+
     // Clean up player
     if (this.player) {
       this.player.destroy();
@@ -131,6 +200,8 @@ export class Game extends Scene {
     this.events.off(GameEvents.PLAYER_DAMAGED);
     this.events.off(GameEvents.MODE_CHANGED);
     this.events.off(GameEvents.GOLD_CHANGED);
+    this.events.off(GameEvents.CAMP_DESTROYED);
+    this.events.off("playerInteractWithCamp");
 
     // Clean up registry
     this.registry.remove("gameState");

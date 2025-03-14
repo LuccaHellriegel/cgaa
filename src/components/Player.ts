@@ -8,6 +8,8 @@ export class Player {
   private maxHealth: number;
   private speed: number;
   private isDead: boolean;
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private healthBar: Phaser.GameObjects.Rectangle;
 
   constructor(scene: Scene) {
     assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
@@ -36,8 +38,18 @@ export class Player {
     // Start with idle animation
     this.sprite.play("player_idle");
 
+    // Create health bar
+    this.healthBar = scene.add.rectangle(0, -30, 32, 4, 0x00ff00);
+
+    // Set up keyboard input
+    const keyboard = scene.input.keyboard;
+    if (!keyboard) {
+      throw new Error("Scene must have keyboard input system");
+    }
+    this.cursors = keyboard.createCursorKeys();
+
     // Emit player ready event
-    this.scene.events.emit("player-ready", this);
+    scene.events.emit("player-ready", this);
   }
 
   public setPosition(x: number, y: number): void {
@@ -81,34 +93,38 @@ export class Player {
     this.health = Math.min(this.maxHealth, this.health + amount);
   }
 
-  public update(): void {
+  public update(_time: number, delta: number): void {
     if (this.isDead) return;
 
-    const keyboard = this.scene.input.keyboard;
-    assert(keyboard !== null, "Scene must have keyboard input system");
+    // Calculate movement vector based on keyboard input
+    const movementVector = new Phaser.Math.Vector2(0, 0);
 
-    const wasdKeys = this.scene.registry.get("wasdKeys");
-    if (!wasdKeys) return;
-
-    // Calculate movement vector
-    const movement = {
-      x: 0,
-      y: 0,
-    };
-
-    if (wasdKeys.W.isDown) movement.y -= 1;
-    if (wasdKeys.S.isDown) movement.y += 1;
-    if (wasdKeys.A.isDown) movement.x -= 1;
-    if (wasdKeys.D.isDown) movement.x += 1;
+    if (this.cursors.left.isDown) {
+      movementVector.x -= 1;
+    }
+    if (this.cursors.right.isDown) {
+      movementVector.x += 1;
+    }
+    if (this.cursors.up.isDown) {
+      movementVector.y -= 1;
+    }
+    if (this.cursors.down.isDown) {
+      movementVector.y += 1;
+    }
 
     // Normalize and apply movement
-    const length = Math.sqrt(movement.x * movement.x + movement.y * movement.y);
-    if (length > 0) {
-      movement.x = (movement.x / length) * this.speed;
-      movement.y = (movement.y / length) * this.speed;
-      this.sprite.setVelocity(movement.x, movement.y);
-    } else {
-      this.sprite.setVelocity(0, 0);
+    if (movementVector.length() > 0) {
+      movementVector.normalize();
+      // Apply speed adjusted for frame time
+      const frameSpeed = (this.speed * delta) / 1000;
+      this.sprite.x += movementVector.x * frameSpeed;
+      this.sprite.y += movementVector.y * frameSpeed;
+    }
+
+    // Update health bar position
+    if (this.healthBar) {
+      this.healthBar.setPosition(this.sprite.x, this.sprite.y - 30);
+      this.healthBar.setScale(this.health / this.maxHealth, 1);
     }
   }
 

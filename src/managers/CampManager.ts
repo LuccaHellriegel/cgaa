@@ -101,10 +101,10 @@ export class CampManager {
     return camp.buildings.every((building) => building.isDestroyedState());
   }
 
-  public update(): void {
-    // Update all buildings
+  public update(time: number, delta: number): void {
+    // Update all camps
     this.camps.forEach((camp) => {
-      camp.buildings.forEach((building) => building.update());
+      camp.buildings.forEach((building) => building.update(time, delta));
 
       // Check if camp is destroyed
       if (!camp.isDestroyed && this.isCampDestroyed(camp.id)) {

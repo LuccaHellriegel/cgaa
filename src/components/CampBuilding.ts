@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { BaseComponent } from "./BaseComponent";
+import { WaveDirectionComponent } from "./WaveDirectionComponent";
 
 export enum BuildingSize {
   SMALL = "small",
@@ -42,11 +43,19 @@ export class CampBuilding extends BaseComponent {
   private healthBar: Phaser.GameObjects.Rectangle;
   private healthBarBackground: Phaser.GameObjects.Rectangle;
   private isDestroyed: boolean = false;
+  private isQuestTarget: boolean = false;
+  private isCooperating: boolean = false;
+  private questMarker: Phaser.GameObjects.Text | null = null;
+  private cooperationMarker: Phaser.GameObjects.Text | null = null;
+  private id: string;
+  private waveDirectionComponent: WaveDirectionComponent;
 
   constructor(scene: Scene, x: number, y: number, size: BuildingSize) {
     super({ scene, x, y });
+    this.id = `camp_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     this.config = BUILDING_CONFIGS[size];
     this.health = this.config.health;
+    this.waveDirectionComponent = new WaveDirectionComponent(scene, this);
 
     // Create building sprite
     const width =
@@ -81,6 +90,65 @@ export class CampBuilding extends BaseComponent {
       0x00ff00
     );
     this.updateHealthBar();
+  }
+
+  public markAsQuestTarget(): void {
+    this.isQuestTarget = true;
+
+    // Create quest target marker
+    if (!this.questMarker) {
+      this.questMarker = this.scene.add.text(
+        this.sprite.x,
+        this.sprite.y + this.sprite.height / 2 + 10,
+        "❌",
+        {
+          fontSize: "24px",
+          color: "#ff0000",
+        }
+      );
+      this.questMarker.setOrigin(0.5);
+      this.questMarker.setDepth(5);
+    }
+  }
+
+  public setCooperating(value: boolean): void {
+    this.isCooperating = value;
+
+    // Update building appearance
+    if (value) {
+      this.sprite.setFillStyle(0x44ff44); // Green tint for cooperating camps
+
+      // Create cooperation marker
+      if (!this.cooperationMarker) {
+        this.cooperationMarker = this.scene.add.text(
+          this.sprite.x,
+          this.sprite.y - this.sprite.height / 2 - 20,
+          "C",
+          {
+            fontSize: "24px",
+            color: "#44ff44",
+            backgroundColor: "#000000",
+            padding: { x: 4, y: 2 },
+          }
+        );
+        this.cooperationMarker.setOrigin(0.5);
+        this.cooperationMarker.setDepth(5);
+      }
+    } else {
+      this.sprite.setFillStyle(0x666666); // Reset to default color
+      if (this.cooperationMarker) {
+        this.cooperationMarker.destroy();
+        this.cooperationMarker = null;
+      }
+    }
+  }
+
+  public isCooperatingState(): boolean {
+    return this.isCooperating;
+  }
+
+  public isQuestTargetState(): boolean {
+    return this.isQuestTarget;
   }
 
   public takeDamage(amount: number): void {
@@ -126,13 +194,30 @@ export class CampBuilding extends BaseComponent {
     return this.isDestroyed;
   }
 
-  public update(): void {
-    // Update health bar position and scale
+  public update(time: number, delta: number): void {
+    // Update health bar position to follow the building
     if (this.healthBar && this.healthBarBackground) {
       this.healthBarBackground.setPosition(this.sprite.x, this.sprite.y - 30);
       this.healthBar.setPosition(this.sprite.x, this.sprite.y - 30);
       this.healthBar.setScale(this.health / this.config.health, 1);
     }
+
+    // Update marker positions
+    if (this.questMarker) {
+      this.questMarker.setPosition(
+        this.sprite.x,
+        this.sprite.y + this.sprite.height / 2 + 10
+      );
+    }
+    if (this.cooperationMarker) {
+      this.cooperationMarker.setPosition(
+        this.sprite.x,
+        this.sprite.y - this.sprite.height / 2 - 20
+      );
+    }
+
+    // Update wave direction component
+    this.waveDirectionComponent.update(time, delta);
   }
 
   public destroy(): void {
@@ -170,6 +255,36 @@ export class CampBuilding extends BaseComponent {
     this.sprite.destroy();
     this.healthBar.destroy();
     this.healthBarBackground.destroy();
+    if (this.questMarker) {
+      this.questMarker.destroy();
+    }
+    if (this.cooperationMarker) {
+      this.cooperationMarker.destroy();
+    }
+
+    // Clean up wave direction component
+    this.waveDirectionComponent.destroy();
+
     super.destroy();
+  }
+
+  public getId(): string {
+    return this.id;
+  }
+
+  public unmarkAsQuestTarget(): void {
+    // Remove any visual indicators for quest target
+    if (this.questMarker) {
+      this.questMarker.destroy();
+      this.questMarker = null;
+    }
+  }
+
+  public setWaveTarget(camp: CampBuilding | null): void {
+    this.waveDirectionComponent.setTargetCamp(camp);
+  }
+
+  public getWaveTarget(): CampBuilding | null {
+    return this.waveDirectionComponent.getTargetCamp();
   }
 }

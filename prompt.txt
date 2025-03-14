@@ -3,3 +3,4 @@ Study the .cursor/rules directory for technical requirements
 Implement what is not implemented
 Run "npm run typecheck" to verify types
 Focus on one new feature at a time
+Document your progress in the SPECS

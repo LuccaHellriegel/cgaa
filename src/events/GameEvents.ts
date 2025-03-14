@@ -12,6 +12,8 @@ export const GameEvents = {
   TOWER_REMOVED: "tower-removed",
   ENEMY_KILLED: "enemy-killed",
   ENEMY_SPAWNED: "enemy-spawned",
+  CAMP_DESTROYED: "camp-destroyed",
+  QUEST_COMPLETED: "quest-completed",
 
   // Game state events
   MODE_CHANGED: "mode-changed",
