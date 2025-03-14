@@ -1,0 +1,169 @@
+---
+description: Advanced optimization techniques for WebGL shaders in Phaser games
+globs: **/*.ts
+---
+
+# Shader Optimization Advanced
+
+## Context
+- When implementing post-processing or special effects
+- When working with multiple shaders in complex scenes
+- When optimizing for mobile or low-end devices
+- When implementing advanced visual effects
+
+## Requirements
+- Implement fallbacks for less capable hardware
+- Optimize uniform updates to minimize state changes
+- Use specialized techniques for texture operations
+- Apply control flow optimizations for complex shaders
+
+## Examples
+
+<example>
+```typescript
+/**
+ * Advanced shader optimization techniques
+ */
+class AdvancedShaderEffect {
+  private scene: Phaser.Scene;
+  private shader: Phaser.GameObjects.Shader;
+  private uniformUpdates: Map<string, any> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Get simplified mobile shader
+    const fragShader = `
+      precision mediump float;
+      uniform sampler2D effect;
+      uniform float time;
+      uniform vec2 resolution;
+      uniform float intensity;
+      
+      varying vec2 fragCoord;
+      
+      void main() {
+        vec2 uv = fragCoord / resolution.xy;
+        
+        // Simple texture lookup
+        vec4 texColor = texture2D(effect, uv);
+        
+        // Minimal processing for mobile
+        vec3 finalColor = texColor.rgb * vec3(1.0, 0.9, 0.8);
+        
+        gl_FragColor = vec4(finalColor, texColor.a);
+      }
+    `;
+    
+    // Create shader with optimized code
+    this.shader = scene.add.shader('advancedEffect', 0, 0, 800, 600, ['effect'], fragShader);
+    
+    // Batch uniform updates to minimize state changes
+    this.setupOptimizedUpdates();
+  }
+  
+  /**
+   * Batch uniform updates to minimize state changes
+   */
+  private setupOptimizedUpdates(): void {
+    let lastTime = 0;
+    
+    // Update time-based uniforms only when needed
+    this.scene.events.on('prerender', (time: number) => {
+      // Skip if shader is destroyed
+      if (!this.shader || !this.shader.active) return;
+      
+      // Update time-based uniforms only when needed (16ms = ~60fps)
+      if (time - lastTime > 16) {
+        this.uniformUpdates.set('time', time / 1000);
+        lastTime = time;
+      }
+      
+      // Apply all pending uniform updates at once
+      if (this.uniformUpdates.size > 0) {
+        this.uniformUpdates.forEach((value, key) => {
+          this.shader.setUniform(key, value);
+        });
+        this.uniformUpdates.clear();
+      }
+    });
+  }
+  
+  /**
+   * Set effect intensity with deferred update
+   */
+  setIntensity(value: number): void {
+    this.uniformUpdates.set('intensity', Math.max(0, Math.min(1, value)));
+  }
+}
+```
+</example>
+
+<example type="invalid">
+```typescript
+// BAD: Unoptimized shader with excessive complexity
+class UnoptimizedEffect {
+  constructor(scene, x, y, width, height) {
+    // Heavy fragment shader with no platform-specific optimizations
+    const fragShader = `
+      precision highp float;
+      uniform sampler2D mainTexture;
+      uniform float time;
+      
+      varying vec2 fragCoord;
+      
+      // Expensive function with many trigonometric operations
+      vec3 rainbow(float t) {
+        return vec3(
+          sin(t) * sin(t),
+          sin(t + 2.094) * sin(t + 2.094),
+          sin(t + 4.188) * sin(t + 4.188)
+        );
+      }
+      
+      void main() {
+        // Excessive texture lookups
+        vec2 uv = fragCoord;
+        vec4 color1 = texture2D(mainTexture, uv);
+        vec4 color2 = texture2D(mainTexture, uv + vec2(0.01, 0.0));
+        vec4 color3 = texture2D(mainTexture, uv - vec2(0.01, 0.0));
+        
+        // Expensive loops with dynamic conditions
+        float sum = 0.0;
+        for (int i = 0; i < 20; i++) {
+          if (i < int(time)) {  // Dynamic loop condition - very bad for performance
+            sum += sin(float(i) + time);
+          }
+        }
+        
+        gl_FragColor = vec4(color1.rgb * rainbow(time), 1.0);
+      }
+    `;
+    
+    // Create shader
+    const shader = scene.add.shader('effect', x, y, width, height, null, fragShader);
+    
+    // Inefficient uniform updates every frame
+    scene.events.on('update', () => {
+      shader.setUniform('time', scene.time.now / 1000);
+    });
+  }
+}
+```
+</example>
+
+## Texture Operations
+- Minimize texture lookups
+- Use texture arrays for multiple textures
+- Implement MIP-mapping for distant textures
+- Batch similar texture operations
+- Use texture compression when appropriate
+
+## Control Flow Optimization
+- Avoid dynamic branching in shader hot paths
+- Unroll small loops with known iteration counts
+- Replace if/else statements with step() or mix()
+- Ensure loop conditions are constant
+- Minimize divergent execution paths
+
+<version>1.0.0</version> 

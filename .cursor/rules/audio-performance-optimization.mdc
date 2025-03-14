@@ -1,0 +1,174 @@
+---
+description: Optimize audio performance in Phaser games to minimize performance impact
+globs: **/*.{ts,tsx}
+---
+
+# Phaser Audio Performance Optimization
+
+## Context
+- When implementing high-action gameplay with many sound effects
+- When optimizing for mobile devices with limited audio capabilities
+- When experiencing audio-related performance issues
+- When implementing sound-heavy games
+
+## Requirements
+- Use Phaser's built-in audio pooling for frequently played sounds
+- Implement audio sprites for short, frequent sound effects
+- Apply sound rate limiting for repetitive effects
+- Use priority-based sound playing for high-action sequences
+- Implement distance-based audio culling for spatial sounds
+
+## Examples
+
+```typescript
+// Audio manager with performance optimizations
+export class OptimizedAudioManager {
+  private scene: Phaser.Scene;
+  private soundPools: Map<string, Phaser.Sound.BaseSound[]> = new Map();
+  private audioSprites: Map<string, Phaser.Sound.BaseSound> = new Map();
+  
+  // Sound rate limiting to prevent audio clutter
+  private soundTimestamps: Map<string, number> = new Map();
+  private soundCooldowns: Map<string, number> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Set up sound cooldowns for rate limiting
+    this.soundCooldowns.set('shoot', 50);  // 50ms between shots
+    this.soundCooldowns.set('footstep', 200); // 200ms between steps
+    
+    // Create pools for frequently used sounds
+    this.createSoundPool('shoot', 5);
+    this.createSoundPool('explosion', 3);
+    
+    // Create audio sprite
+    this.createAudioSprite('sfxSprite');
+  }
+  
+  /**
+   * Create a pool of sound instances for frequent sounds
+   */
+  private createSoundPool(key: string, size: number): void {
+    const pool: Phaser.Sound.BaseSound[] = [];
+    
+    for (let i = 0; i < size; i++) {
+      const sound = this.scene.sound.add(key, { loop: false });
+      pool.push(sound);
+    }
+    
+    this.soundPools.set(key, pool);
+  }
+  
+  /**
+   * Create and configure an audio sprite
+   */
+  private createAudioSprite(key: string): void {
+    const sprite = this.scene.sound.addAudioSprite(key);
+    if (sprite) {
+      this.audioSprites.set(key, sprite);
+    }
+  }
+  
+  /**
+   * Play a sound from a pool with rate limiting
+   */
+  playSoundFromPool(key: string): void {
+    // Skip if on cooldown
+    const now = this.scene.time.now;
+    const lastPlayed = this.soundTimestamps.get(key) || 0;
+    const cooldown = this.soundCooldowns.get(key) || 0;
+    
+    if (now - lastPlayed < cooldown) {
+      return; // Still on cooldown
+    }
+    
+    // Get sound pool
+    const pool = this.soundPools.get(key);
+    if (!pool || pool.length === 0) return;
+    
+    // Find available sound in pool
+    let sound = pool.find(s => !s.isPlaying);
+    
+    // If all sounds are playing, pick the oldest one
+    if (!sound) {
+      let oldestTime = Infinity;
+      let oldestSound = null;
+      
+      pool.forEach(s => {
+        if (s.isPlaying) {
+          const startTime = s.data?.get('startTime') || 0;
+          if (startTime < oldestTime) {
+            oldestTime = startTime;
+            oldestSound = s;
+          }
+        }
+      });
+      
+      sound = oldestSound;
+      if (sound) sound.stop();
+    }
+    
+    // Play the sound and track timestamp
+    if (sound) {
+      sound.play();
+      sound.data = sound.data || new Phaser.Data.DataManager({});
+      sound.data.set('startTime', now);
+      this.soundTimestamps.set(key, now);
+    }
+  }
+  
+  /**
+   * Play a sound from an audio sprite
+   */
+  playSpriteSound(spriteKey: string, soundKey: string): void {
+    const sprite = this.audioSprites.get(spriteKey);
+    if (sprite) {
+      (sprite as Phaser.Sound.WebAudioSound).play(soundKey);
+    }
+  }
+  
+  /**
+   * Play sound with distance-based volume for spatial audio
+   */
+  playSpatialSound(key: string, x: number, y: number, maxDistance: number = 300): void {
+    // Get player position (assuming it's stored in a game object)
+    const player = this.scene.player;
+    if (!player) return;
+    
+    // Calculate distance to sound source
+    const dx = player.x - x;
+    const dy = player.y - y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Skip if too far
+    if (distance > maxDistance) return;
+    
+    // Calculate volume based on distance (inverse linear falloff)
+    const volume = 1 - (distance / maxDistance);
+    
+    // Play with calculated volume
+    this.scene.sound.play(key, { volume });
+  }
+}
+```
+
+## Audio Pooling
+- Create pools for frequently played sounds
+- Reuse sound instances instead of creating new ones
+- Track which sounds in the pool are currently playing
+- Select the oldest playing sound when all are in use
+
+## Audio Sprites
+- Combine small sound effects into a single audio file
+- Reduce the number of audio file loads
+- Use spritemap JSON to define sound markers
+- Play individual sounds from the sprite using markers
+
+## Rate Limiting
+- Set cooldown periods for frequently triggered sounds
+- Skip sound playback when still on cooldown
+- Vary cooldown time based on sound importance
+- Maintain separate cooldowns for different sound categories
+
+<version>1.0.0</version> 

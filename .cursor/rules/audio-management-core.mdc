@@ -1,0 +1,163 @@
+---
+description: Implement core audio management practices for Phaser games
+globs: **/*.{ts,tsx}
+---
+
+# Phaser Audio Management Core
+
+## Context
+- When implementing sound effects and music in Phaser games
+- When targeting multiple platforms with different audio capabilities
+- When setting up the audio architecture for a new Phaser game
+
+## Requirements
+- Configure Phaser's sound manager with optimal parameters during game initialization
+- Implement a centralized audio manager class to handle all Phaser audio interactions
+- Properly preload all audio assets in Phaser's loading scene with multiple formats
+- Implement efficient clean-up of audio resources during scene transitions
+
+## Examples
+
+```typescript
+// Core audio manager setup for Phaser
+export class CoreAudioManager {
+  private scene: Phaser.Scene;
+  private soundEffects: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private music: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private sfxVolume: number = 0.7;
+  private musicVolume: number = 0.5;
+  private muted: boolean = false;
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Configure optimal audio settings
+    this.configureAudio();
+    
+    // Set up event listeners for game pause/resume
+    this.setupEventListeners();
+  }
+  
+  /**
+   * Configure Phaser sound manager optimally
+   */
+  private configureAudio(): void {
+    // Access the global sound manager
+    const soundManager = this.scene.sound;
+    
+    // Configure global audio settings
+    soundManager.setVolume(1.0);
+    soundManager.setMute(false);
+    
+    // Limit sounds based on platform
+    if (this.scene.sys.game.device.os.mobile) {
+      soundManager.setMaxListeners(8); // Mobile - fewer sounds
+    } else {
+      soundManager.setMaxListeners(16); // Desktop - more sounds
+    }
+  }
+  
+  /**
+   * Set up event listeners for game state
+   */
+  private setupEventListeners(): void {
+    // Handle scene lifecycle events
+    this.scene.events.on('pause', this.onPause, this);
+    this.scene.events.on('resume', this.onResume, this);
+    this.scene.events.once('shutdown', this.shutdown, this);
+    
+    // Handle global game events
+    this.scene.game.events.on('blur', this.onBlur, this);
+    this.scene.game.events.on('focus', this.onFocus, this);
+  }
+  
+  /**
+   * Preload audio assets with the correct formats
+   */
+  preloadAudio(): void {
+    // Detect browser capabilities for audio format
+    const audioTest = document.createElement('audio');
+    const formats = {
+      ogg: audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace('no', ''),
+      mp3: audioTest.canPlayType('audio/mpeg').replace('no', ''),
+      m4a: audioTest.canPlayType('audio/mp4; codecs="mp4a.40.5"').replace('no', '')
+    };
+    
+    // Determine preferred formats based on browser support
+    const preferredFormats = [];
+    if (formats.ogg) preferredFormats.push('ogg');
+    if (formats.mp3) preferredFormats.push('mp3');
+    if (formats.m4a) preferredFormats.push('m4a');
+    
+    // Load sound effects with multiple formats
+    this.scene.load.audio('jump', preferredFormats.map(format => `assets/audio/jump.${format}`));
+    this.scene.load.audio('pickup', preferredFormats.map(format => `assets/audio/pickup.${format}`));
+    
+    // Load music tracks
+    this.scene.load.audio('mainTheme', preferredFormats.map(format => `assets/audio/mainTheme.${format}`));
+  }
+  
+  /**
+   * Clean up resources when scene is destroyed
+   */
+  shutdown(): void {
+    // Remove event listeners
+    this.scene.events.off('pause', this.onPause, this);
+    this.scene.events.off('resume', this.onResume, this);
+    this.scene.game.events.off('blur', this.onBlur, this);
+    this.scene.game.events.off('focus', this.onFocus, this);
+    
+    // Stop and destroy all sounds
+    this.soundEffects.forEach(sound => {
+      sound.stop();
+      sound.destroy();
+    });
+    
+    this.music.forEach(sound => {
+      sound.stop();
+      sound.destroy();
+    });
+    
+    // Clear maps
+    this.soundEffects.clear();
+    this.music.clear();
+  }
+  
+  // Event handlers
+  private onPause(): void {
+    this.scene.sound.pauseAll();
+  }
+  
+  private onResume(): void {
+    if (!this.muted) {
+      this.scene.sound.resumeAll();
+    }
+  }
+  
+  private onBlur(): void {
+    this.scene.sound.pauseAll();
+  }
+  
+  private onFocus(): void {
+    if (!this.muted) {
+      this.scene.sound.resumeAll();
+    }
+  }
+}
+```
+
+## Initialization Best Practices
+- Initialize audio manager in scene create method
+- Configure audio manager before loading game assets
+- Set up volume controls based on user preferences
+- Handle audio suspension on mobile platforms
+- Initialize all audio components when transitioning from loading to gameplay
+
+## Platform Considerations
+- Detect audio capabilities before loading assets
+- Provide fallback formats for cross-browser compatibility
+- Reduce simultaneous sounds on mobile devices
+- Handle audio interruptions on mobile devices
+- Implement audio resumption after interruption
+
+<version>1.0.0</version> 

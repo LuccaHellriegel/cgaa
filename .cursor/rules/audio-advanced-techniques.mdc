@@ -1,0 +1,200 @@
+---
+description: Implement advanced audio techniques for enhanced gameplay experience
+globs: **/*.{ts,tsx}
+---
+
+# Advanced Phaser Audio Techniques
+
+## Context
+- When implementing dynamic or adaptive audio systems
+- When creating immersive audio experiences
+- When implementing spatial audio or positional sound effects
+- When creating games requiring complex audio layering, mixing, or transitions
+
+## Requirements
+- Use Phaser's WebAudio capabilities for advanced audio processing
+- Implement dynamic music systems that adapt to gameplay
+- Create smooth transitions between different audio states
+- Apply audio effects and filters for enhanced immersion
+- Implement categories for selective audio management
+
+## Examples
+
+```typescript
+// Advanced audio techniques implementation
+export class AdvancedAudioManager {
+  private scene: Phaser.Scene;
+  private music: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private currentMusic: string | null = null;
+  private transitionTime: number = 1000; // ms
+  
+  // Audio categories for selective control
+  private categories: Map<string, Set<Phaser.Sound.BaseSound>> = new Map([
+    ['sfx', new Set()],
+    ['music', new Set()],
+    ['voice', new Set()],
+    ['ui', new Set()],
+    ['ambient', new Set()]
+  ]);
+  
+  // Audio effects
+  private filters: Map<string, any> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    
+    // Set up WebAudio effects
+    this.setupAudioEffects();
+  }
+  
+  /**
+   * Set up WebAudio effects for processing
+   */
+  private setupAudioEffects(): void {
+    if (this.scene.sound.context) {
+      // Create a low-pass filter
+      const lowpassFilter = this.scene.sound.context.createBiquadFilter();
+      lowpassFilter.type = 'lowpass';
+      lowpassFilter.frequency.value = 1000;
+      this.filters.set('lowpass', lowpassFilter);
+      
+      // Create a reverb effect
+      this.createReverb(2, 0.5).then(reverb => {
+        this.filters.set('reverb', reverb);
+      });
+    }
+  }
+  
+  /**
+   * Create a reverb effect
+   */
+  private async createReverb(seconds: number, decay: number): Promise<any> {
+    const context = this.scene.sound.context;
+    if (!context) return null;
+    
+    const length = seconds * context.sampleRate;
+    const impulse = context.createBuffer(2, length, context.sampleRate);
+    
+    const left = impulse.getChannelData(0);
+    const right = impulse.getChannelData(1);
+    
+    for (let i = 0; i < length; i++) {
+      const n = i / length;
+      // Simple exponential decay
+      left[i] = (Math.random() * 2 - 1) * Math.pow(1 - n, decay);
+      right[i] = (Math.random() * 2 - 1) * Math.pow(1 - n, decay);
+    }
+    
+    const reverb = context.createConvolver();
+    reverb.buffer = impulse;
+    
+    return reverb;
+  }
+  
+  /**
+   * Cross-fade between two music tracks
+   */
+  crossFadeMusic(newMusicKey: string, duration: number = 1000): void {
+    const newMusic = this.music.get(newMusicKey);
+    if (!newMusic) return;
+    
+    // If no current music, just play the new track
+    if (!this.currentMusic) {
+      newMusic.play();
+      this.currentMusic = newMusicKey;
+      return;
+    }
+    
+    const currentMusic = this.music.get(this.currentMusic);
+    if (!currentMusic) return;
+    
+    // Start new music at zero volume
+    newMusic.setVolume(0);
+    newMusic.play();
+    
+    // Fade out current music and fade in new music
+    const startTime = this.scene.time.now;
+    const endTime = startTime + duration;
+    
+    // Set up a tween for smooth transition
+    this.scene.tweens.add({
+      targets: { t: 0 },
+      t: 1,
+      duration: duration,
+      onUpdate: (tween) => {
+        const t = tween.getValue();
+        currentMusic.setVolume(1 - t);
+        newMusic.setVolume(t);
+      },
+      onComplete: () => {
+        currentMusic.stop();
+        this.currentMusic = newMusicKey;
+      }
+    });
+  }
+  
+  /**
+   * Apply audio effect to a sound
+   */
+  applyEffect(sound: Phaser.Sound.WebAudioSound, effectKey: string, amount: number = 1.0): void {
+    if (!sound || !(sound instanceof Phaser.Sound.WebAudioSound)) return;
+    
+    const effect = this.filters.get(effectKey);
+    if (!effect) return;
+    
+    // Get source node from WebAudio sound
+    const source = sound.source;
+    if (!source) return;
+    
+    // Connect the source to the effect, then to destination
+    source.disconnect();
+    source.connect(effect);
+    effect.connect(this.scene.sound.context.destination);
+  }
+  
+  /**
+   * Create an adaptive music system based on game state
+   */
+  updateAdaptiveMusic(intensity: number): void {
+    // Adjust music parameters based on gameplay intensity
+    const currentMusic = this.music.get(this.currentMusic || '');
+    if (!currentMusic) return;
+    
+    // Modify rate slightly for increased tension
+    const newRate = 1.0 + (intensity * 0.2); // Max 20% faster
+    currentMusic.setRate(newRate);
+    
+    // Apply low-pass filter during high intensity
+    if (currentMusic instanceof Phaser.Sound.WebAudioSound && this.filters.has('lowpass')) {
+      const lowpass = this.filters.get('lowpass');
+      
+      // More filtering at high intensity
+      const filterFreq = 20000 - (intensity * 15000); // Range: 5000 - 20000 Hz
+      lowpass.frequency.value = filterFreq;
+    }
+  }
+}
+```
+
+## Dynamic Audio
+- Adapt music and sound effects based on gameplay conditions
+- Transition between different game states with audio cues
+- Layer multiple audio tracks for dynamic mix
+- Change audio parameters based on player actions
+- Design music systems that respond to game events
+
+## Spatial Audio
+- Position sounds in the game world
+- Attenuate volume based on distance from listener
+- Apply filters based on environment (e.g., reverb in caves)
+- Pan sounds based on relative position to camera
+- Simulate doppler effect for moving sound sources
+
+## Audio Categories
+- Group sounds into logical categories
+- Control volume independently for each category
+- Apply effects to entire categories
+- Mute or unmute categories based on game state
+- Prioritize sounds based on category importance
+
+<version>1.0.0</version> 
