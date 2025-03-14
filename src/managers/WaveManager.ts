@@ -3,20 +3,7 @@ import { Enemy } from "../components/Enemy";
 import { ObjectiveMarker } from "../components/GameProgressUI";
 import { Player } from "../components/Player";
 import { GameEvents } from "../events/GameEvents";
-
-// Add assert function
-function assert(
-  condition: boolean,
-  message: string,
-  context?: any
-): asserts condition {
-  if (!condition) {
-    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
-    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-}
+import { assert } from "../utils/assert";
 
 export interface CampStatus {
   id: string;

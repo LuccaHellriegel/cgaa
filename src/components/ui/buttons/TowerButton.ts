@@ -1,29 +1,16 @@
 import { Scene } from "phaser";
 import { TowerType, TOWER_CONFIGS } from "../../Tower";
+import { assert } from "../../../utils/assert";
 
 interface TowerButtonConfig {
   type: TowerType;
   cost: number;
 }
 
-// Add assertion utility function
-function assert(
-  condition: boolean,
-  message: string,
-  context?: any
-): asserts condition {
-  if (!condition) {
-    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
-    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-}
-
 export class TowerButton extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Rectangle;
   private isSelected: boolean = false;
-  private config: { type: TowerType; cost: number };
+  private config: TowerButtonConfig;
 
   constructor(scene: Scene, x: number, y: number, type: TowerType) {
     super(scene, x, y);

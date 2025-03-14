@@ -1,20 +1,7 @@
 import { Scene } from "phaser";
 import { TowerType, TOWER_CONFIGS } from "../../Tower";
 import { TowerButton } from "../buttons/TowerButton";
-
-// Add assertion utility function
-function assert(
-  condition: boolean,
-  message: string,
-  context?: any
-): asserts condition {
-  if (!condition) {
-    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
-    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-}
+import { assert } from "../../../utils/assert";
 
 export class BuildMenu {
   private scene: Scene;

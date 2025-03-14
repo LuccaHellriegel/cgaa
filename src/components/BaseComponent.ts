@@ -1,18 +1,5 @@
 import { Scene } from "phaser";
-
-// Utility function for assertions
-function assert(
-  condition: boolean,
-  message: string,
-  context?: any
-): asserts condition {
-  if (!condition) {
-    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
-    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-}
+import { assert } from "../utils/assert";
 
 export interface ComponentConfig {
   scene: Scene;

@@ -6,20 +6,7 @@ import { CollisionSystem } from "./game/systems/CollisionSystem";
 import { GameState } from "../controllers/GameController";
 import { GameEvents } from "../events/GameEvents";
 import { Soul } from "../components/Soul";
-
-// Add assertion utility function
-function assert(
-  condition: boolean,
-  message: string,
-  context?: any
-): asserts condition {
-  if (!condition) {
-    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
-    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-}
+import { assert } from "../utils/assert";
 
 export class Game extends Scene {
   private player: Player | null = null;
