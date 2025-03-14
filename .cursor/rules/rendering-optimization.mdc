@@ -3,7 +3,7 @@ description: Optimize rendering performance when creating visual elements to ens
 globs: **/*.ts
 ---
 
-# Optimize Rendering for Performance
+# Phaser Rendering Optimization Techniques
 
 ## Context
 - When working with numerous game objects on screen simultaneously
@@ -13,49 +13,96 @@ globs: **/*.ts
 - When targeting devices with limited GPU capabilities
 
 ## Requirements
-- Use Phaser's built-in rendering optimization techniques
+- Use Phaser's WebGL rendering pipeline for maximum performance
 - Batch similar rendering operations to reduce draw calls
-- Implement culling to avoid rendering off-screen objects
-- Properly manage textures and sprite sheets
-- Use appropriate rendering techniques for the visual style
-- Optimize programmatically generated graphics
+- Implement camera culling to avoid rendering off-screen objects
+- Use texture atlases and sprite sheets for efficient memory usage
+- Apply appropriate alpha settings and blend modes
+- Optimize or cache procedurally generated graphics
+- Leverage Phaser 3.70+ rendering optimizations where available
 
 ## Examples
 
 <example>
 ```typescript
-// Optimized rendering manager utilizing Phaser's techniques
-export class OptimizedRenderer {
+// Comprehensive Phaser rendering optimization manager
+export class PhaserOptimizedRenderer {
   private scene: Phaser.Scene;
   private camera: Phaser.Cameras.Scene2D.Camera;
-  private entities: Phaser.GameObjects.Group;
+  private renderTextures: Map<string, Phaser.GameObjects.RenderTexture> = new Map();
   private layers: Map<string, Phaser.GameObjects.Container> = new Map();
   
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.camera = scene.cameras.main;
     
-    // Group for entities with automatic culling
-    this.entities = scene.add.group();
+    // Configure camera for culling
+    this.setupCamera();
     
-    // Create rendering layers
+    // Create rendering layers with proper depth sorting
     this.setupLayers();
+    
+    // Configure WebGL pipeline settings if available
+    this.optimizeWebGLSettings();
+  }
+  
+  private setupCamera(): void {
+    // Set reasonable cull padding to prevent pop-in
+    this.camera.cullPadding = 100;
+    
+    // Disable camera rendering of objects outside bounds
+    this.camera.disableCull = false;
+    
+    // Optimize camera follow for smoother scrolling
+    this.camera.roundPixels = true; // Prevent pixel bleeding
   }
   
   private setupLayers(): void {
-    // Create layers with appropriate depths
+    // Create optimized render layers with appropriate depths
     this.createLayer('background', 0);
     this.createLayer('terrain', 10);
     this.createLayer('enemies', 20);
     this.createLayer('player', 30);
     this.createLayer('projectiles', 40);
-    this.createLayer('ui', 100);
+    this.createLayer('ui', 100, true); // UI layer fixed to camera
   }
   
-  private createLayer(name: string, depth: number): void {
+  private createLayer(name: string, depth: number, fixedToCamera: boolean = false): void {
     const container = this.scene.add.container(0, 0);
     container.setDepth(depth);
+    
+    if (fixedToCamera) {
+      // UI elements should be fixed to camera (not affected by camera movement)
+      container.setScrollFactor(0);
+    }
+    
     this.layers.set(name, container);
+  }
+  
+  private optimizeWebGLSettings(): void {
+    // Only apply if WebGL is available
+    if (this.scene.game.renderer.type === Phaser.WEBGL) {
+      // Access WebGL renderer
+      const renderer = this.scene.game.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+      
+      // Batch sprites to minimize draw calls
+      renderer.setMaxTextures(Math.min(32, renderer.getMaxTextures()));
+      
+      // Set texture filtering for pixel art games if needed
+      renderer.pipelines.forEach((pipeline) => {
+        if (pipeline.hasOwnProperty('defaultPhysicallyCorrectLights')) {
+          pipeline.defaultPhysicallyCorrectLights = false; // Turn off expensive lighting
+        }
+      });
+      
+      // Get default pipeline
+      const mainPipeline = renderer.pipelines.get('MultiPipeline') as Phaser.Renderer.WebGL.Pipelines.MultiPipeline;
+      if (mainPipeline) {
+        // Optional: Set filtering mode for pixel art
+        // mainPipeline.setTextureFilteringNearestMag();
+        // mainPipeline.setTextureFilteringNearestMin();
+      }
+    }
   }
   
   loadTextureAtlas(): void {
@@ -66,14 +113,14 @@ export class OptimizedRenderer {
       'assets/spritesheet.json'
     );
     
-    // Set up animations from atlas
+    // Set up animations from atlas when loading completes
     this.scene.load.once('complete', () => {
       this.setupAnimations();
     });
   }
   
   private setupAnimations(): void {
-    // Create animations using the atlas frames
+    // Create optimized animations using atlas frames
     this.scene.anims.create({
       key: 'player_walk',
       frames: this.scene.anims.generateFrameNames('gameSprites', {
@@ -82,6 +129,7 @@ export class OptimizedRenderer {
         end: 7,
         zeroPad: 2
       }),
+      // Don't set frameRate too high for performance
       frameRate: 10,
       repeat: -1
     });
@@ -93,68 +141,132 @@ export class OptimizedRenderer {
     const layer = this.layers.get(name);
     if (layer) {
       layer.add(gameObject);
+      
+      // Set skipCull false to ensure proper culling
+      if ('skipCull' in gameObject) {
+        (gameObject as any).skipCull = false;
+      }
+      
+      // Set appropriate alpha for layer (UI elements fully opaque)
+      if (name !== 'ui' && 'alpha' in gameObject) {
+        // Avoid alpha values that force Phaser to do special blending
+        // Alpha of exactly 1.0 is fastest
+        (gameObject as any).alpha = 1.0;
+      }
     } else {
       console.warn(`Layer "${name}" does not exist`);
       this.scene.add.existing(gameObject as any);
     }
   }
   
-  optimizeStaticObjects(): void {
-    // Convert static elements to static compound body
-    const terrain = this.layers.get('terrain');
-    if (terrain) {
-      // Convert to a static texture for better performance
-      const renderTexture = this.scene.add.renderTexture(0, 0, this.scene.scale.width, this.scene.scale.height);
-      renderTexture.draw(terrain);
+  optimizeStaticObjects(layerName: string): void {
+    // Convert static elements to a render texture for massive performance boost
+    const layer = this.layers.get(layerName);
+    if (layer && layer.list.length > 0) {
+      // Create render texture the size of the camera
+      const renderTexture = this.scene.add.renderTexture(
+        0, 0, 
+        this.scene.scale.width, 
+        this.scene.scale.height
+      );
       
-      // Clear the container and add the texture
-      terrain.removeAll(true);
-      terrain.add(renderTexture);
+      // Draw all objects in the layer to the single texture
+      renderTexture.draw(layer);
+      
+      // Store for later reference
+      this.renderTextures.set(layerName, renderTexture);
+      
+      // Clear the original container and add the texture
+      layer.removeAll(true);
+      layer.add(renderTexture);
+      
+      // For large worlds, consider using multiple render textures in a grid
     }
   }
   
-  createShapeTexture(key: string, drawFunction: (graphics: Phaser.GameObjects.Graphics) => void): string {
-    // Create a reusable texture from shapes
+  createAndCacheShape(key: string, drawFunction: (graphics: Phaser.GameObjects.Graphics) => void, width: number, height: number): string {
+    // Don't recreate if already cached
+    if (this.scene.textures.exists(key)) {
+      return key;
+    }
+    
+    // Create a reusable texture from shapes - MUCH more efficient
     const graphics = this.scene.make.graphics({});
     drawFunction(graphics);
     
     // Generate a texture that can be reused with sprites
-    graphics.generateTexture(key, graphics.width, graphics.height);
+    graphics.generateTexture(key, width, height);
     graphics.destroy();
     
     return key;
   }
   
-  createCircleTexture(key: string, radius: number, fillColor: number): string {
-    return this.createShapeTexture(key, (graphics) => {
-      graphics.fillStyle(fillColor);
-      graphics.fillCircle(radius, radius, radius);
-      graphics.lineStyle(2, 0x000000);
-      graphics.strokeCircle(radius, radius, radius);
-    });
+  createCircleTexture(key: string, radius: number, fillColor: number, strokeColor?: number, strokeWidth?: number): string {
+    return this.createAndCacheShape(
+      key, 
+      (graphics) => {
+        // Fill circle
+        graphics.fillStyle(fillColor);
+        graphics.fillCircle(radius, radius, radius);
+        
+        // Optional stroke
+        if (strokeColor !== undefined && strokeWidth !== undefined) {
+          graphics.lineStyle(strokeWidth, strokeColor);
+          graphics.strokeCircle(radius, radius, radius);
+        }
+      }, 
+      radius * 2, 
+      radius * 2
+    );
   }
   
-  setupCulling(): void {
-    // Set up automatic culling for entities
-    this.scene.cameras.main.culledObjects = this.entities.getChildren();
+  setupCullingForGroup(group: Phaser.GameObjects.Group): void {
+    // Enable automatic culling for group members
+    group.getChildren().forEach((child: any) => {
+      if ('skipCull' in child) {
+        child.skipCull = false;
+      }
+    });
     
-    // Enable cull padding to prevent pop-in
-    this.scene.cameras.main.cullPadding = 100;
+    // Add to camera culling list
+    const cullList = this.camera.cullCallback ? 
+      [this.camera.cullCallback] : [];
+    
+    // Add culling callback
+    this.camera.cullCallback = (camera: Phaser.Cameras.Scene2D.Camera) => {
+      // Run any existing cull callbacks
+      cullList.forEach(callback => callback(camera));
+      
+      // Get updated group children and cull them
+      const children = group.getChildren();
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as any;
+        if (!child.skipCull) {
+          child.cull(camera);
+        }
+      }
+    };
   }
   
   optimizeParticles(emitterConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig): Phaser.GameObjects.Particles.ParticleEmitter {
     // Create optimized particle system
-    const particles = this.scene.add.particles('gameSprites', 'effects/particle');
+    const particles = this.scene.add.particles('gameSprites');
     
-    // Set optimized defaults
+    // Set optimized defaults to prevent performance issues
     const optimizedConfig: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig = {
       ...emitterConfig,
       // Limit max particles
-      maxParticles: emitterConfig.maxParticles || 20,
-      // Use efficient blend mode
+      maxParticles: Math.min(emitterConfig.maxParticles || 20, 50),
+      // Use efficient blend mode - ADD is often much faster than SCREEN
       blendMode: emitterConfig.blendMode || Phaser.BlendModes.ADD,
       // Ensure particles have a limited lifespan
-      lifespan: emitterConfig.lifespan || 1000
+      lifespan: Math.min(emitterConfig.lifespan || 1000, 2000),
+      // Set reasonable emission rate
+      frequency: Math.max(emitterConfig.frequency || 100, 50),
+      // Ensure alpha is 1 for best performance
+      alpha: { start: 1, end: 0 },
+      // Prefer single frame particles when possible
+      frame: emitterConfig.frame || 'effects/particle'
     };
     
     // Create and return the emitter
@@ -163,19 +275,82 @@ export class OptimizedRenderer {
     
     return emitter;
   }
+  
+  setBatchingForSprites(textureName: string, enabled: boolean = true): void {
+    // Configure texture batching based on WebGL capabilities
+    if (this.scene.game.renderer.type === Phaser.WEBGL) {
+      const texture = this.scene.textures.get(textureName);
+      if (texture) {
+        // Enable or disable batching for this texture
+        // When enabled, sprites using this texture will batch together
+        texture.source.forEach(source => {
+          source.glTexture.setFilter(enabled ? 0 : 1);
+        });
+      }
+    }
+  }
+  
+  createTilemapLayer(tilemap: Phaser.Tilemaps.Tilemap, layerIndex: number, tileset: string): Phaser.Tilemaps.TilemapLayer {
+    // Create optimized tilemap layer
+    const layer = tilemap.createLayer(layerIndex, tilemap.getTileset(tileset));
+    
+    if (layer) {
+      // Set culling properties for best performance
+      layer.setSkipCull(false);
+      layer.setCullPadding(1, 1);
+      
+      // Optimize for static layers
+      if (this.scene.game.renderer.type === Phaser.WEBGL) {
+        // Use WebGL-specific optimizations when available
+        layer.setRenderOrder(1); // Pipeline optimization
+      }
+    }
+    
+    return layer;
+  }
+  
+  updateDynamicTextures(): void {
+    // Only update dynamic textures when needed
+    this.renderTextures.forEach((texture, key) => {
+      if (key.startsWith('dynamic_')) {
+        const sourceLayer = this.layers.get(key.replace('dynamic_', ''));
+        if (sourceLayer && sourceLayer.list.length > 0) {
+          texture.clear();
+          texture.draw(sourceLayer);
+        }
+      }
+    });
+  }
+  
+  destroy(): void {
+    // Clean up all created resources
+    this.renderTextures.forEach(texture => texture.destroy());
+    this.renderTextures.clear();
+    
+    // Clear camera cullbacks
+    this.camera.cullCallback = null;
+  }
 }
 ```
-This example implements several Phaser-specific rendering optimizations: texture atlases for batch rendering, layers with appropriate depths, static texture conversion for unchanging elements, cached shape textures, and optimized particle systems with reasonable defaults.
+This example demonstrates comprehensive Phaser rendering optimizations including WebGL pipeline configuration, proper texture batching, intelligent use of render textures, optimized camera settings, and efficient particle emission. The approach strategically batches similar objects, culls off-screen content, and minimizes expensive draw operations.
 </example>
 
 <example type="invalid">
 ```typescript
-// Inefficient rendering practices
-export class UnoptimizedRenderer {
+// Inefficient Phaser rendering practices
+export class UnoptimizedPhaserRenderer {
   private scene: Phaser.Scene;
   
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+    
+    // Disable culling - causes everything to render
+    scene.cameras.main.disableCull = true;
+    
+    // Create excessive depth layers
+    for (let i = 0; i < 100; i++) {
+      scene.add.container(0, 0).setDepth(i);
+    }
   }
   
   loadAssets(): void {
@@ -190,143 +365,220 @@ export class UnoptimizedRenderer {
   }
   
   createEnemy(x: number, y: number): Phaser.GameObjects.Sprite {
-    // Create a new Graphics object for EVERY enemy
+    // Generate a new texture for every enemy - extreme performance hit
     const graphics = this.scene.add.graphics();
     graphics.fillStyle(0xff0000);
     graphics.fillCircle(0, 0, 20);
-    graphics.generateTexture('enemy_runtime_' + Date.now(), 40, 40); // Unique key per enemy
+    
+    // Using timestamps as texture keys - creates hundreds of unique textures
+    const uniqueKey = 'enemy_' + Date.now() + '_' + Math.random();
+    graphics.generateTexture(uniqueKey, 40, 40);
     graphics.destroy();
     
-    // Create sprite with the just-generated unique texture
-    return this.scene.add.sprite(x, y, 'enemy_runtime_' + Date.now());
+    // Create sprite with unique non-batchable texture
+    const sprite = this.scene.add.sprite(x, y, uniqueKey);
+    
+    // Setting alpha to non-1.0 value forces special blending
+    sprite.setAlpha(0.99);
+    
+    return sprite;
   }
   
   createParticles(): void {
-    // Create separate particle emitters with excessive particles
+    // Create many separate particle emitters with excessive particles
     for (let i = 0; i < 10; i++) {
       const particles = this.scene.add.particles('projectile');
       particles.createEmitter({
         x: 100 + i * 50,
         y: 100 + i * 30,
         speed: 200,
-        maxParticles: 300, // Excessive particles
+        maxParticles: 500, // Excessive particles
         scale: { start: 1, end: 0 },
         blendMode: Phaser.BlendModes.SCREEN, // Expensive blend mode
-        lifespan: 5000, // Long-lived particles
-        frequency: 10 // Frequent emission
+        lifespan: 8000, // Long-lived particles
+        frequency: 5, // Very frequent emission
+        alpha: { start: 0.8, end: 0.2 } // Non-optimal alpha values
       });
     }
   }
   
-  update(): void {
-    // Inefficient update with no culling
-    const allObjects = this.scene.children.list;
+  createTilemap(): void {
+    // Create inefficient tilemap
+    const map = this.scene.make.tilemap({ key: 'level' });
     
-    allObjects.forEach(object => {
-      // Update all objects regardless of visibility
-      if (object instanceof Phaser.GameObjects.Sprite) {
-        object.rotation += 0.01;
-        
-        // Manual visibility check without using Phaser's culling
-        const bounds = object.getBounds();
+    // Use multiple tilesets instead of one
+    const tileset1 = map.addTilesetImage('ground', 'terrain1');
+    const tileset2 = map.addTilesetImage('objects', 'terrain2');
+    
+    // Create layers with mixed tilesets
+    const groundLayer = map.createLayer(0, tileset1);
+    const objectLayer = map.createLayer(1, tileset2);
+    
+    // Disable culling on the layers
+    groundLayer.skipCull = true;
+    objectLayer.skipCull = true;
+  }
+  
+  // Create new graphics objects every frame
+  update(time: number, delta: number): void {
+    // Create transient graphics objects - extreme performance hit
+    for (let i = 0; i < 20; i++) {
+      const graphics = this.scene.add.graphics();
+      graphics.fillStyle(0xffffff * Math.random());
+      graphics.fillRect(
+        Math.random() * this.scene.scale.width, 
+        Math.random() * this.scene.scale.height, 
+        20, 
+        20
+      );
+      
+      // Destroy later - causes constant garbage collection
+      this.scene.time.delayedCall(100, () => {
+        graphics.destroy();
+      });
+    }
+    
+    // Inefficient visibility checks
+    this.scene.children.each((gameObject: any) => {
+      if (gameObject instanceof Phaser.GameObjects.Sprite) {
+        // Manual visibility computation instead of using Phaser's culling
+        const bounds = gameObject.getBounds();
         const camera = this.scene.cameras.main;
-        object.visible = (
+        gameObject.visible = (
           bounds.right >= camera.scrollX &&
           bounds.left <= camera.scrollX + camera.width &&
           bounds.bottom >= camera.scrollY &&
           bounds.top <= camera.scrollY + camera.height
         );
+        
+        // Apply tint every frame - causes rebatching
+        gameObject.setTint(0xffffff);
       }
+      return true;
     });
   }
 }
 ```
-This approach creates performance issues through multiple inefficient practices: loading many individual textures instead of atlases, generating new textures during gameplay, excessive particle counts with expensive blend modes, and inefficient object updates without proper culling.
+This example demonstrates serious Phaser rendering anti-patterns: creating unique textures during gameplay, disabling culling, using excessive particle counts with expensive blend modes, setting non-optimal alpha values, creating and destroying graphics objects every frame, and performing manual visibility checks instead of using Phaser's built-in culling.
 </example>
 
-## Phaser-Specific Notes
+## Phaser Rendering Optimization Tips
 
-1. Use Phaser's texture atlases and sprite sheets:
+1. **Use texture atlases to minimize draw calls:**
    ```typescript
-   // In your preloader scene
-   this.load.atlas('spritesheet', 'assets/spritesheet.png', 'assets/spritesheet.json');
+   // Load a texture atlas
+   scene.load.atlas('sprites', 'assets/atlas.png', 'assets/atlas.json');
    
-   // Create sprites from atlas
-   const sprite = this.add.sprite(x, y, 'spritesheet', 'player_idle');
+   // Use frames from the atlas
+   scene.add.sprite(x, y, 'sprites', 'player_idle_01');
+   ```
+
+2. **Enable Phaser's built-in culling:**
+   ```typescript
+   // Enable culling on the camera (on by default)
+   scene.cameras.main.disableCull = false;
    
-   // Create animations
-   this.anims.create({
-     key: 'walk',
-     frames: this.anims.generateFrameNames('spritesheet', {
-       prefix: 'player_walk_',
-       start: 1,
-       end: 8
-     }),
-     frameRate: 10,
-     repeat: -1
+   // Set reasonable cull padding (in pixels)
+   scene.cameras.main.cullPadding = 50;
+   
+   // Ensure game objects use culling
+   sprite.skipCull = false;
+   ```
+
+3. **Leverage Phaser's WebGL pipeline for custom effects:**
+   ```typescript
+   // Create a custom pipeline
+   const customPipeline = new CustomPipeline(game);
+   
+   // Add pipeline to renderer
+   game.renderer.pipelines.add('Custom', customPipeline);
+   
+   // Use pipeline on a game object
+   sprite.setPipeline('Custom');
+   ```
+
+4. **Optimize alpha settings for better batching:**
+   ```typescript
+   // Alpha of exactly 1.0 is most efficient for batching
+   sprite.setAlpha(1.0);
+   
+   // If transparency is needed, try to use fewer distinct alpha values
+   // Either fully transparent or fully opaque is most efficient
+   ```
+
+5. **Combine static elements with render textures:**
+   ```typescript
+   // Create a render texture
+   const rt = scene.add.renderTexture(0, 0, 800, 600);
+   
+   // Draw multiple objects to a single texture
+   rt.draw(background);
+   rt.draw(staticObstacles);
+   rt.draw(decorations);
+   
+   // Original objects can now be removed from display list
+   ```
+
+6. **Use efficient blend modes:**
+   ```typescript
+   // Normal blend mode is fastest
+   sprite.setBlendMode(Phaser.BlendModes.NORMAL);
+   
+   // ADD is faster than SCREEN for glow effects
+   particles.setBlendMode(Phaser.BlendModes.ADD);
+   ```
+
+7. **Optimize tilemap rendering:**
+   ```typescript
+   // Create optimized tilemap layer
+   const layer = map.createLayer(0, tileset);
+   
+   // Enable culling
+   layer.skipCull = false;
+   
+   // Set culling padding
+   layer.setCullPadding(1);
+   ```
+
+8. **Cache generated graphics as textures:**
+   ```typescript
+   // Create graphics once
+   const graphics = scene.make.graphics();
+   graphics.fillStyle(0xff0000);
+   graphics.fillCircle(50, 50, 50);
+   
+   // Generate reusable texture
+   graphics.generateTexture('redCircle', 100, 100);
+   graphics.destroy();
+   
+   // Use the cached texture multiple times
+   scene.add.sprite(x, y, 'redCircle');
+   ```
+
+9. **Properly manage WebGL context in Phaser 3.50+:**
+   ```typescript
+   // Configure WebGL context on game creation
+   const game = new Phaser.Game({
+     type: Phaser.WEBGL,
+     width: 800,
+     height: 600,
+     render: {
+       antialias: false,
+       pixelArt: true,
+       roundPixels: true
+     }
    });
    ```
 
-2. For programmatic graphics, generate textures once and reuse:
-   ```typescript
-   // Generate textures at startup
-   createTextures() {
-     const shapes = ['circle', 'square', 'triangle'];
-     const colors = [0xff0000, 0x00ff00, 0x0000ff];
-     
-     // Generate all combinations
-     shapes.forEach(shape => {
-       colors.forEach(color => {
-         const key = `${shape}_${color.toString(16)}`;
-         this.createShapeTexture(key, shape, color);
-       });
-     });
-   }
-   ```
+10. **Use Phaser 3.70+'s optimized physics and rendering:**
+    ```typescript
+    // Enable direct control for better performance
+    const body = sprite.body;
+    body.setDirectControl(true);
+    
+    // Use predefined collision groups
+    body.setCollisionGroup(1);
+    body.setCollidesWith([1, 2]);
+    ```
 
-3. Optimize render depth management with Phaser:
-   ```typescript
-   // Use setDepth for simple depth management
-   background.setDepth(0);
-   terrain.setDepth(10);
-   enemies.setDepth(20);
-   player.setDepth(30);
-   
-   // For more complex scenes, use layer containers
-   const uiLayer = this.add.container(0, 0).setDepth(100);
-   uiLayer.add([healthBar, scoreText, menuButton]);
-   ```
-
-4. Use Phaser's built-in camera culling:
-   ```typescript
-   // Enable culling (on by default in Phaser 3)
-   this.cameras.main.useCulling = true;
-   
-   // Set cull padding to prevent pop-in
-   this.cameras.main.cullPadding = 100;
-   ```
-
-5. Use Phaser's built-in pooling for visual effects:
-   ```typescript
-   // Create a particle manager once
-   const particles = this.add.particles('flare');
-   
-   // Create emitter configurations
-   const explosionEmitter = particles.createEmitter({
-     frame: 'red',
-     speed: { min: 100, max: 200 },
-     angle: { min: 0, max: 360 },
-     scale: { start: 0.5, end: 0 },
-     blendMode: 'ADD',
-     lifespan: 800,
-     gravityY: 0,
-     active: false, // Start inactive
-     maxParticles: 20
-   });
-   
-   // Activate emitter at specific positions when needed
-   function createExplosion(x, y) {
-     explosionEmitter.setPosition(x, y);
-     explosionEmitter.explode(20); // Emit 20 particles
-   }
-   
+<version>1.0.0</version>

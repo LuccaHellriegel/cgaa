@@ -3,218 +3,579 @@ description: Optimize collision detection when implementing game physics to prev
 globs: **/*.{ts,tsx}
 ---
 
-# Efficient Collision Detection
+# Phaser Collision Optimization Techniques
 
 ## Context
-- When implementing physics and collision in games with many entities
-- When experiencing performance drops during collision-heavy scenarios
-- When using custom collision shapes beyond Phaser's built-in circles and rectangles
-- When implementing line-of-sight or detection mechanics
+- When implementing physics systems in Phaser games with many interactive entities
+- When experiencing framerate drops during collision-heavy scenarios in Phaser
+- When implementing custom collision shapes or detection mechanics
+- When building games that require efficient collision handling on mobile devices
 
 ## Requirements
-- Use Phaser's built-in collision groups to batch similar physics objects
-- Implement spatial partitioning via Phaser's internal tree for custom collision systems
-- Use a broad-phase (distance check) before detailed collision calculations
-- Create collision layers and categories to filter unnecessary collision checks
-- Disable physics for off-screen objects or those far from interaction
-- Use appropriate physics body types (static, dynamic) based on object behavior
-- Profile collision hotspots and optimize the most frequently called routines
+- Use Phaser 3.70+ collision groups and collision categories for efficient filtering
+- Implement proper active/inactive state management for physics bodies
+- Use Phaser's direct control mode for performance-critical objects
+- Configure appropriate physics body types (static, dynamic, fixed) based on object behavior
+- Leverage Phaser's spatial partitioning for efficient collision detection
+- Disable collision for off-screen objects using Phaser's camera bounds
+- Profile collision performance using Phaser's built-in debugging tools
 
 ## Examples
 
 <example>
 ```typescript
-// Using Phaser's optimized collision detection with groups and layers
-export class OptimizedCollisionManager {
+// Optimized Phaser 3.70+ collision management
+export class PhaserCollisionManager {
   private scene: Phaser.Scene;
   private player: Phaser.Physics.Arcade.Sprite;
   private enemies: Phaser.Physics.Arcade.Group;
   private projectiles: Phaser.Physics.Arcade.Group;
   private obstacles: Phaser.Physics.Arcade.StaticGroup;
   
+  // Collision groups for Phaser 3.70+
+  private readonly COLLISION_GROUPS = {
+    PLAYER: 1,
+    ENEMY: 2,
+    PROJECTILE: 3,
+    OBSTACLE: 4,
+    POWERUP: 5
+  };
+  
   constructor(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
     this.scene = scene;
     this.player = player;
     
-    // Create physics groups with appropriate configs
-    this.enemies = scene.physics.add.group({
-      collideWorldBounds: true,
-      bounceX: 0.5,
-      bounceY: 0.5
-    });
+    // Configure player physics for optimal performance
+    const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
     
-    this.projectiles = scene.physics.add.group({
-      allowGravity: false
-    });
+    // Use Phaser 3.70+ direct control for improved performance
+    playerBody.setDirectControl(true);
     
-    // Static bodies for immovable objects (better performance)
-    this.obstacles = scene.physics.add.staticGroup();
+    // Set player collision group
+    playerBody.setCollisionGroup(this.COLLISION_GROUPS.PLAYER);
     
-    // Set up collision handlers with specific callbacks
+    // Set what the player can collide with
+    playerBody.setCollidesWith([
+      this.COLLISION_GROUPS.ENEMY, 
+      this.COLLISION_GROUPS.OBSTACLE
+    ]);
+    
+    // Create optimized physics groups
+    this.createPhysicsGroups();
+    
+    // Setup collision handlers
     this.setupCollisions();
+    
+    // Enable debug visuals during development
+    if (process.env.NODE_ENV !== 'production') {
+      this.enableDebugVisuals();
+    }
   }
   
-  setupCollisions(): void {
-    // Player collides with obstacles - no callback needed
-    this.scene.physics.add.collider(this.player, this.obstacles);
+  private createPhysicsGroups(): void {
+    // Create enemy group with shared physics properties
+    this.enemies = this.scene.physics.add.group({
+      collideWorldBounds: true,
+      bounceX: 0.5,
+      bounceY: 0.5,
+      dragX: 50,
+      createCallback: (gameObject) => {
+        // Configure physics properties for each created enemy
+        const body = gameObject.body as Phaser.Physics.Arcade.Body;
+        body.setCollisionGroup(this.COLLISION_GROUPS.ENEMY);
+        body.setCollidesWith([
+          this.COLLISION_GROUPS.PLAYER, 
+          this.COLLISION_GROUPS.OBSTACLE,
+          this.COLLISION_GROUPS.PROJECTILE
+        ]);
+      }
+    });
     
-    // Enemies collide with obstacles and each other
-    this.scene.physics.add.collider(this.enemies, this.obstacles);
-    this.scene.physics.add.collider(this.enemies, this.enemies);
+    // Create projectile group optimized for fast movement
+    this.projectiles = this.scene.physics.add.group({
+      allowGravity: false,
+      createCallback: (gameObject) => {
+        const body = gameObject.body as Phaser.Physics.Arcade.Body;
+        
+        // Optimize for efficient collision checking
+        body.setDirectControl(true);
+        body.setCollisionGroup(this.COLLISION_GROUPS.PROJECTILE);
+        body.setCollidesWith([this.COLLISION_GROUPS.ENEMY]);
+        
+        // Set smaller hitbox for better precision
+        body.setSize(gameObject.width * 0.7, gameObject.height * 0.7, true);
+      }
+    });
     
-    // Projectiles only overlap with enemies (one-way collision)
+    // Static bodies for immovable objects - much better performance
+    this.obstacles = this.scene.physics.add.staticGroup({
+      createCallback: (gameObject) => {
+        const body = gameObject.body as Phaser.Physics.Arcade.StaticBody;
+        body.setCollisionGroup(this.COLLISION_GROUPS.OBSTACLE);
+        
+        // Static bodies typically collide with everything except projectiles
+        body.setCollidesWith([
+          this.COLLISION_GROUPS.PLAYER, 
+          this.COLLISION_GROUPS.ENEMY
+        ]);
+      }
+    });
+  }
+  
+  private setupCollisions(): void {
+    // Configure Phaser's world collision detection
+    const world = this.scene.physics.world;
+    
+    // Optimize world bounds
+    world.setBounds(0, 0, this.scene.scale.width, this.scene.scale.height);
+    world.setBoundsCollision(true, true, true, true);
+    
+    // Use Phaser's built-in collision system with optimized callbacks
+    this.scene.physics.add.collider(
+      this.player, 
+      this.obstacles,
+      undefined, // No callback needed for simple solid collisions
+      undefined,
+      this
+    );
+    
+    // Enemies collide with obstacles using a processing function for optimization
+    this.scene.physics.add.collider(
+      this.enemies, 
+      this.obstacles,
+      undefined,
+      this.processEnemyObstacleCollision,
+      this
+    );
+    
+    // Projectiles overlap with enemies instead of collision (one-way effect)
     this.scene.physics.add.overlap(
       this.projectiles, 
       this.enemies, 
       this.handleProjectileEnemyCollision,
-      this.filterActiveObjects, // Process function for early filtering
+      this.processProjectileCollision, // Filtering function for early exit
       this
     );
     
-    // Optimize player-enemy collision with custom processing
+    // Player and enemy collision with custom handling
     this.scene.physics.add.overlap(
-      this.enemies,
       this.player,
-      this.handleEnemyPlayerCollision,
-      this.filterEnemyPlayerCollision, // Only check active attacking enemies
+      this.enemies,
+      this.handlePlayerEnemyCollision,
+      this.processPlayerEnemyCollision,
       this
     );
   }
   
-  // Process function to filter inactive objects before expensive collision checks
-  filterActiveObjects(obj1: any, obj2: any): boolean {
-    return obj1.active && obj2.active;
-  }
-  
-  // More specific filtering based on game state and distance
-  filterEnemyPlayerCollision(enemy: any, player: any): boolean {
-    // First check if both are active
-    if (!enemy.active || !player.active) return false;
+  // Processing function for more efficient collision detection
+  private processEnemyObstacleCollision(enemy: Phaser.GameObjects.GameObject, obstacle: Phaser.GameObjects.GameObject): boolean {
+    // Skip inactive objects
+    if (!enemy.active) return false;
     
-    // Then do a rough distance check before detailed collision
-    const dx = enemy.x - player.x;
-    const dy = enemy.y - player.y;
+    // Skip objects that are too far apart (broad phase check)
+    const enemyBody = enemy.body as Phaser.Physics.Arcade.Body;
+    const obstacleBody = obstacle.body as Phaser.Physics.Arcade.StaticBody;
+    
+    // Get distance between the objects (using squared distance to avoid sqrt)
+    const dx = enemyBody.center.x - obstacleBody.center.x;
+    const dy = enemyBody.center.y - obstacleBody.center.y;
     const distSquared = dx * dx + dy * dy;
     
-    // Only check collision if enemy is close enough (avoid sqrt)
-    return distSquared < 10000; // 100 pixel radius
+    // Only process collision if objects are close enough
+    // This combines width and height for a rough approximation
+    const combinedWidth = enemyBody.width + obstacleBody.width;
+    const combinedHeight = enemyBody.height + obstacleBody.height;
+    const minDistSquared = (combinedWidth * combinedWidth + combinedHeight * combinedHeight) / 4;
+    
+    return distSquared <= minDistSquared;
   }
   
-  update(time: number, delta: number): void {
-    // Disable physics for enemies far from player
-    this.enemies.getChildren().forEach((enemy: any) => {
-      const dx = enemy.x - this.player.x;
-      const dy = enemy.y - this.player.y;
-      const distSquared = dx * dx + dy * dy;
+  // More efficient processing function for projectile collision
+  private processProjectileCollision(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): boolean {
+    // Skip collision processing if either object is inactive
+    if (!projectile.active || !enemy.active) return false;
+    
+    // Get physics bodies
+    const projectileBody = projectile.body as Phaser.Physics.Arcade.Body;
+    const enemyBody = enemy.body as Phaser.Physics.Arcade.Body;
+    
+    // Perform quick AABB intersection check without full physics calculation
+    return Phaser.Geom.Intersects.RectangleToRectangle(
+      projectileBody.boundingBox,
+      enemyBody.boundingBox
+    );
+  }
+  
+  // Process function with distance check for player-enemy collision
+  private processPlayerEnemyCollision(player: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): boolean {
+    // Skip inactive enemies
+    if (!enemy.active) return false;
+    
+    // Get the enemy's body
+    const enemyBody = enemy.body as Phaser.Physics.Arcade.Body;
+    const playerBody = player.body as Phaser.Physics.Arcade.Body;
+    
+    // Skip enemies in "stunned" or other non-colliding states
+    if (enemyBody.checkCollision.none) return false;
+    
+    // If we're using visibility culling, only process collisions for visible enemies
+    return enemy.visible && Phaser.Geom.Intersects.RectangleToRectangle(
+      playerBody.boundingBox,
+      enemyBody.boundingBox
+    );
+  }
+  
+  // Collision handler for projectile and enemy
+  private handleProjectileEnemyCollision(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
+    // Handle collision effects here
+    // Typically deactivates projectile and damages enemy
+  }
+  
+  // Collision handler for player and enemy
+  private handlePlayerEnemyCollision(player: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
+    // Handle player-enemy collision effects
+  }
+  
+  // Enable physics debugging
+  private enableDebugVisuals(): void {
+    // Display physics bodies and velocities
+    this.scene.physics.world.createDebugGraphic();
+    
+    // Advanced debugging - draw collision groups with different colors
+    const graphics = this.scene.add.graphics({
+      lineStyle: { width: 2, color: 0x00ff00 },
+      fillStyle: { color: 0xff0000, alpha: 0.3 }
+    });
+    graphics.setDepth(9999);
+    
+    // Update the debug display in the scene update loop
+    this.scene.events.on('update', () => {
+      graphics.clear();
+      this.drawDebugCollisionGroups(graphics);
+    });
+  }
+  
+  // Helper method for drawing debug information
+  private drawDebugCollisionGroups(graphics: Phaser.GameObjects.Graphics): void {
+    // Draw different collision groups with different colors
+    const drawBody = (body: Phaser.Physics.Arcade.Body, color: number) => {
+      graphics.lineStyle(1, color, 1);
+      graphics.strokeRect(body.x, body.y, body.width, body.height);
       
-      // Enable/disable physics based on distance
-      if (distSquared > 250000) { // 500 pixel radius
-        enemy.body.enable = false;
-      } else if (!enemy.body.enable) {
-        enemy.body.enable = true;
+      // Show collision group as text
+      const text = this.scene.add.text(body.x, body.y - 15, 
+        `Group: ${body.collisionGroup}`, 
+        { fontSize: '10px', backgroundColor: '#000' }
+      );
+      text.setDepth(10000);
+      this.scene.time.delayedCall(16, () => text.destroy());
+    };
+    
+    // Draw player body
+    const playerBody = this.player.body as Phaser.Physics.Arcade.Body;
+    drawBody(playerBody, 0x00ff00);
+    
+    // Draw enemy bodies
+    this.enemies.getChildren().forEach(enemy => {
+      const body = enemy.body as Phaser.Physics.Arcade.Body;
+      if (body && body.enable) {
+        drawBody(body, 0xff0000);
+      }
+    });
+    
+    // Draw projectile bodies
+    this.projectiles.getChildren().forEach(projectile => {
+      const body = projectile.body as Phaser.Physics.Arcade.Body;
+      if (body && body.enable) {
+        drawBody(body, 0x0000ff);
       }
     });
   }
   
-  createComplexCollider(): void {
-    // For irregular shapes, use compound bodies
-    const enemy = this.enemies.create(400, 300, 'enemy');
+  // Update method to optimize physics processing
+  update(time: number, delta: number): void {
+    // Optimize by disabling physics for off-screen enemies
+    const camera = this.scene.cameras.main;
+    const cameraBounds = new Phaser.Geom.Rectangle(
+      camera.scrollX - 100,  // Add padding to prevent pop-in
+      camera.scrollY - 100,
+      camera.width + 200,
+      camera.height + 200
+    );
     
-    // Create a compound body from multiple shapes
-    const body = enemy.body as Phaser.Physics.Arcade.Body;
-    body.setSize(30, 50); // Core body
-    body.setOffset(10, 15); // Alignment with sprite
+    // Use Phaser 3.70+ efficient body management
+    this.enemies.getChildren().forEach((enemy: any) => {
+      const body = enemy.body as Phaser.Physics.Arcade.Body;
+      
+      // Skip if already processed
+      if (!body) return;
+      
+      // Get enemy bounds
+      const enemyBounds = body.getBounds();
+      
+      // Check if enemy is on screen with padding
+      const isVisible = Phaser.Geom.Rectangle.Overlaps(cameraBounds, enemyBounds);
+      
+      // Enable/disable physics based on visibility
+      if (!isVisible && body.enable) {
+        // Disable physics for off-screen enemies
+        body.enable = false;
+        enemy.visible = false;
+      } else if (isVisible && !body.enable) {
+        // Re-enable physics for on-screen enemies
+        body.enable = true;
+        enemy.visible = true;
+      }
+    });
+    
+    // Similar optimization for projectiles
+    this.projectiles.getChildren().forEach((projectile: any) => {
+      const body = projectile.body as Phaser.Physics.Arcade.Body;
+      
+      // Disable physics for projectiles that have traveled too far
+      if (body && body.enable) {
+        const distanceSquared = 
+          body.position.distanceSq(this.player.body.position);
+        
+        // If projectile is too far from player, disable it
+        if (distanceSquared > 250000) { // 500 pixels squared
+          body.enable = false;
+          projectile.active = false;
+          projectile.visible = false;
+        }
+      }
+    });
   }
 }
 ```
-This example demonstrates efficient Phaser collision handling using physics groups, optimized filtering with process callbacks, distance-based optimization, and proper static vs. dynamic body usage.
+This example demonstrates comprehensive collision optimization techniques specific to Phaser 3.70+, utilizing collision groups, direct control mode, efficient body management, and optimized collision filtering.
 </example>
 
 <example type="invalid">
 ```typescript
-// Inefficient collision detection
-export class UnoptimizedCollisionManager {
+// Inefficient Phaser physics implementation
+export class UnoptimizedPhaserPhysics {
   private scene: Phaser.Scene;
   private player: Phaser.Physics.Arcade.Sprite;
-  private enemies: Phaser.Physics.Arcade.Sprite[] = [];
-  private projectiles: Phaser.Physics.Arcade.Sprite[] = [];
+  private enemies: Phaser.GameObjects.Sprite[] = []; // Not using groups
+  private projectiles: Phaser.GameObjects.Sprite[] = []; // Not using groups
   
   constructor(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
     this.scene = scene;
     this.player = player;
+    
+    // Not configuring physics body properties optimally
+    // Not using collision groups
+    
+    // Create enemies one by one without shared configuration
+    for (let i = 0; i < 20; i++) {
+      const enemy = scene.physics.add.sprite(
+        Phaser.Math.Between(0, 800),
+        Phaser.Math.Between(0, 600),
+        'enemy'
+      );
+      
+      // Using default body settings instead of optimizing
+      this.enemies.push(enemy);
+    }
   }
   
   update(): void {
-    // Check ALL projectiles against ALL enemies every frame (O(n²) complexity)
+    // Manually check collisions rather than using Phaser's system
     for (const projectile of this.projectiles) {
       if (!projectile.active) continue;
       
+      // Using getBounds() is expensive when called repeatedly
+      const projectileBounds = projectile.getBounds();
+      
+      // O(n²) collision check without spatial partitioning
       for (const enemy of this.enemies) {
         if (!enemy.active) continue;
         
-        // Expensive rectangle collision check every frame
-        if (Phaser.Geom.Intersects.RectangleToRectangle(
-          projectile.getBounds(),
-          enemy.getBounds()
-        )) {
-          this.handleProjectileEnemyCollision(projectile, enemy);
+        // Expensive bounds calculation every frame
+        const enemyBounds = enemy.getBounds();
+        
+        // Rectangle intersection is more expensive than using Phaser's collision system
+        if (Phaser.Geom.Rectangle.Overlaps(projectileBounds, enemyBounds)) {
+          this.handleCollision(projectile, enemy);
+          break;
         }
       }
     }
     
-    // No spatial partitioning or distance-based filtering
-    // No use of Phaser's optimized collision system
-    // No grouping of similar objects for batch processing
+    // Checking player against every enemy manually
+    const playerBounds = this.player.getBounds();
+    for (const enemy of this.enemies) {
+      // No broad-phase filtering
+      const enemyBounds = enemy.getBounds();
+      
+      if (Phaser.Geom.Rectangle.Overlaps(playerBounds, enemyBounds)) {
+        this.handlePlayerEnemyCollision(this.player, enemy);
+      }
+    }
+    
+    // Not disabling physics for offscreen objects
+    // Not using Phaser's collision categories or groups
+    // Not using collision callbacks efficiently
+    
+    // Create new projectiles without object pooling
+    if (this.scene.input.activePointer.isDown) {
+      // Creating new physics objects every frame is expensive
+      const projectile = this.scene.physics.add.sprite(
+        this.player.x,
+        this.player.y,
+        'projectile'
+      );
+      
+      // Individual configuration instead of shared group config
+      projectile.setVelocity(
+        Math.cos(this.player.rotation) * 500,
+        Math.sin(this.player.rotation) * 500
+      );
+      
+      this.projectiles.push(projectile);
+    }
+  }
+  
+  // Manually removing objects instead of using Phaser's built-in systems
+  handleCollision(projectile: Phaser.Physics.Arcade.Sprite, enemy: Phaser.Physics.Arcade.Sprite): void {
+    // Destroy instead of deactivate and reuse
+    projectile.destroy();
+    
+    // Remove from array - inefficient array filtering
+    this.projectiles = this.projectiles.filter(p => p !== projectile);
+    
+    // Same with enemy
+    enemy.destroy();
+    this.enemies = this.enemies.filter(e => e !== enemy);
+  }
+  
+  handlePlayerEnemyCollision(player: Phaser.Physics.Arcade.Sprite, enemy: Phaser.Physics.Arcade.Sprite): void {
+    // Handle player-enemy collision
   }
 }
 ```
-This approach manually checks all objects against each other, resulting in O(n²) complexity and poor performance as object count increases. It doesn't use Phaser's built-in collision system or any spatial partitioning.
+This approach demonstrates multiple anti-patterns in Phaser physics: manual collision detection instead of using the built-in system, not using groups, repeatedly calling expensive methods like getBounds(), creating new physics bodies frequently, and not leveraging Phaser's collision optimization features.
 </example>
 
-## Phaser-Specific Notes
+## Phaser 3.70+ Collision Optimization Techniques
 
-1. Use Phaser's collision categories for complex filtering:
-   ```typescript
-   // Setup physics categories
-   const CATEGORY_PLAYER = 0x0001;
-   const CATEGORY_ENEMY = 0x0002;
-   const CATEGORY_BULLET = 0x0004;
-   const CATEGORY_WALL = 0x0008;
-   
-   // Set player to collide only with walls and enemies
-   player.body.setCollidesWith([CATEGORY_WALL, CATEGORY_ENEMY]);
-   
-   // Set bullets to collide only with enemies
-   bullet.body.setCollidesWith([CATEGORY_ENEMY]);
-   ```
+### 1. Use Collision Groups for Efficient Filtering
 
-2. Leverage Phaser's built-in spatial hash:
-   ```typescript
-   // Get all bodies in a specific region (much faster than checking all)
-   const bodiesInArea = this.scene.physics.world.query.rectangle(x, y, width, height);
-   
-   // Process only nearby bodies
-   bodiesInArea.forEach(body => {
-     // Handle collisions with bodies in this region
-   });
-   ```
+```typescript
+// Define collision groups
+const GROUPS = {
+  PLAYER: 1,
+  ENEMY: 2,
+  PROJECTILE: 3,
+  OBSTACLE: 4
+};
 
-3. Use Phaser's collision groups for multi-object collision callbacks:
-   ```typescript
-   // Create collision group
-   const enemyGroup = this.physics.add.group([enemy1, enemy2, enemy3]);
-   const bulletGroup = this.physics.add.group([bullet1, bullet2]);
-   
-   // Apply same collision behavior to all objects in groups
-   this.physics.add.collider(enemyGroup, bulletGroup, this.handleCollision);
-   ```
+// Configure player physics body
+const playerBody = player.body;
+playerBody.setCollisionGroup(GROUPS.PLAYER);
 
-4. For Matter.js physics in Phaser, use collision filtering:
-   ```typescript
-   // Using Matter.js collision filtering in Phaser
-   this.matter.body.setCollisionGroup(playerBody, 1);
-   this.matter.body.setCollisionGroup(enemyBody, 2);
-   
-   // Set collision mask (what group this body can collide with)
-   this.matter.body.setCollidesWith(playerBody, [2, 3]); // Collide with groups 2 and 3
-   
+// Set what groups the player can collide with
+playerBody.setCollidesWith([GROUPS.ENEMY, GROUPS.OBSTACLE]);
+
+// Example: Make projectiles only hit enemies
+projectileBody.setCollisionGroup(GROUPS.PROJECTILE);
+projectileBody.setCollidesWith([GROUPS.ENEMY]);
+```
+
+### 2. Enable Direct Control for Performance
+
+```typescript
+// Enable direct control mode for performance-critical objects
+// Available in Phaser 3.70+
+playerBody.setDirectControl(true);
+
+// Direct control bypasses some physics calculations for better performance
+// Best used for player characters or objects under direct input control
+```
+
+### 3. Use Efficient Physics Body Types
+
+```typescript
+// Static bodies for immovable objects (best performance)
+const platform = scene.physics.add.staticBody(x, y, width, height);
+
+// Dynamic bodies for objects that move and respond to forces
+const movingObject = scene.physics.add.body(x, y, width, height);
+
+// Fixed rotation bodies for better performance when rotation isn't needed
+bodyA.setFixedRotation();
+```
+
+### 4. Optimize with Process Callbacks
+
+```typescript
+// Add a process callback to filter collision checks
+scene.physics.add.collider(
+  groupA, 
+  groupB, 
+  handleCollision,   // Called when collision occurs
+  filterCollision,   // Called BEFORE detailed collision check
+  this
+);
+
+// Efficient process function with early exit
+function filterCollision(objA, objB) {
+  // Skip inactive objects
+  if (!objA.active || !objB.active) return false;
+  
+  // Skip if too far apart (broad phase)
+  const dx = objA.x - objB.x;
+  const dy = objA.y - objB.y;
+  return (dx * dx + dy * dy) < 10000; // 100 pixel radius squared
+}
+```
+
+### 5. Efficiently Manage Active Bodies
+
+```typescript
+// Disable physics for off-screen objects
+function optimizeOffscreenObjects(group, camera) {
+  const visibleBounds = camera.getBounds();
+  // Add padding to prevent pop-in
+  visibleBounds.inflate(200, 200);
+  
+  group.getChildren().forEach(obj => {
+    const body = obj.body;
+    const visible = visibleBounds.contains(body.x, body.y);
+    
+    // Enable/disable based on visibility
+    body.enable = visible;
+  });
+}
+```
+
+### 6. Use Phaser's World Bounds Efficiently
+
+```typescript
+// Configure world bounds for better performance
+scene.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+// Enable bounds collision only where needed
+scene.physics.world.setBoundsCollision(true, true, true, true);
+
+// For large worlds, only update physics near the camera
+scene.physics.world.step(regionX, regionY, regionWidth, regionHeight);
+```
+
+### 7. Debug and Profile Collision Performance
+
+```typescript
+// Enable physics debug rendering only during development
+if (process.env.NODE_ENV !== 'production') {
+  // Create debug graphics
+  scene.physics.world.createDebugGraphic();
+  
+  // Show body velocity and collision information
+  scene.physics.world.debugGraphic.showBody = true;
+  scene.physics.world.debugGraphic.showVelocity = true;
+}
+```
+
+<version>1.0.0</version>
+</rewritten_file>
