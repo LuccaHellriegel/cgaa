@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { GraphicsGenerator } from "../graphics/GraphicsGenerator";
-import { AudioManager } from "../managers/AudioManager";
+import { AudioManager } from "../managers/audio/AudioManager";
 
 export class Preloader extends Scene {
   private graphicsGenerator: GraphicsGenerator;
@@ -101,8 +101,8 @@ export class Preloader extends Scene {
           },
         });
       })
-      .catch((error) => {
-        console.error("Error loading audio:", error);
+      .catch((error: Error) => {
+        console.error("Failed to load audio:", error);
         // Continue to main menu even if audio loading fails
         this.registry.set("audioManager", this.audioManager);
         this.scene.start("MainMenu");

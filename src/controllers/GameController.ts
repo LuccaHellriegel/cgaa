@@ -5,6 +5,8 @@ export interface GameState {
   showTowerMenu: boolean;
   selectedTower: TowerType | null;
   souls: number;
+  gold: number;
+  mode: string;
 }
 
 export class GameController {
@@ -13,6 +15,8 @@ export class GameController {
     showTowerMenu: false,
     selectedTower: null,
     souls: 0,
+    gold: 0,
+    mode: "normal",
   };
 
   public getState(): GameState {

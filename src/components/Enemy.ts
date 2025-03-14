@@ -1,218 +1,131 @@
-import { Physics } from "phaser";
-import { BaseComponent, ComponentConfig } from "./BaseComponent";
+import { Scene, Physics } from "phaser";
+import { GameEvents } from "../events/GameEvents";
 
-export interface EnemyConfig extends ComponentConfig {
-  speed?: number;
-  health?: number;
-  damage?: number;
-  target?: { x: number; y: number } | null;
+// Add assertion utility function
+function assert(
+  condition: boolean,
+  message: string,
+  context?: any
+): asserts condition {
+  if (!condition) {
+    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
+    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
 }
 
-export class Enemy extends BaseComponent {
+export class Enemy {
+  private scene: Scene;
   private sprite: Physics.Arcade.Sprite;
-  private speed: number;
   private health: number;
+  private maxHealth: number;
   private damage: number;
-  private target: { x: number; y: number } | null = null;
-  private isDead: boolean = false;
-  private isAttacking: boolean = false;
-  private attackCooldown: number = 0;
-  private particles: any;
+  private speed: number;
+  private target: Phaser.Math.Vector2 | null;
+  private healthBar: Phaser.GameObjects.Graphics;
 
-  constructor(config: EnemyConfig) {
-    super(config);
-    this.speed = config.speed || 100;
-    this.health = config.health || 100;
+  constructor(
+    scene: Scene,
+    x: number,
+    y: number,
+    config: {
+      health?: number;
+      damage?: number;
+      speed?: number;
+    } = {}
+  ) {
+    assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
+      providedType: typeof scene,
+      isScene: scene instanceof Scene,
+    });
+    assert(typeof x === "number", "X position must be a number");
+    assert(typeof y === "number", "Y position must be a number");
+
+    this.scene = scene;
+    this.maxHealth = config.health || 100;
+    this.health = this.maxHealth;
     this.damage = config.damage || 10;
-    this.target = config.target || null;
+    this.speed = config.speed || 100;
+    this.target = null;
 
-    // Create enemy sprite
-    this.sprite = this.scene.physics.add.sprite(
-      config.x || 0,
-      config.y || 0,
-      config.texture || "enemy"
-    );
+    // Create sprite
+    this.sprite = scene.physics.add.sprite(x, y, "enemy");
+    this.sprite.setScale(0.8);
 
-    // Setup physics
-    this.sprite.setCollideWorldBounds(true);
-
-    // Get particle effects if available
-    try {
-      this.particles = this.scene.registry.get("particles");
-    } catch (e) {
-      console.warn("Particle effects not available");
-      this.particles = null;
-    }
-
-    // Play idle animation
-    this.sprite.anims.play("enemy_idle", true);
-
-    // Set up animation completion listener
-    this.sprite.on("animationcomplete", this.handleAnimationComplete, this);
-  }
-
-  private handleAnimationComplete(
-    animation: Phaser.Animations.Animation
-  ): void {
-    if (animation.key === "enemy_death") {
-      this.destroy();
-    }
-  }
-
-  public takeDamage(amount: number): void {
-    if (this.isDead) return;
-
-    this.health -= amount;
-
-    // Play hit sound
-    this.scene.registry.get("audioManager").playSound("hit");
-
-    // Flash red
-    this.sprite.setTint(0xff0000);
-    this.scene.time.delayedCall(100, () => {
-      if (!this.isDead) {
-        this.sprite.clearTint();
-      }
-    });
-
-    // Emit impact particles if available
-    if (this.particles?.impact) {
-      try {
-        this.particles.impact.emitParticleAt(this.sprite.x, this.sprite.y, 5);
-      } catch (e) {
-        console.warn("Failed to emit impact particles");
-      }
-    }
-
-    if (this.health <= 0) {
-      this.die();
-    }
-  }
-
-  private die(): void {
-    this.isDead = true;
-    this.sprite.setVelocity(0, 0);
-    this.sprite.anims.play("enemy_death", true);
-
-    // Play death sound
-    this.scene.registry.get("audioManager").playSound("death");
-
-    // Emit death particles if available
-    if (this.particles?.death) {
-      try {
-        this.particles.death.emitParticleAt(this.sprite.x, this.sprite.y);
-      } catch (e) {
-        console.warn("Failed to emit death particles");
-      }
-    }
-  }
-
-  public attack(target: any): void {
-    if (this.isDead || this.isAttacking) return;
-
-    this.isAttacking = true;
-    this.attackCooldown = 1000; // 1 second cooldown
-
-    // Play attack animation
-    this.sprite.anims.play("enemy_attack", true);
-
-    // Deal damage after animation delay
-    this.scene.time.delayedCall(500, () => {
-      if (!this.isDead && target.takeDamage) {
-        target.takeDamage(this.damage);
-      }
-    });
-
-    // Reset attack state after cooldown
-    this.scene.time.delayedCall(this.attackCooldown, () => {
-      this.isAttacking = false;
-    });
-  }
-
-  public update(_time: number, _delta: number): void {
-    if (this.isDead) {
-      this.sprite.setVelocity(0, 0);
-      return;
-    }
-
-    if (this.isAttacking) {
-      this.sprite.setVelocity(0, 0);
-      return;
-    }
-
-    if (!this.target) {
-      this.sprite.setVelocity(0, 0);
-      if (!this.sprite.anims.isPlaying) {
-        this.sprite.anims.play("enemy_idle", true);
-      }
-      return;
-    }
-
-    // Calculate direction to target
-    const dx = this.target.x - this.sprite.x;
-    const dy = this.target.y - this.sprite.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance > 0) {
-      // Normalize and apply speed
-      const vx = (dx / distance) * this.speed;
-      const vy = (dy / distance) * this.speed;
-
-      this.sprite.setVelocity(vx, vy);
-      this.sprite.setFlipX(vx < 0);
-      if (
-        !this.sprite.anims.isPlaying ||
-        (this.sprite.anims.currentAnim &&
-          this.sprite.anims.currentAnim.key !== "enemy_move")
-      ) {
-        this.sprite.anims.play("enemy_move", true);
-      }
-    } else {
-      this.sprite.setVelocity(0, 0);
-      if (
-        !this.sprite.anims.isPlaying ||
-        (this.sprite.anims.currentAnim &&
-          this.sprite.anims.currentAnim.key !== "enemy_idle")
-      ) {
-        this.sprite.anims.play("enemy_idle", true);
-      }
-    }
-  }
-
-  public setTarget(target: { x: number; y: number } | null): void {
-    this.target = target;
-  }
-
-  public getDamage(): number {
-    return this.damage;
+    // Create health bar
+    this.healthBar = scene.add.graphics();
+    this.updateHealthBar();
   }
 
   public getSprite(): Physics.Arcade.Sprite {
     return this.sprite;
   }
 
-  public isCollidingWith(object: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }): boolean {
-    return (
-      this.sprite.x < object.x + object.width &&
-      this.sprite.x + this.sprite.width > object.x &&
-      this.sprite.y < object.y + object.height &&
-      this.sprite.y + this.sprite.height > object.y
+  public getDamage(): number {
+    return this.damage;
+  }
+
+  public takeDamage(amount: number): void {
+    assert(
+      typeof amount === "number" && amount > 0,
+      "Damage amount must be a positive number"
+    );
+
+    this.health = Math.max(0, this.health - amount);
+    this.updateHealthBar();
+
+    if (this.health === 0) {
+      this.scene.events.emit(GameEvents.ENEMY_KILLED, this);
+      this.destroy();
+    }
+  }
+
+  public setTarget(target: Phaser.Math.Vector2): void {
+    assert(target instanceof Phaser.Math.Vector2, "Target must be a Vector2");
+    this.target = target;
+  }
+
+  private updateHealthBar(): void {
+    this.healthBar.clear();
+
+    // Draw background
+    this.healthBar.fillStyle(0xff0000);
+    this.healthBar.fillRect(this.sprite.x - 20, this.sprite.y - 30, 40, 5);
+
+    // Draw health
+    const healthPercentage = this.health / this.maxHealth;
+    this.healthBar.fillStyle(0x00ff00);
+    this.healthBar.fillRect(
+      this.sprite.x - 20,
+      this.sprite.y - 30,
+      40 * healthPercentage,
+      5
     );
   }
 
-  public isDestroyed(): boolean {
-    return this.isDead;
+  public update(): void {
+    if (this.target) {
+      // Move towards target
+      const angle = Phaser.Math.Angle.Between(
+        this.sprite.x,
+        this.sprite.y,
+        this.target.x,
+        this.target.y
+      );
+
+      this.sprite.setVelocity(
+        Math.cos(angle) * this.speed,
+        Math.sin(angle) * this.speed
+      );
+
+      // Update health bar position
+      this.updateHealthBar();
+    }
   }
 
   public destroy(): void {
-    if (this.sprite) {
-      this.sprite.destroy();
-    }
-    super.destroy();
+    this.healthBar.destroy();
+    this.sprite.destroy();
   }
 }

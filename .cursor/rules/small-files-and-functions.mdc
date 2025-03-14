@@ -1,0 +1,68 @@
+---
+description: Keep files under 300 lines and functions under 70 lines when writing code to improve readability and maintainability
+globs: **/*.{js,ts,jsx,tsx,java,py,rb,c,cpp,go,rs,php,cs}
+---
+
+# Small Files and Functions
+
+<version>1.0.0</version>
+
+## Context
+- Apply when writing or refactoring code in any language
+- Helps maintain code readability and simplifies debugging
+- Reduces cognitive load when understanding code components
+- Makes code easier to test and maintain
+
+## Requirements
+- Limit file size to less than 300 lines of code (excluding comments and blank lines)
+- Limit function bodies to less than 70 lines of code
+- When splitting large functions, centralize control flow in parent functions
+- Move non-branching logic to helper functions
+- Keep leaf functions pure when possible
+- Centralize state manipulation in parent functions
+
+## Guidelines for Function Splitting
+- Aim for inverse hourglass shape: few parameters, simple return type, meaty logic
+- Push control flow (if/switch statements) up to parent functions
+- Push implementation details (for loops, calculations) down to helper functions
+- Let parent functions manage state, helpers compute changes
+- Each function should have a single, clear responsibility
+
+## Examples
+
+<example>
+// Good: Small, focused function
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// Good: Parent function centralizes control flow
+function processUserData(userData) {
+  if (!validateUserData(userData)) {
+    return { success: false, error: "Invalid user data" };
+  }
+  
+  const processedData = transformUserData(userData);
+  const savedResult = saveToDatabase(processedData);
+  
+  return { success: true, result: savedResult };
+}
+</example>
+
+<example type="invalid">
+// Bad: Function too long (exceeds 70 lines)
+function processEverything(data) {
+  // Imagine 80+ lines of code here doing multiple things:
+  // - data validation
+  // - data transformation
+  // - business logic
+  // - error handling
+  // - database interaction
+  // - formatting response
+  // All these concerns should be split into separate functions
+}
+
+// Bad: File with too many lines (exceeds 300)
+// utilities.js - 350 lines of unrelated helper functions that
+// should be split into separate modules by concern
+</example> 

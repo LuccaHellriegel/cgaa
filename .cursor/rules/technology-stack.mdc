@@ -1,0 +1,106 @@
+---
+description: Structure game state and scene management in Phaser games to ensure clean transitions and maintainable code
+globs: src/**/*.{ts,tsx}
+---
+
+# Phaser Game Technology Stack
+
+<version>1.0.0</version>
+
+## Context
+- Applied to all TypeScript files in the Circle Gladiator Army Arena (CGAA) game
+- Ensures consistent implementation of game features using the established technology stack
+- Maintains architectural consistency across the codebase
+
+## Technology Stack Components
+- **Core Framework**: Phaser 3 for game development
+- **Language**: TypeScript for type safety and better maintainability
+- **Build Tool**: Vite for fast development and optimized production builds
+- **Testing Framework**: Vitest with JSDOM for component and unit testing
+- **Physics Engine**: Phaser's Arcade Physics system with custom extensions
+- **Module System**: ES Modules for code organization
+- **Asset Handling**: Programmatically generated assets for performance optimization
+
+## Requirements
+- Use Phaser 3 Scene-based architecture for game state management
+- Implement TypeScript interfaces and types for all game entities
+- Organize code using component-based architecture
+- Use object pooling for frequently created/destroyed game objects
+- Implement proper event handling through Phaser's event system
+- Apply Arcade Physics for collision detection and movement
+- Write tests using Vitest for all game components
+- Use procedural generation for textures and game elements when appropriate
+
+## Examples
+
+<example>
+// Good: Proper scene structure with lifecycle methods
+export class MainGame extends Scene {
+  constructor() {
+    super({ key: "MainGame" });
+  }
+  
+  create() {
+    // Setup game objects and event handlers
+    this.createPlayer();
+    this.createEnemies();
+    this.setupEventListeners();
+  }
+  
+  update(time: number, delta: number) {
+    // Update game state
+    this.player.update(delta);
+    this.enemyManager.update(delta);
+  }
+}
+</example>
+
+<example>
+// Good: Object pooling implementation
+export class BulletPool {
+  private pool: Bullet[] = [];
+  private scene: Scene;
+  
+  constructor(scene: Scene, size: number) {
+    this.scene = scene;
+    // Pre-create all bullets
+    for (let i = 0; i < size; i++) {
+      const bullet = new Bullet(scene);
+      bullet.setActive(false).setVisible(false);
+      this.pool.push(bullet);
+    }
+  }
+  
+  get(): Bullet | null {
+    return this.pool.find(bullet => !bullet.active) || null;
+  }
+}
+</example>
+
+<example type="invalid">
+// Bad: Direct DOM manipulation instead of using Phaser
+function createGameElement() {
+  const element = document.createElement('div');
+  element.style.width = '100px';
+  element.style.height = '100px';
+  document.body.appendChild(element);
+  
+  // Should use Phaser's GameObjects instead
+}
+</example>
+
+<example type="invalid">
+// Bad: Not using TypeScript type safety
+function createEnemy(type, position, speed) {
+  // Missing type annotations
+  const enemy = this.enemies.create(position.x, position.y);
+  enemy.speed = speed;
+  
+  // Should be:
+  // function createEnemy(type: EnemyType, position: Vector2, speed: number): Enemy {
+  //   const enemy = this.enemies.create(position.x, position.y) as Enemy;
+  //   enemy.speed = speed;
+  //   return enemy;
+  // }
+}
+</example> 

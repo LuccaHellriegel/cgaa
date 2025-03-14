@@ -1,34 +1,50 @@
-import { Physics } from "phaser";
-import { BaseComponent, ComponentConfig } from "./BaseComponent";
+import { Scene, Physics } from "phaser";
 
-export interface PlayerConfig extends ComponentConfig {
-  speed?: number;
-  maxHealth?: number;
+// Add assertion utility function
+function assert(
+  condition: boolean,
+  message: string,
+  context?: any
+): asserts condition {
+  if (!condition) {
+    const contextStr = context ? ` Context: ${JSON.stringify(context)}` : "";
+    const errorMsg = `Assertion failed: ${message}.${contextStr}`;
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
 }
 
-export class Player extends BaseComponent {
+export class Player {
+  private scene: Scene;
   private sprite: Physics.Arcade.Sprite;
-  private speed: number;
-  private isDead: boolean = false;
   private health: number;
   private maxHealth: number;
+  private speed: number;
+  private isDead: boolean;
 
-  constructor(config: PlayerConfig) {
-    super(config);
-    this.speed = config.speed || 200;
-    this.maxHealth = config.maxHealth || 100;
+  constructor(scene: Scene) {
+    assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
+      providedType: typeof scene,
+      isScene: scene instanceof Scene,
+    });
+
+    this.scene = scene;
+    this.maxHealth = 100;
     this.health = this.maxHealth;
+    this.speed = 200;
+    this.isDead = false;
 
-    // Create player sprite
-    this.sprite = this.scene.physics.add.sprite(
-      config.x || 0,
-      config.y || 0,
-      config.texture || "player"
-    );
-
-    // Setup physics
+    // Create sprite
+    this.sprite = scene.physics.add.sprite(0, 0, "player");
     this.sprite.setCollideWorldBounds(true);
     this.sprite.setScale(1.5); // Make the player a bit larger
+
+    // Check if animation exists
+    assert(
+      this.scene.anims.exists("player_idle"),
+      "player_idle animation must exist",
+      { animationKey: "player_idle" }
+    );
 
     // Start with idle animation
     this.sprite.play("player_idle");
@@ -37,20 +53,15 @@ export class Player extends BaseComponent {
     this.scene.events.emit("player-ready", this);
   }
 
-  public setVelocity(x: number, y: number): void {
-    if (this.isDead) return;
-    this.sprite.setVelocity(x * this.speed, y * this.speed);
+  public setPosition(x: number, y: number): void {
+    assert(typeof x === "number", "X position must be a number");
+    assert(typeof y === "number", "Y position must be a number");
 
-    // Update animation based on movement
-    if (x !== 0 || y !== 0) {
-      this.sprite.play("player_move", true);
-      // Only flip if moving horizontally
-      if (x !== 0) {
-        this.sprite.setFlipX(x < 0);
-      }
-    } else {
-      this.sprite.play("player_idle", true);
-    }
+    this.sprite.setPosition(x, y);
+  }
+
+  public getSprite(): Physics.Arcade.Sprite {
+    return this.sprite;
   }
 
   public getHealth(): number {
@@ -62,65 +73,59 @@ export class Player extends BaseComponent {
   }
 
   public takeDamage(amount: number): void {
-    if (this.isDead) return;
+    assert(
+      typeof amount === "number" && amount > 0,
+      "Damage amount must be a positive number"
+    );
 
     this.health = Math.max(0, this.health - amount);
-    if (this.health === 0) {
-      this.die();
-    } else {
-      // Flash red
-      this.sprite.setTint(0xff0000);
-      this.scene.time.delayedCall(100, () => {
-        this.sprite.clearTint();
-      });
+    if (this.health === 0 && !this.isDead) {
+      this.isDead = true;
+      this.scene.events.emit("playerDeath");
     }
   }
 
   public heal(amount: number): void {
-    if (this.isDead) return;
+    assert(
+      typeof amount === "number" && amount > 0,
+      "Heal amount must be a positive number"
+    );
 
     this.health = Math.min(this.maxHealth, this.health + amount);
-    // Flash green
-    this.sprite.setTint(0x00ff00);
-    this.scene.time.delayedCall(100, () => {
-      this.sprite.clearTint();
-    });
   }
 
-  public die(): void {
-    this.isDead = true;
-    this.health = 0;
-    this.sprite.setVelocity(0, 0);
-    this.sprite.setTint(0xff0000);
-    this.emit("died");
-  }
+  public update(): void {
+    if (this.isDead) return;
 
-  public isCollidingWith(object: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }): boolean {
-    return (
-      this.sprite.x < object.x + object.width &&
-      this.sprite.x + this.sprite.width > object.x &&
-      this.sprite.y < object.y + object.height &&
-      this.sprite.y + this.sprite.height > object.y
-    );
-  }
+    const keyboard = this.scene.input.keyboard;
+    assert(keyboard !== null, "Scene must have keyboard input system");
 
-  public getSprite(): Physics.Arcade.Sprite {
-    return this.sprite;
-  }
+    const wasdKeys = this.scene.registry.get("wasdKeys");
+    if (!wasdKeys) return;
 
-  public update(_time: number, _delta: number): void {
-    if (this.isDead) {
+    // Calculate movement vector
+    const movement = {
+      x: 0,
+      y: 0,
+    };
+
+    if (wasdKeys.W.isDown) movement.y -= 1;
+    if (wasdKeys.S.isDown) movement.y += 1;
+    if (wasdKeys.A.isDown) movement.x -= 1;
+    if (wasdKeys.D.isDown) movement.x += 1;
+
+    // Normalize and apply movement
+    const length = Math.sqrt(movement.x * movement.x + movement.y * movement.y);
+    if (length > 0) {
+      movement.x = (movement.x / length) * this.speed;
+      movement.y = (movement.y / length) * this.speed;
+      this.sprite.setVelocity(movement.x, movement.y);
+    } else {
       this.sprite.setVelocity(0, 0);
     }
   }
 
   public destroy(): void {
-    super.destroy();
     this.sprite.destroy();
   }
 }

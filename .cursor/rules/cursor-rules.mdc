@@ -1,6 +1,6 @@
 ---
 description: Use ALWAYS when asked to CREATE A RULE or UPDATE A RULE or taught a lesson from the user that should be retained as a new rule for Cursor
-globs: .cursor/rules/*.mdc
+globs: **/*.mdc
 ---
 # Cursor Rules Format
 ## Core Structure
@@ -57,6 +57,12 @@ Common glob patterns for different rule types:
 - Multiple extensions: src/**/*.{js,jsx,ts,tsx}
 - Multiple files: dist/**/*, docs/**/*.md
 
+### Scope Guidelines
+- ALWAYS use the widest possible scope for rule application
+- Prefer **/*.{extension} over more specific patterns unless the rule truly only applies to a subset of files
+- Ensure rules apply to all relevant files across the codebase for consistency
+- Use more specific scopes only when the rule is truly specific to certain directories or file types
+
 ## Required Fields
 
 ### Frontmatter
@@ -93,6 +99,7 @@ Common glob patterns for different rule types:
 3. Optimize for AI context window efficiency
 4. Remove any non-essential or redundant information
 5. Use standard glob patterns without quotes (e.g., *.js, src/**/*.ts)
+6. Apply rules to the widest possible scope of files for maximum impact and consistency
 
 ## AI Context Efficiency
 
@@ -107,4 +114,5 @@ Common glob patterns for different rule types:
   - NEVER include verbose explanations or redundant context that increases AI token overhead
   - Keep file as short and to the point as possible BUT NEVER at the expense of sacrificing rule impact and usefulness for the AI Agent.
   - the front matter can ONLY have the fields description and globs.
+  - ALWAYS use the widest possible scope in glob patterns to ensure rules are applied consistently across the codebase.
 </critical>
