@@ -10,46 +10,63 @@ The game follows the story of a rebellious circle defending blue friends against
 
 The following table shows the current implementation status of key game features:
 
-| Feature          | Status         | Notes                                                        |
-| ---------------- | -------------- | ------------------------------------------------------------ |
-| Player Character | ✅ Implemented | Basic movement, health, and collision implemented            |
-| Enemy Types      | ✅ Implemented | Basic enemies with health, movement, and targeting           |
-| Tower System     | ✅ Implemented | Tower placement, targeting, and upgrades implemented         |
-| Camp System      | ✅ Implemented | Camp structures and destruction mechanics implemented        |
-| Soul Economy     | ✅ Implemented | Soul collection and usage for building towers                |
-| UI Elements      | ✅ Implemented | Health bar, soul counter, tower upgrades UI implemented      |
-| Diplomacy System | ✅ Implemented | Quest system, cooperation, and wave direction implemented    |
-| Wave System      | ✅ Implemented | Dynamic wave composition, scaling, and timing implemented    |
-| Combat Mechanics | ✅ Implemented | Basic combat between player, towers, and enemies             |
-| Game Progression | ✅ Implemented | Camp conquest, king boss, and victory conditions implemented |
-| Sound System     | ✅ Implemented | Audio manager, sound effects, and music fully integrated     |
+| Feature                  | Status                   | Notes                                                                 |
+| ------------------------ | ------------------------ | --------------------------------------------------------------------- |
+| Player Character         | ✅ Implemented           | Basic movement, health, and collision implemented                     |
+| Enemy Types              | ⚠️ Partially Implemented | Basic enemy structure exists but needs additional types and behaviors |
+| Tower System             | ⚠️ Partially Implemented | Basic structure exists but targeting and upgrades need completion     |
+| Camp System              | ⚠️ Partially Implemented | Basic camp structures exist but destruction mechanics need completion |
+| Soul Economy             | ⚠️ Partially Implemented | Base collection mechanics exist but usage needs integration           |
+| UI Elements              | ⚠️ Partially Implemented | Basic UI exists but needs integration with game systems               |
+| Diplomacy System         | ⚠️ Partially Implemented | Framework exists but core functionality incomplete                    |
+| Wave System              | ⚠️ Partially Implemented | Basic wave structure exists but needs integration with other systems  |
+| Combat Mechanics         | ⚠️ Partially Implemented | Basic combat exists but needs refinement and advanced mechanics       |
+| Game Progression         | ⚠️ Partially Implemented | Camp conquest exists but king boss fight needs completion             |
+| Sound System             | ⚠️ Partially Implemented | Audio manager exists but integration with game events is minimal      |
+| Performance Optimization | ⚠️ Partially Implemented | Framework added but not fully utilized across all game systems        |
 
 ## Specifications
 
 The following specifications outline the various components, mechanics, and features of the CGAA game.
 
-| Domain                   | Description                        | Implementation Status | Link                                                          |
-| ------------------------ | ---------------------------------- | --------------------- | ------------------------------------------------------------- |
-| Game Overview            | High-level description of the game | ✅ Implemented        | [Game Overview](specs/game_overview.md)                       |
-| Characters               | Player character and enemies       | ✅ Implemented        | [Characters](specs/characters.md)                             |
-| Game Mechanics           | Core gameplay systems              | ✅ Implemented        | [Game Mechanics](specs/game_mechanics.md)                     |
-| Controls and UI          | User interface and controls        | ✅ Implemented        | [Controls and UI](specs/controls_ui.md)                       |
-| Combat                   | Combat mechanics                   | ✅ Implemented        | [Combat](specs/combat.md)                                     |
-| Towers                   | Tower types and functionality      | ✅ Implemented        | [Towers](specs/towers.md)                                     |
-| Camps                    | Camp mechanics and interactions    | ✅ Implemented        | [Camps](specs/camps.md)                                       |
-| Diplomacy                | Cooperation and quest systems      | ✅ Implemented        | [Diplomacy](specs/diplomacy.md)                               |
-| Graphics and Visuals     | Visual style and implementation    | ✅ Implemented        | [Graphics and Visuals](specs/graphics_visuals.md)             |
-| Technical Architecture   | Technical implementation details   | ✅ Implemented        | [Technical Architecture](specs/technical_architecture.md)     |
-| Performance Optimization | Performance considerations         | ✅ Implemented        | [Performance Optimization](specs/performance_optimization.md) |
-| Audio System             | Sound effects and music            | ✅ Implemented        | [Audio System](specs/audio.md)                                |
+| Domain                   | Description                        | Implementation Status    | Link                                                          |
+| ------------------------ | ---------------------------------- | ------------------------ | ------------------------------------------------------------- |
+| Game Overview            | High-level description of the game | ✅ Implemented           | [Game Overview](specs/game_overview.md)                       |
+| Characters               | Player character and enemies       | ⚠️ Partially Implemented | [Characters](specs/characters.md)                             |
+| Game Mechanics           | Core gameplay systems              | ⚠️ Partially Implemented | [Game Mechanics](specs/game_mechanics.md)                     |
+| Controls and UI          | User interface and controls        | ⚠️ Partially Implemented | [Controls and UI](specs/controls_ui.md)                       |
+| Combat                   | Combat mechanics                   | ⚠️ Partially Implemented | [Combat](specs/combat.md)                                     |
+| Towers                   | Tower types and functionality      | ⚠️ Partially Implemented | [Towers](specs/towers.md)                                     |
+| Camps                    | Camp mechanics and interactions    | ⚠️ Partially Implemented | [Camps](specs/camps.md)                                       |
+| Diplomacy                | Cooperation and quest systems      | ⚠️ Partially Implemented | [Diplomacy](specs/diplomacy.md)                               |
+| Graphics and Visuals     | Visual style and implementation    | ⚠️ Partially Implemented | [Graphics and Visuals](specs/graphics_visuals.md)             |
+| Technical Architecture   | Technical implementation details   | ⚠️ Partially Implemented | [Technical Architecture](specs/technical_architecture.md)     |
+| Performance Optimization | Performance considerations         | ⚠️ Partially Implemented | [Performance Optimization](specs/performance_optimization.md) |
+| Audio System             | Sound effects and music            | ⚠️ Partially Implemented | [Audio System](specs/audio.md)                                |
 
 ## Next Features to Implement
 
 Based on the current state of implementation, the following features should be prioritized next:
 
-1. **Sound Effects** - Implement audio feedback for game events using the sound pack in temp_audio
-2. **Performance Optimization** - Optimize rendering and game logic for larger maps
-3. **Additional Content** - Add more tower types and enemy variations
+1. **Complete Core Systems**
+
+   - Finish implementing wave system integration with camps
+   - Complete the diplomacy system's wave direction control
+   - Finalize camp conquest mechanics
+   - Add full king boss battle mechanics
+
+2. **System Integration**
+
+   - Integrate audio system with all game events
+   - Complete object pooling for enemy spawning
+   - Implement visual indicators for game state (camp status, wave directions)
+   - Connect tower upgrade UI to actual game mechanics
+
+3. **Polish and User Experience**
+   - Add tutorials and help system
+   - Implement accessibility features
+   - Add additional tower types and enemy variations
+   - Balance game mechanics
 
 ## Audio System Details
 
@@ -111,3 +128,31 @@ The Wave System has been enhanced with the following features:
    - Enemy pooling for efficient object management
    - Optimized wave calculations and updates
    - Clean destruction of wave components
+
+## Known Implementation Gaps
+
+The following specific implementation gaps have been identified and should be addressed:
+
+1. **Diplomacy System**
+
+   - The `findNearbyCamps` method in DiplomatMenu is empty with a comment "This should be implemented"
+   - Wave direction control UI exists but isn't fully connected to the actual wave targeting system
+
+2. **Audio System**
+
+   - Sound effect triggers are missing from most gameplay events
+   - Music transitions between game states need implementation
+
+3. **Wave System**
+
+   - Wave direction control from cooperating camps needs implementation
+   - Visual indicators for wave paths need to be added
+
+4. **Performance Optimization**
+
+   - Object pooling framework exists but isn't applied to most game objects
+   - Need to implement pooling for frequently created objects like enemies
+
+5. **King Boss Battle**
+   - Basic structure exists but the actual battle mechanics need implementation
+   - Victory conditions and barriers need to be fully connected to game state

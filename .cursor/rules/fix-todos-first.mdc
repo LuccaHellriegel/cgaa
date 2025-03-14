@@ -1,0 +1,76 @@
+---
+description: Fix ALL TODOs when encountered in code to prevent technical debt accumulation
+globs: **/*.{ts,js,tsx,jsx}
+---
+
+# Fix TODOs Before Any Other Changes
+
+## Context
+- When working with code that contains TODO comments
+- When making changes to files that have existing TODOs
+- During code review and maintenance phases
+- When implementing new features that interact with TODO-marked code
+
+## Requirements
+- IMMEDIATELY fix any TODO comments you encounter before proceeding with other changes
+- Do NOT add new code that depends on unfixed TODOs
+- Ensure all TODOs are properly addressed, not just removed without implementation
+- If a TODO cannot be fixed immediately, document why and escalate its priority
+- Tests MUST be written for all implemented TODO fixes
+- Mark fixed TODOs with a comment indicating when they were resolved
+- Update relevant documentation after fixing TODOs
+
+## Examples
+
+<example>
+```typescript
+// Before: Encountered TODO during implementation
+function calculateDamage(attacker, defender) {
+  // TODO: Implement critical hit calculation
+  const baseDamage = attacker.strength - defender.defense;
+  return Math.max(1, baseDamage);
+}
+
+// After: Fixed TODO before continuing with other tasks
+function calculateDamage(attacker, defender) {
+  const baseDamage = attacker.strength - defender.defense;
+  
+  // Critical hit calculation
+  const isCritical = Math.random() < attacker.criticalChance;
+  const criticalMultiplier = isCritical ? 2.0 : 1.0;
+  
+  return Math.max(1, baseDamage * criticalMultiplier);
+  // Fixed TODO: Implemented critical hit calculation - 2023-05-10
+}
+```
+When encountering a TODO, the developer immediately implemented the missing critical hit calculation before moving on to other changes. This maintains code quality and prevents technical debt from accumulating.
+</example>
+
+<example type="invalid">
+```typescript
+// INVALID: Ignoring TODOs while adding new code
+function calculateDamage(attacker, defender) {
+  // TODO: Implement critical hit calculation
+  const baseDamage = attacker.strength - defender.defense;
+  
+  // Adding new dodge mechanics without fixing the critical hit TODO
+  if (Math.random() < defender.dodgeChance) {
+    return 0; // Dodged the attack
+  }
+  
+  return Math.max(1, baseDamage);
+}
+```
+This is wrong! The developer added new dodge mechanics without addressing the existing TODO for critical hit calculation. This creates layered technical debt that becomes harder to fix over time.
+</example>
+
+## Prioritization Guidelines
+
+1. Critical TODOs affect functionality and should be fixed immediately
+2. Performance TODOs should be addressed before adding features that could compound performance issues
+3. Documentation TODOs should be resolved before code review
+4. UX TODOs should be addressed before user-facing features are considered complete
+
+<critical>
+Ignoring TODOs while continuing development is a SERIOUS violation of code quality standards. Each ignored TODO represents technical debt that compounds interest over time, making the codebase progressively more difficult to maintain and extend. Diligently fixing TODOs when encountered is NOT optional—it is a fundamental responsibility of every developer working on this project.
+</critical> 

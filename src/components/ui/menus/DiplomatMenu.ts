@@ -181,6 +181,10 @@ export class DiplomatMenu {
     _camp: CampBuilding,
     _radius: number
   ): CampBuilding[] {
+    // TODO: Implement the findNearbyCamps method to properly locate nearby camps
+    // This should query the camp system or scene for camps within the given radius
+    // Current implementation returns empty array, preventing quest targeting functionality
+
     // This should be implemented in the game scene or camp system
     // For now, return an empty array as noted in the comment
     return [];
@@ -211,6 +215,7 @@ export class DiplomatMenu {
   }
 
   public update(): void {
+    // TODO: Implement menu position updates to follow game camera or handle window resizing
     // Update menu position if needed
   }
 

@@ -41,6 +41,9 @@ export class WaveCompositionComponent implements Component {
       size: waveSize,
       composition: this.getWaveComposition(waveSize),
     });
+
+    // TODO: Implement actual audio trigger for wave start
+    // this.scene.registry.get("audioManager").playSound("wave_start");
   }
 
   private getWaveComposition(waveSize: number): Record<string, number> {
@@ -124,11 +127,17 @@ export class WaveCompositionComponent implements Component {
       this.scene.events.emit("waveComplete", {
         wave: this.currentWave,
       });
+
+      // TODO: Implement wave completion rewards and feedback
+      // Currently waves complete silently with no player feedback or rewards
     }
   }
 
   public addEnemy(enemy: Enemy): void {
     this.activeEnemies.push(enemy);
+
+    // TODO: Connect this with object pooling system for better performance
+    // Current implementation creates new enemy instances instead of reusing them
   }
 
   public getCurrentWave(): number {

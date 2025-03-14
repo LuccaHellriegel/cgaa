@@ -21,6 +21,9 @@ export class KingChamber extends Scene {
     // Store initial data for player setup
     this.registry.set("playerHealth", data.playerHealth);
     this.registry.set("playerPosition", data.playerPosition);
+
+    // TODO: Implement proper player transition to king chamber
+    // Player should carry over weapons, stats, and other progress
   }
 
   create(): void {
@@ -51,11 +54,20 @@ export class KingChamber extends Scene {
 
     // Set up initial barrier state
     this.checkBarrierCondition();
+
+    // TODO: Add dramatic music and effects when entering king chamber
+    // Currently the king chamber lacks atmosphere and dramatic entrance
+
+    // TODO: Add environmental hazards and terrain features
+    // King chamber should have unique challenges beyond just the king
   }
 
   private checkBarrierCondition(): void {
     // Get all camps
     const camps = this.registry.get("camps") as CampBuilding[];
+
+    // TODO: Verify camps data is properly passed from main game
+    // This could be null if registry setup is incomplete
 
     // Check if all camps are either destroyed or cooperating
     const allCampsDefeated = camps.every(
@@ -86,6 +98,9 @@ export class KingChamber extends Scene {
 
     // Play barrier break sound
     this.registry.get("audioManager").playSound("barrier_break");
+
+    // TODO: Add dramatic sequence when barrier opens
+    // Should include camera effects, particle explosion, and king animation
   }
 
   private handleVictory(): void {
@@ -117,6 +132,12 @@ export class KingChamber extends Scene {
     this.time.delayedCall(3000, () => {
       this.events.emit(GameEvents.GAME_WIN);
     });
+
+    // TODO: Implement full victory screen with stats and achievements
+    // Current victory sequence is minimal with no player stats or achievements displayed
+
+    // TODO: Add option to restart or continue playing after victory
+    // Players should be able to continue exploring or restart with bonuses
   }
 
   update(): void {
@@ -124,6 +145,9 @@ export class KingChamber extends Scene {
     if (this.king) {
       this.king.update();
     }
+
+    // TODO: Implement dynamic difficulty scaling during king fight
+    // King difficulty should adapt based on player performance
   }
 
   destroy(): void {

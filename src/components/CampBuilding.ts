@@ -90,6 +90,10 @@ export class CampBuilding extends BaseComponent {
       0x00ff00
     );
     this.updateHealthBar();
+
+    // TODO: Add unique visuals for different camp sizes and types
+    // Current camps are just differently sized rectangles
+    // Should have distinctive appearances based on size and type
   }
 
   public markAsQuestTarget(): void {
@@ -141,6 +145,9 @@ export class CampBuilding extends BaseComponent {
         this.cooperationMarker = null;
       }
     }
+
+    // TODO: Add effects/animation when camp changes to cooperating state
+    // Currently cooperation state changes without fanfare or clear feedback
   }
 
   public isCooperatingState(): boolean {
@@ -218,6 +225,10 @@ export class CampBuilding extends BaseComponent {
 
     // Update wave direction component
     this.waveDirectionComponent.update(time, delta);
+
+    // TODO: Implement wave spawning based on camp state
+    // Camps need to generate waves at appropriate intervals
+    // Should hook into main wave system
   }
 
   public destroy(): void {
@@ -251,8 +262,10 @@ export class CampBuilding extends BaseComponent {
       });
     }
 
-    // Clean up game objects
-    this.sprite.destroy();
+    // Emit camp destroyed event
+    this.scene.events.emit("campDestroyed", this);
+
+    // Clean up
     this.healthBar.destroy();
     this.healthBarBackground.destroy();
     if (this.questMarker) {
@@ -261,11 +274,8 @@ export class CampBuilding extends BaseComponent {
     if (this.cooperationMarker) {
       this.cooperationMarker.destroy();
     }
-
-    // Clean up wave direction component
     this.waveDirectionComponent.destroy();
-
-    super.destroy();
+    this.sprite.destroy();
   }
 
   public getId(): string {
@@ -273,7 +283,7 @@ export class CampBuilding extends BaseComponent {
   }
 
   public unmarkAsQuestTarget(): void {
-    // Remove any visual indicators for quest target
+    this.isQuestTarget = false;
     if (this.questMarker) {
       this.questMarker.destroy();
       this.questMarker = null;
@@ -282,6 +292,10 @@ export class CampBuilding extends BaseComponent {
 
   public setWaveTarget(camp: CampBuilding | null): void {
     this.waveDirectionComponent.setTargetCamp(camp);
+
+    // TODO: Connect this with the wave spawning system
+    // This method only updates the visual direction component
+    // Need to ensure waves actually target the chosen camp
   }
 
   public getWaveTarget(): CampBuilding | null {

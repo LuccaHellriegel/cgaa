@@ -69,6 +69,9 @@ export class AudioManager {
       music_defeat: { volume: 0.4, rate: 1 },
     };
 
+    // TODO: Connect sound triggers with game events
+    // Currently most sound effects are defined but not triggered by game events
+
     // Listen for game state changes
     scene.events.on("gameStateChanged", this.handleGameStateChange, this);
   }
@@ -101,6 +104,9 @@ export class AudioManager {
 
     // Start with menu music
     this.playMusic(GameState.MENU);
+
+    // TODO: Add error handling for missing audio files
+    // Current implementation silently fails if audio files aren't available
   }
 
   private handleGameStateChange(newState: GameState): void {
@@ -118,6 +124,9 @@ export class AudioManager {
     } else if (newState === GameState.DIPLOMACY) {
       this.player.playSound("ambient_crowd", { loop: true });
     }
+
+    // TODO: Implement transitions between game states
+    // Need smoother transitions with cross-fading and state-specific audio
   }
 
   public getCurrentGameState(): GameState {
@@ -137,6 +146,9 @@ export class AudioManager {
     this.currentGameState = state;
     this.currentMusic = musicKey;
     this.player.fadeInSound(musicKey, this.musicFadeTime, { loop: true });
+
+    // TODO: Implement dynamic music system based on gameplay intensity
+    // Music should change based on factors like number of enemies, player health, etc.
   }
 
   public playSound(key: string): void {

@@ -9,6 +9,7 @@ import { GameEvents } from "../events/GameEvents";
 import { Soul } from "../components/Soul";
 import { assert } from "../utils/assert";
 import { BuildingSize } from "../components/CampBuilding";
+import { PerformanceOptimizer } from "../systems/PerformanceOptimizer";
 
 export class Game extends Scene {
   private player: Player | null = null;
@@ -16,6 +17,7 @@ export class Game extends Scene {
   private worldSystem: WorldSystem | null = null;
   private collisionSystem: CollisionSystem | null = null;
   private campSystem: CampSystem | null = null;
+  private performanceOptimizer: PerformanceOptimizer | null = null;
   private gameState: GameState | null = null;
 
   constructor() {
@@ -46,6 +48,12 @@ export class Game extends Scene {
     this.campSystem = new CampSystem(this);
     assert(this.campSystem !== null, "Camp system must be initialized");
 
+    this.performanceOptimizer = new PerformanceOptimizer(this);
+    assert(
+      this.performanceOptimizer !== null,
+      "Performance optimizer must be initialized"
+    );
+
     // Create player
     this.player = new Player(this);
     assert(this.player !== null, "Player must be initialized");
@@ -68,6 +76,17 @@ export class Game extends Scene {
 
     // Setup event handlers
     this.setupEventHandlers();
+
+    // Optimize static content after everything is created
+    if (this.performanceOptimizer) {
+      this.performanceOptimizer.optimizeStaticContent();
+    }
+
+    // TODO: Implement wave system initialization and integration
+    // Need to connect wave system with camps and spawn enemies properly
+
+    // TODO: Add tutorial and onboarding elements
+    // New players need guidance on controls and game mechanics
   }
 
   private createInitialCamps(): void {
@@ -99,11 +118,17 @@ export class Game extends Scene {
 
     campPositions.forEach(({ x, y, size }) => {
       const camp = this.campSystem!.createCamp(x, y, size);
-      // Add camp to collision system
+      // Add camp to collision system and static layer
       if (this.collisionSystem) {
         this.collisionSystem.registerCamp(camp);
       }
+      if (this.performanceOptimizer) {
+        this.performanceOptimizer.addToStaticLayer("terrain", camp.getSprite());
+      }
     });
+
+    // TODO: Store camps list in registry for access in KingChamber scene
+    // Currently camp data doesn't persist between scenes
   }
 
   private setupEventHandlers(): void {
@@ -148,6 +173,12 @@ export class Game extends Scene {
         this.campSystem.showDiplomatMenu(camp);
       }
     });
+
+    // TODO: Add event handlers for wave system integration
+    // Need to handle wave start, enemy spawning, and wave completion
+
+    // TODO: Connect audio system with game events
+    // Audio triggers should be added for all major game events
   }
 
   public update(time: number, delta: number): void {
@@ -165,6 +196,17 @@ export class Game extends Scene {
     if (this.campSystem) {
       this.campSystem.update(time, delta);
     }
+
+    // Update performance optimizer
+    if (this.performanceOptimizer) {
+      this.performanceOptimizer.update();
+    }
+
+    // TODO: Add game state transitions based on game conditions
+    // E.g., switch to combat mode when enemies nearby, diplomacy mode near camps
+
+    // TODO: Implement transition to king chamber when all camps are handled
+    // Currently no auto-transition to king chamber when conditions are met
   }
 
   public shutdown(): void {
@@ -189,6 +231,11 @@ export class Game extends Scene {
       this.campSystem = null;
     }
 
+    if (this.performanceOptimizer) {
+      this.performanceOptimizer.destroy();
+      this.performanceOptimizer = null;
+    }
+
     // Clean up player
     if (this.player) {
       this.player.destroy();
@@ -203,8 +250,7 @@ export class Game extends Scene {
     this.events.off(GameEvents.CAMP_DESTROYED);
     this.events.off("playerInteractWithCamp");
 
-    // Clean up registry
-    this.registry.remove("gameState");
-    this.registry.remove("wasdKeys");
+    // TODO: Save game state to enable game continuation
+    // Currently game state is lost when scene shuts down
   }
 }

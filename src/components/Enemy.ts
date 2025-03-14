@@ -46,6 +46,12 @@ export class Enemy {
     // Create health bar
     this.healthBar = scene.add.graphics();
     this.updateHealthBar();
+
+    // TODO: Implement enemy pooling integration with PerformanceOptimizer
+    // Enemies should be created from and returned to object pools, not instantiated directly
+
+    // TODO: Add different enemy types with unique visuals and behaviors
+    // Current implementation only has generic enemies
   }
 
   public getType(): string {
@@ -73,11 +79,17 @@ export class Enemy {
       this.scene.events.emit(GameEvents.ENEMY_KILLED, this);
       this.destroy();
     }
+
+    // TODO: Add damage feedback effects and sound
+    // Enemies should flash, play hit sounds, and show damage numbers when hit
   }
 
   public setTarget(target: Phaser.Math.Vector2): void {
     assert(target instanceof Phaser.Math.Vector2, "Target must be a Vector2");
     this.target = target;
+
+    // TODO: Implement target priority system
+    // Enemies should prioritize targets based on distance, type, and threat level
   }
 
   private updateHealthBar(): void {
@@ -116,10 +128,18 @@ export class Enemy {
       // Update health bar position
       this.updateHealthBar();
     }
+
+    // TODO: Implement pathfinding for enemies to navigate around obstacles
+    // Current movement is direct line to target with no obstacle avoidance
+
+    // TODO: Add enemy attack behaviors and animations
+    // Enemies should have attack animations and behaviors when near targets
   }
 
   public destroy(): void {
     this.healthBar.destroy();
     this.sprite.destroy();
+
+    // TODO: Return to object pool instead of destroying
   }
 }

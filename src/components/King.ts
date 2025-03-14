@@ -30,6 +30,12 @@ export class King extends Enemy {
     );
     this.specialAttackIndicator.setStrokeStyle(2, 0xff0000);
     this.specialAttackIndicator.setVisible(false);
+
+    // TODO: Implement king visual effects and animations
+    // Current king implementation lacks distinctive visual appearance and animations
+
+    // TODO: Add sound effects for king
+    // No sound effects are currently played for king's actions
   }
 
   public update(): void {
@@ -48,6 +54,12 @@ export class King extends Enemy {
       this.getSprite().x,
       this.getSprite().y
     );
+
+    // TODO: Implement multiple attack patterns for king
+    // Current implementation only has a single attack pattern
+
+    // TODO: Add battle phases based on king's health
+    // King should change behavior as health decreases
   }
 
   private performSpecialAttack(): void {
@@ -84,6 +96,9 @@ export class King extends Enemy {
       this.specialAttackIndicator.setVisible(false);
       this.specialAttackCooldown = this.SPECIAL_ATTACK_INTERVAL;
     });
+
+    // TODO: Implement visual and audio feedback for special attack
+    // Special attack needs particles, screen shake, and sound effects
   }
 
   public destroy(): void {
@@ -92,5 +107,9 @@ export class King extends Enemy {
 
     // Emit victory event when king is destroyed
     this.scene.events.emit(GameEvents.KING_DEFEATED);
+
+    // TODO: Implement proper victory sequence
+    // Current victory is abrupt with minimal feedback to player
+    // Should include animations, particle effects, and triumphant music
   }
 }
