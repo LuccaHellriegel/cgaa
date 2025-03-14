@@ -1,0 +1,93 @@
+description: Use the pre-downloaded audio collection in temp_audio when implementing sound effects to ensure consistent audio assets
+globs: src/**/*.{ts,js}
+
+# Audio Assets Management
+<version>1.0.0</version>
+
+## Context
+- When implementing new sound effects in the game
+- When adding audio feedback for game events
+- When modifying existing audio implementation
+- When expanding audio support for new game features
+
+## Requirements
+- Check the temp_audio directory for available sound effects before implementing new audio features
+- Use "The Essential Retro Video Game Sound Effects Collection" by Juhani Junkala from temp_audio
+- Map appropriate sound effects to game actions based on their semantic meaning
+- Implement both MP3 and OGG formats for cross-browser compatibility
+- Document any new sound effects used in the SPECS.md file
+
+## Examples
+
+<example>
+```typescript
+// Good: Checking and using available audio assets
+export class SoundEffectsManager {
+  constructor(scene: Phaser.Scene) {
+    // Load assets from temp_audio directory
+    scene.load.audio('hit', [
+      'assets/audio/hit.mp3',
+      'assets/audio/hit.ogg'
+    ]);
+    
+    // Map game actions to existing sound effects
+    this.actionSoundMap = {
+      playerHit: 'hit',
+      enemyDeath: 'death',
+      towerBuild: 'build',
+      soulCollect: 'collect'
+    };
+  }
+  
+  playActionSound(action: string): void {
+    const soundKey = this.actionSoundMap[action];
+    if (soundKey) {
+      // Play the pre-mapped sound from temp_audio collection
+      this.audioManager.playSound(soundKey);
+    }
+  }
+}
+```
+This example properly uses the pre-downloaded audio collection, ensuring consistent sound effects throughout the game.
+</example>
+
+<example type="invalid">
+```typescript
+// Bad: Creating arbitrary sound effects without checking available assets
+export class BadSoundImplementation {
+  constructor(scene: Phaser.Scene) {
+    // Creating arbitrary sound keys without checking temp_audio
+    scene.load.audio('random_laser', 'assets/audio/laser.mp3');
+    scene.load.audio('custom_explosion', 'assets/audio/boom.mp3');
+    
+    // No mapping to existing effects
+    this.sounds = {
+      attack: 'random_laser',
+      destroy: 'custom_explosion'
+    };
+  }
+  
+  playSound(type: string): void {
+    // Using arbitrary sounds not from the temp_audio collection
+    this.scene.sound.play(this.sounds[type]);
+  }
+}
+```
+This implementation ignores the existing audio collection in temp_audio, creating inconsistency in sound effects and potentially causing missing assets issues.
+</example>
+
+## Phaser-Specific Notes
+
+1. When loading audio files from temp_audio, ensure proper asset path configuration:
+   ```typescript
+   // During preload phase
+   this.load.setPath('assets/audio/');
+   this.load.audio('hit', ['hit.mp3', 'hit.ogg']);
+   ```
+
+2. Common sound effects and their semantic mapping:
+   - Combat: 'hit', 'shoot', 'death'
+   - Building: 'build', 'collect'
+   - UI: 'ui_click', 'ui_hover'
+   - Game events: 'wave_start'
+   - Ambient: 'ambient_wind', 'ambient_crowd' 

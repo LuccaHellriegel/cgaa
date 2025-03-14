@@ -10,6 +10,7 @@ export const GameEvents = {
   SOUL_COLLECTED: "soul-collected",
   TOWER_PLACED: "tower-placed",
   TOWER_REMOVED: "tower-removed",
+  TOWER_STATS_UPDATED: "tower-stats-updated",
   ENEMY_KILLED: "enemy-killed",
   ENEMY_SPAWNED: "enemy-spawned",
   CAMP_DESTROYED: "camp-destroyed",

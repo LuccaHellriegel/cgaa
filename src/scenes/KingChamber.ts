@@ -93,7 +93,7 @@ export class KingChamber extends Scene {
     this.physics.pause();
 
     // Show victory text
-    const victoryText = this.add
+    this.add
       .text(this.scale.width / 2, this.scale.height / 2, "Victory!", {
         fontSize: "64px",
         color: "#ffffff",
@@ -101,7 +101,7 @@ export class KingChamber extends Scene {
       .setOrigin(0.5);
 
     // Add victory particles
-    const emitter = this.add.particles(0, 0, "particle", {
+    this.add.particles(0, 0, "particle", {
       x: { min: 0, max: this.scale.width },
       y: this.scale.height + 10,
       lifespan: { min: 1000, max: 1100 },
@@ -119,7 +119,7 @@ export class KingChamber extends Scene {
     });
   }
 
-  update(time: number, delta: number): void {
+  update(): void {
     // Update king if it exists
     if (this.king) {
       this.king.update();

@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { GameState } from "../controllers/GameController";
-import { TowerType, TowerTypes } from "../types/TowerTypes";
+import { TowerType, TowerTypes, TOWER_UPGRADES } from "../types/TowerTypes";
+import { GameEvents } from "../events/GameEvents";
 
 export interface TowerData {
   name: string;
@@ -21,6 +22,8 @@ export class TowerMenu {
   private titleText: Phaser.GameObjects.Text;
   private statsText: Phaser.GameObjects.Text;
   private sellButton: Phaser.GameObjects.Container;
+  private upgradeButton: Phaser.GameObjects.Container;
+  private upgradePreviewText: Phaser.GameObjects.Text;
   private selectedTower: TowerType | null = null;
   private towerTypes: Record<TowerType, TowerData> = TowerTypes;
 
@@ -34,6 +37,8 @@ export class TowerMenu {
     this.createBackground();
     this.createTitle();
     this.createStats();
+    this.createUpgradePreview();
+    this.createUpgradeButton();
     this.createSellButton();
 
     // Hide by default
@@ -42,7 +47,7 @@ export class TowerMenu {
 
   private createBackground(): void {
     const width = 200;
-    const height = 250;
+    const height = 300;
     this.background = this.scene.add.rectangle(
       0,
       0,
@@ -73,8 +78,50 @@ export class TowerMenu {
     this.container.add(this.statsText);
   }
 
+  private createUpgradePreview(): void {
+    this.upgradePreviewText = this.scene.add.text(10, 120, "", {
+      fontSize: "12px",
+      color: "#00ff00",
+      wordWrap: { width: 180 },
+    });
+    this.container.add(this.upgradePreviewText);
+  }
+
+  private createUpgradeButton(): void {
+    const buttonContainer = this.scene.add.container(10, 160);
+
+    // Button background
+    const buttonBg = this.scene.add.rectangle(0, 0, 180, 40, 0x006600);
+    buttonBg.setOrigin(0, 0);
+    buttonBg.setInteractive({ useHandCursor: true });
+
+    // Button text
+    const buttonText = this.scene.add.text(90, 20, "Upgrade Tower", {
+      fontSize: "16px",
+      color: "#ffffff",
+    });
+    buttonText.setOrigin(0.5, 0.5);
+
+    buttonContainer.add([buttonBg, buttonText]);
+    this.container.add(buttonContainer);
+    this.upgradeButton = buttonContainer;
+
+    // Button events
+    buttonBg.on("pointerover", () => {
+      buttonBg.setFillStyle(0x008800);
+    });
+
+    buttonBg.on("pointerout", () => {
+      buttonBg.setFillStyle(0x006600);
+    });
+
+    buttonBg.on("pointerdown", () => {
+      this.handleUpgradeButtonClick();
+    });
+  }
+
   private createSellButton(): void {
-    const buttonContainer = this.scene.add.container(10, 200);
+    const buttonContainer = this.scene.add.container(10, 220);
 
     // Button background
     const buttonBg = this.scene.add.rectangle(0, 0, 180, 40, 0x990000);
@@ -111,7 +158,7 @@ export class TowerMenu {
     const screenWidth = this.scene.scale.width;
     const screenHeight = this.scene.scale.height;
     const menuWidth = 200;
-    const menuHeight = 250;
+    const menuHeight = 300;
 
     let x = tower.position?.x || 0;
     let y = tower.position?.y || 0;
@@ -138,6 +185,23 @@ export class TowerMenu {
         `Sell Value: ${tower.sellValue} souls`
     );
 
+    // Show upgrade preview if available
+    const nextLevel = (tower.level || 1) + 1;
+    const upgrade = TOWER_UPGRADES[nextLevel];
+    if (upgrade) {
+      this.upgradePreviewText.setText(
+        `Next Level:\n` +
+          `Cost: ${upgrade.cost} souls\n` +
+          `+${upgrade.damageIncrease} Damage\n` +
+          `+${upgrade.rangeIncrease} Range\n` +
+          `+${upgrade.attackSpeedIncrease} Attack Speed`
+      );
+      this.upgradeButton.setVisible(true);
+    } else {
+      this.upgradePreviewText.setText("Max Level Reached!");
+      this.upgradeButton.setVisible(false);
+    }
+
     this.container.setVisible(true);
   }
 
@@ -155,16 +219,41 @@ export class TowerMenu {
       );
       this.sellButton.setVisible(true);
       this.selectedTower = state.selectedTower;
+
+      // Show upgrade preview if available
+      const nextLevel = (tower.level || 1) + 1;
+      const upgrade = TOWER_UPGRADES[nextLevel];
+      if (upgrade) {
+        this.upgradePreviewText.setText(
+          `Next Level:\n` +
+            `Cost: ${upgrade.cost} souls\n` +
+            `+${upgrade.damageIncrease} Damage\n` +
+            `+${upgrade.rangeIncrease} Range\n` +
+            `+${upgrade.attackSpeedIncrease} Attack Speed`
+        );
+        this.upgradeButton.setVisible(true);
+      } else {
+        this.upgradePreviewText.setText("Max Level Reached!");
+        this.upgradeButton.setVisible(false);
+      }
     } else {
       this.statsText.setText("");
       this.sellButton.setVisible(false);
+      this.upgradeButton.setVisible(false);
+      this.upgradePreviewText.setText("");
       this.selectedTower = null;
+    }
+  }
+
+  private handleUpgradeButtonClick(): void {
+    if (this.selectedTower) {
+      this.scene.events.emit(GameEvents.UI_TOWER_UPGRADED, this.selectedTower);
     }
   }
 
   private handleSellButtonClick(): void {
     if (this.selectedTower) {
-      this.scene.events.emit("sellTower", this.selectedTower);
+      this.scene.events.emit(GameEvents.UI_TOWER_SOLD, this.selectedTower);
       this.selectedTower = null;
     }
   }

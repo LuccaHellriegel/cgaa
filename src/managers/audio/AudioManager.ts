@@ -9,11 +9,24 @@ interface SoundConfig {
   rate: number;
 }
 
+export enum GameState {
+  MENU = "menu",
+  EXPLORATION = "exploration",
+  COMBAT = "combat",
+  DIPLOMACY = "diplomacy",
+  VICTORY = "victory",
+  DEFEAT = "defeat",
+}
+
 export class AudioManager {
   private loader: SoundLoader;
   private pool: SoundPool;
   private player: SoundPlayer;
   private frequentSounds: string[] = ["hit", "shoot"]; // Sounds that should be pooled
+  private currentGameState: GameState = GameState.MENU;
+  private currentMusic: string | null = null;
+  private musicFadeTime: number = 1000; // ms
+  private soundConfigs: Record<string, SoundConfig>;
 
   constructor(scene: Scene) {
     assert(scene instanceof Scene, "Must provide a valid Phaser Scene", {
@@ -24,26 +37,49 @@ export class AudioManager {
     this.loader = new SoundLoader(scene);
     this.pool = new SoundPool(scene);
     this.player = new SoundPlayer(scene);
+
+    // Initialize sound configurations
+    this.soundConfigs = {
+      // Combat sounds
+      hit: { volume: 0.5, rate: 1 },
+      shoot: { volume: 0.4, rate: 1 },
+      death: { volume: 0.7, rate: 1 },
+
+      // Building sounds
+      build: { volume: 0.6, rate: 1 },
+
+      // UI sounds
+      ui_hover: { volume: 0.3, rate: 1 },
+      ui_click: { volume: 0.4, rate: 1 },
+
+      // Game event sounds
+      wave_start: { volume: 0.5, rate: 1 },
+      collect: { volume: 0.5, rate: 1 },
+
+      // Ambient sounds
+      ambient_wind: { volume: 0.2, rate: 1 },
+      ambient_crowd: { volume: 0.2, rate: 1 },
+
+      // Music tracks
+      music_menu: { volume: 0.3, rate: 1 },
+      music_exploration: { volume: 0.3, rate: 1 },
+      music_combat: { volume: 0.4, rate: 1 },
+      music_diplomacy: { volume: 0.3, rate: 1 },
+      music_victory: { volume: 0.4, rate: 1 },
+      music_defeat: { volume: 0.4, rate: 1 },
+    };
+
+    // Listen for game state changes
+    scene.events.on("gameStateChanged", this.handleGameStateChange, this);
   }
 
   public async loadAudio(): Promise<void> {
-    const soundConfigs: Record<string, SoundConfig> = {
-      hit: { volume: 0.5, rate: 1 },
-      shoot: { volume: 0.4, rate: 1 },
-      build: { volume: 0.6, rate: 1 },
-      collect: { volume: 0.5, rate: 1 },
-      death: { volume: 0.7, rate: 1 },
-      ui_hover: { volume: 0.3, rate: 1 },
-      ui_click: { volume: 0.4, rate: 1 },
-      wave_start: { volume: 0.5, rate: 1 },
-    };
-
     // Load all sounds
-    const loadedSounds = await this.loader.loadAudio(soundConfigs);
+    const loadedSounds = await this.loader.loadAudio(this.soundConfigs);
 
     // Set up pools for frequent sounds and regular sounds for others
     loadedSounds.forEach((key) => {
-      const config = soundConfigs[key];
+      const config = this.soundConfigs[key];
       assert(config !== undefined, "Config must exist for loaded sound", {
         key,
       });
@@ -62,6 +98,45 @@ export class AudioManager {
         this.player.createSound(key, config);
       }
     });
+
+    // Start with menu music
+    this.playMusic(GameState.MENU);
+  }
+
+  private handleGameStateChange(newState: GameState): void {
+    assert(Object.values(GameState).includes(newState), "Invalid game state", {
+      newState,
+      validStates: Object.values(GameState),
+    });
+
+    this.currentGameState = newState;
+    this.playMusic(newState);
+
+    // Handle ambient sounds based on state
+    if (newState === GameState.EXPLORATION) {
+      this.player.playSound("ambient_wind", { loop: true });
+    } else if (newState === GameState.DIPLOMACY) {
+      this.player.playSound("ambient_crowd", { loop: true });
+    }
+  }
+
+  public getCurrentGameState(): GameState {
+    return this.currentGameState;
+  }
+
+  private playMusic(state: GameState): void {
+    const musicKey = `music_${state.toLowerCase()}`;
+    if (this.currentMusic === musicKey) return;
+
+    // Fade out current music if playing
+    if (this.currentMusic) {
+      this.player.fadeOutSound(this.currentMusic, this.musicFadeTime);
+    }
+
+    // Update current state and music
+    this.currentGameState = state;
+    this.currentMusic = musicKey;
+    this.player.fadeInSound(musicKey, this.musicFadeTime, { loop: true });
   }
 
   public playSound(key: string): void {
@@ -108,17 +183,7 @@ export class AudioManager {
     missing: string[];
   } {
     const loadedSounds = this.loader.getLoadedSounds();
-    const allSoundKeys = [
-      "hit",
-      "shoot",
-      "build",
-      "collect",
-      "death",
-      "ui_hover",
-      "ui_click",
-      "wave_start",
-    ];
-
+    const allSoundKeys = Object.keys(this.soundConfigs);
     const missing = allSoundKeys.filter((key) => !loadedSounds.has(key));
 
     return {
