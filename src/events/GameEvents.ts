@@ -14,6 +14,8 @@ export const GameEvents = {
   ENEMY_SPAWNED: "enemy-spawned",
   CAMP_DESTROYED: "camp-destroyed",
   QUEST_COMPLETED: "quest-completed",
+  DAMAGE_DEALT: "damage-dealt",
+  KING_DEFEATED: "king-defeated",
 
   // Game state events
   MODE_CHANGED: "mode-changed",

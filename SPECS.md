@@ -10,18 +10,18 @@ The game follows the story of a rebellious circle defending blue friends against
 
 The following table shows the current implementation status of key game features:
 
-| Feature          | Status                   | Notes                                                      |
-| ---------------- | ------------------------ | ---------------------------------------------------------- |
-| Player Character | ✅ Implemented           | Basic movement, health, and collision implemented          |
-| Enemy Types      | ✅ Implemented           | Basic enemies with health, movement, and targeting         |
-| Tower System     | ✅ Implemented           | Basic tower placement and targeting                        |
-| Camp System      | ✅ Implemented           | Camp structures and destruction mechanics implemented      |
-| Soul Economy     | ✅ Implemented           | Soul collection and usage for building towers              |
-| UI Elements      | 🔄 Partially Implemented | Health bar, soul counter, game progress UI implemented     |
-| Diplomacy System | ✅ Implemented           | Quest system, cooperation, and wave direction implemented  |
-| Wave System      | ✅ Implemented           | Dynamic wave composition, scaling, and timing implemented  |
-| Combat Mechanics | ✅ Implemented           | Basic combat between player, towers, and enemies           |
-| Game Progression | 🔄 Partially Implemented | Camp conquest mechanics partial, king boss not implemented |
+| Feature          | Status                   | Notes                                                        |
+| ---------------- | ------------------------ | ------------------------------------------------------------ |
+| Player Character | ✅ Implemented           | Basic movement, health, and collision implemented            |
+| Enemy Types      | ✅ Implemented           | Basic enemies with health, movement, and targeting           |
+| Tower System     | ✅ Implemented           | Basic tower placement and targeting                          |
+| Camp System      | ✅ Implemented           | Camp structures and destruction mechanics implemented        |
+| Soul Economy     | ✅ Implemented           | Soul collection and usage for building towers                |
+| UI Elements      | 🔄 Partially Implemented | Health bar, soul counter, game progress UI implemented       |
+| Diplomacy System | ✅ Implemented           | Quest system, cooperation, and wave direction implemented    |
+| Wave System      | ✅ Implemented           | Dynamic wave composition, scaling, and timing implemented    |
+| Combat Mechanics | ✅ Implemented           | Basic combat between player, towers, and enemies             |
+| Game Progression | ✅ Implemented           | Camp conquest, king boss, and victory conditions implemented |
 
 ## Specifications
 

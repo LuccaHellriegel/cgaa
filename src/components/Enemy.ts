@@ -3,7 +3,7 @@ import { GameEvents } from "../events/GameEvents";
 import { assert } from "../utils/assert";
 
 export class Enemy {
-  private scene: Scene;
+  protected scene: Scene;
   private sprite: Physics.Arcade.Sprite;
   private health: number;
   private maxHealth: number;
