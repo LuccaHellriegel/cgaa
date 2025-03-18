@@ -1,0 +1,90 @@
+---
+name: Create MDC Rules in .cursor/rules Directory
+description: Ensures all MDC rules are created in the .cursor/rules directory with each rule in a separate file
+version: "1.0"
+globs: 
+  - "**/*.mdc"
+triggers:
+  - file_creation
+---
+
+# MDC Rule: Create Rules in .cursor/rules Directory
+
+## Description
+This rule instructs Cursor AI to always create new MDC (Model-Driven Configuration) rules in the `.cursor/rules` directory, with each rule in a separate file with the `.mdc` extension.
+
+## Rule Structure
+
+All MDC rules should follow this structure:
+
+```yaml
+---
+name: [Rule Name]
+description: [Short description of the rule]
+version: "1.0"
+globs: 
+  - [File patterns this rule applies to]
+triggers:
+  - [Events that trigger this rule]
+---
+
+# [Rule Title]
+
+## Description
+[Detailed description of the rule's purpose]
+
+## Rule Definition
+[Specific instructions and requirements]
+
+## Examples
+[Examples of how the rule applies]
+```
+
+## Implementation Guidelines
+
+1. **Filename**: Use a descriptive filename ending with `.mdc`
+   - Example: `typescript_formatting.mdc`
+
+2. **File Location**: Always place rule files in the `.cursor/rules` directory
+   - Correct: `.cursor/rules/typescript_formatting.mdc`
+   - Incorrect: `rules/typescript_formatting.mdc`
+
+3. **Frontmatter**: Include proper YAML frontmatter at the top of the file with:
+   - `name`: Clear name for the rule
+   - `description`: Brief explanation of the rule's purpose
+   - `version`: Rule version (typically "1.0")
+   - `globs`: File patterns the rule applies to
+   - `triggers`: Events that activate the rule (file_creation, file_change, etc.)
+
+4. **Content Structure**: Organize content with clear markdown headings:
+   - Level 1 heading for the title
+   - Level 2 headings for sections
+   - Include Description, Rule Definition, and Examples sections
+
+## Examples
+
+### Example Request
+```
+Create an MDC rule for TypeScript formatting standards
+```
+
+### Example Implementation
+Cursor should create a file at `.cursor/rules/typescript_formatting.mdc` with proper frontmatter and structure:
+
+```yaml
+---
+name: TypeScript Formatting Standards
+description: Enforces consistent formatting in TypeScript files
+version: "1.0"
+globs:
+  - "**/*.ts"
+  - "**/*.tsx" 
+triggers:
+  - file_change
+---
+
+# TypeScript Formatting Standards
+
+## Description
+This rule defines the formatting standards for TypeScript files...
+``` 
