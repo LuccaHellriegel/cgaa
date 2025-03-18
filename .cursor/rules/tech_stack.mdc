@@ -1,39 +1,60 @@
+---
+name: Tech Stack Guidelines
+description: Defines technology stack and best practices for the CGAA project
+version: "1.0"
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "vite.config.ts"
+  - "package.json"
+triggers:
+  - file_change
+  - file_creation
+---
+
 # Tech Stack Guidelines
 
-## Core Technologies
+## Description
+This rule defines the technology stack and best practices for development in the Circle Gladiator Army Arena project.
+
+## Rule Definition
+
+### Core Technologies
 
 CGAA is built with the following technologies:
 - **Phaser 3**: Main game framework
 - **TypeScript**: Programming language
 - **Vite**: Build tool and development server
 
-## Best Practices
+### Best Practices
 
-### Phaser 3
+#### Phaser 3
 - Use Phaser's scene lifecycle methods appropriately (`preload`, `create`, `update`)
 - Leverage built-in physics and collision detection
 - Use `scene.registry` for global data that persists between scenes
 - Prefer texture atlases over individual images where possible
 
-### TypeScript
+#### TypeScript
 - Use strong typing for all variables, functions, and classes
 - Create interfaces for game objects and configurations
 - Use `readonly` for properties that shouldn't change
 - Avoid `any` type - prefer proper type definitions
 
-### Vite
+#### Vite
 - Use ES modules syntax for imports (`import/export`)
 - Place static assets in the `public` directory
 - Use environment variables for configuration
 - Keep build scripts in the `vite` directory
 
-## Project Structure
+### Project Structure
 - Game logic belongs in `src`
 - Asset files go in `public`
 - Specifications live in `specs`
 - Tests should be co-located with their implementation files
 
-## Performance Guidelines
+## Examples
+
+### Performance Guidelines
 - Pre-generate textures during loading phase
 - Use object pooling for frequently created/destroyed objects
 - Minimize DOM interactions

@@ -1,21 +1,38 @@
+---
+name: Testing Strategy
+description: Guidelines for testing approach with focus on pure logic and avoiding Phaser dependencies in tests
+version: "1.0"
+globs:
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+triggers:
+  - file_change
+  - file_creation
+---
+
 # Testing Strategy
 
-## Core Principles
+## Description
+This rule defines the testing approach for the Circle Gladiator Army Arena project, emphasizing testing pure logic without Phaser dependencies.
+
+## Rule Definition
+
+### Core Principles
 
 - **No Phaser in Tests**: Never use Phaser code directly in test files
 - **Avoid DOM Mocking**: Only write tests for code that can be tested without mocking the DOM
 - **Pure Logic Focus**: Tests should target pure logic that doesn't depend on Phaser's rendering or event system
 
-## Best Practices
+### Best Practices
 
-### Code Structure
+#### Code Structure
 
 - Separate game logic from Phaser implementation
 - Create pure utility functions that don't depend on Phaser
 - Use dependency injection to make components testable
 - Extract complex calculations into standalone functions
 
-### What to Test
+#### What to Test
 
 ✅ **DO Test**:
 - Pure utility functions
@@ -31,9 +48,10 @@
 - Animation systems
 - Anything requiring DOM/Canvas access
 
-### Example Approach
+## Examples
 
-**Instead of this:**
+### Bad Practice Example
+
 ```typescript
 // Hard to test - directly uses Phaser
 function createEnemy(scene: Phaser.Scene, x: number, y: number) {
@@ -43,7 +61,8 @@ function createEnemy(scene: Phaser.Scene, x: number, y: number) {
 }
 ```
 
-**Do this:**
+### Good Practice Example
+
 ```typescript
 // Testable game logic
 function calculateEnemyProperties(level: number) {
@@ -65,7 +84,7 @@ function createEnemy(scene: Phaser.Scene, x: number, y: number, level: number) {
 }
 ```
 
-## Tools and Setup
+### Tools and Setup
 
 - Use Vitest for unit testing
 - Keep test files alongside implementation with `.test.ts` or `.spec.ts` suffix
