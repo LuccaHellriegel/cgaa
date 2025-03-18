@@ -1,0 +1,73 @@
+# Testing Strategy
+
+## Core Principles
+
+- **No Phaser in Tests**: Never use Phaser code directly in test files
+- **Avoid DOM Mocking**: Only write tests for code that can be tested without mocking the DOM
+- **Pure Logic Focus**: Tests should target pure logic that doesn't depend on Phaser's rendering or event system
+
+## Best Practices
+
+### Code Structure
+
+- Separate game logic from Phaser implementation
+- Create pure utility functions that don't depend on Phaser
+- Use dependency injection to make components testable
+- Extract complex calculations into standalone functions
+
+### What to Test
+
+✅ **DO Test**:
+- Pure utility functions
+- Game logic algorithms (pathfinding, scoring, etc.)
+- Data transformations
+- State management logic
+- Configuration validation
+
+❌ **DON'T Test**:
+- Phaser scene lifecycle methods
+- Rendering functionality
+- Input handling
+- Animation systems
+- Anything requiring DOM/Canvas access
+
+### Example Approach
+
+**Instead of this:**
+```typescript
+// Hard to test - directly uses Phaser
+function createEnemy(scene: Phaser.Scene, x: number, y: number) {
+  const enemy = scene.physics.add.sprite(x, y, 'enemy');
+  enemy.setVelocity(100, 0);
+  return enemy;
+}
+```
+
+**Do this:**
+```typescript
+// Testable game logic
+function calculateEnemyProperties(level: number) {
+  return {
+    health: 50 + (level * 10),
+    speed: 100 + (level * 5),
+    damage: 5 + Math.floor(level / 2)
+  };
+}
+
+// Phaser implementation (not directly tested)
+function createEnemy(scene: Phaser.Scene, x: number, y: number, level: number) {
+  const properties = calculateEnemyProperties(level);
+  const enemy = scene.physics.add.sprite(x, y, 'enemy');
+  enemy.setVelocity(properties.speed, 0);
+  enemy.setData('health', properties.health);
+  enemy.setData('damage', properties.damage);
+  return enemy;
+}
+```
+
+## Tools and Setup
+
+- Use Vitest for unit testing
+- Keep test files alongside implementation with `.test.ts` or `.spec.ts` suffix
+- Use mocking sparingly and only for non-Phaser dependencies
+- Consider using integration tests for end-to-end game behavior 
