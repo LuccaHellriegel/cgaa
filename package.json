@@ -15,12 +15,15 @@
   "homepage": "https://github.com/phaserjs/template-vite-ts#readme",
   "scripts": {
     "dev": "vite --config vite/config.dev.mjs",
-    "build": "vite build --config vite/config.prod.mjs"
+    "build": "vite build --config vite/config.prod.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "terser": "^5.39.0",
     "typescript": "^5.8.2",
-    "vite": "^6.2.2"
+    "vite": "^6.2.2",
+    "vitest": "^1.4.0"
   },
   "dependencies": {
     "phaser": "^3.88.2"
