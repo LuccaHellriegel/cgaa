@@ -3,50 +3,68 @@ description: Design game entities using component-based architecture to improve 
 globs: **/*.ts
 ---
 
-# Component-Based Entity Architecture
+# Phaser Component Architecture Foundation
 
 ## Context
-- When creating complex game entities with multiple behaviors
-- When code reuse across different entity types is important
+- When creating complex Phaser game entities with multiple behaviors
+- When code reuse across different entity types is important in a Phaser game
 - When entity behavior needs to be modified at runtime
 - When working on medium to large Phaser game projects
 
 ## Requirements
-- Extend Phaser.GameObjects with component-based design
-- Separate entity behaviors into individual components
-- Design components to be reusable across different entity types
-- Ensure components can be added/removed dynamically
-- Components should follow single responsibility principle
+- Use Phaser.GameObjects as the foundation for component-based entity design
+- Create a robust entity-component framework that integrates with Phaser's lifecycle
+- Implement proper component management within entities
+- Ensure clean resource management and event cleanup in components
+- Design components to be self-contained and focused on a single responsibility
 
 ## Examples
 
-<example>
 ```typescript
 // Component interface compatible with Phaser's lifecycle
 interface Component {
+  init?(): void;
+  preUpdate?(time: number, delta: number): void;
   update(time: number, delta: number): void;
+  postUpdate?(time: number, delta: number): void;
   destroy(): void;
 }
 
 // Base entity class that integrates with Phaser's GameObject system
-class Entity extends Phaser.GameObjects.Container {
+class PhaserEntity extends Phaser.GameObjects.Container {
   private components: Map<string, Component> = new Map();
+  private registeredEvents: { target: Phaser.Events.EventEmitter, event: string, fn: Function, context: any }[] = [];
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
+    // Add to scene and update list
     scene.add.existing(this);
     scene.sys.updateList.add(this);
   }
 
-  addComponent(name: string, component: Component): this {
+  // Add component and initialize it
+  addComponent<T extends Component>(name: string, component: T): T {
     this.components.set(name, component);
-    return this;
+    
+    // Call initialization if it exists
+    if (component.init) {
+      component.init();
+    }
+    
+    return component;
   }
 
+  // Get component by name with proper TypeScript typing
   getComponent<T extends Component>(name: string): T | undefined {
     return this.components.get(name) as T;
   }
 
+  // Check if component exists
+  hasComponent(name: string): boolean {
+    return this.components.has(name);
+  }
+
+  // Remove component and clean it up
   removeComponent(name: string): boolean {
     const component = this.components.get(name);
     if (component) {
@@ -56,82 +74,108 @@ class Entity extends Phaser.GameObjects.Container {
     return false;
   }
 
+  // Register event for automatic cleanup
+  addEvent(target: Phaser.Events.EventEmitter, event: string, fn: Function, context: any): void {
+    target.on(event, fn, context);
+    this.registeredEvents.push({ target, event, fn, context });
+  }
+
+  // Phaser lifecycle methods
+  preUpdate(time: number, delta: number): void {
+    // Call preUpdate on all components that implement it
+    this.components.forEach(component => {
+      if (component.preUpdate) {
+        component.preUpdate(time, delta);
+      }
+    });
+  }
+
   update(time: number, delta: number): void {
     // Update all components
     this.components.forEach(component => component.update(time, delta));
+  }
+
+  postUpdate(time: number, delta: number): void {
+    // Call postUpdate on all components that implement it
+    this.components.forEach(component => {
+      if (component.postUpdate) {
+        component.postUpdate(time, delta);
+      }
+    });
   }
 
   destroy(fromScene?: boolean): void {
     // Clean up all components
     this.components.forEach(component => component.destroy());
     this.components.clear();
+    
+    // Remove all registered event listeners
+    this.registeredEvents.forEach(({ target, event, fn, context }) => {
+      target.off(event, fn, context);
+    });
+    this.registeredEvents = [];
+    
+    // Call parent destroy method
     super.destroy(fromScene);
   }
 }
-
-// Basic usage
-const createEnemy = (scene: Phaser.Scene, x: number, y: number): Entity => {
-  const enemy = new Entity(scene, x, y);
-  
-  // Add sprite as a child of the container
-  const sprite = scene.add.sprite(0, 0, 'enemy');
-  enemy.add(sprite);
-  
-  return enemy;
-};
 ```
-</example>
 
-<example type="invalid">
+## Implementation Approaches
+
+### Container-Based Composition
+
+Using Phaser's Container as a base class provides the best flexibility for component-based entities:
+
 ```typescript
-// Monolithic entity class with mixed responsibilities
-class Enemy extends Phaser.GameObjects.Sprite {
-  private health: number = 100;
-  private speed: number = 150;
-  private attackDamage: number = 10;
+// The container holds visual elements and components
+const enemy = new PhaserEntity(scene, x, y);
+const sprite = scene.add.sprite(0, 0, 'enemy');
+enemy.add(sprite);
+
+// Adding components that can work with any container-based entity
+enemy.addComponent('health', new HealthComponent(enemy, 100));
+enemy.addComponent('movement', new MovementComponent(enemy, 150));
+```
+
+### Extended GameObject Approach
+
+For simpler entities, extending Phaser GameObjects and adding component functionality:
+
+```typescript
+class ComponentGameObject extends Phaser.GameObjects.Sprite {
+  private components: Map<string, Component> = new Map();
   
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, 'enemy');
-    scene.add.existing(this);
-    scene.physics.world.enable(this);
+  // Component methods...
+  
+  update(time: number, delta: number): void {
+    // Update components
+    this.components.forEach(component => component.update(time, delta));
   }
-  
-  update(): void {
-    // Movement, attacks, health, and animations all mixed together
-    // No separation of concerns
-    // Hard to reuse code across different entity types
-  }
-  
-  // Many methods handling different aspects of behavior
-  // Tightly coupled and difficult to modify
 }
 ```
-This monolithic class mixes multiple responsibilities, making it difficult to extend, test, or reuse. Adding new features requires modifying the entire class, increasing complexity and the risk of bugs.
-</example>
 
-## Phaser-Specific Implementation Tips
+### Proper Event Handling
 
-1. Use Phaser.GameObjects.Container as a base class for entities:
-   - Containers can hold multiple child GameObjects
-   - Allows grouping visual elements with component logic
-   - Provides consistent positioning for all components
+Always clean up event listeners to prevent memory leaks:
 
-2. Integrate with Phaser's update loop:
-   ```typescript
-   // Add entity to update list
-   scene.sys.updateList.add(entityInstance);
-   
-   // Remove when no longer needed
-   scene.sys.updateList.remove(entityInstance);
-   ```
+```typescript
+// In your component or entity class
+private events: Array<{emitter: Phaser.Events.EventEmitter, event: string, listener: Function}> = [];
 
-3. For physics entities, add the physics body to the container:
-   ```typescript
-   // Enable physics on the container
-   scene.physics.world.enable(entityContainer);
-   
-   // Access the body for physics operations
-   const body = entityContainer.body as Phaser.Physics.Arcade.Body;
-   ```
+// Register event with tracking
+addEvent(emitter: Phaser.Events.EventEmitter, event: string, listener: Function): void {
+  emitter.on(event, listener, this);
+  this.events.push({ emitter, event, listener });
+}
+
+// Cleanup on destroy
+destroy(): void {
+  this.events.forEach(({ emitter, event, listener }) => {
+    emitter.off(event, listener, this);
+  });
+  this.events = [];
+}
+```
 
 <version>1.0.0</version> 

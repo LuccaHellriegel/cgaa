@@ -3,186 +3,249 @@ description: Implement effective component communication patterns to ensure loos
 globs: **/*.ts
 ---
 
-# Component Communication Patterns
+# Phaser Component Communication Patterns
 
 ## Context
-- When implementing component-based entity systems
-- When components need to interact with each other
-- When maintaining loose coupling between components is important
-- When designing event-driven gameplay systems
+- When implementing interactions between components in a Phaser entity
+- When ensuring loose coupling between entity components
+- When designing event-driven systems in component architecture
+- When managing dependencies between components efficiently
 
 ## Requirements
-- Keep components decoupled using appropriate communication patterns
-- Use event systems for indirect communication between components
-- Implement clear interfaces for direct component interactions
-- Avoid tight coupling between unrelated components
-- Ensure component communication patterns are consistent across the codebase
+- Use event-based communication between components when possible
+- Establish clear interfaces for direct component references
+- Leverage Phaser's event emitter system for component communication
+- Design components to minimize direct dependencies
+- Structure component access via the parent entity's interface
 
 ## Examples
 
-<example>
 ```typescript
-// GOOD: Event-based communication between components
+// Health component using Phaser's event system for notifications
 class HealthComponent implements Component {
-  private entity: Entity;
+  private entity: PhaserEntity;
+  private scene: Phaser.Scene;
   private currentHealth: number;
   private maxHealth: number;
+  private healthBar: Phaser.GameObjects.Graphics;
   
-  constructor(entity: Entity, maxHealth: number) {
+  constructor(entity: PhaserEntity, maxHealth: number) {
     this.entity = entity;
+    this.scene = entity.scene;
     this.maxHealth = maxHealth;
     this.currentHealth = maxHealth;
+    
+    // Create health bar as a child of the entity
+    this.healthBar = this.scene.add.graphics();
+    this.entity.add(this.healthBar);
+    this.updateHealthBar();
   }
 
   takeDamage(amount: number): void {
     this.currentHealth = Math.max(0, this.currentHealth - amount);
+    this.updateHealthBar();
     
     // Emit a Phaser event that can be listened to by other components
-    this.entity.scene.events.emit('entityDamaged', this.entity, amount);
+    this.scene.events.emit('entityDamaged', this.entity, amount);
+    
+    // Visual feedback using Phaser's tween system
+    this.entity.list.forEach((child) => {
+      if (child instanceof Phaser.GameObjects.Sprite) {
+        child.setTint(0xff0000);
+        this.scene.tweens.add({
+          targets: child,
+          duration: 100,
+          onComplete: () => {
+            child.clearTint();
+          }
+        });
+      }
+    });
     
     if (this.currentHealth <= 0) {
-      this.entity.scene.events.emit('entityDied', this.entity);
+      // Broadcast entity death event
+      this.scene.events.emit('entityDied', this.entity);
     }
+  }
+
+  heal(amount: number): void {
+    this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
+    this.updateHealthBar();
+    this.scene.events.emit('entityHealed', this.entity, amount);
+  }
+
+  private updateHealthBar(): void {
+    // Draw health bar
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x000000, 0.5);
+    this.healthBar.fillRect(-20, -30, 40, 5);
+    
+    const healthPercent = this.currentHealth / this.maxHealth;
+    const color = healthPercent > 0.5 ? 0x00ff00 : healthPercent > 0.25 ? 0xffff00 : 0xff0000;
+    
+    this.healthBar.fillStyle(color, 1);
+    this.healthBar.fillRect(-20, -30, 40 * healthPercent, 5);
   }
 
   update(time: number, delta: number): void {
-    // Component update logic
+    // Position health bar above entity
+    this.healthBar.setPosition(0, 0);
   }
 
   destroy(): void {
-    // Clean up any listeners if needed
+    this.healthBar.destroy();
   }
 }
 
-// Component listening for events from others
-class EffectsComponent implements Component {
-  private entity: Entity;
+// Input component that affects movement through component communication
+class PlayerInputComponent implements Component {
+  private entity: PhaserEntity;
+  private scene: Phaser.Scene;
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   
-  constructor(entity: Entity) {
+  constructor(entity: PhaserEntity) {
     this.entity = entity;
+    this.scene = entity.scene;
+    this.cursors = this.scene.input.keyboard.createCursorKeys();
     
-    // Listen for events from other components
-    this.entity.scene.events.on('entityDamaged', this.onEntityDamaged, this);
-    this.entity.scene.events.on('entityDied', this.onEntityDied, this);
-  }
-  
-  onEntityDamaged(damagedEntity: Entity, amount: number): void {
-    // Only respond if it's our entity
-    if (damagedEntity === this.entity) {
-      // Create damage effects
-      this.createDamageEffect(amount);
+    // Register pointer down event with automatic cleanup
+    if (entity instanceof PhaserEntity) {
+      entity.addEvent(
+        this.scene.input,
+        'pointerdown',
+        this.handlePointerDown,
+        this
+      );
     }
   }
   
-  onEntityDied(deadEntity: Entity): void {
-    if (deadEntity === this.entity) {
-      this.createDeathEffect();
+  private handlePointerDown(pointer: Phaser.Input.Pointer): void {
+    // Access the movement component through the entity
+    const movementComponent = this.entity.getComponent<MovementComponent>('movement');
+    if (movementComponent) {
+      // Communicate with the movement component through its public API
+      movementComponent.moveTo(pointer.worldX, pointer.worldY);
     }
-  }
-  
-  createDamageEffect(amount: number): void {
-    // Visual feedback for damage
-  }
-  
-  createDeathEffect(): void {
-    // Death animation logic
   }
   
   update(time: number, delta: number): void {
-    // Component update logic
-  }
-  
-  destroy(): void {
-    // Important: Clean up event listeners
-    this.entity.scene.events.off('entityDamaged', this.onEntityDamaged, this);
-    this.entity.scene.events.off('entityDied', this.onEntityDied, this);
-  }
-}
-```
-</example>
-
-<example type="invalid">
-```typescript
-// BAD: Tightly coupled components with direct references
-class HealthComponent implements Component {
-  private entity: Entity;
-  private currentHealth: number;
-  private maxHealth: number;
-  private effectsComponent: EffectsComponent; // Direct reference
-  private soundComponent: SoundComponent; // Direct reference
-  
-  constructor(entity: Entity, maxHealth: number) {
-    this.entity = entity;
-    this.maxHealth = maxHealth;
-    this.currentHealth = maxHealth;
+    // Get reference to the movement component
+    const movementComponent = this.entity.getComponent<MovementComponent>('movement');
+    if (!movementComponent) return;
     
-    // Directly fetching other components - tight coupling
-    this.effectsComponent = entity.getComponent<EffectsComponent>('effects')!;
-    this.soundComponent = entity.getComponent<SoundComponent>('sound')!;
-  }
-
-  takeDamage(amount: number): void {
-    this.currentHealth = Math.max(0, this.currentHealth - amount);
-    
-    // Direct method calls to other components
-    this.effectsComponent.createDamageEffect(amount);
-    this.soundComponent.playSound('damage');
-    
-    if (this.currentHealth <= 0) {
-      this.effectsComponent.createDeathEffect();
-      this.soundComponent.playSound('death');
+    // Keyboard controls
+    if (this.cursors.left.isDown) {
+      movementComponent.moveInDirection(Math.PI);
+    } else if (this.cursors.right.isDown) {
+      movementComponent.moveInDirection(0);
+    } else if (this.cursors.up.isDown) {
+      movementComponent.moveInDirection(-Math.PI/2);
+    } else if (this.cursors.down.isDown) {
+      movementComponent.moveInDirection(Math.PI/2);
+    } else if (!this.scene.input.activePointer.isDown) {
+      // Only stop if not moving to pointer
+      movementComponent.stop();
     }
   }
   
-  // Other methods...
+  destroy(): void {
+    // Event cleanup is handled by the entity
+  }
+}
+
+// Example of a component using event listeners
+class DamageEffectsComponent implements Component {
+  private entity: PhaserEntity;
+  private scene: Phaser.Scene;
+  
+  constructor(entity: PhaserEntity) {
+    this.entity = entity;
+    this.scene = entity.scene;
+    
+    // Listen for damage events
+    this.entity.addEvent(
+      this.scene.events,
+      'entityDamaged',
+      this.onEntityDamaged,
+      this
+    );
+  }
+  
+  private onEntityDamaged(damagedEntity: PhaserEntity, amount: number): void {
+    // Only respond to events for this entity
+    if (damagedEntity !== this.entity) return;
+    
+    // Create damage effects - particles, camera shake, etc.
+    if (amount > 20) {
+      // Heavy damage effect
+      this.scene.cameras.main.shake(100, 0.01);
+    }
+    
+    // Create damage number floating text
+    const damageText = this.scene.add.text(
+      this.entity.x, 
+      this.entity.y - 40, 
+      `-${amount}`, 
+      { fontSize: '16px', color: '#ff0000' }
+    );
+    
+    // Animate the damage text
+    this.scene.tweens.add({
+      targets: damageText,
+      y: damageText.y - 50,
+      alpha: 0,
+      duration: 800,
+      onComplete: () => {
+        damageText.destroy();
+      }
+    });
+  }
+  
+  update(time: number, delta: number): void {
+    // No update needed - this component is event-driven
+  }
+  
+  destroy(): void {
+    // Event cleanup handled by entity
+  }
 }
 ```
-This example shows poor component communication with tight coupling between components. The HealthComponent directly depends on and calls methods of other components, making it impossible to use independently and difficult to test.
-</example>
 
 ## Communication Patterns
 
-1. **Event-Based Communication**:
-   ```typescript
-   // Publishing component
-   this.entity.scene.events.emit('eventName', this.entity, additionalData);
-   
-   // Subscribing component
-   this.entity.scene.events.on('eventName', this.handleEvent, this);
-   
-   // Always clean up in destroy
-   this.entity.scene.events.off('eventName', this.handleEvent, this);
-   ```
+### Event-Based Communication
+- Use Phaser's event system to decouple components
+- Broadcast state changes that other components might need to respond to
+- Listen for events from the scene or other entities
+- Structure events with clear naming and payload conventions
 
-2. **Component Registry Lookups**:
-   ```typescript
-   // Get component only when needed, not stored as property
-   update(time: number, delta: number): void {
-     // Only when needed, look up other components
-     const movementComponent = this.entity.getComponent<MovementComponent>('movement');
-     if (movementComponent && this.shouldAdjustMovement()) {
-       movementComponent.adjustSpeed(this.speedFactor);
-     }
-   }
-   ```
+### Direct Component References
+- Use entity.getComponent<Type>('name') for direct component access
+- Only use direct references when tight coupling is necessary
+- Create well-defined public APIs for components
+- Check for null/undefined when accessing other components
 
-3. **Message Passing with Command Pattern**:
-   ```typescript
-   interface Command {
-     execute(): void;
-   }
-   
-   // Component sends a command without knowing who handles it
-   this.entity.sendCommand(new ApplyDamageCommand(10));
-   
-   // Entity distributes to appropriate component
-   sendCommand(command: Command): void {
-     this.components.forEach(component => {
-       if ('handleCommand' in component) {
-         (component as any).handleCommand(command);
-       }
-     });
-   }
-   ```
+### Scene-Level Component Managers
+For systems that need central coordination:
+
+```typescript
+class PhysicsManager {
+  private scene: Phaser.Scene;
+  private entities: Map<string, PhysicsData> = new Map();
+  
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    scene.events.on('update', this.update, this);
+  }
+  
+  register(id: string, entity: Phaser.GameObjects.GameObject, config: PhysicsConfig): void {
+    // Setup physics for entity
+  }
+  
+  update(time: number, delta: number): void {
+    // Update all registered entities' physics
+  }
+}
+```
 
 <version>1.0.0</version> 
