@@ -10,15 +10,28 @@ import { Game, Types } from "phaser";
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 1024,
-  height: 768,
+  width: window.innerWidth,
+  height: window.innerHeight,
   parent: "game-container",
   backgroundColor: "#000000",
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { x: 0, y: 0 },
+    },
   },
   scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
 };
 
-export default new Game(config);
+const game = new Game(config);
+
+// Keep the game canvas sized to the window
+window.addEventListener("resize", () => {
+  game.scale.resize(window.innerWidth, window.innerHeight);
+});
+
+export default game;
