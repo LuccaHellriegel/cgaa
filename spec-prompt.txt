@@ -4,4 +4,5 @@ New requirement.
 
 
 
-Update with this guidance. Store them under "specs/mcp" with each technical topic as a seperate markdown file.
+Update with this guidance. Store them under "specs/mcp" with each technical topic as a seperate markdown file. 
+Follow the cursor rules.

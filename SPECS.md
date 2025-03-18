@@ -8,11 +8,19 @@ Circle Gladiator Army Arena (CGAA) is a 2D action game with Tower Defense elemen
 
 ### Programmatic Texture Generation
 
-| Document                                                               | Description                                          |
-| ---------------------------------------------------------------------- | ---------------------------------------------------- |
-| [Texture Generation](specs/prog-gen/texture-generation.md)             | Creating circle textures during game loading         |
-| [Texture Management](specs/prog-gen/texture-management.md)             | System for managing and retrieving textures          |
-| [Performance Optimization](specs/prog-gen/performance-optimization.md) | Strategies to optimize loading time and memory usage |
+| Document                                                               | Description                                               |
+| ---------------------------------------------------------------------- | --------------------------------------------------------- |
+| [Texture Generation](specs/prog-gen/texture-generation.md)             | Creating circle and triangle textures during game loading |
+| [Texture Management](specs/prog-gen/texture-management.md)             | System for managing and retrieving textures               |
+| [Performance Optimization](specs/prog-gen/performance-optimization.md) | Strategies to optimize loading time and memory usage      |
+
+### Weapons System
+
+| Document                                                | Description                                                |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| [Weapon System](specs/weapons/weapon-system.md)         | Overview of the weapon system architecture                 |
+| [Chain Weapon](specs/weapons/chain-weapon.md)           | Specifications for the chain weapon with triangle head     |
+| [Weapon Animations](specs/weapons/weapon-animations.md) | Animation system for weapons with focus on chain extension |
 
 ## Implementation Priorities
 

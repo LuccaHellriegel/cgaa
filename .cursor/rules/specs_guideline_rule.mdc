@@ -1,0 +1,93 @@
+---
+name: Specification Document Guidelines
+description: Ensures specs contain minimal code examples and focus on proper Phaser usage
+version: "1.0"
+globs:
+  - "specs/**/*.md"
+triggers:
+  - file_change
+  - file_creation
+---
+
+# Specification Document Guidelines
+
+## Description
+This rule defines standards for writing specification documents in the Circle Gladiator Army Arena project, with emphasis on minimal code examples and proper Phaser usage guidance.
+
+## Rule Definition
+
+When writing or updating specification documents, follow these guidelines:
+
+1. **Minimal Code Examples**
+   - Keep code examples short and focused on the specific concept being explained
+   - Include only the most critical code snippets that demonstrate the core idea
+   - Aim for 5-15 lines of code per example
+   - Remove boilerplate and unnecessary setup code from examples
+   - Use comments to indicate where code has been omitted
+
+2. **Focus on Advice**
+   - Specifications should primarily provide guidance and best practices
+   - Explain the "why" behind architectural decisions
+   - Include alternatives considered and reasons for the chosen approach
+   - Highlight potential pitfalls and how to avoid them
+   - Prioritize clarity and understandability over completeness
+
+3. **Proper Phaser Usage**
+   - Always follow Phaser's recommended patterns and practices
+   - Reference the official Phaser documentation when suggesting approaches
+   - Demonstrate correct use of Phaser's scene management, game objects, and physics systems
+   - Focus on performance optimization techniques specific to Phaser
+   - Use TypeScript types from Phaser correctly (avoid any where possible)
+   - Show integration with Phaser's built-in systems rather than creating parallel implementations
+
+4. **Code Example Format**
+   - Use TypeScript for all code examples
+   - Include type annotations for function parameters and return values
+   - Format code consistently with the project's style guidelines
+   - Include comments for complex or non-obvious code sections
+   - Ensure examples can be easily adapted for real implementation
+
+## Examples
+
+### Good Practice Example
+
+```typescript
+// Good example - minimal, focused on Phaser's API
+function createChainWeapon(scene: Phaser.Scene, config: ChainConfig): ChainWeapon {
+  // Create container for all weapon parts
+  const container = scene.add.container(config.x, config.y);
+  
+  // Use Phaser's built-in methods for physics body
+  if (config.hasPhysics) {
+    scene.physics.world.enable(container);
+    // Physics body setup...
+  }
+  
+  // Return the composited weapon
+  return new ChainWeapon(container, config);
+}
+```
+
+### Practices to Avoid Example
+
+```typescript
+// Bad example - too verbose, not using Phaser effectively
+function createWeapon(scene, config) {
+  // Custom implementation that doesn't use Phaser's container system
+  const weaponParts = [];
+  
+  // Creating parts manually...
+  const handle = document.createElement('canvas');
+  const ctx = handle.getContext('2d');
+  // ... lots of manual drawing code ...
+  
+  // Not using Phaser's built-in animation system
+  function animateWeapon() {
+    // Custom animation loop
+    requestAnimationFrame(() => {
+      // ... many lines of custom animation code ...
+    });
+  }
+  
+  // ... more unrelated code ...
+} 
