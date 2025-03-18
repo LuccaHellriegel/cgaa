@@ -97,6 +97,16 @@ export class Game extends Scene {
       .setOrigin(0.5)
       .setDepth(5);
 
+    // Circle Textures Section
+    this.add
+      .text(1000, 350, "CIRCLE TEXTURES", {
+        color: "#ffffff",
+        fontSize: "24px",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+
     // Create a grid of circles with different sizes and colors
     // Size variation
     for (let size = 5; size <= 50; size += 5) {
@@ -124,9 +134,46 @@ export class Game extends Scene {
       }
     }
 
-    // Create a grid of circles with different stroke settings
+    // Triangle Textures Section
     this.add
-      .text(1000, 1500, "CIRCLES WITH STROKE", {
+      .text(1000, 1200, "TRIANGLE TEXTURES", {
+        color: "#ffffff",
+        fontSize: "24px",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+
+    // Create a grid of triangles with different sizes and colors
+    // Size variation
+    for (let size = 10; size <= 60; size += 10) {
+      this.add
+        .text(400, 1250 + (size - 10) * 20, `Size: ${size}px`, {
+          color: "#ffffff",
+          fontSize: "14px",
+        })
+        .setDepth(5);
+
+      // Create a row of triangles with this size and different colors
+      for (let i = 0; i < colors.length; i++) {
+        const color = colors[i];
+        const x = 600 + i * 100;
+        const y = 1250 + (size - 10) * 20;
+
+        // Get the texture key for this triangle
+        const textureKey = textureManager.getTriangleTexture({
+          sideLength: size,
+          color,
+        });
+
+        // Create a sprite using the texture
+        this.add.sprite(x, y, textureKey).setDepth(1);
+      }
+    }
+
+    // Create a grid of triangles with different stroke settings
+    this.add
+      .text(1000, 1500, "TRIANGLES WITH STROKE", {
         color: "#ffffff",
         fontSize: "24px",
         fontStyle: "bold",
@@ -136,7 +183,46 @@ export class Game extends Scene {
 
     // Different stroke widths
     for (let strokeWidth = 1; strokeWidth <= 5; strokeWidth++) {
-      const y = 1600 + (strokeWidth - 1) * 100;
+      const y = 1600 + (strokeWidth - 1) * 120;
+
+      this.add
+        .text(400, y, `Stroke: ${strokeWidth}px`, {
+          color: "#ffffff",
+          fontSize: "14px",
+        })
+        .setDepth(5);
+
+      // Create a row of triangles with different colors
+      for (let i = 0; i < colors.length; i++) {
+        const color = colors[i];
+        const x = 600 + i * 100;
+
+        // Get the texture key for this triangle
+        const textureKey = textureManager.getTriangleTexture({
+          sideLength: 30,
+          color,
+          strokeColor: 0xffffff,
+          strokeWidth,
+        });
+
+        // Create a sprite using the texture
+        this.add.sprite(x, y, textureKey).setDepth(1);
+      }
+    }
+
+    // Circles with Stroke Section
+    this.add
+      .text(1000, 700, "CIRCLES WITH STROKE", {
+        color: "#ffffff",
+        fontSize: "24px",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+
+    // Different stroke widths
+    for (let strokeWidth = 1; strokeWidth <= 5; strokeWidth++) {
+      const y = 800 + (strokeWidth - 1) * 100;
 
       this.add
         .text(400, y, `Stroke: ${strokeWidth}px`, {

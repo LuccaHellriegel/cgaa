@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
   calculateTextureSize,
+  calculateTriangleTextureSize,
   colorToHex,
   calculateTotalTextures,
   createTextureKey,
+  createTriangleTextureKey,
 } from "./utils";
 
 describe("Texture Utils", () => {
@@ -21,6 +23,24 @@ describe("Texture Utils", () => {
 
     it("should ignore negative stroke widths", () => {
       expect(calculateTextureSize(10, -2)).toBe(20);
+    });
+  });
+
+  describe("calculateTriangleTextureSize", () => {
+    it("should calculate correct size for equilateral triangle", () => {
+      // For side length 10, height is approximately 8.66
+      expect(calculateTriangleTextureSize(10)).toBeCloseTo(10);
+      // For side length 20, height is approximately 17.32
+      expect(calculateTriangleTextureSize(20)).toBeCloseTo(20);
+    });
+
+    it("should include stroke width in the calculation", () => {
+      expect(calculateTriangleTextureSize(10, 2)).toBeCloseTo(14);
+      expect(calculateTriangleTextureSize(20, 5)).toBeCloseTo(30);
+    });
+
+    it("should ignore negative stroke widths", () => {
+      expect(calculateTriangleTextureSize(10, -2)).toBeCloseTo(10);
     });
   });
 
@@ -57,6 +77,20 @@ describe("Texture Utils", () => {
     it("should include optional parameters", () => {
       expect(createTextureKey(10, 0xff0000, 0x00ff00, 2)).toBe(
         "circle_10_16711680_65280_2"
+      );
+    });
+  });
+
+  describe("createTriangleTextureKey", () => {
+    it("should create key with required parameters", () => {
+      expect(createTriangleTextureKey(20, 0xff0000)).toBe(
+        "triangle_20_16711680_0_0"
+      );
+    });
+
+    it("should include optional parameters", () => {
+      expect(createTriangleTextureKey(30, 0xff0000, 0x00ff00, 2)).toBe(
+        "triangle_30_16711680_65280_2"
       );
     });
   });

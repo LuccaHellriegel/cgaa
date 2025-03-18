@@ -1,5 +1,9 @@
 import { Scene } from "phaser";
-import { CircleTextureOptions, TextureGenerator } from "./TextureGenerator";
+import {
+  CircleTextureOptions,
+  TextureGenerator,
+  TriangleTextureOptions,
+} from "./TextureGenerator";
 import { calculateTotalTextures } from "./utils";
 
 /**
@@ -16,6 +20,18 @@ export class TextureManager {
   private readonly config = {
     circles: {
       radiusRange: { min: 5, max: 50, step: 5 },
+      colors: [
+        0xff0000, // Red
+        0x00ff00, // Green
+        0x0000ff, // Blue
+        0xffff00, // Yellow
+        0xff00ff, // Magenta
+        0x00ffff, // Cyan
+        0xffffff, // White
+      ],
+    },
+    triangles: {
+      sideLengthRange: { min: 10, max: 60, step: 10 },
       colors: [
         0xff0000, // Red
         0x00ff00, // Green
@@ -56,13 +72,24 @@ export class TextureManager {
     progressCallback?: (progress: number) => void
   ): void {
     // Calculate the total number of textures to generate
-    const { radiusRange, colors } = this.config.circles;
-    const totalTextures = calculateTotalTextures(
+    const { radiusRange, colors: circleColors } = this.config.circles;
+    const { sideLengthRange, colors: triangleColors } = this.config.triangles;
+
+    const totalCircleTextures = calculateTotalTextures(
       radiusRange.min,
       radiusRange.max,
       radiusRange.step,
-      colors.length
+      circleColors.length
     );
+
+    const totalTriangleTextures = calculateTotalTextures(
+      sideLengthRange.min,
+      sideLengthRange.max,
+      sideLengthRange.step,
+      triangleColors.length
+    );
+
+    const totalTextures = totalCircleTextures + totalTriangleTextures;
 
     let generatedCount = 0;
 
@@ -72,8 +99,25 @@ export class TextureManager {
       radius <= radiusRange.max;
       radius += radiusRange.step
     ) {
-      for (const color of colors) {
+      for (const color of circleColors) {
         this.generator.generateCircleTexture({ radius, color });
+
+        // Update progress
+        generatedCount++;
+        if (progressCallback) {
+          progressCallback(generatedCount / totalTextures);
+        }
+      }
+    }
+
+    // Generate all triangle textures
+    for (
+      let sideLength = sideLengthRange.min;
+      sideLength <= sideLengthRange.max;
+      sideLength += sideLengthRange.step
+    ) {
+      for (const color of triangleColors) {
+        this.generator.generateTriangleTexture({ sideLength, color });
 
         // Update progress
         generatedCount++;
@@ -91,5 +135,14 @@ export class TextureManager {
    */
   public getCircleTexture(options: CircleTextureOptions): string {
     return this.generator.getCircleTexture(options);
+  }
+
+  /**
+   * Gets a triangle texture with the specified options.
+   * @param options The options for the triangle texture.
+   * @returns The key for the texture.
+   */
+  public getTriangleTexture(options: TriangleTextureOptions): string {
+    return this.generator.getTriangleTexture(options);
   }
 }
