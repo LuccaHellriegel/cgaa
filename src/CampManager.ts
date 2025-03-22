@@ -17,6 +17,7 @@ export class CampManager {
       this.camps,
       this.nextCampId
     );
+
     this.camps.push(...newCamps);
     this.nextCampId += newCamps.length;
   }

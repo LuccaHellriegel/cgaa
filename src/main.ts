@@ -1,6 +1,5 @@
 import "./style.css";
 import { Game } from "./Game";
-import { assertValue } from "./utils/assert";
 
 // Debug flag for development visualizations
 export const DEBUG = false;
@@ -23,5 +22,5 @@ updateCanvasSize();
 window.addEventListener("resize", updateCanvasSize);
 
 // Initialize and run game
-const game = new Game(canvas, DEBUG);
+const game = new Game(canvas);
 game.start();

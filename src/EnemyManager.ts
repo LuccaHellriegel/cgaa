@@ -30,10 +30,10 @@ export class EnemyManager {
     this.enemies = [];
     this.debug = debug;
     this.ai = new EnemyAI(game, debug);
-    this.initializePool();
   }
 
-  private initializePool(): void {
+  // Initialize pool after player exists
+  initializePool(): void {
     // Pre-create a pool of enemies
     for (let i = 0; i < this.POOL_SIZE; i++) {
       const enemy = this.createEnemy(
@@ -46,6 +46,11 @@ export class EnemyManager {
   }
 
   generateEnemies(): void {
+    // Make sure pool is initialized
+    if (this.enemies.length === 0) {
+      this.initializePool();
+    }
+
     for (let i = 0; i < this.ENEMY_COUNT; i++) {
       this.spawnNewEnemy();
     }
@@ -72,6 +77,23 @@ export class EnemyManager {
         continue;
       }
 
+      // Check for collisions with other enemies
+      const activeEnemies = this.getActiveEnemies();
+      for (const otherEnemy of activeEnemies) {
+        const dx = x - otherEnemy.position.x;
+        const dy = y - otherEnemy.position.y;
+        const minDistance = otherEnemy.radius + 20 + 10; // radius + new enemy radius + buffer
+        if (dx * dx + dy * dy < minDistance * minDistance) {
+          validPosition = false;
+          break;
+        }
+      }
+      if (!validPosition) {
+        attempts++;
+        continue;
+      }
+
+      // Check distance from player
       if (player) {
         const dx = x - player.position.x;
         const dy = y - player.position.y;
@@ -94,13 +116,32 @@ export class EnemyManager {
       ];
 
       for (const corner of corners) {
+        let cornerValid = true;
+
+        // Check wall collisions
         if (
-          !this.game.getCampManager().entityCollidesWithWalls({
+          this.game.getCampManager().entityCollidesWithWalls({
             x: corner.x,
             y: corner.y,
             radius: 20,
           })
         ) {
+          continue;
+        }
+
+        // Check enemy collisions
+        const activeEnemies = this.getActiveEnemies();
+        for (const otherEnemy of activeEnemies) {
+          const dx = corner.x - otherEnemy.position.x;
+          const dy = corner.y - otherEnemy.position.y;
+          const minDistance = otherEnemy.radius + 20 + 10;
+          if (dx * dx + dy * dy < minDistance * minDistance) {
+            cornerValid = false;
+            break;
+          }
+        }
+
+        if (cornerValid) {
           x = corner.x;
           y = corner.y;
           validPosition = true;
@@ -199,14 +240,9 @@ export class EnemyManager {
     }
 
     // Reset or initialize AI state machine - start in WANDERING state
-    if (enemy.ai) {
-      enemy.ai.state = "WANDERING"; // Start wandering immediately
-      enemy.ai.waitUntil = Date.now();
-      enemy.ai.idleTime = 1000 + Math.random() * 2000;
-      enemy.ai.waitTime = 2000 + Math.random() * 3000;
-    } else {
+    if (!enemy.ai) {
       enemy.ai = {
-        state: "WANDERING", // Start wandering immediately
+        state: "WANDERING",
         waitUntil: Date.now(),
         idleTime: 1000 + Math.random() * 2000,
         waitTime: 2000 + Math.random() * 3000,
@@ -245,7 +281,7 @@ export class EnemyManager {
       position: validPosition,
       radius: radius,
       movement: {
-        speed: 0.1,
+        speed: 0.3,
         direction: { x: 0, y: 0 },
         turnSpeed: 0.1,
       },
@@ -272,14 +308,16 @@ export class EnemyManager {
         lastPathUpdateTime: 0,
       },
       ai: {
-        state: "IDLE",
+        state: "WANDERING", // Start wandering immediately like in reviveEnemy
         waitUntil: Date.now(),
         idleTime: 1000 + Math.random() * 2000,
         waitTime: 2000 + Math.random() * 3000,
       },
     };
 
-    this.enemies.push(enemy);
+    // Find an initial target for the enemy to move towards
+    this.ai.findRandomTarget(enemy);
+
     return enemy;
   }
 
@@ -298,42 +336,43 @@ export class EnemyManager {
       const oldX = enemy.position.x;
       const oldY = enemy.position.y;
 
-      // Update AI and get new position
+      // Update AI to set movement direction
       this.ai.updateAI(enemy);
 
-      // Check wall collisions for X and Y movements separately
-      const newX = enemy.position.x;
-      const newY = enemy.position.y;
+      // Apply movement based on direction
+      if (enemy.movement && enemy.movement.direction) {
+        const speed = enemy.movement.speed * validDelta;
+        const newX = enemy.position.x + enemy.movement.direction.x * speed;
+        const newY = enemy.position.y + enemy.movement.direction.y * speed;
 
-      // Reset position temporarily to check X movement
-      enemy.position.x = oldX;
-      enemy.position.y = oldY;
+        // Reset position temporarily to check X movement
+        enemy.position.x = oldX;
+        enemy.position.y = oldY;
 
-      // Try X movement
-      const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
-        x: newX,
-        y: oldY,
-        radius: enemy.radius,
-      });
+        // Try X movement
+        const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
+          x: newX,
+          y: oldY,
+          radius: enemy.radius,
+        });
 
-      // Try Y movement
-      const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
-        x: oldX,
-        y: newY,
-        radius: enemy.radius,
-      });
+        // Try Y movement
+        const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
+          x: oldX,
+          y: newY,
+          radius: enemy.radius,
+        });
 
-      // Apply allowed movements
-      if (canMoveX) {
-        enemy.position.x = newX;
-      }
-      if (canMoveY) {
-        enemy.position.y = newY;
-      }
+        // Apply allowed movements
+        if (canMoveX) {
+          enemy.position.x = newX;
+        }
+        if (canMoveY) {
+          enemy.position.y = newY;
+        }
 
-      // If movement was blocked, request a new path
-      if (!canMoveX || !canMoveY) {
-        if (enemy.pathfinding) {
+        // If movement was blocked, request a new path
+        if ((!canMoveX || !canMoveY) && enemy.pathfinding) {
           enemy.pathfinding.needsPathUpdate = true;
         }
       }
@@ -347,20 +386,6 @@ export class EnemyManager {
     if (this.getActiveEnemies().length < this.ENEMY_COUNT / 2) {
       this.spawnNewEnemy();
     }
-  }
-
-  private isEnemyNearCamera(enemy: Entity): boolean {
-    const bufferDistance = 300; // Distance beyond viewport to start updating
-    const camera = this.game.camera;
-
-    return (
-      enemy.position.x + enemy.radius + bufferDistance >= camera.position.x &&
-      enemy.position.x - enemy.radius - bufferDistance <=
-        camera.position.x + camera.viewportWidth &&
-      enemy.position.y + enemy.radius + bufferDistance >= camera.position.y &&
-      enemy.position.y - enemy.radius - bufferDistance <=
-        camera.position.y + camera.viewportHeight
-    );
   }
 
   private updateCombat(enemy: Entity, _deltaTime: number): void {

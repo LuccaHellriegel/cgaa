@@ -21,12 +21,10 @@ export class Game {
   public readonly WORLD_WIDTH = 4800; // Doubled from 2400
   public readonly WORLD_HEIGHT = 3600; // Doubled from 1800
 
-  constructor(canvas: HTMLCanvasElement, debug: boolean = false) {
-    this.canvas = canvas;
-    this.ctx = assertValue(
-      canvas.getContext("2d"),
-      "2D context must be available"
-    );
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = assertValue(canvas, "Canvas must be provided");
+    const context = canvas.getContext("2d");
+    this.ctx = assertValue(context, "Could not get canvas context");
 
     // Initialize camera with viewport size and world size
     this.camera = new Camera(
@@ -36,12 +34,15 @@ export class Game {
       this.WORLD_HEIGHT
     );
 
+    // Set up effects system
     this.effects = new EffectsSystem();
+
+    // Initialize camp manager
     this.campManager = new CampManager(this);
 
     // Initialize managers
     this.playerManager = new PlayerManager(this);
-    this.enemyManager = new EnemyManager(this, debug);
+    this.enemyManager = new EnemyManager(this, true); // Enable debug
 
     this.initializeGame();
 
@@ -62,6 +63,10 @@ export class Game {
 
     // Set camera to follow the player
     this.camera.followEntity(player);
+
+    // Initialize enemy pool and generate initial enemies
+    this.enemyManager.initializePool();
+    this.enemyManager.generateEnemies();
   }
 
   restart(): void {

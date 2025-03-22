@@ -11,8 +11,8 @@ export class EnemyAI {
 
   constructor(game: Game, debug: boolean = false) {
     this.game = assertValue(game, "Game instance must be provided");
-    this.pathfinder = new Pathfinding(game.WORLD_WIDTH, game.WORLD_HEIGHT, 30);
     this.debug = debug;
+    this.pathfinder = new Pathfinding(game);
   }
 
   updateAI(enemy: Entity): void {
@@ -26,6 +26,10 @@ export class EnemyAI {
       "Enemy must have pathfinding component"
     );
     const position = assertValue(enemy.position, "Enemy must have position");
+    const movement = assertValue(
+      enemy.movement,
+      "Enemy must have movement component"
+    );
 
     // Check for wall collisions
     const collidesWithWalls = this.game
@@ -36,8 +40,25 @@ export class EnemyAI {
         radius: enemy.radius,
       });
 
+    // If we hit a wall, immediately try to find a new target away from the wall
     if (collidesWithWalls) {
-      pathfinding.needsPathUpdate = true;
+      // Stop current movement
+      movement.direction = { x: 0, y: 0 };
+
+      // Force state to WANDERING to ensure we look for a new path
+      ai.state = "WANDERING";
+
+      // Try to find a new target away from the current position
+      const newTarget = this.findRandomWalkablePosition(enemy, true); // true for wall escape mode
+      if (newTarget) {
+        pathfinding.targetPosition = newTarget;
+        pathfinding.needsPathUpdate = true;
+        pathfinding.path = [];
+        pathfinding.currentPathIndex = 0;
+      }
+
+      // Skip the rest of the update to allow new path to be calculated next frame
+      return;
     }
 
     switch (ai.state) {
@@ -50,6 +71,8 @@ export class EnemyAI {
           pathfinding.needsPathUpdate = true;
           ai.state = "WANDERING";
         }
+        // No movement during idle state
+        movement.direction = { x: 0, y: 0 };
         break;
 
       case "WANDERING":
@@ -80,22 +103,69 @@ export class EnemyAI {
           }
         }
 
-        // Check if we've reached our destination
-        if (
-          pathfinding.targetPosition &&
-          this.hasReachedPosition(enemy, pathfinding.targetPosition, 20)
-        ) {
-          // Transition to waiting state
-          ai.state = "WAITING";
-          ai.waitUntil = now + ai.waitTime;
+        // Calculate movement based on path
+        if (pathfinding.path.length > 0) {
+          // If we've reached the current point or don't have a current point
+          if (
+            pathfinding.currentPathIndex >= pathfinding.path.length ||
+            (pathfinding.currentPathIndex < pathfinding.path.length &&
+              this.hasReachedPosition(
+                enemy,
+                pathfinding.path[pathfinding.currentPathIndex],
+                5
+              ))
+          ) {
+            // Move to next point if available
+            pathfinding.currentPathIndex++;
 
-          // Reset path data
-          pathfinding.path = [];
-          pathfinding.currentPathIndex = 0;
-          pathfinding.targetPosition = null;
+            // If we've reached the end of the path
+            if (pathfinding.currentPathIndex >= pathfinding.path.length) {
+              // If we haven't reached the final target yet, update path
+              if (
+                pathfinding.targetPosition &&
+                !this.hasReachedPosition(enemy, pathfinding.targetPosition, 20)
+              ) {
+                pathfinding.needsPathUpdate = true;
+                // Keep moving towards target while path updates
+                const dx = pathfinding.targetPosition.x - position.x;
+                const dy = pathfinding.targetPosition.y - position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                movement.direction =
+                  distance > 0
+                    ? { x: dx / distance, y: dy / distance }
+                    : { x: 0, y: 0 };
+              } else {
+                // We've reached the target
+                movement.direction = { x: 0, y: 0 };
+                // Transition to waiting state
+                ai.state = "WAITING";
+                ai.waitUntil = now + ai.waitTime;
+                // Reset path data
+                pathfinding.path = [];
+                pathfinding.currentPathIndex = 0;
+                pathfinding.targetPosition = null;
+              }
+            }
+          }
+
+          // If we have a current path point to move to
+          if (pathfinding.currentPathIndex < pathfinding.path.length) {
+            const targetPoint = pathfinding.path[pathfinding.currentPathIndex];
+            const dx = targetPoint.x - position.x;
+            const dy = targetPoint.y - position.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            movement.direction =
+              distance > 0
+                ? { x: dx / distance, y: dy / distance }
+                : { x: 0, y: 0 };
+          }
+        } else {
+          // No path available, stop moving
+          movement.direction = { x: 0, y: 0 };
         }
+
         // Check if we need a path update due to being stuck
-        else if (
+        if (
           pathfinding.targetPosition &&
           now - pathfinding.lastPathUpdateTime > 5000
         ) {
@@ -104,6 +174,9 @@ export class EnemyAI {
         break;
 
       case "WAITING":
+        // No movement during waiting
+        movement.direction = { x: 0, y: 0 };
+
         // If wait time has passed, transition back to idle
         if (now >= ai.waitUntil) {
           ai.state = "IDLE";
@@ -125,7 +198,10 @@ export class EnemyAI {
     }
   }
 
-  private findRandomWalkablePosition(enemy: Entity): Vector2D | null {
+  private findRandomWalkablePosition(
+    enemy: Entity,
+    isWallEscape: boolean = false
+  ): Vector2D | null {
     const position = assertValue(enemy.position, "Enemy must have position");
 
     // Update pathfinding with latest obstacles
@@ -137,16 +213,15 @@ export class EnemyAI {
     this.pathfinder.updateObstacles(obstacles, walls);
 
     // Try to find a walkable position
-    const attempts = 20;
-    const maxRange = 500; // Maximum distance to search
+    const attempts = isWallEscape ? 50 : 20; // More attempts when escaping walls
+    const maxRange = isWallEscape ? 200 : 500; // Shorter range when escaping walls to find closer valid positions
 
     for (let i = 0; i < attempts; i++) {
-      // Bias the search toward the enemy's camp if it has one
+      // Bias the search toward the enemy's camp if it has one and not escaping walls
       let baseX = position.x;
       let baseY = position.y;
 
-      if (enemy.campId) {
-        // Try to stay within the camp if assigned to one
+      if (!isWallEscape && enemy.campId) {
         const camp = this.game
           .getCampManager()
           .getCamps()
@@ -157,18 +232,49 @@ export class EnemyAI {
         }
       }
 
-      // Generate position with increasing range
-      const range = Math.min(100 + i * 50, maxRange);
+      // When escaping walls, try to move away from current position
+      let range: number;
+      if (isWallEscape) {
+        // Start with a minimum range to ensure we move away from the wall
+        range = Math.max(50, Math.min(50 + i * 10, maxRange));
+      } else {
+        range = Math.min(100 + i * 50, maxRange);
+      }
+
       const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * range;
+      const distance = isWallEscape ? range : Math.random() * range; // Use full range when escaping
 
       const x = baseX + Math.cos(angle) * distance;
       const y = baseY + Math.sin(angle) * distance;
 
+      // Ensure position is within world bounds with padding
+      const padding = enemy.radius * 2;
+      const boundedX = Math.max(
+        padding,
+        Math.min(this.game.WORLD_WIDTH - padding, x)
+      );
+      const boundedY = Math.max(
+        padding,
+        Math.min(this.game.WORLD_HEIGHT - padding, y)
+      );
+
       // Check if position is walkable
-      const pos = { x, y };
-      if (this.pathfinder.isPositionWalkable(pos)) {
-        return pos;
+      const pos = {
+        x: boundedX,
+        y: boundedY,
+      };
+
+      if (this.pathfinder.isWalkable(pos)) {
+        // Double check that this position isn't too close to walls
+        if (
+          !this.game.getCampManager().entityCollidesWithWalls({
+            x: boundedX,
+            y: boundedY,
+            radius: enemy.radius + 5, // Add a small buffer
+          })
+        ) {
+          return pos;
+        }
       }
     }
 
@@ -194,23 +300,8 @@ export class EnemyAI {
   ): Array<{ position: Vector2D; radius: number }> {
     const obstacles: Array<{ position: Vector2D; radius: number }> = [];
 
-    // Add other enemies as obstacles
-    const enemies = this.game.getEnemyManager().getEnemies();
-    for (const enemy of enemies) {
-      if (!enemy.isDead && enemy.id !== currentEnemy.id) {
-        const position = assertValue(
-          enemy.position,
-          "Enemy must have position"
-        );
-        const radius = assertValue(enemy.radius, "Enemy must have radius");
-        obstacles.push({
-          position,
-          radius,
-        });
-      }
-    }
-
-    // Add player as obstacle
+    // During initialization, only consider the player as an obstacle
+    // This avoids the circular dependency during EnemyManager initialization
     const player = this.game.getPlayer();
     if (player) {
       const position = assertValue(
@@ -222,6 +313,27 @@ export class EnemyAI {
         position,
         radius,
       });
+    }
+
+    // Only check other enemies if we're not in initialization
+    try {
+      const enemies = this.game.getEnemyManager().getEnemies();
+      for (const enemy of enemies) {
+        if (!enemy.isDead && enemy.id !== currentEnemy.id) {
+          const position = assertValue(
+            enemy.position,
+            "Enemy must have position"
+          );
+          const radius = assertValue(enemy.radius, "Enemy must have radius");
+          obstacles.push({
+            position,
+            radius,
+          });
+        }
+      }
+    } catch (e) {
+      // During initialization, EnemyManager won't be available yet
+      // That's fine, we'll just use player as obstacle for initial positioning
     }
 
     return obstacles;

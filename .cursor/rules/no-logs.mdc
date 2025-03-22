@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+* Do not add logs, wait for confirmation of fixes by the users
