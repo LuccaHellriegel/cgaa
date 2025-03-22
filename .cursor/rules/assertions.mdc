@@ -1,7 +1,7 @@
 ---
 description: 
-globs: *.ts
-alwaysApply: false
+globs: 
+alwaysApply: true
 ---
 * Use runtime assertions in addition to strict typing
 * Prefer assertions to if-checks where possible

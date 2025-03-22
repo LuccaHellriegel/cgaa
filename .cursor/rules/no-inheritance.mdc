@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+* We never use class inheritance
+* We always compose, use functions or use manager classes

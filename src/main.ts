@@ -1,5 +1,7 @@
 import "./style.css";
 import { Game } from "./Game";
+import { PlayerManager } from "./PlayerManager";
+import { EnemyManager } from "./EnemyManager";
 
 // Create canvas element
 const canvas = document.createElement("canvas");
@@ -18,10 +20,40 @@ document.body.appendChild(instructions);
 // Initialize and run game
 const game = new Game(canvas);
 
+// Initialize managers
+const playerManager = new PlayerManager(game);
+const enemyManager = new EnemyManager(game);
+
+// Set managers in game
+game.setPlayerManager(playerManager);
+game.setEnemyManager(enemyManager);
+
+// Create initial player and enemies
+playerManager.createPlayer({
+  x: canvas.width / 2,
+  y: canvas.height / 2,
+});
+enemyManager.generateEnemies();
+
+let lastTime = performance.now();
+
 function gameLoop(): void {
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastTime;
+  lastTime = currentTime;
+
+  // Update game components
   game.update();
+  playerManager.update(deltaTime);
+  enemyManager.update(deltaTime);
+
+  // Render everything
   game.render();
+
+  // Continue game loop
   requestAnimationFrame(gameLoop);
 }
 
+// Start the game loop
+lastTime = performance.now();
 gameLoop();

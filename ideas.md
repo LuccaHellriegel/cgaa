@@ -1,2 +1,3 @@
 - WebGL and Canvas for graphics
 - AI / Pathfinding in Web Workers
+- multiplayer

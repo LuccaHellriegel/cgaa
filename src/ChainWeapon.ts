@@ -1,4 +1,5 @@
-import { ChainLink, ChainWeaponState, Enemy, TriangleTip } from "./types";
+import { Entity } from "./Entity";
+import { ChainLink, ChainWeaponState, TriangleTip } from "./types";
 
 export class ChainWeapon {
   private links: ChainLink[];
@@ -10,7 +11,7 @@ export class ChainWeapon {
   private maxLength: number;
   private currentLength: number;
   private extendSpeed: number;
-  private retractSpeed: number;
+  public retractSpeed: number;
   private holdTime: number;
   private holdCounter: number;
   private triangleTip: TriangleTip;
@@ -85,6 +86,8 @@ export class ChainWeapon {
           this.currentLength = this.maxLength;
           this.state = "EXTENDED";
           this.holdCounter = this.holdTime;
+          // Clear hit enemies when fully extended to allow for new hits
+          this.hitEnemies.clear();
         }
         break;
 
@@ -92,6 +95,8 @@ export class ChainWeapon {
         this.holdCounter--;
         if (this.holdCounter <= 0) {
           this.state = "RETRACTING";
+          // Clear hit enemies when starting to retract
+          this.hitEnemies.clear();
         }
         break;
 
@@ -106,6 +111,7 @@ export class ChainWeapon {
         break;
     }
 
+    // Update link positions
     if (this.state !== "IDLE") {
       const visibleLinks = Math.min(
         Math.ceil(this.currentLength / this.linkDistance),
@@ -170,18 +176,22 @@ export class ChainWeapon {
     }
   }
 
-  checkCollisions(enemies: Enemy[]): number[] {
+  checkCollisions(enemies: Entity[]): number[] {
     if (this.state !== "EXTENDING" && this.state !== "EXTENDED") return [];
 
     const hitEnemyIndices: number[] = [];
+    const visibleLinks = Math.min(
+      Math.ceil(this.currentLength / this.linkDistance),
+      this.linkCount
+    );
 
     // Check triangle tip for collisions
     for (let i = 0; i < enemies.length; i++) {
-      if (this.hitEnemies.has(i)) continue;
+      if (enemies[i].isDead || this.hitEnemies.has(i)) continue;
 
       const enemy = enemies[i];
-      const dx = this.triangleTip.x - enemy.x;
-      const dy = this.triangleTip.y - enemy.y;
+      const dx = this.triangleTip.x - enemy.position.x;
+      const dy = this.triangleTip.y - enemy.position.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < this.triangleTip.size / 2 + enemy.radius) {
@@ -190,24 +200,16 @@ export class ChainWeapon {
       }
     }
 
-    // Check the last few links
-    const visibleLinks = Math.min(
-      Math.ceil(this.currentLength / this.linkDistance),
-      this.linkCount
-    );
-
-    let startCheckIndex = Math.max(0, visibleLinks - 3);
-    for (let j = startCheckIndex; j < visibleLinks; j++) {
-      if (j >= this.links.length) break;
-
+    // Check all visible links for collisions
+    for (let j = 0; j < visibleLinks; j++) {
       const link = this.links[j];
 
       for (let i = 0; i < enemies.length; i++) {
-        if (this.hitEnemies.has(i)) continue;
+        if (enemies[i].isDead || this.hitEnemies.has(i)) continue;
 
         const enemy = enemies[i];
-        const dx = link.x - enemy.x;
-        const dy = link.y - enemy.y;
+        const dx = link.x - enemy.position.x;
+        const dy = link.y - enemy.position.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < link.radius + enemy.radius) {
@@ -223,7 +225,7 @@ export class ChainWeapon {
   forceRetract(): void {
     if (this.state === "EXTENDING" || this.state === "EXTENDED") {
       this.state = "RETRACTING";
-      this.holdCounter = 0;
+      this.hitEnemies.clear();
     }
   }
 

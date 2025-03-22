@@ -1,7 +1,7 @@
 ---
 description: 
-globs: *.ts
-alwaysApply: false
+globs: 
+alwaysApply: true
 ---
 * Every Game Object with its own independent identity is an Entity
 * Example: the player is an Entity, his chain weapon is not
@@ -11,4 +11,4 @@ alwaysApply: false
 * We mark dead entities as dead via bool and keep them instead of removing them, systems skip dead
 * We keep different types of entities in different arrays, e.g. buildings, towers, enemies, players
 * For each Entity type we have a central manager class that implements update and render methods
-* Managers register themselves in a global manager, via which the can access other managers state
+* Managers are created in the central Game class and can access each others state through the Game class
