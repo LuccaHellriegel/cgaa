@@ -31,8 +31,16 @@ export class PlayerManager {
 
     this.game.canvas.addEventListener("mousemove", (e) => {
       const rect = this.game.canvas.getBoundingClientRect();
-      this.mouseX = e.clientX - rect.left;
-      this.mouseY = e.clientY - rect.top;
+      const screenX = e.clientX - rect.left;
+      const screenY = e.clientY - rect.top;
+
+      // Convert screen coordinates to world coordinates
+      const worldPos = this.game.camera.screenToWorld({
+        x: screenX,
+        y: screenY,
+      });
+      this.mouseX = worldPos.x;
+      this.mouseY = worldPos.y;
     });
 
     this.game.canvas.addEventListener("mousedown", () => {
@@ -105,12 +113,8 @@ export class PlayerManager {
   }
 
   update(deltaTime: number): void {
-    const validDelta = assertRange(
-      deltaTime,
-      0,
-      50,
-      "Delta time must be positive and not too large"
-    );
+    // Clamp delta time between 0 and 50ms to prevent large jumps
+    const validDelta = Math.max(0, Math.min(deltaTime, 50));
 
     for (const player of this.players) {
       if (player.isDead) continue;
@@ -119,6 +123,9 @@ export class PlayerManager {
       this.updateMovement(player, validDelta);
       this.updateCombat(player, validDelta);
       this.checkCollisions(player);
+
+      // Update camera to follow player
+      this.game.camera.followEntity(player);
     }
   }
 
@@ -158,23 +165,21 @@ export class PlayerManager {
   private updateMovement(player: Entity, deltaTime: number): void {
     const movement = player.movement;
 
-    // Update position
-    player.position.x += movement.direction.x * movement.speed * deltaTime;
-    player.position.y += movement.direction.y * movement.speed * deltaTime;
+    // Calculate new position
+    const newX =
+      player.position.x + movement.direction.x * movement.speed * deltaTime;
+    const newY =
+      player.position.y + movement.direction.y * movement.speed * deltaTime;
 
-    // Keep player within canvas bounds
-    player.position.x = assertRange(
-      player.position.x,
+    // Clamp position to world bounds
+    player.position.x = Math.max(
       player.radius,
-      this.game.canvas.width - player.radius,
-      "Player X position out of bounds"
+      Math.min(newX, this.game.WORLD_WIDTH - player.radius)
     );
 
-    player.position.y = assertRange(
-      player.position.y,
+    player.position.y = Math.max(
       player.radius,
-      this.game.canvas.height - player.radius,
-      "Player Y position out of bounds"
+      Math.min(newY, this.game.WORLD_HEIGHT - player.radius)
     );
   }
 

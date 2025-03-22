@@ -28,11 +28,13 @@ const enemyManager = new EnemyManager(game);
 game.setPlayerManager(playerManager);
 game.setEnemyManager(enemyManager);
 
-// Create initial player and enemies
+// Create initial player in the center of the world
 playerManager.createPlayer({
-  x: canvas.width / 2,
-  y: canvas.height / 2,
+  x: game.WORLD_WIDTH / 2,
+  y: game.WORLD_HEIGHT / 2,
 });
+
+// Generate enemies throughout the world
 enemyManager.generateEnemies();
 
 let lastTime = performance.now();

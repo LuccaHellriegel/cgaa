@@ -53,8 +53,8 @@ export class EnemyManager {
 
     do {
       validPosition = true;
-      x = Math.random() * (this.game.canvas.width - 60) + 30;
-      y = Math.random() * (this.game.canvas.height - 60) + 30;
+      x = Math.random() * (this.game.WORLD_WIDTH - 60) + 30;
+      y = Math.random() * (this.game.WORLD_HEIGHT - 60) + 30;
 
       if (player) {
         const dx = x - player.position.x;
@@ -89,7 +89,7 @@ export class EnemyManager {
       return this.createEnemy(position, radius);
     }
 
-    // If we get here, reuse the first dead enemy (shouldn't happen with proper pool size)
+    // If we get here, reuse the first dead enemy
     const fallbackEnemy = this.enemies[0];
     this.reviveEnemy(fallbackEnemy, position, radius);
     return fallbackEnemy;
@@ -179,15 +179,32 @@ export class EnemyManager {
     for (const enemy of this.enemies) {
       if (enemy.isDead) continue;
 
-      this.updateMovement(enemy, validDelta);
-      this.updateCombat(enemy, validDelta);
-      this.checkCollisions(enemy);
+      // Only update enemies near the camera view
+      if (this.isEnemyNearCamera(enemy)) {
+        this.updateMovement(enemy, validDelta);
+        this.updateCombat(enemy, validDelta);
+        this.checkCollisions(enemy);
+      }
     }
 
     // Spawn new enemies if below threshold
     if (this.getActiveEnemies().length < this.ENEMY_COUNT / 2) {
       this.spawnNewEnemy();
     }
+  }
+
+  private isEnemyNearCamera(enemy: Entity): boolean {
+    const bufferDistance = 300; // Distance beyond viewport to start updating
+    const camera = this.game.camera;
+
+    return (
+      enemy.position.x + enemy.radius + bufferDistance >= camera.position.x &&
+      enemy.position.x - enemy.radius - bufferDistance <=
+        camera.position.x + camera.viewportWidth &&
+      enemy.position.y + enemy.radius + bufferDistance >= camera.position.y &&
+      enemy.position.y - enemy.radius - bufferDistance <=
+        camera.position.y + camera.viewportHeight
+    );
   }
 
   private updateMovement(enemy: Entity, deltaTime: number): void {
@@ -224,18 +241,18 @@ export class EnemyManager {
       enemy.position.x += movement.direction.x * movement.speed * deltaTime;
       enemy.position.y += movement.direction.y * movement.speed * deltaTime;
 
-      // Keep enemy within canvas bounds
+      // Keep enemy within world bounds
       enemy.position.x = assertRange(
         enemy.position.x,
         enemy.radius,
-        this.game.canvas.width - enemy.radius,
+        this.game.WORLD_WIDTH - enemy.radius,
         "Enemy X position out of bounds"
       );
 
       enemy.position.y = assertRange(
         enemy.position.y,
         enemy.radius,
-        this.game.canvas.height - enemy.radius,
+        this.game.WORLD_HEIGHT - enemy.radius,
         "Enemy Y position out of bounds"
       );
     }
@@ -313,36 +330,39 @@ export class EnemyManager {
     for (const enemy of this.enemies) {
       if (enemy.isDead) continue;
 
-      const renderComponent = assertValue(
-        enemy.render,
-        "Enemy must have render component"
-      );
-      const combat = assertValue(
-        enemy.combat,
-        "Enemy must have combat component"
-      );
+      // Only render if visible in camera
+      if (this.game.camera.isEntityVisible(enemy)) {
+        const renderComponent = assertValue(
+          enemy.render,
+          "Enemy must have render component"
+        );
+        const combat = assertValue(
+          enemy.combat,
+          "Enemy must have combat component"
+        );
 
-      // Draw enemy body
-      context.beginPath();
-      context.arc(
-        enemy.position.x,
-        enemy.position.y,
-        enemy.radius,
-        0,
-        Math.PI * 2
-      );
-      context.fillStyle = renderComponent.color;
-      context.fill();
-      context.closePath();
+        // Draw enemy body
+        context.beginPath();
+        context.arc(
+          enemy.position.x,
+          enemy.position.y,
+          enemy.radius,
+          0,
+          Math.PI * 2
+        );
+        context.fillStyle = renderComponent.color;
+        context.fill();
+        context.closePath();
 
-      // Draw enemy weapon
-      if (combat.weapon) {
-        combat.weapon.render(context);
-      }
+        // Draw enemy weapon
+        if (combat.weapon) {
+          combat.weapon.render(context);
+        }
 
-      // Render health bar
-      if (enemy.health) {
-        this.renderHealthBar(context, enemy);
+        // Render health bar
+        if (enemy.health) {
+          this.renderHealthBar(context, enemy);
+        }
       }
     }
   }
