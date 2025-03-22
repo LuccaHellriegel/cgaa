@@ -34,4 +34,21 @@ export interface Entity {
     color: string;
     targetAngle: number;
   };
+
+  // Optional pathfinding component
+  pathfinding?: {
+    path: Vector2D[];
+    currentPathIndex: number;
+    targetPosition: Vector2D | null;
+    needsPathUpdate: boolean;
+    lastPathUpdateTime: number;
+  };
+
+  // Optional AI state machine component
+  ai?: {
+    state: "IDLE" | "WANDERING" | "WAITING";
+    waitUntil: number;
+    idleTime: number;
+    waitTime: number;
+  };
 }

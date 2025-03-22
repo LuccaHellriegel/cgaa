@@ -3,6 +3,9 @@ import { Game } from "./Game";
 import { PlayerManager } from "./PlayerManager";
 import { EnemyManager } from "./EnemyManager";
 
+// Debug flag for development visualizations
+export const DEBUG = false;
+
 // Create canvas element
 const canvas = document.createElement("canvas");
 canvas.id = "gameCanvas";
@@ -27,7 +30,7 @@ const game = new Game(canvas);
 
 // Initialize managers
 const playerManager = new PlayerManager(game);
-const enemyManager = new EnemyManager(game);
+const enemyManager = new EnemyManager(game, DEBUG);
 
 // Set managers in game
 game.setPlayerManager(playerManager);

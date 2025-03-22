@@ -1,7 +1,7 @@
 import { Entity } from "./Entity";
 import { Game } from "./Game";
 import { Vector2D } from "./types";
-import { assert, assertValue, assertRange } from "./utils/assert";
+import { assert, assertValue } from "./utils/assert";
 import { ChainWeapon } from "./ChainWeapon";
 
 export class PlayerManager {
