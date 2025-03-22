@@ -4,6 +4,7 @@ globs:
 alwaysApply: true
 ---
 * Use runtime assertions in addition to strict typing
+* Use assertions instead of throwing errors
 * Prefer assertions to if-checks where possible
 * Helpful assertions are: assert not null, assert number ranges, assert not empty
 * Assert function/method arguments and return values

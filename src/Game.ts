@@ -308,6 +308,10 @@ export class Game {
     return this.effects;
   }
 
+  getEnemyManager(): EnemyManager {
+    return assertValue(this.enemyManager, "EnemyManager must be initialized");
+  }
+
   start(): void {
     this.lastTime = performance.now();
     this.gameLoop();

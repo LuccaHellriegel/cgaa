@@ -66,3 +66,15 @@ export function assertNonEmpty<T>(
 
 // Type helper for non-empty arrays
 type NonEmptyArray<T> = T[] & { 0: T };
+
+/**
+ * Assert that a condition is true without returning a value
+ * Useful for pure validation checks where we don't need the value back
+ * @param condition The condition to check
+ * @param message The error message to display if the assertion fails
+ */
+export function assertCondition(condition: boolean, message: string): void {
+  if (!condition) {
+    throw new Error(`Assertion failed: ${message}`);
+  }
+}
