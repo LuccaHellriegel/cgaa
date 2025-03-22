@@ -52,10 +52,14 @@ function gameLoop(): void {
   const deltaTime = currentTime - lastTime;
   lastTime = currentTime;
 
+  // Cap maximum delta time to prevent large jumps when tab is inactive
+  const maxDeltaTime = 16.67; // Cap at ~16.67ms (60 fps)
+  const cappedDeltaTime = Math.min(deltaTime, maxDeltaTime);
+
   // Update game components
   game.update();
-  playerManager.update(deltaTime);
-  enemyManager.update(deltaTime);
+  playerManager.update(cappedDeltaTime);
+  enemyManager.update(cappedDeltaTime);
 
   // Render everything
   game.render();
