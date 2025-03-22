@@ -49,6 +49,12 @@ export class Game {
     );
 
     this.effects = new EffectsSystem();
+
+    // Handle canvas resize
+    window.addEventListener("resize", () => {
+      this.camera.viewportWidth = this.canvas.width;
+      this.camera.viewportHeight = this.canvas.height;
+    });
   }
 
   update(): void {

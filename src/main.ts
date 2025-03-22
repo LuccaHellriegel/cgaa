@@ -6,16 +6,21 @@ import { EnemyManager } from "./EnemyManager";
 // Create canvas element
 const canvas = document.createElement("canvas");
 canvas.id = "gameCanvas";
-canvas.width = 800;
-canvas.height = 600;
 document.body.appendChild(canvas);
 
-// Create instructions div
-const instructions = document.createElement("div");
-instructions.id = "instructions";
-instructions.textContent =
-  "WASD or Arrow Keys to move | Mouse to aim | Click to fire chain weapon";
-document.body.appendChild(instructions);
+// Function to update canvas size
+function updateCanvasSize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// Initial size setup
+updateCanvasSize();
+
+// Handle window resizing
+window.addEventListener("resize", () => {
+  updateCanvasSize();
+});
 
 // Initialize and run game
 const game = new Game(canvas);
