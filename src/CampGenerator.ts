@@ -22,10 +22,6 @@ export class CampGenerator {
     );
     const safeCount = Math.min(count, maxCamps);
 
-    console.log(
-      `Attempting to generate ${safeCount} camps (max possible: ${maxCamps})`
-    );
-
     const maxAttempts = 100;
     let successfulCamps = 0;
     let totalAttempts = 0;
@@ -41,17 +37,8 @@ export class CampGenerator {
         newCamps.push(camp);
         successfulCamps++;
         currentCampId++;
-        console.log(
-          `Successfully generated camp ${successfulCamps}/${safeCount}`
-        );
       }
       totalAttempts++;
-    }
-
-    if (successfulCamps < safeCount) {
-      console.warn(
-        `Only generated ${successfulCamps}/${safeCount} camps after ${totalAttempts} attempts`
-      );
     }
 
     return newCamps;
@@ -87,7 +74,6 @@ export class CampGenerator {
       attempts++;
     }
 
-    console.warn("Failed to generate valid camp position after max attempts");
     return null;
   }
 

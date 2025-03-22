@@ -250,10 +250,6 @@ export class PlayerManager {
     return ++PlayerManager.entityIdCounter;
   }
 
-  getPlayers(): Entity[] {
-    return this.players;
-  }
-
   getActivePlayer(): Entity {
     return assertValue(this.players[0], "No active player found");
   }

@@ -1,4 +1,12 @@
-import { Particle } from "./types";
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  color: string;
+  size: number;
+  life: number;
+}
 
 export class EffectsSystem {
   private particles: Particle[];

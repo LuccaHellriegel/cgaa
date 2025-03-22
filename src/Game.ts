@@ -10,8 +10,8 @@ import { Vector2D } from "./types";
 export class Game {
   public canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
-  private playerManager: PlayerManager | null = null;
-  private enemyManager: EnemyManager | null = null;
+  private playerManager: PlayerManager;
+  private enemyManager: EnemyManager;
   public effects: EffectsSystem;
   public camera: Camera;
   private campManager: CampManager;
@@ -21,23 +21,7 @@ export class Game {
   public readonly WORLD_WIDTH = 4800; // Doubled from 2400
   public readonly WORLD_HEIGHT = 3600; // Doubled from 1800
 
-  setPlayerManager(manager: PlayerManager): void {
-    this.playerManager = manager;
-  }
-
-  setEnemyManager(manager: EnemyManager): void {
-    this.enemyManager = manager;
-  }
-
-  getPlayer(): Entity | null {
-    return this.playerManager?.getActivePlayer() || null;
-  }
-
-  getEnemies(): Entity[] {
-    return this.enemyManager?.getEnemies() || [];
-  }
-
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, debug: boolean = false) {
     this.canvas = canvas;
     this.ctx = assertValue(
       canvas.getContext("2d"),
@@ -54,6 +38,11 @@ export class Game {
 
     this.effects = new EffectsSystem();
     this.campManager = new CampManager(this);
+
+    // Initialize managers
+    this.playerManager = new PlayerManager(this);
+    this.enemyManager = new EnemyManager(this, debug);
+
     this.initializeGame();
 
     // Handle canvas resize
@@ -66,6 +55,13 @@ export class Game {
   private initializeGame(): void {
     // Generate initial camps
     this.campManager.generateCamps(3);
+
+    // Create initial player at a safe spawn position
+    const spawnPosition = this.findSafeSpawnPosition(20);
+    const player = this.playerManager.createPlayer(spawnPosition);
+
+    // Set camera to follow the player
+    this.camera.followEntity(player);
   }
 
   restart(): void {
@@ -126,10 +122,10 @@ export class Game {
     }
 
     // Update player
-    this.playerManager?.update(deltaTime);
+    this.playerManager.update(deltaTime);
 
     // Update enemies
-    this.enemyManager?.update(deltaTime);
+    this.enemyManager.update(deltaTime);
 
     // Update effects
     this.effects.update();
@@ -214,10 +210,10 @@ export class Game {
     this.campManager.render(this.ctx);
 
     // Draw enemies
-    this.enemyManager?.render(this.ctx);
+    this.enemyManager.render(this.ctx);
 
     // Draw player
-    this.playerManager?.render(this.ctx);
+    this.playerManager.render(this.ctx);
 
     // Draw effects
     this.effects.render(this.ctx);
@@ -334,5 +330,13 @@ export class Game {
 
     // Continue game loop
     requestAnimationFrame(() => this.gameLoop());
+  }
+
+  getPlayer(): Entity | null {
+    return this.playerManager.getActivePlayer() || null;
+  }
+
+  getEnemies(): Entity[] {
+    return this.enemyManager.getEnemies();
   }
 }

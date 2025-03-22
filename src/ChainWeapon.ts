@@ -1,11 +1,18 @@
 import { Entity } from "./Entity";
-import { ChainWeaponState, TriangleTip } from "./types";
+
+type ChainWeaponState = "IDLE" | "EXTENDING" | "EXTENDED" | "RETRACTING";
 
 interface ChainLink {
   x: number;
   y: number;
   radius: number;
   color: string;
+}
+
+interface TriangleTip {
+  size: number;
+  x: number;
+  y: number;
 }
 
 export class ChainWeapon {
