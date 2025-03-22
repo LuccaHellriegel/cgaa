@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Tech Stack
+
+* We use Vite for builds
+* We use TypeScript with strict typing
+* We use Canvas for Graphics
+* We do not use any other libraries except was is already there

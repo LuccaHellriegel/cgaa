@@ -1,24 +1,27 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./style.css";
+import { Game } from "./Game";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+// Create canvas element
+const canvas = document.createElement("canvas");
+canvas.id = "gameCanvas";
+canvas.width = 800;
+canvas.height = 600;
+document.body.appendChild(canvas);
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+// Create instructions div
+const instructions = document.createElement("div");
+instructions.id = "instructions";
+instructions.textContent =
+  "WASD or Arrow Keys to move | Mouse to aim | Click to fire chain weapon";
+document.body.appendChild(instructions);
+
+// Initialize and run game
+const game = new Game(canvas);
+
+function gameLoop(): void {
+  game.update();
+  game.render();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();

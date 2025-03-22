@@ -24,10 +24,12 @@ a:hover {
 
 body {
   margin: 0;
+  overflow: hidden;
+  background: #111;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 h1 {
@@ -93,4 +95,20 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+canvas {
+  background: #222;
+  display: block;
+  border: 2px solid #333;
+}
+
+#instructions {
+  position: absolute;
+  top: 10px;
+  color: white;
+  font-family: Arial, sans-serif;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
 }
