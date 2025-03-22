@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+* After every major change, execute `npm run typecheck` and fix all type issues

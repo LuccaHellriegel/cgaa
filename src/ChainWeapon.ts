@@ -230,4 +230,15 @@ export class ChainWeapon {
   getState(): ChainWeaponState {
     return this.state;
   }
+
+  getHitbox(): { x: number; y: number; radius: number } | null {
+    if (this.state === "IDLE" || this.state === "RETRACTING") return null;
+
+    // Return the triangle tip as the hitbox
+    return {
+      x: this.triangleTip.x,
+      y: this.triangleTip.y,
+      radius: this.triangleTip.size / 2,
+    };
+  }
 }

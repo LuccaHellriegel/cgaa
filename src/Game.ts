@@ -15,6 +15,7 @@ export class Game {
   private lastClickTime: number;
   private readonly clickCooldown: number;
   private readonly enemyCount: number;
+  private readonly PLAYER_INVULNERABLE_TIME: number = 1000; // 1 second of invulnerability after hit
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -26,7 +27,7 @@ export class Game {
     this.clickCooldown = 200;
     this.enemyCount = 15;
 
-    // Initialize player
+    // Initialize player with health
     this.player = {
       x: canvas.width / 2,
       y: canvas.height / 2,
@@ -34,6 +35,8 @@ export class Game {
       color: "#3498db",
       speed: 5,
       direction: { x: 0, y: 0 },
+      health: { current: 100, max: 100 },
+      invulnerableUntil: 0,
     };
 
     // Initialize game objects
@@ -114,6 +117,14 @@ export class Game {
       y,
       radius,
       color: `hsl(${Math.random() * 60 + 340}, 80%, 60%)`,
+      speed: 2,
+      direction: { x: 0, y: 0 },
+      weapon: new ChainWeapon(x, y, 10),
+      detectionRange: 200,
+      attackCooldown: 2000,
+      lastAttackTime: 0,
+      targetAngle: 0,
+      turnSpeed: 0.02,
     });
   }
 
@@ -154,8 +165,86 @@ export class Game {
     );
   }
 
+  private updateEnemies(): void {
+    const now = Date.now();
+
+    for (const enemy of this.enemies) {
+      const dx = this.player.x - enemy.x;
+      const dy = this.player.y - enemy.y;
+      const distanceToPlayer = Math.sqrt(dx * dx + dy * dy);
+
+      // Calculate angle to player
+      const angleToPlayer = Math.atan2(dy, dx);
+
+      // Smoothly rotate towards player
+      let angleDiff = angleToPlayer - enemy.targetAngle;
+      // Normalize angle difference to [-PI, PI]
+      if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+      if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+      enemy.targetAngle +=
+        Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), enemy.turnSpeed);
+
+      if (distanceToPlayer < enemy.detectionRange) {
+        // Move towards player
+        enemy.direction.x = Math.cos(enemy.targetAngle);
+        enemy.direction.y = Math.sin(enemy.targetAngle);
+
+        enemy.x += enemy.direction.x * enemy.speed;
+        enemy.y += enemy.direction.y * enemy.speed;
+
+        // Attack if cooldown is over
+        if (now - enemy.lastAttackTime > enemy.attackCooldown && enemy.weapon) {
+          if (enemy.weapon.getState() === "IDLE") {
+            enemy.weapon.fire(enemy.x, enemy.y, enemy.targetAngle);
+            enemy.lastAttackTime = now;
+          }
+        }
+      }
+
+      // Update enemy's weapon
+      if (enemy.weapon) {
+        enemy.weapon.update(enemy.x, enemy.y);
+
+        // Check if weapon hits player
+        if (!this.isPlayerInvulnerable()) {
+          const playerHit = this.checkWeaponHitsPlayer(enemy.weapon);
+          if (playerHit) {
+            this.damagePlayer(10);
+          }
+        }
+      }
+    }
+  }
+
+  private isPlayerInvulnerable(): boolean {
+    return Date.now() < this.player.invulnerableUntil;
+  }
+
+  private damagePlayer(amount: number): void {
+    this.player.health.current = Math.max(
+      0,
+      this.player.health.current - amount
+    );
+    this.player.invulnerableUntil = Date.now() + this.PLAYER_INVULNERABLE_TIME;
+    this.effects.createHitEffect(this.player.x, this.player.y, "#ff0000");
+  }
+
+  private checkWeaponHitsPlayer(weapon: ChainWeapon): boolean {
+    // We'll implement a simple hit check using the weapon's tip
+    const hitbox = weapon.getHitbox();
+    if (!hitbox) return false;
+
+    const dx = hitbox.x - this.player.x;
+    const dy = hitbox.y - this.player.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    return distance < this.player.radius + hitbox.radius;
+  }
+
   update(): void {
     this.updatePlayer();
+    this.updateEnemies();
     this.chainWeapon.update(this.player.x, this.player.y);
     this.effects.update();
 
@@ -176,16 +265,29 @@ export class Game {
   render(): void {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw enemies
+    // Draw enemies and their weapons
     for (const enemy of this.enemies) {
+      // Draw enemy
       this.ctx.beginPath();
       this.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
       this.ctx.fillStyle = enemy.color;
       this.ctx.fill();
       this.ctx.closePath();
+
+      // Draw enemy's weapon
+      if (enemy.weapon) {
+        enemy.weapon.render(this.ctx);
+      }
+
+      // Draw enemy's detection range (for debugging)
+      // this.ctx.beginPath();
+      // this.ctx.arc(enemy.x, enemy.y, enemy.detectionRange, 0, Math.PI * 2);
+      // this.ctx.strokeStyle = "rgba(255, 0, 0, 0.2)";
+      // this.ctx.stroke();
+      // this.ctx.closePath();
     }
 
-    // Draw player
+    // Draw player with damage indication
     this.ctx.beginPath();
     this.ctx.arc(
       this.player.x,
@@ -194,9 +296,43 @@ export class Game {
       0,
       Math.PI * 2
     );
-    this.ctx.fillStyle = this.player.color;
+
+    if (this.isPlayerInvulnerable()) {
+      // Flash white when invulnerable
+      this.ctx.fillStyle = `rgba(255, 255, 255, ${
+        0.5 + Math.sin(Date.now() * 0.01) * 0.5
+      })`;
+    } else {
+      // Normal color with health tint
+      const healthPercent = this.player.health.current / this.player.health.max;
+      const red = Math.floor(255 * (1 - healthPercent));
+      const blue = Math.floor(255 * healthPercent);
+      this.ctx.fillStyle = `rgb(${red}, 100, ${blue})`;
+    }
+
     this.ctx.fill();
     this.ctx.closePath();
+
+    // Draw health bar
+    const healthBarWidth = 50;
+    const healthBarHeight = 5;
+    const healthPercent = this.player.health.current / this.player.health.max;
+
+    this.ctx.fillStyle = "#ff0000";
+    this.ctx.fillRect(
+      this.player.x - healthBarWidth / 2,
+      this.player.y - this.player.radius - 10,
+      healthBarWidth,
+      healthBarHeight
+    );
+
+    this.ctx.fillStyle = "#00ff00";
+    this.ctx.fillRect(
+      this.player.x - healthBarWidth / 2,
+      this.player.y - this.player.radius - 10,
+      healthBarWidth * healthPercent,
+      healthBarHeight
+    );
 
     // Draw aiming line when weapon is not active
     if (this.chainWeapon.getState() === "IDLE") {
@@ -216,7 +352,7 @@ export class Game {
       this.ctx.closePath();
     }
 
-    // Draw chain weapon
+    // Draw player's chain weapon
     this.chainWeapon.render(this.ctx);
 
     // Draw effects

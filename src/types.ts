@@ -1,3 +1,5 @@
+import { ChainWeapon } from "./ChainWeapon";
+
 export interface Vector2D {
   x: number;
   y: number;
@@ -10,12 +12,28 @@ export interface GameObject {
   color: string;
 }
 
+export interface Health {
+  current: number;
+  max: number;
+}
+
 export interface Player extends GameObject {
   speed: number;
   direction: Vector2D;
+  health: Health;
+  invulnerableUntil: number;
 }
 
-export interface Enemy extends GameObject {}
+export interface Enemy extends GameObject {
+  speed: number;
+  direction: Vector2D;
+  weapon: ChainWeapon | null;
+  detectionRange: number;
+  attackCooldown: number;
+  lastAttackTime: number;
+  targetAngle: number;
+  turnSpeed: number;
+}
 
 export interface ChainLink extends GameObject {}
 

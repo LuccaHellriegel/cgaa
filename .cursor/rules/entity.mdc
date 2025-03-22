@@ -1,0 +1,14 @@
+---
+description: 
+globs: *.ts
+alwaysApply: false
+---
+* Every Game Object with its own independent identity is an Entity
+* Example: the player is an Entity, his chain weapon is not
+* We use one central Entity interface that includes all relevant state, including render/animation/health state
+* State that is not relevant to the entity type is null
+* Each Entity has a unique ID, we use a counter
+* We mark dead entities as dead via bool and keep them instead of removing them, systems skip dead
+* We keep different types of entities in different arrays, e.g. buildings, towers, enemies, players
+* For each Entity type we have a central manager class that implements update and render methods
+* Managers register themselves in a global manager, via which the can access other managers state

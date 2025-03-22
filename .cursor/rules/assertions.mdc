@@ -1,0 +1,9 @@
+---
+description: 
+globs: *.ts
+alwaysApply: false
+---
+* Use runtime assertions in addition to strict typing
+* Prefer assertions to if-checks where possible
+* Helpful assertions are: assert not null, assert number ranges, assert not empty
+* Assert function/method arguments and return values
