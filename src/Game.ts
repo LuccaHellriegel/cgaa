@@ -63,7 +63,7 @@ export class Game {
       this.mouseY = e.clientY - rect.top;
     });
 
-    this.canvas.addEventListener("mousedown", (e) => {
+    this.canvas.addEventListener("mousedown", () => {
       const now = Date.now();
       if (now - this.lastClickTime < this.clickCooldown) return;
       this.lastClickTime = now;
