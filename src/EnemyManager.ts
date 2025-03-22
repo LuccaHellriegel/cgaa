@@ -55,11 +55,22 @@ export class EnemyManager {
     let x: number, y: number;
     let validPosition: boolean;
     const player = this.game.getPlayer();
+    let attempts = 0;
+    const maxAttempts = 50;
 
     do {
       validPosition = true;
       x = Math.random() * (this.game.WORLD_WIDTH - 60) + 30;
       y = Math.random() * (this.game.WORLD_HEIGHT - 60) + 30;
+
+      // Check for wall collisions
+      if (
+        this.game.getCampManager().entityCollidesWithWalls({ x, y, radius: 20 })
+      ) {
+        validPosition = false;
+        attempts++;
+        continue;
+      }
 
       if (player) {
         const dx = x - player.position.x;
@@ -68,9 +79,35 @@ export class EnemyManager {
 
         if (distance < 150) {
           validPosition = false;
+          attempts++;
         }
       }
-    } while (!validPosition);
+    } while (!validPosition && attempts < maxAttempts);
+
+    // If no valid position found after max attempts, try corners
+    if (!validPosition) {
+      const corners = [
+        { x: 100, y: 100 },
+        { x: this.game.WORLD_WIDTH - 100, y: 100 },
+        { x: 100, y: this.game.WORLD_HEIGHT - 100 },
+        { x: this.game.WORLD_WIDTH - 100, y: this.game.WORLD_HEIGHT - 100 },
+      ];
+
+      for (const corner of corners) {
+        if (
+          !this.game.getCampManager().entityCollidesWithWalls({
+            x: corner.x,
+            y: corner.y,
+            radius: 20,
+          })
+        ) {
+          x = corner.x;
+          y = corner.y;
+          validPosition = true;
+          break;
+        }
+      }
+    }
 
     const radius = Math.random() * 10 + 15;
     const position = { x, y };
@@ -117,6 +154,18 @@ export class EnemyManager {
     enemy.position = position;
     enemy.radius = radius;
 
+    // Check if position is within a camp
+    enemy.campId = undefined; // Reset camp assignment
+    const camps = this.game.getCampManager().getCamps();
+    for (const camp of camps) {
+      const dx = position.x - camp.position.x;
+      const dy = position.y - camp.position.y;
+      if (dx * dx + dy * dy <= camp.radius * camp.radius) {
+        enemy.campId = camp.id;
+        break;
+      }
+    }
+
     // Reset health
     enemy.health.current = enemy.health.max;
     enemy.health.invulnerableUntil = 0;
@@ -149,20 +198,23 @@ export class EnemyManager {
       };
     }
 
-    // Reset or initialize AI state machine
+    // Reset or initialize AI state machine - start in WANDERING state
     if (enemy.ai) {
-      enemy.ai.state = "IDLE";
+      enemy.ai.state = "WANDERING"; // Start wandering immediately
       enemy.ai.waitUntil = Date.now();
-      enemy.ai.idleTime = 1000 + Math.random() * 2000; // 1-3 seconds
-      enemy.ai.waitTime = 2000 + Math.random() * 3000; // 2-5 seconds
+      enemy.ai.idleTime = 1000 + Math.random() * 2000;
+      enemy.ai.waitTime = 2000 + Math.random() * 3000;
     } else {
       enemy.ai = {
-        state: "IDLE",
+        state: "WANDERING", // Start wandering immediately
         waitUntil: Date.now(),
         idleTime: 1000 + Math.random() * 2000,
         waitTime: 2000 + Math.random() * 3000,
       };
     }
+
+    // Find an initial target for the enemy to move towards
+    this.findRandomTarget(enemy);
   }
 
   private createEnemy(position: Vector2D, radius: number = 20): Entity {
@@ -173,10 +225,23 @@ export class EnemyManager {
       validPosition
     );
 
+    // Check if position is within a camp
+    let campId: number | undefined;
+    const camps = this.game.getCampManager().getCamps();
+    for (const camp of camps) {
+      const dx = position.x - camp.position.x;
+      const dy = position.y - camp.position.y;
+      if (dx * dx + dy * dy <= camp.radius * camp.radius) {
+        campId = camp.id;
+        break;
+      }
+    }
+
     const enemyColor = `hsl(${Math.random() * 60 + 340}, 80%, 60%)`;
     const enemy: Entity = {
       id: this.generateEntityId(),
       isDead: false,
+      campId: campId,
       position: validPosition,
       radius: radius,
       movement: {
@@ -199,7 +264,6 @@ export class EnemyManager {
         color: enemyColor,
         targetAngle: 0,
       },
-      // Add pathfinding component
       pathfinding: {
         path: [],
         currentPathIndex: 0,
@@ -207,12 +271,11 @@ export class EnemyManager {
         needsPathUpdate: true,
         lastPathUpdateTime: 0,
       },
-      // Add AI state machine
       ai: {
         state: "IDLE",
         waitUntil: Date.now(),
-        idleTime: 1000 + Math.random() * 2000, // 1-3 seconds
-        waitTime: 2000 + Math.random() * 3000, // 2-5 seconds
+        idleTime: 1000 + Math.random() * 2000,
+        waitTime: 2000 + Math.random() * 3000,
       },
     };
 
@@ -231,13 +294,53 @@ export class EnemyManager {
     for (const enemy of this.enemies) {
       if (enemy.isDead) continue;
 
-      // Only update enemies near the camera view
-      if (this.isEnemyNearCamera(enemy)) {
-        this.updateMovement(enemy, validDelta);
-        this.updateCombat(enemy, validDelta);
-        this.checkCollisions(enemy);
-        this.updateAI(enemy);
+      // Store current position for collision check
+      const oldX = enemy.position.x;
+      const oldY = enemy.position.y;
+
+      // Update AI and get new position
+      this.updateAI(enemy);
+
+      // Check wall collisions for X and Y movements separately
+      const newX = enemy.position.x;
+      const newY = enemy.position.y;
+
+      // Reset position temporarily to check X movement
+      enemy.position.x = oldX;
+      enemy.position.y = oldY;
+
+      // Try X movement
+      const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
+        x: newX,
+        y: oldY,
+        radius: enemy.radius,
+      });
+
+      // Try Y movement
+      const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
+        x: oldX,
+        y: newY,
+        radius: enemy.radius,
+      });
+
+      // Apply allowed movements
+      if (canMoveX) {
+        enemy.position.x = newX;
       }
+      if (canMoveY) {
+        enemy.position.y = newY;
+      }
+
+      // If movement was blocked, request a new path
+      if (!canMoveX || !canMoveY) {
+        if (enemy.pathfinding) {
+          enemy.pathfinding.needsPathUpdate = true;
+        }
+      }
+
+      // Update combat and check collisions
+      this.updateCombat(enemy, validDelta);
+      this.checkCollisions(enemy);
     }
 
     // Spawn new enemies if below threshold
@@ -258,136 +361,6 @@ export class EnemyManager {
       enemy.position.y - enemy.radius - bufferDistance <=
         camera.position.y + camera.viewportHeight
     );
-  }
-
-  private updateMovement(enemy: Entity, deltaTime: number): void {
-    if (!enemy.ai || !enemy.pathfinding) {
-      // Fall back to original behavior if no AI/pathfinding
-      this.updateDirectMovement(enemy, deltaTime);
-      return;
-    }
-
-    const ai = enemy.ai;
-    const movement = enemy.movement;
-    const render = enemy.render;
-    const pathfinding = enemy.pathfinding;
-
-    // Only move if in wandering state
-    if (ai.state !== "WANDERING") {
-      movement.direction.x = 0;
-      movement.direction.y = 0;
-      return;
-    }
-
-    // If no path or at end of path, stop moving
-    if (
-      pathfinding.path.length === 0 ||
-      pathfinding.currentPathIndex >= pathfinding.path.length
-    ) {
-      movement.direction.x = 0;
-      movement.direction.y = 0;
-      return;
-    }
-
-    // Get current waypoint
-    const waypoint = pathfinding.path[pathfinding.currentPathIndex];
-
-    // Calculate direction to waypoint
-    const dx = waypoint.x - enemy.position.x;
-    const dy = waypoint.y - enemy.position.y;
-    const distanceToWaypoint = Math.sqrt(dx * dx + dy * dy);
-
-    // Calculate angle to waypoint
-    const angleToWaypoint = Math.atan2(dy, dx);
-
-    // Smoothly rotate towards waypoint
-    let angleDiff = angleToWaypoint - render.targetAngle;
-    // Normalize angle difference to [-PI, PI]
-    if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-    if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-
-    render.targetAngle +=
-      Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), movement.turnSpeed);
-
-    // Move towards waypoint
-    if (distanceToWaypoint > 5) {
-      movement.direction.x = Math.cos(render.targetAngle);
-      movement.direction.y = Math.sin(render.targetAngle);
-
-      // Apply movement
-      enemy.position.x += movement.direction.x * movement.speed * deltaTime;
-      enemy.position.y += movement.direction.y * movement.speed * deltaTime;
-
-      // Keep enemy within world bounds
-      enemy.position.x = assertRange(
-        enemy.position.x,
-        enemy.radius,
-        this.game.WORLD_WIDTH - enemy.radius,
-        "Enemy X position out of bounds"
-      );
-
-      enemy.position.y = assertRange(
-        enemy.position.y,
-        enemy.radius,
-        this.game.WORLD_HEIGHT - enemy.radius,
-        "Enemy Y position out of bounds"
-      );
-    } else {
-      // Reached current waypoint, move to next one
-      pathfinding.currentPathIndex++;
-    }
-  }
-
-  // Keep the original movement logic as a fallback method
-  private updateDirectMovement(enemy: Entity, deltaTime: number): void {
-    const movement = enemy.movement;
-    const render = enemy.render;
-    const combat = enemy.combat;
-
-    // Get player position
-    const player = this.game.getPlayer();
-    if (!player) return;
-
-    // Calculate direction to player
-    const dx = player.position.x - enemy.position.x;
-    const dy = player.position.y - enemy.position.y;
-    const distanceToPlayer = Math.sqrt(dx * dx + dy * dy);
-
-    // Calculate angle to player
-    const angleToPlayer = Math.atan2(dy, dx);
-
-    // Smoothly rotate towards player
-    let angleDiff = angleToPlayer - render.targetAngle;
-    // Normalize angle difference to [-PI, PI]
-    if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-    if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-
-    render.targetAngle +=
-      Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), movement.turnSpeed);
-
-    // Move towards player if in range
-    if (distanceToPlayer < combat.detectionRange) {
-      movement.direction.x = Math.cos(render.targetAngle);
-      movement.direction.y = Math.sin(render.targetAngle);
-
-      enemy.position.x += movement.direction.x * movement.speed * deltaTime;
-      enemy.position.y += movement.direction.y * movement.speed * deltaTime;
-
-      // Keep enemy within world bounds
-      enemy.position.x = assertRange(
-        enemy.position.x,
-        enemy.radius,
-        this.game.WORLD_WIDTH - enemy.radius,
-        "Enemy X position out of bounds"
-      );
-
-      enemy.position.y = assertRange(
-        enemy.position.y,
-        enemy.radius,
-        this.game.WORLD_HEIGHT - enemy.radius,
-        "Enemy Y position out of bounds"
-      );
-    }
   }
 
   private updateCombat(enemy: Entity, _deltaTime: number): void {
@@ -432,25 +405,22 @@ export class EnemyManager {
     const combat = enemy.combat;
 
     // Check if enemy's weapon hits player
-    if (combat.weapon && combat.weapon.getState() === "EXTENDED") {
-      const hitbox = combat.weapon.getHitbox();
-      if (hitbox) {
-        const player = this.game.getPlayer();
-        if (!player || player.isDead) return;
+    if (
+      combat.weapon &&
+      (combat.weapon.getState() === "EXTENDED" ||
+        combat.weapon.getState() === "EXTENDING")
+    ) {
+      const player = this.game.getPlayer();
+      if (!player || player.isDead) return;
 
-        const dx = hitbox.x - player.position.x;
-        const dy = hitbox.y - player.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+      if (combat.weapon.checkCollisionWithEntity(player)) {
+        // Damage player through entity health component
+        const playerHealth = player.health;
+        playerHealth.current = Math.max(0, playerHealth.current - 5);
+        playerHealth.invulnerableUntil = Date.now() + 2000;
 
-        if (distance < player.radius + hitbox.radius) {
-          // Damage player through entity health component
-          const playerHealth = player.health;
-          playerHealth.current = Math.max(0, playerHealth.current - 5);
-          playerHealth.invulnerableUntil = Date.now() + 2000;
-
-          if (playerHealth.current <= 0) {
-            player.isDead = true;
-          }
+        if (playerHealth.current <= 0) {
+          player.isDead = true;
         }
       }
     }
@@ -625,6 +595,19 @@ export class EnemyManager {
     const ai = enemy.ai;
     const pathfinding = enemy.pathfinding;
 
+    // Check for wall collisions - this is the only addition to the original code
+    const collidesWithWalls = this.game
+      .getCampManager()
+      .entityCollidesWithWalls({
+        x: enemy.position.x,
+        y: enemy.position.y,
+        radius: enemy.radius,
+      });
+
+    if (collidesWithWalls) {
+      pathfinding.needsPathUpdate = true;
+    }
+
     switch (ai.state) {
       case "IDLE":
         // If idle time has passed, transition to wandering state
@@ -642,7 +625,11 @@ export class EnemyManager {
         if (pathfinding.targetPosition && pathfinding.needsPathUpdate) {
           // Update obstacles before finding path
           const obstacles = this.getObstacles(enemy);
-          this.pathfinder.updateObstacles(obstacles);
+          const walls = this.game
+            .getCampManager()
+            .getCamps()
+            .flatMap((camp) => camp.walls);
+          this.pathfinder.updateObstacles(obstacles, walls);
 
           // Find path to target
           pathfinding.path = this.pathfinder.findPath(
@@ -694,18 +681,6 @@ export class EnemyManager {
     }
   }
 
-  // Helper to get all obstacles (other entities)
-  private getObstacles(
-    currentEnemy: Entity
-  ): Array<{ position: Vector2D; radius: number }> {
-    return this.enemies
-      .filter((enemy) => !enemy.isDead && enemy !== currentEnemy)
-      .map((enemy) => ({
-        position: enemy.position,
-        radius: enemy.radius,
-      }));
-  }
-
   // Helper to check if entity has reached position
   private hasReachedPosition(
     entity: Entity,
@@ -716,5 +691,89 @@ export class EnemyManager {
     const dy = entity.position.y - position.y;
     const distanceSquared = dx * dx + dy * dy;
     return distanceSquared <= threshold * threshold;
+  }
+
+  private findRandomTarget(enemy: Entity): void {
+    if (!enemy.pathfinding) return;
+
+    const newTarget = this.findRandomWalkablePosition(enemy);
+    if (newTarget) {
+      enemy.pathfinding.targetPosition = newTarget;
+    }
+  }
+
+  private findRandomWalkablePosition(enemy: Entity): Vector2D | null {
+    // Update pathfinding with latest obstacles
+    const obstacles = this.getObstacles(enemy);
+    const walls = this.game
+      .getCampManager()
+      .getCamps()
+      .flatMap((camp) => camp.walls);
+    this.pathfinder.updateObstacles(obstacles, walls);
+
+    // Try to find a walkable position
+    const attempts = 20;
+    const maxRange = 500; // Maximum distance to search
+
+    for (let i = 0; i < attempts; i++) {
+      // Bias the search toward the enemy's camp if it has one
+      let baseX = enemy.position.x;
+      let baseY = enemy.position.y;
+
+      if (enemy.campId) {
+        // Try to stay within the camp if assigned to one
+        const camp = this.game
+          .getCampManager()
+          .getCamps()
+          .find((c) => c.id === enemy.campId);
+        if (camp) {
+          baseX = camp.position.x;
+          baseY = camp.position.y;
+        }
+      }
+
+      // Generate position with increasing range
+      const range = Math.min(100 + i * 50, maxRange);
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * range;
+
+      const x = baseX + Math.cos(angle) * distance;
+      const y = baseY + Math.sin(angle) * distance;
+
+      // Check if position is walkable
+      const pos = { x, y };
+      if (this.pathfinder.isPositionWalkable(pos)) {
+        return pos;
+      }
+    }
+
+    return null;
+  }
+
+  private getObstacles(
+    currentEnemy: Entity
+  ): Array<{ position: Vector2D; radius: number }> {
+    const obstacles: Array<{ position: Vector2D; radius: number }> = [];
+
+    // Add other enemies as obstacles
+    for (const enemy of this.enemies) {
+      if (!enemy.isDead && enemy.id !== currentEnemy.id) {
+        obstacles.push({
+          position: enemy.position,
+          radius: enemy.radius,
+        });
+      }
+    }
+
+    // Add player as obstacle
+    const player = this.game.getPlayer();
+    if (player) {
+      obstacles.push({
+        position: player.position,
+        radius: player.radius,
+      });
+    }
+
+    return obstacles;
   }
 }

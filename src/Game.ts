@@ -4,6 +4,8 @@ import { EffectsSystem } from "./EffectsSystem";
 import { PlayerManager } from "./PlayerManager";
 import { EnemyManager } from "./EnemyManager";
 import { Camera } from "./Camera";
+import { CampManager } from "./CampManager";
+import { Vector2D } from "./types";
 
 export class Game {
   public canvas: HTMLCanvasElement;
@@ -12,10 +14,12 @@ export class Game {
   private enemyManager: EnemyManager | null = null;
   public effects: EffectsSystem;
   public camera: Camera;
+  private campManager: CampManager;
+  private lastTime: number = 0;
 
   // World dimensions - much larger than the viewport
-  public readonly WORLD_WIDTH = 2400;
-  public readonly WORLD_HEIGHT = 1800;
+  public readonly WORLD_WIDTH = 4800; // Doubled from 2400
+  public readonly WORLD_HEIGHT = 3600; // Doubled from 1800
 
   setPlayerManager(manager: PlayerManager): void {
     this.playerManager = manager;
@@ -49,6 +53,8 @@ export class Game {
     );
 
     this.effects = new EffectsSystem();
+    this.campManager = new CampManager(this);
+    this.initializeGame();
 
     // Handle canvas resize
     window.addEventListener("resize", () => {
@@ -57,12 +63,86 @@ export class Game {
     });
   }
 
-  update(): void {
+  private initializeGame(): void {
+    // Generate initial camps
+    this.campManager.generateCamps(3);
+  }
+
+  restart(): void {
+    // Reset game state
+    this.initializeGame();
+
+    // Reset player
+    if (this.playerManager) {
+      // Clear existing players
+      this.playerManager.clearPlayers();
+      // Find a safe spawn position for the player
+      const spawnPosition = this.findSafeSpawnPosition(20);
+      const player = this.playerManager.createPlayer(spawnPosition);
+      // Reset camera to follow new player
+      this.camera.followEntity(player);
+    }
+
+    // Reset enemy manager and regenerate enemies
+    if (this.enemyManager) {
+      this.enemyManager = new EnemyManager(this, false);
+      this.enemyManager.generateEnemies();
+    }
+
+    // Clear effects
+    this.effects = new EffectsSystem();
+  }
+
+  private findSafeSpawnPosition(radius: number): Vector2D {
+    const maxAttempts = 50;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      // Try positions in the center area of the map
+      const x = this.WORLD_WIDTH * (0.4 + Math.random() * 0.2); // 40-60% of width
+      const y = this.WORLD_HEIGHT * (0.4 + Math.random() * 0.2); // 40-60% of height
+
+      // Check if position collides with any camp walls
+      if (!this.campManager.entityCollidesWithWalls({ x, y, radius })) {
+        return { x, y };
+      }
+      attempts++;
+    }
+
+    // Fallback to a position far from the center if no safe spot found
+    return {
+      x: this.WORLD_WIDTH * 0.25,
+      y: this.WORLD_HEIGHT * 0.25,
+    };
+  }
+
+  update(deltaTime: number): void {
+    // Check if player is dead and trigger restart
+    const player = this.getPlayer();
+    if (player?.isDead) {
+      // Add a small delay before restart
+      setTimeout(() => this.restart(), 1000);
+      return;
+    }
+
+    // Update player
+    this.playerManager?.update(deltaTime);
+
+    // Update enemies
+    this.enemyManager?.update(deltaTime);
+
+    // Update effects
     this.effects.update();
+
+    // Update camera to follow player
+    if (player) {
+      this.camera.followEntity(player);
+    }
+
+    // Check collisions
     this.checkWeaponCollisions();
   }
 
-  // Detect collisions between player and enemies or bullets
   private checkWeaponCollisions(): void {
     const player = this.getPlayer();
     if (!player) return;
@@ -120,33 +200,32 @@ export class Game {
   }
 
   render(): void {
+    // Clear the entire canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Save the context state
+    // Apply camera transform
     this.ctx.save();
-
-    // Apply camera transformation
     this.ctx.translate(-this.camera.position.x, -this.camera.position.y);
 
-    // Draw world boundaries and grid
+    // Draw world boundaries
     this.drawWorldBoundaries();
 
-    // Delegate rendering to managers
-    if (this.playerManager) {
-      this.playerManager.render(this.ctx);
-    }
+    // Draw camps and walls
+    this.campManager.render(this.ctx);
 
-    if (this.enemyManager) {
-      this.enemyManager.render(this.ctx);
-    }
+    // Draw enemies
+    this.enemyManager?.render(this.ctx);
+
+    // Draw player
+    this.playerManager?.render(this.ctx);
 
     // Draw effects
     this.effects.render(this.ctx);
 
-    // Restore the context state
+    // Restore camera transform
     this.ctx.restore();
 
-    // Draw UI elements that should stay fixed on screen
+    // Draw UI elements (not affected by camera)
     this.drawUI();
   }
 
@@ -220,8 +299,36 @@ export class Game {
     );
   }
 
+  getCampManager(): CampManager {
+    return this.campManager;
+  }
+
   // Accessor for effects system
   getEffectsSystem(): EffectsSystem {
     return this.effects;
+  }
+
+  start(): void {
+    this.lastTime = performance.now();
+    this.gameLoop();
+  }
+
+  private gameLoop(): void {
+    const currentTime = performance.now();
+    const deltaTime = currentTime - this.lastTime;
+    this.lastTime = currentTime;
+
+    // Cap maximum delta time to prevent large jumps when tab is inactive
+    const maxDeltaTime = 16.67; // Cap at ~16.67ms (60 fps)
+    const cappedDeltaTime = Math.min(deltaTime, maxDeltaTime);
+
+    // Update game components
+    this.update(cappedDeltaTime);
+
+    // Render everything
+    this.render();
+
+    // Continue game loop
+    requestAnimationFrame(() => this.gameLoop());
   }
 }

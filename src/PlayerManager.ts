@@ -113,120 +113,79 @@ export class PlayerManager {
   }
 
   update(deltaTime: number): void {
-    // Clamp delta time between 0 and 50ms to prevent large jumps
-    const validDelta = Math.max(0, Math.min(deltaTime, 50));
+    const player = this.getActivePlayer();
 
-    for (const player of this.players) {
-      if (player.isDead) continue;
+    // Handle movement input
+    const movement = assertValue(
+      player.movement,
+      "Player must have movement component"
+    );
+    const direction = { x: 0, y: 0 };
 
-      this.handleInput(player);
-      this.updateMovement(player, validDelta);
-      this.updateCombat(player, validDelta);
-      this.checkCollisions(player);
+    if (this.keys["w"] || this.keys["ArrowUp"]) direction.y -= 1;
+    if (this.keys["s"] || this.keys["ArrowDown"]) direction.y += 1;
+    if (this.keys["a"] || this.keys["ArrowLeft"]) direction.x -= 1;
+    if (this.keys["d"] || this.keys["ArrowRight"]) direction.x += 1;
 
-      // Update camera to follow player
-      this.game.camera.followEntity(player);
-    }
-  }
-
-  private handleInput(player: Entity): void {
-    const movement = player.movement;
-    const render = player.render;
-
-    // Reset direction
-    movement.direction.x = 0;
-    movement.direction.y = 0;
-
-    // Update direction based on keys
-    if (this.keys["w"] || this.keys["ArrowUp"]) movement.direction.y = -1;
-    if (this.keys["s"] || this.keys["ArrowDown"]) movement.direction.y = 1;
-    if (this.keys["a"] || this.keys["ArrowLeft"]) movement.direction.x = -1;
-    if (this.keys["d"] || this.keys["ArrowRight"]) movement.direction.x = 1;
-
-    // Normalize diagonal movement
+    // Normalize direction if moving diagonally
     const length = Math.sqrt(
-      movement.direction.x * movement.direction.x +
-        movement.direction.y * movement.direction.y
+      direction.x * direction.x + direction.y * direction.y
     );
     if (length > 0) {
-      movement.direction.x /= length;
-      movement.direction.y /= length;
+      direction.x /= length;
+      direction.y /= length;
     }
-
-    // Update player angle based on mouse position
-    if (length > 0) {
-      render.targetAngle = Math.atan2(
-        movement.direction.y,
-        movement.direction.x
-      );
-    }
-  }
-
-  private updateMovement(player: Entity, deltaTime: number): void {
-    const movement = player.movement;
 
     // Calculate new position
-    const newX =
-      player.position.x + movement.direction.x * movement.speed * deltaTime;
-    const newY =
-      player.position.y + movement.direction.y * movement.speed * deltaTime;
+    const newX = player.position.x + direction.x * movement.speed * deltaTime;
+    const newY = player.position.y + direction.y * movement.speed * deltaTime;
 
-    // Clamp position to world bounds
+    // Check wall collisions for X and Y movements separately
+    const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
+      x: newX,
+      y: player.position.y,
+      radius: player.radius,
+    });
+
+    const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
+      x: player.position.x,
+      y: newY,
+      radius: player.radius,
+    });
+
+    // Apply movement only in valid directions
+    if (canMoveX) {
+      player.position.x = newX;
+    }
+    if (canMoveY) {
+      player.position.y = newY;
+    }
+
+    // Keep player within world bounds
     player.position.x = Math.max(
       player.radius,
-      Math.min(newX, this.game.WORLD_WIDTH - player.radius)
+      Math.min(player.position.x, this.game.WORLD_WIDTH - player.radius)
     );
-
     player.position.y = Math.max(
       player.radius,
-      Math.min(newY, this.game.WORLD_HEIGHT - player.radius)
+      Math.min(player.position.y, this.game.WORLD_HEIGHT - player.radius)
     );
-  }
 
-  private updateCombat(player: Entity, _deltaTime: number): void {
-    const combat = player.combat;
-
-    // Update weapon position
+    // Update weapon
+    const combat = assertValue(
+      player.combat,
+      "Player must have combat component"
+    );
     if (combat.weapon) {
       combat.weapon.update(player.position.x, player.position.y);
     }
-  }
 
-  private checkCollisions(player: Entity): void {
-    const combat = player.combat;
-
-    // Check if player's weapon hits enemies
-    if (combat.weapon && combat.weapon.getState() === "EXTENDED") {
-      const enemies = this.game.getEnemies();
-      const hitEnemyIndices = combat.weapon.checkCollisions(enemies);
-
-      for (const index of hitEnemyIndices) {
-        const enemy = enemies[index];
-        if (!enemy) continue;
-
-        const enemyHealth = enemy.health;
-        enemyHealth.current = Math.max(0, enemyHealth.current - 20);
-
-        // Create hit effect when enemy is damaged
-        this.game.effects.createHitEffect(
-          enemy.position.x,
-          enemy.position.y,
-          enemy.render.color
-        );
-
-        if (enemyHealth.current <= 0) {
-          enemy.isDead = true;
-          // Create death effect with more particles
-          for (let i = 0; i < 3; i++) {
-            this.game.effects.createHitEffect(
-              enemy.position.x,
-              enemy.position.y,
-              enemy.render.color
-            );
-          }
-        }
-      }
-    }
+    // Update player angle based on mouse position
+    const angle = Math.atan2(
+      this.mouseY - player.position.y,
+      this.mouseX - player.position.x
+    );
+    player.render.targetAngle = angle;
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -295,7 +254,11 @@ export class PlayerManager {
     return this.players;
   }
 
-  getActivePlayer(): Entity | null {
-    return this.players.find((player) => !player.isDead) || null;
+  getActivePlayer(): Entity {
+    return assertValue(this.players[0], "No active player found");
+  }
+
+  clearPlayers(): void {
+    this.players = [];
   }
 }

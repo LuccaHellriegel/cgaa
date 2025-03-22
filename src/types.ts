@@ -3,15 +3,6 @@ export interface Vector2D {
   y: number;
 }
 
-export interface GameObject {
-  x: number;
-  y: number;
-  radius: number;
-  color: string;
-}
-
-export interface ChainLink extends GameObject {}
-
 export interface TriangleTip {
   size: number;
   x: number;
@@ -29,3 +20,25 @@ export interface Particle {
 }
 
 export type ChainWeaponState = "IDLE" | "EXTENDING" | "EXTENDED" | "RETRACTING";
+
+export interface Wall {
+  position: Vector2D;
+  width: number;
+  height: number;
+  rotation: number;
+}
+
+export interface Entrance {
+  position: Vector2D;
+  width: number;
+  direction: Vector2D;
+}
+
+export interface Camp {
+  id: number;
+  position: Vector2D;
+  radius: number;
+  color: string;
+  walls: Wall[];
+  entrances: Entrance[];
+}

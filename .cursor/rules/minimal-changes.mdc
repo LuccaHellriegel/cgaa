@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+* Keep all changes to a minimum, leaving existing functionality and patterns in tact
+* Ensure to not duplicate functionality that is already in the codebase

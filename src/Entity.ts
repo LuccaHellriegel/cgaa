@@ -5,6 +5,7 @@ export interface Entity {
   // Core entity properties
   id: number; // Unique entity ID
   isDead: boolean; // Entity state flag
+  campId?: number; // Optional camp identifier
 
   // Position and physics
   position: Vector2D; // Using existing Vector2D interface

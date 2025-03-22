@@ -1,4 +1,4 @@
-import { Vector2D } from "./types";
+import { Vector2D, Wall } from "./types";
 import { assertValue } from "./utils/assert";
 
 interface PathNode {
@@ -189,75 +189,208 @@ export class Pathfinding {
 
   // Update obstacles in the grid
   updateObstacles(
-    obstacles: Array<{ position: Vector2D; radius: number }>
+    obstacles: Array<{ position: Vector2D; radius: number }>,
+    walls: Wall[] = []
   ): void {
-    // Reset walkability
+    // Add a small buffer for obstacles to prevent entities from getting too close
+    const OBSTACLE_BUFFER = 5;
+
+    // Reset all nodes to walkable
     for (let x = 0; x < this.grid.length; x++) {
-      for (let y = 0; y < this.grid[0].length; y++) {
+      for (let y = 0; y < this.grid[x].length; y++) {
         this.grid[x][y].walkable = true;
       }
     }
 
-    // Mark obstacles as unwalkable
+    // Mark cells containing obstacles as non-walkable
     for (const obstacle of obstacles) {
+      const radius = obstacle.radius + OBSTACLE_BUFFER;
       const gridPos = this.worldToGrid(obstacle.position);
-      const radius = Math.ceil(obstacle.radius / this.gridSize);
 
-      // Mark the obstacle and surrounding cells based on radius
-      for (let x = -radius; x <= radius; x++) {
-        for (let y = -radius; y <= radius; y++) {
-          const checkX = gridPos.x + x;
-          const checkY = gridPos.y + y;
+      // Calculate the grid cells that the obstacle covers
+      const minX = Math.max(
+        0,
+        Math.floor((obstacle.position.x - radius) / this.gridSize)
+      );
+      const maxX = Math.min(
+        this.grid.length - 1,
+        Math.ceil((obstacle.position.x + radius) / this.gridSize)
+      );
+      const minY = Math.max(
+        0,
+        Math.floor((obstacle.position.y - radius) / this.gridSize)
+      );
+      const maxY = Math.min(
+        this.grid[0].length - 1,
+        Math.ceil((obstacle.position.y + radius) / this.gridSize)
+      );
 
-          if (
-            checkX >= 0 &&
-            checkX < this.grid.length &&
-            checkY >= 0 &&
-            checkY < this.grid[0].length
-          ) {
-            // Only mark as unwalkable if within the actual radius
-            const worldPos = this.gridToWorld({ x: checkX, y: checkY });
-            const dx = worldPos.x - obstacle.position.x;
-            const dy = worldPos.y - obstacle.position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+      // Mark cells as non-walkable
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          const cellCenter = this.gridToWorld({ x, y });
+          const dx = cellCenter.x - obstacle.position.x;
+          const dy = cellCenter.y - obstacle.position.y;
+          if (dx * dx + dy * dy < radius * radius) {
+            this.grid[x][y].walkable = false;
+          }
+        }
+      }
+    }
 
-            if (distance < obstacle.radius) {
-              this.grid[checkX][checkY].walkable = false;
-            }
+    // Mark cells containing walls as non-walkable
+    for (const wall of walls) {
+      // Calculate wall position and size with a small buffer
+      const wallBBox = this.getWallBoundingBox(wall, OBSTACLE_BUFFER);
+
+      // Convert to grid coordinates
+      const gridMinX = Math.max(0, Math.floor(wallBBox.minX / this.gridSize));
+      const gridMaxX = Math.min(
+        this.grid.length - 1,
+        Math.ceil(wallBBox.maxX / this.gridSize)
+      );
+      const gridMinY = Math.max(0, Math.floor(wallBBox.minY / this.gridSize));
+      const gridMaxY = Math.min(
+        this.grid[0].length - 1,
+        Math.ceil(wallBBox.maxY / this.gridSize)
+      );
+
+      // Mark cells that intersect with the wall as non-walkable
+      for (let x = gridMinX; x <= gridMaxX; x++) {
+        for (let y = gridMinY; y <= gridMaxY; y++) {
+          const cellCenter = this.gridToWorld({ x, y });
+          if (this.pointInWall(cellCenter, wall, OBSTACLE_BUFFER)) {
+            this.grid[x][y].walkable = false;
           }
         }
       }
     }
   }
 
+  // Get the bounding box of a wall with optional buffer
+  private getWallBoundingBox(
+    wall: Wall,
+    buffer: number = 0
+  ): { minX: number; maxX: number; minY: number; maxY: number } {
+    const halfWidth = (wall.width + buffer) / 2;
+    const halfHeight = (wall.height + buffer) / 2;
+
+    if (wall.rotation === 0) {
+      // Simpler case for non-rotated walls
+      return {
+        minX: wall.position.x - halfWidth,
+        maxX: wall.position.x + halfWidth,
+        minY: wall.position.y - halfHeight,
+        maxY: wall.position.y + halfHeight,
+      };
+    } else {
+      // For rotated walls, calculate corners
+      const cosA = Math.cos(wall.rotation);
+      const sinA = Math.sin(wall.rotation);
+
+      const corners = [
+        {
+          x: wall.position.x + cosA * halfWidth - sinA * halfHeight,
+          y: wall.position.y + sinA * halfWidth + cosA * halfHeight,
+        },
+        {
+          x: wall.position.x + cosA * halfWidth + sinA * halfHeight,
+          y: wall.position.y + sinA * halfWidth - cosA * halfHeight,
+        },
+        {
+          x: wall.position.x - cosA * halfWidth + sinA * halfHeight,
+          y: wall.position.y - sinA * halfWidth - cosA * halfHeight,
+        },
+        {
+          x: wall.position.x - cosA * halfWidth - sinA * halfHeight,
+          y: wall.position.y - sinA * halfWidth + cosA * halfHeight,
+        },
+      ];
+
+      // Find mins and maxes
+      return {
+        minX: Math.min(...corners.map((c) => c.x)),
+        maxX: Math.max(...corners.map((c) => c.x)),
+        minY: Math.min(...corners.map((c) => c.y)),
+        maxY: Math.max(...corners.map((c) => c.y)),
+      };
+    }
+  }
+
+  // Check if a point is inside a wall (with optional buffer)
+  private pointInWall(
+    point: Vector2D,
+    wall: Wall,
+    buffer: number = 0
+  ): boolean {
+    if (wall.rotation === 0) {
+      // Fast check for axis-aligned walls
+      const halfWidth = (wall.width + buffer) / 2;
+      const halfHeight = (wall.height + buffer) / 2;
+
+      return (
+        point.x >= wall.position.x - halfWidth &&
+        point.x <= wall.position.x + halfWidth &&
+        point.y >= wall.position.y - halfHeight &&
+        point.y <= wall.position.y + halfHeight
+      );
+    } else {
+      // Transform point to wall's local space for rotated walls
+      const dx = point.x - wall.position.x;
+      const dy = point.y - wall.position.y;
+      const cosA = Math.cos(-wall.rotation);
+      const sinA = Math.sin(-wall.rotation);
+
+      const localX = dx * cosA - dy * sinA;
+      const localY = dx * sinA + dy * cosA;
+
+      // Check if point is inside rectangle in local space
+      return (
+        Math.abs(localX) <= (wall.width + buffer) / 2 &&
+        Math.abs(localY) <= (wall.height + buffer) / 2
+      );
+    }
+  }
+
   // Find a random walkable position in the world
-  findRandomWalkablePosition(): Vector2D {
-    const cols = this.grid.length;
-    const rows = this.grid[0].length;
+  findRandomWalkablePosition(): Vector2D | null {
+    // Try 50 random positions
+    for (let attempts = 0; attempts < 50; attempts++) {
+      const x = Math.random() * this.worldWidth;
+      const y = Math.random() * this.worldHeight;
 
-    // Try to find a walkable position (max 20 attempts)
-    for (let i = 0; i < 20; i++) {
-      const x = Math.floor(Math.random() * cols);
-      const y = Math.floor(Math.random() * rows);
+      const gridPos = this.worldToGrid({ x, y });
 
-      if (this.grid[x][y].walkable) {
-        return this.gridToWorld({ x, y });
+      // Check if position is within grid and walkable
+      if (
+        gridPos.x >= 0 &&
+        gridPos.x < this.grid.length &&
+        gridPos.y >= 0 &&
+        gridPos.y < this.grid[0].length &&
+        this.grid[gridPos.x][gridPos.y].walkable
+      ) {
+        // Return the center of the walkable grid cell
+        return this.gridToWorld(gridPos);
       }
     }
 
-    // Fallback - linear scan for any walkable tile
-    for (let x = 0; x < cols; x++) {
-      for (let y = 0; y < rows; y++) {
-        if (this.grid[x][y].walkable) {
-          return this.gridToWorld({ x, y });
-        }
-      }
+    return null;
+  }
+
+  // Check if a position is walkable
+  isPositionWalkable(position: Vector2D): boolean {
+    const gridPos = this.worldToGrid(position);
+
+    // Check bounds
+    if (
+      gridPos.x < 0 ||
+      gridPos.x >= this.grid.length ||
+      gridPos.y < 0 ||
+      gridPos.y >= this.grid[0].length
+    ) {
+      return false;
     }
 
-    // Last resort - return center of world
-    return {
-      x: this.worldWidth / 2,
-      y: this.worldHeight / 2,
-    };
+    return this.grid[gridPos.x][gridPos.y].walkable;
   }
 }

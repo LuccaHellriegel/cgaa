@@ -1,5 +1,12 @@
 import { Entity } from "./Entity";
-import { ChainLink, ChainWeaponState, TriangleTip } from "./types";
+import { ChainWeaponState, TriangleTip } from "./types";
+
+interface ChainLink {
+  x: number;
+  y: number;
+  radius: number;
+  color: string;
+}
 
 export class ChainWeapon {
   private links: ChainLink[];
@@ -242,5 +249,46 @@ export class ChainWeapon {
       y: this.triangleTip.y,
       radius: this.triangleTip.size / 2,
     };
+  }
+
+  getLinks(): Array<{ x: number; y: number; radius: number }> {
+    if (this.state === "IDLE" || this.state === "RETRACTING") return [];
+
+    const visibleLinks = Math.min(
+      Math.ceil(this.currentLength / this.linkDistance),
+      this.linkCount
+    );
+
+    return this.links.slice(0, visibleLinks);
+  }
+
+  checkCollisionWithEntity(entity: Entity): boolean {
+    if (this.state !== "EXTENDING" && this.state !== "EXTENDED") return false;
+
+    // Check tip collision
+    const hitbox = this.getHitbox();
+    if (hitbox) {
+      const dx = hitbox.x - entity.position.x;
+      const dy = hitbox.y - entity.position.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < entity.radius + hitbox.radius) {
+        return true;
+      }
+    }
+
+    // Check chain link collisions
+    const links = this.getLinks();
+    for (const link of links) {
+      const dx = link.x - entity.position.x;
+      const dy = link.y - entity.position.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < entity.radius + link.radius) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
