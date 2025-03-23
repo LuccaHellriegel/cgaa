@@ -63,11 +63,10 @@ export class Camera {
 
   isEntityVisible(entity: Entity): boolean {
     return (
-      entity.position.x + entity.radius >= this.position.x &&
-      entity.position.x - entity.radius <=
-        this.position.x + this.viewportWidth &&
-      entity.position.y + entity.radius >= this.position.y &&
-      entity.position.y - entity.radius <= this.position.y + this.viewportHeight
+      entity.position.x + entity.size >= this.position.x &&
+      entity.position.x - entity.size <= this.position.x + this.viewportWidth &&
+      entity.position.y + entity.size >= this.position.y &&
+      entity.position.y - entity.size <= this.position.y + this.viewportHeight
     );
   }
 }

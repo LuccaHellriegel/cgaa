@@ -1,6 +1,6 @@
 import { Entity } from "./Entity";
 import { Game } from "./Game";
-import { Vector2D } from "./types";
+import { Vector2D, RenderType } from "./types";
 import { assert, assertValue, assertRange } from "./utils/assert";
 import { ChainWeapon } from "./ChainWeapon";
 import { EnemyAI } from "./EnemyAI";
@@ -82,7 +82,7 @@ export class EnemyManager {
       for (const otherEnemy of activeEnemies) {
         const dx = x - otherEnemy.position.x;
         const dy = y - otherEnemy.position.y;
-        const minDistance = otherEnemy.radius + 20 + 10; // radius + new enemy radius + buffer
+        const minDistance = otherEnemy.size + 20 + 10; // radius + new enemy radius + buffer
         if (dx * dx + dy * dy < minDistance * minDistance) {
           validPosition = false;
           break;
@@ -134,7 +134,7 @@ export class EnemyManager {
         for (const otherEnemy of activeEnemies) {
           const dx = corner.x - otherEnemy.position.x;
           const dy = corner.y - otherEnemy.position.y;
-          const minDistance = otherEnemy.radius + 20 + 10;
+          const minDistance = otherEnemy.size + 20 + 10;
           if (dx * dx + dy * dy < minDistance * minDistance) {
             cornerValid = false;
             break;
@@ -193,7 +193,7 @@ export class EnemyManager {
     // Reset entity state
     enemy.isDead = false;
     enemy.position = position;
-    enemy.radius = radius;
+    enemy.size = radius;
 
     // Check if position is within a camp
     enemy.campId = undefined; // Reset camp assignment
@@ -276,10 +276,11 @@ export class EnemyManager {
     const enemyColor = `hsl(${Math.random() * 60 + 340}, 80%, 60%)`;
     const enemy: Entity = {
       id: this.generateEntityId(),
+      type: RenderType.Circle,
       isDead: false,
       campId: campId,
       position: validPosition,
-      radius: radius,
+      size: radius,
       movement: {
         speed: 0.3,
         direction: { x: 0, y: 0 },
@@ -353,14 +354,14 @@ export class EnemyManager {
         const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
           x: newX,
           y: oldY,
-          radius: enemy.radius,
+          radius: enemy.size,
         });
 
         // Try Y movement
         const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
           x: oldX,
           y: newY,
-          radius: enemy.radius,
+          radius: enemy.size,
         });
 
         // Apply allowed movements
@@ -473,7 +474,7 @@ export class EnemyManager {
         context.arc(
           enemy.position.x,
           enemy.position.y,
-          enemy.radius,
+          enemy.size,
           0,
           Math.PI * 2
         );
@@ -517,7 +518,7 @@ export class EnemyManager {
     ctx.fillStyle = "#ff0000";
     ctx.fillRect(
       enemy.position.x - healthBarWidth / 2,
-      enemy.position.y - enemy.radius - 10,
+      enemy.position.y - enemy.size - 10,
       healthBarWidth,
       healthBarHeight
     );
@@ -525,7 +526,7 @@ export class EnemyManager {
     ctx.fillStyle = "#00ff00";
     ctx.fillRect(
       enemy.position.x - healthBarWidth / 2,
-      enemy.position.y - enemy.radius - 10,
+      enemy.position.y - enemy.size - 10,
       healthBarWidth * healthPercentage,
       healthBarHeight
     );

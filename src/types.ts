@@ -1,3 +1,9 @@
+export enum RenderType {
+  Circle = "circle",
+  Triangle = "triangle",
+  Rectangle = "rectangle",
+}
+
 export interface Vector2D {
   x: number;
   y: number;

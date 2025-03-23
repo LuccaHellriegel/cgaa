@@ -1,6 +1,6 @@
 import { Entity } from "./Entity";
 import { Game } from "./Game";
-import { Vector2D } from "./types";
+import { Vector2D, RenderType } from "./types";
 import { assert, assertValue } from "./utils/assert";
 import { ChainWeapon } from "./ChainWeapon";
 
@@ -83,9 +83,10 @@ export class PlayerManager {
 
     const player: Entity = {
       id: this.generateEntityId(),
+      type: RenderType.Circle,
       isDead: false,
       position: validPosition,
-      radius: 20,
+      size: 20,
       movement: {
         speed: 0.3,
         direction: { x: 0, y: 0 },
@@ -144,13 +145,13 @@ export class PlayerManager {
     const canMoveX = !this.game.getCampManager().entityCollidesWithWalls({
       x: newX,
       y: player.position.y,
-      radius: player.radius,
+      radius: player.size,
     });
 
     const canMoveY = !this.game.getCampManager().entityCollidesWithWalls({
       x: player.position.x,
       y: newY,
-      radius: player.radius,
+      radius: player.size,
     });
 
     // Apply movement only in valid directions
@@ -163,12 +164,12 @@ export class PlayerManager {
 
     // Keep player within world bounds
     player.position.x = Math.max(
-      player.radius,
-      Math.min(player.position.x, this.game.WORLD_WIDTH - player.radius)
+      player.size,
+      Math.min(player.position.x, this.game.WORLD_WIDTH - player.size)
     );
     player.position.y = Math.max(
-      player.radius,
-      Math.min(player.position.y, this.game.WORLD_HEIGHT - player.radius)
+      player.size,
+      Math.min(player.position.y, this.game.WORLD_HEIGHT - player.size)
     );
 
     // Update weapon
@@ -202,7 +203,7 @@ export class PlayerManager {
       context.arc(
         player.position.x,
         player.position.y,
-        player.radius,
+        player.size,
         0,
         Math.PI * 2
       );
@@ -231,7 +232,7 @@ export class PlayerManager {
     ctx.fillStyle = "#ff0000";
     ctx.fillRect(
       player.position.x - healthBarWidth / 2,
-      player.position.y - player.radius - 10,
+      player.position.y - player.size - 10,
       healthBarWidth,
       healthBarHeight
     );
@@ -239,7 +240,7 @@ export class PlayerManager {
     ctx.fillStyle = "#00ff00";
     ctx.fillRect(
       player.position.x - healthBarWidth / 2,
-      player.position.y - player.radius - 10,
+      player.position.y - player.size - 10,
       healthBarWidth * healthPercentage,
       healthBarHeight
     );

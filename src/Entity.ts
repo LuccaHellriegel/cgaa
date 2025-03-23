@@ -1,55 +1,68 @@
 import { ChainWeapon } from "./ChainWeapon";
-import { Vector2D } from "./types";
+import { Vector2D, RenderType } from "./types";
 
-export interface Entity {
-  // Core entity properties
-  id: number; // Unique entity ID
-  isDead: boolean; // Entity state flag
-  campId?: number; // Optional camp identifier
+export interface AttackComponent {
+  attackValue: number;
+}
 
-  // Position and physics
-  position: Vector2D; // Using existing Vector2D interface
-  radius: number; // Collision radius
+export interface CameraComponent {
+  position: Vector2D;
+  smoothFactor: number;
+}
 
-  // Components
-  movement: {
-    speed: number;
-    direction: Vector2D;
-    turnSpeed: number;
-  };
+export interface ScreenComponent {
+  viewportWidth: number;
+  viewportHeight: number;
+  worldWidth: number;
+  worldHeight: number;
+}
 
-  health: {
-    current: number;
-    max: number;
-    invulnerableUntil: number;
-  };
+export interface MovementComponent {
+  speed: number;
+  direction: Vector2D;
+  turnSpeed: number;
+}
 
-  combat: {
-    weapon: ChainWeapon | null;
-    detectionRange: number;
-    attackCooldown: number;
-    lastAttackTime: number;
-  };
+export interface HealthComponent {
+  current: number;
+  max: number;
+  invulnerableUntil: number;
+}
 
-  render: {
-    color: string;
-    targetAngle: number;
-  };
+export interface CombatComponent {
+  weapon: ChainWeapon | null;
+  detectionRange: number;
+  attackCooldown: number;
+  lastAttackTime: number;
+}
 
-  // Optional pathfinding component
-  pathfinding?: {
-    path: Vector2D[];
-    currentPathIndex: number;
-    targetPosition: Vector2D | null;
-    needsPathUpdate: boolean;
-    lastPathUpdateTime: number;
-  };
+export interface RenderComponent {
+  type: RenderType;
+  color: string;
+  targetAngle: number;
+}
 
-  // Optional AI state machine component
-  ai?: {
-    state: "IDLE" | "WANDERING" | "WAITING";
-    waitUntil: number;
-    idleTime: number;
-    waitTime: number;
-  };
+export interface PathfindingComponent {
+  path: Vector2D[];
+  currentPathIndex: number;
+  targetPosition: Vector2D | null;
+  needsPathUpdate: boolean;
+  lastPathUpdateTime: number;
+}
+
+export interface AIComponent {
+  state: "IDLE" | "WANDERING" | "WAITING";
+  waitUntil: number;
+  idleTime: number;
+  waitTime: number;
+}
+
+export interface CampComponent {
+  campId: number;
+}
+
+export interface PositionComponent {
+  x: number;
+  y: number;
+  size: number;
 }

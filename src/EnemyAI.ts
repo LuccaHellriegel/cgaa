@@ -37,7 +37,7 @@ export class EnemyAI {
       .entityCollidesWithWalls({
         x: position.x,
         y: position.y,
-        radius: enemy.radius,
+        radius: enemy.size,
       });
 
     // If we hit a wall, immediately try to find a new target away from the wall
@@ -248,7 +248,7 @@ export class EnemyAI {
       const y = baseY + Math.sin(angle) * distance;
 
       // Ensure position is within world bounds with padding
-      const padding = enemy.radius * 2;
+      const padding = enemy.size * 2;
       const boundedX = Math.max(
         padding,
         Math.min(this.game.WORLD_WIDTH - padding, x)
@@ -270,7 +270,7 @@ export class EnemyAI {
           !this.game.getCampManager().entityCollidesWithWalls({
             x: boundedX,
             y: boundedY,
-            radius: enemy.radius + 5, // Add a small buffer
+            radius: enemy.size + 5, // Add a small buffer
           })
         ) {
           return pos;
@@ -308,7 +308,7 @@ export class EnemyAI {
         player.position,
         "Player must have position"
       );
-      const radius = assertValue(player.radius, "Player must have radius");
+      const radius = assertValue(player.size, "Player must have radius");
       obstacles.push({
         position,
         radius,
@@ -324,7 +324,7 @@ export class EnemyAI {
             enemy.position,
             "Enemy must have position"
           );
-          const radius = assertValue(enemy.radius, "Enemy must have radius");
+          const radius = assertValue(enemy.size, "Enemy must have radius");
           obstacles.push({
             position,
             radius,
@@ -344,7 +344,7 @@ export class EnemyAI {
 
     const context = assertValue(ctx, "Context must be provided");
     const position = assertValue(enemy.position, "Enemy must have position");
-    const radius = assertValue(enemy.radius, "Enemy must have radius");
+    const radius = assertValue(enemy.size, "Enemy must have radius");
     const ai = assertValue(enemy.ai, "Enemy must have AI component");
     const pathfinding = assertValue(
       enemy.pathfinding,

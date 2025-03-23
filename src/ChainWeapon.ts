@@ -1,22 +1,9 @@
 import { Entity } from "./Entity";
-
+import { RenderType } from "./types";
 type ChainWeaponState = "IDLE" | "EXTENDING" | "EXTENDED" | "RETRACTING";
 
-interface ChainLink {
-  x: number;
-  y: number;
-  radius: number;
-  color: string;
-}
-
-interface TriangleTip {
-  size: number;
-  x: number;
-  y: number;
-}
-
 export class ChainWeapon {
-  private links: ChainLink[];
+  private links: Entity[];
   private linkCount: number;
   private baseRadius: number;
   private linkDistance: number;
@@ -28,7 +15,7 @@ export class ChainWeapon {
   public retractSpeed: number;
   private holdTime: number;
   private holdCounter: number;
-  private triangleTip: TriangleTip;
+  private triangleTip: Entity;
   private tipOffset: number;
   private hitEnemies: Set<number>;
   private originX: number;
@@ -48,9 +35,12 @@ export class ChainWeapon {
     this.holdTime = 5;
     this.holdCounter = 0;
     this.triangleTip = {
+      id: 0,
+      position: { x: 0, y: 0 },
       size: 20,
-      x: 0,
-      y: 0,
+      render: { color: "#e74c3c" },
+      type: RenderType.Triangle,
+      isDead: false,
     };
     this.hitEnemies = new Set();
     this.originX = startX;
@@ -63,14 +53,16 @@ export class ChainWeapon {
       const radius = this.baseRadius + radiusIncrease;
 
       this.links.push({
-        x: startX,
-        y: startY,
-        radius: radius,
-        color: "#888",
+        id: i,
+        position: { x: startX, y: startY },
+        size: radius,
+        render: { color: "#888" },
+        type: RenderType.Circle,
+        isDead: false,
       });
     }
 
-    const lastLinkRadius = this.links[linkCount - 1].radius;
+    const lastLinkRadius = this.links[linkCount - 1].size;
     this.tipOffset = lastLinkRadius + this.triangleTip.size / 2 + 2;
   }
 
@@ -137,21 +129,25 @@ export class ChainWeapon {
           const linkDistance = (i + 1) * this.linkDistance;
           const linkLength = Math.min(linkDistance, this.currentLength);
 
-          this.links[i].x = this.originX + Math.cos(this.angle) * linkLength;
-          this.links[i].y = this.originY + Math.sin(this.angle) * linkLength;
+          this.links[i].position.x =
+            this.originX + Math.cos(this.angle) * linkLength;
+          this.links[i].position.y =
+            this.originY + Math.sin(this.angle) * linkLength;
         } else {
-          this.links[i].x = this.originX;
-          this.links[i].y = this.originY;
+          this.links[i].position.x = this.originX;
+          this.links[i].position.y = this.originY;
         }
       }
 
       if (visibleLinks > 0) {
         const lastLink = this.links[visibleLinks - 1];
-        this.triangleTip.x = lastLink.x + Math.cos(this.angle) * this.tipOffset;
-        this.triangleTip.y = lastLink.y + Math.sin(this.angle) * this.tipOffset;
+        this.triangleTip.position.x =
+          lastLink.position.x + Math.cos(this.angle) * this.tipOffset;
+        this.triangleTip.position.y =
+          lastLink.position.y + Math.sin(this.angle) * this.tipOffset;
       } else {
-        this.triangleTip.x = this.originX;
-        this.triangleTip.y = this.originY;
+        this.triangleTip.position.x = this.originX;
+        this.triangleTip.position.y = this.originY;
       }
     }
   }
@@ -167,7 +163,7 @@ export class ChainWeapon {
     for (let i = 0; i < visibleLinks; i++) {
       const link = this.links[i];
       ctx.beginPath();
-      ctx.arc(link.x, link.y, link.radius, 0, Math.PI * 2);
+      ctx.arc(link.position.x, link.position.y, link.size, 0, Math.PI * 2);
       ctx.fillStyle = i === 0 ? "#5499db" : "#888";
       ctx.fill();
       ctx.closePath();
@@ -175,7 +171,7 @@ export class ChainWeapon {
 
     if (visibleLinks > 0) {
       ctx.save();
-      ctx.translate(this.triangleTip.x, this.triangleTip.y);
+      ctx.translate(this.triangleTip.position.x, this.triangleTip.position.y);
       ctx.rotate(this.angle);
 
       ctx.beginPath();
@@ -204,11 +200,11 @@ export class ChainWeapon {
       if (enemies[i].isDead || this.hitEnemies.has(i)) continue;
 
       const enemy = enemies[i];
-      const dx = this.triangleTip.x - enemy.position.x;
-      const dy = this.triangleTip.y - enemy.position.y;
+      const dx = this.triangleTip.position.x - enemy.position.x;
+      const dy = this.triangleTip.position.y - enemy.position.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < this.triangleTip.size / 2 + enemy.radius) {
+      if (distance < this.triangleTip.size / 2 + enemy.size) {
         hitEnemyIndices.push(i);
         this.hitEnemies.add(i);
       }
@@ -222,11 +218,11 @@ export class ChainWeapon {
         if (enemies[i].isDead || this.hitEnemies.has(i)) continue;
 
         const enemy = enemies[i];
-        const dx = link.x - enemy.position.x;
-        const dy = link.y - enemy.position.y;
+        const dx = link.position.x - enemy.position.x;
+        const dy = link.position.y - enemy.position.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < link.radius + enemy.radius) {
+        if (distance < link.size + enemy.size) {
           hitEnemyIndices.push(i);
           this.hitEnemies.add(i);
         }
@@ -252,13 +248,13 @@ export class ChainWeapon {
 
     // Return the triangle tip as the hitbox
     return {
-      x: this.triangleTip.x,
-      y: this.triangleTip.y,
+      x: this.triangleTip.position.x,
+      y: this.triangleTip.position.y,
       radius: this.triangleTip.size / 2,
     };
   }
 
-  getLinks(): Array<{ x: number; y: number; radius: number }> {
+  getLinks(): Entity[] {
     if (this.state === "IDLE" || this.state === "RETRACTING") return [];
 
     const visibleLinks = Math.min(
@@ -279,7 +275,7 @@ export class ChainWeapon {
       const dy = hitbox.y - entity.position.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < entity.radius + hitbox.radius) {
+      if (distance < entity.size + hitbox.radius) {
         return true;
       }
     }
@@ -287,11 +283,11 @@ export class ChainWeapon {
     // Check chain link collisions
     const links = this.getLinks();
     for (const link of links) {
-      const dx = link.x - entity.position.x;
-      const dy = link.y - entity.position.y;
+      const dx = link.position.x - entity.position.x;
+      const dy = link.position.y - entity.position.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < entity.radius + link.radius) {
+      if (distance < entity.size + link.size) {
         return true;
       }
     }

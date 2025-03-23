@@ -17,10 +17,6 @@ export class Game {
   private campManager: CampManager;
   private lastTime: number = 0;
 
-  // World dimensions - much larger than the viewport
-  public readonly WORLD_WIDTH = 4800; // Doubled from 2400
-  public readonly WORLD_HEIGHT = 3600; // Doubled from 1800
-
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = assertValue(canvas, "Canvas must be provided");
     const context = canvas.getContext("2d");
