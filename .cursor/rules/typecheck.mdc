@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Run 'npm run typecheck' after every change and fix every type error
