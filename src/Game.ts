@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { Wall } from "./Wall";
 import { Enemy } from "./Enemy";
 import { PathFinder } from "./PathFinder";
+import { CampGenerator } from "./CampGenerator";
 
 export class Game {
   private ctx: CanvasRenderingContext2D;
@@ -17,6 +18,7 @@ export class Game {
   private lastEnemySpawnTime: number = 0;
   private pathFinder: PathFinder;
   private mousePressed: boolean = false;
+  private campGenerator: CampGenerator;
 
   // World map dimensions (larger than screen)
   private readonly WORLD_WIDTH = 2000;
@@ -53,6 +55,9 @@ export class Game {
       });
       console.log(`Adjusted entrance width to: ${this.ENTRANCE_WIDTH}`);
     }
+
+    // Initialize camp generator
+    this.campGenerator = new CampGenerator(this.WORLD_WIDTH, this.WORLD_HEIGHT);
 
     // Generate random walls first
     this.generateWalls();
@@ -102,14 +107,14 @@ export class Game {
       this.mousePressed = true;
       this.player.setMouse(true, e.clientX, e.clientY);
     });
-
-    this.canvas.addEventListener("mouseup", (e) => {
+    this.canvas.addEventListener("mouseup", () => {
       this.mousePressed = false;
-      this.player.setMouse(false, e.clientX, e.clientY);
+      this.player.setMouse(false, 0, 0);
     });
-
     this.canvas.addEventListener("mousemove", (e) => {
-      this.player.setMouse(this.mousePressed, e.clientX, e.clientY);
+      if (this.mousePressed) {
+        this.player.setMouse(true, e.clientX, e.clientY);
+      }
     });
   }
 
@@ -117,41 +122,9 @@ export class Game {
     // Add border walls around the world
     this.addBorderWalls();
 
-    // Create camps at fixed positions around the edges
-    const edgeBuffer = 100; // Buffer from the edge
-    const campSize = 300; // Fixed camp size
-
-    // Define fixed camp positions (near corners and edges)
-    const campPositions = [
-      // Top-left corner
-      { x: edgeBuffer, y: edgeBuffer },
-
-      // Top-right corner
-      { x: this.WORLD_WIDTH - edgeBuffer - campSize, y: edgeBuffer },
-
-      // Bottom-left corner
-      { x: edgeBuffer, y: this.WORLD_HEIGHT - edgeBuffer - campSize },
-
-      // Bottom-right corner
-      {
-        x: this.WORLD_WIDTH - edgeBuffer - campSize,
-        y: this.WORLD_HEIGHT - edgeBuffer - campSize,
-      },
-
-      // Middle of top edge
-      { x: this.WORLD_WIDTH / 2 - campSize / 2, y: edgeBuffer },
-    ];
-
-    for (const pos of campPositions) {
-      const walls = this.createCampWalls(
-        pos.x,
-        pos.y,
-        campSize,
-        campSize,
-        [] // No internal entrances
-      );
-      this.walls.push(...walls);
-    }
+    // Generate camps using the new camp generator
+    this.campGenerator.generateCamps(5); // Generate 5 camps
+    this.walls.push(...this.campGenerator.getWalls());
   }
 
   private addBorderWalls() {
@@ -184,140 +157,6 @@ export class Game {
 
     // Left border
     this.walls.push(new Wall(0, 0, borderThickness, this.WORLD_HEIGHT, false));
-  }
-
-  private createCampWalls(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    internalEntrances: number[] = []
-  ): Wall[] {
-    const walls: Wall[] = [];
-
-    // Determine number of entrances for this camp
-    const numEntrances =
-      Math.floor(
-        Math.random() * (this.MAX_ENTRANCES - this.MIN_ENTRANCES + 1)
-      ) + this.MIN_ENTRANCES;
-
-    // Create entrance positions (0=top, 1=right, 2=bottom, 3=left)
-    const entrancePositions: number[] = [];
-    while (entrancePositions.length < numEntrances) {
-      const position = Math.floor(Math.random() * 4);
-      if (
-        !entrancePositions.includes(position) &&
-        !internalEntrances.includes(position)
-      ) {
-        entrancePositions.push(position);
-      }
-    }
-
-    // Add internal entrances (connections between sections)
-    entrancePositions.push(...internalEntrances);
-
-    // Create walls with gaps for entrances
-    // Top wall
-    if (entrancePositions.includes(0)) {
-      // Create entrance in the top wall
-      const entranceStart = x + Math.random() * (width - this.ENTRANCE_WIDTH);
-      walls.push(new Wall(x, y, entranceStart - x, this.WALL_THICKNESS));
-      walls.push(
-        new Wall(
-          entranceStart + this.ENTRANCE_WIDTH,
-          y,
-          x + width - (entranceStart + this.ENTRANCE_WIDTH),
-          this.WALL_THICKNESS
-        )
-      );
-    } else {
-      // No entrance, full wall
-      walls.push(new Wall(x, y, width, this.WALL_THICKNESS));
-    }
-
-    // Right wall
-    if (entrancePositions.includes(1)) {
-      // Create entrance in the right wall
-      const entranceStart = y + Math.random() * (height - this.ENTRANCE_WIDTH);
-      walls.push(
-        new Wall(
-          x + width - this.WALL_THICKNESS,
-          y,
-          this.WALL_THICKNESS,
-          entranceStart - y
-        )
-      );
-      walls.push(
-        new Wall(
-          x + width - this.WALL_THICKNESS,
-          entranceStart + this.ENTRANCE_WIDTH,
-          this.WALL_THICKNESS,
-          y + height - (entranceStart + this.ENTRANCE_WIDTH)
-        )
-      );
-    } else {
-      // No entrance, full wall
-      walls.push(
-        new Wall(
-          x + width - this.WALL_THICKNESS,
-          y,
-          this.WALL_THICKNESS,
-          height
-        )
-      );
-    }
-
-    // Bottom wall
-    if (entrancePositions.includes(2)) {
-      // Create entrance in the bottom wall
-      const entranceStart = x + Math.random() * (width - this.ENTRANCE_WIDTH);
-      walls.push(
-        new Wall(
-          x,
-          y + height - this.WALL_THICKNESS,
-          entranceStart - x,
-          this.WALL_THICKNESS
-        )
-      );
-      walls.push(
-        new Wall(
-          entranceStart + this.ENTRANCE_WIDTH,
-          y + height - this.WALL_THICKNESS,
-          x + width - (entranceStart + this.ENTRANCE_WIDTH),
-          this.WALL_THICKNESS
-        )
-      );
-    } else {
-      // No entrance, full wall
-      walls.push(
-        new Wall(
-          x,
-          y + height - this.WALL_THICKNESS,
-          width,
-          this.WALL_THICKNESS
-        )
-      );
-    }
-
-    // Left wall
-    if (entrancePositions.includes(3)) {
-      // Create entrance in the left wall
-      const entranceStart = y + Math.random() * (height - this.ENTRANCE_WIDTH);
-      walls.push(new Wall(x, y, this.WALL_THICKNESS, entranceStart - y));
-      walls.push(
-        new Wall(
-          x,
-          entranceStart + this.ENTRANCE_WIDTH,
-          this.WALL_THICKNESS,
-          y + height - (entranceStart + this.ENTRANCE_WIDTH)
-        )
-      );
-    } else {
-      // No entrance, full wall
-      walls.push(new Wall(x, y, this.WALL_THICKNESS, height));
-    }
-
-    return walls;
   }
 
   private spawnEnemy() {

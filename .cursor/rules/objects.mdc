@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+* Never use class-inheritance
+* Prefer interfaces over classes
+* Avoid overabstractions like getter/setters
