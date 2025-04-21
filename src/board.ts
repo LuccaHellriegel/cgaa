@@ -6,6 +6,7 @@ import {
   getCurrentInputFrame,
   resetInputFrameState,
 } from './core/input';
+import { TickAll } from './logic';
 
 /**
  * Placeholder for the main gameplay scene.
@@ -63,7 +64,7 @@ export class Board {
     }
 
     // 2. Update Game State (Logic) (Story 6+)
-    // Logic.TickAll(this.balance, this.gameData, inputFrame, dt);
+    TickAll(this.balance, this.gameData, inputFrame, dt);
 
     // 3. Render Game State (Story 8+)
     // this.render();

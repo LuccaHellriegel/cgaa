@@ -8,7 +8,7 @@
 
 ## Status
 
-Draft
+Complete
 
 ## Context
 
@@ -22,20 +22,20 @@ Story Points: 0.25 (Simple setup)
 
 ## Acceptance Criteria
 
-1.  - [ ] A `src/logic.ts` file exists (or `src/logic/index.ts` if planning for future modularity, let's stick to `src/logic.ts` for now based on arch doc v1).
-2.  - [ ] `src/logic.ts` defines and exports a function `TickAll(balance: Balance, gameData: GameData, input: InputFrame, dt: number): void`.
-3.  - [ ] The initial implementation of `TickAll` has an empty body (or just comments).
-4.  - [ ] The `Board` class (`src/board.ts`) imports the `TickAll` function from `../logic`.
-5.  - [ ] The `Board.tick()` method calls `TickAll(this.balance, this.gameData, inputFrame, dt)` after creating the `inputFrame` and before calling `resetInputFrameState()`.
+1.  - [x] A `src/logic.ts` file exists (or `src/logic/index.ts` if planning for future modularity, let's stick to `src/logic.ts` for now based on arch doc v1).
+2.  - [x] `src/logic.ts` defines and exports a function `TickAll(balance: Balance, gameData: GameData, input: InputFrame, dt: number): void`.
+3.  - [x] The initial implementation of `TickAll` has an empty body (or just comments).
+4.  - [x] The `Board` class (`src/board.ts`) imports the `TickAll` function from `../logic`.
+5.  - [x] The `Board.tick()` method calls `TickAll(this.balance, this.gameData, inputFrame, dt)` after creating the `inputFrame` and before calling `resetInputFrameState()`.
 
 ## Subtasks
 
-1.  - [ ] Create `src/logic.ts`.
-2.  - [ ] Define the `TickAll` function signature (`TickAll(balance: Balance, gameData: GameData, input: InputFrame, dt: number): void`) in `src/logic.ts` with an empty body.
-3.  - [ ] Import necessary types (`Balance`, `GameData`, `InputFrame`) into `src/logic.ts`.
-4.  - [ ] Modify `src/board.ts`:
-    1.  - [ ] Import `TickAll` from `../logic`.
-    2.  - [ ] Call `TickAll(this.balance, this.gameData, inputFrame, dt)` within the `tick` method at the appropriate point (after input collection, before input reset).
+1.  - [x] Create `src/logic.ts`.
+2.  - [x] Define the `TickAll` function signature (`TickAll(balance: Balance, gameData: GameData, input: InputFrame, dt: number): void`) in `src/logic.ts` with an empty body.
+3.  - [x] Import necessary types (`Balance`, `GameData`, `InputFrame`) into `src/logic.ts`.
+4.  - [x] Modify `src/board.ts`:
+    1.  - [x] Import `TickAll` from `../logic`.
+    2.  - [x] Call `TickAll(this.balance, this.gameData, inputFrame, dt)` within the `tick` method at the appropriate point (after input collection, before input reset).
 
 ## Testing Requirements:
 
@@ -44,9 +44,13 @@ Story Points: 0.25 (Simple setup)
 
 ## Story Wrap Up (To be filled in AFTER execution):
 
-- **Agent Model Used:** `<Agent Model Name/Version>`
-- **Agent Credit or Cost:** `<Cost/Credits Consumed>`
+- **Agent Model Used:** Gemini 2.5 Pro
+- **Agent Credit or Cost:** N/A
 - **Date/Time Completed:** `<Timestamp>`
 - **Commit Hash:** `<Git Commit Hash of resulting code>`
 - **Change Log**
-  - ...
+  - Created `src/logic.ts` with an empty `TickAll` function and required type imports (Balance, GameData, InputFrame).
+  - Corrected the import path for `InputFrame` in `src/logic.ts` to `./core/input`.
+  - Imported `TickAll` into `src/board.ts`.
+  - Uncommented and correctly placed the call to `TickAll` within the `Board.tick` method.
+  - Marked all subtasks and AC as complete.
