@@ -1,3 +1,4 @@
+import './style.css'; // Import CSS for styling
 import { Game } from './game';
 
 // eslint-disable-next-line no-console

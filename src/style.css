@@ -1,0 +1,18 @@
+/* Basic Reset */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrollbars */
+  background-color: #222; /* Dark background for contrast */
+  height: 100%; /* Ensure body takes full height */
+}
+
+/* Canvas Styling */
+#game-canvas {
+  display: block; /* Remove potential extra space below canvas */
+  width: 100%; /* Make canvas element fill container width */
+  height: 100%; /* Make canvas element fill container height */
+  object-fit: contain; /* Optional: Maintain aspect ratio if needed, adjust as necessary */
+  background-color: #000; /* Black canvas background */
+} 

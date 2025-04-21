@@ -9,6 +9,7 @@ import { GameData, createGameData } from './gamedata';
 export class Game {
   private readonly balance: Balance;
   private readonly gameData: GameData;
+  private board: Board;
   private lastTimestamp: number = 0;
   private animationFrameId: number | null = null;
   // Placeholder for the current scene - will be refined later
@@ -26,9 +27,17 @@ export class Game {
     // console.log('Initial Player HP:', this.gameData.playerHp);
     // console.log('Max Enemies:', this.gameData.enemy_isActive.length);
 
+    // Get canvas element (ensure it exists)
+    const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+    if (!canvas) {
+      throw new Error("Canvas element with ID 'game-canvas' not found!");
+    }
+
+    console.log('Initializing Board...');
+    this.board = new Board(canvas, this.balance, this.gameData);
+    console.log('Board initialized.');
+
     console.log('Game initialized');
-    // Initialize the first scene (Board), passing balance and gameData
-    this.switchScene(new Board(this.balance, this.gameData));
   }
 
   /**
@@ -61,14 +70,12 @@ export class Game {
     const dt = (timestamp - this.lastTimestamp) / 1000; // Delta time in seconds
     this.lastTimestamp = timestamp;
 
-    // Update the current scene
-    if (this.currentScene) {
-      this.currentScene.update(dt);
-    } else {
-      // Log dt if there's no scene (shouldn't happen after constructor)
-      console.warn('No current scene to update!');
-      console.log(`dt: ${dt.toFixed(4)}s`);
-    }
+    // Update the board
+    this.board.tick(dt);
+
+    // Scene management logic (if needed) will be handled differently,
+    // potentially based on gameData.gameStatus checked within Board or here.
+    // The old this.currentScene logic is removed for now.
 
     // Request the next frame
     this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
@@ -82,26 +89,10 @@ export class Game {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   switchScene(newScene: Board): void {
-    // Type the parameter
-    // Add potential teardown for the old scene here later
-    if (
-      this.currentScene &&
-      typeof (this.currentScene as any).destroy === 'function'
-    ) {
-      (this.currentScene as any).destroy(); // Example teardown call
-    }
-
-    this.currentScene = newScene;
-    console.log(
-      `Switched to scene: ${newScene?.constructor?.name || 'Unknown'}`
-    );
-
-    // Add potential initialization for the new scene here later
-    if (
-      this.currentScene &&
-      typeof (this.currentScene as any).init === 'function'
-    ) {
-      (this.currentScene as any).init(); // Example initialization call
-    }
+    // TODO: Refactor scene management if needed. For now, Board is the only 'scene'.
+    // This method is likely not needed for the MVP scope as defined
+    // unless we introduce menu/gameover screens.
+    // console.warn('switchScene called, but likely not needed for current scope.');
+    // this.currentScene = newScene; // Removing this as board is handled directly
   }
 }

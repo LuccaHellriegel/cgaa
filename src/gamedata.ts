@@ -23,6 +23,8 @@ export type KingState = { hp: number /* ... other king properties */ }; // Place
 export interface GameData {
   // Global State
   gameStatus: GameStatus;
+  canvasWidth: number;
+  canvasHeight: number;
   waveTimer: number;
   currentWaveIndex: number;
   playerSouls: number;
@@ -101,6 +103,8 @@ export function createGameData(): GameData {
   return {
     // Global State Defaults
     gameStatus: 'playing',
+    canvasWidth: 0,
+    canvasHeight: 0,
     waveTimer: 0,
     currentWaveIndex: -1, // Start before the first wave
     playerSouls: 100, // Starting souls
