@@ -1,4 +1,5 @@
 import { Balance } from './balance';
+import { GameData } from './gamedata';
 
 /**
  * Placeholder for the main gameplay scene.
@@ -6,10 +7,12 @@ import { Balance } from './balance';
  */
 export class Board {
   private readonly balance: Balance;
+  private readonly gameData: GameData;
 
-  constructor(balance: Balance) {
+  constructor(balance: Balance, gameData: GameData) {
     this.balance = balance;
-    console.log('Board initialized with balance data:', this.balance);
+    this.gameData = gameData;
+    console.log('Board initialized with balance and gameData.');
   }
 
   /**

@@ -1,5 +1,6 @@
 import { Board } from './board';
 import { Balance, loadBalanceData } from './balance';
+import { GameData, createGameData } from './gamedata';
 
 /**
  * Represents the main game controller. Manages the game loop, scene transitions,
@@ -7,6 +8,7 @@ import { Balance, loadBalanceData } from './balance';
  */
 export class Game {
   private readonly balance: Balance;
+  private readonly gameData: GameData;
   private lastTimestamp: number = 0;
   private animationFrameId: number | null = null;
   // Placeholder for the current scene - will be refined later
@@ -15,11 +17,18 @@ export class Game {
   constructor() {
     console.log('Loading balance data...');
     this.balance = loadBalanceData();
-    console.log('Balance data loaded:', this.balance);
+    console.log('Balance data loaded.');
+
+    console.log('Allocating GameData...');
+    this.gameData = createGameData();
+    console.log('GameData allocated.');
+    // Potentially log parts of gameData for verification if needed
+    // console.log('Initial Player HP:', this.gameData.playerHp);
+    // console.log('Max Enemies:', this.gameData.enemy_isActive.length);
 
     console.log('Game initialized');
-    // Initialize the first scene (Board), passing the balance data
-    this.switchScene(new Board(this.balance));
+    // Initialize the first scene (Board), passing balance and gameData
+    this.switchScene(new Board(this.balance, this.gameData));
   }
 
   /**
