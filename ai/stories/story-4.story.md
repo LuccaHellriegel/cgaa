@@ -63,12 +63,8 @@ Story Points: 1
 - **Date/Time Completed:** `<Timestamp>`
 - **Commit Hash:** `<Git Commit Hash of resulting code>`
 - **Change Log**
-  - ...
-
-## Agent Notes & Chat Log Summary
-
-- Agent created `src/board.ts` and defined the `Board` class.
-- Integrated `Board` into `src/game.ts`, passing `Balance`, `GameData`, and the canvas context.
-- Updated `Game.gameLoop` to call `board.tick(dt)`.
-- Removed redundant/incorrect `switchScene` logic from `Game` constructor.
-- Fixed linter error related to incorrect `Board` constructor arguments.
+  - Created `src/board.ts` and defined the `Board` class.
+  - Integrated `Board` into `src/game.ts`, passing `Balance`, `GameData`, and the canvas context.
+  - Updated `Game.gameLoop` to call `board.tick(dt)`.
+  - Removed redundant/incorrect `switchScene` logic from `Game` constructor.
+  - Fixed linter error related to incorrect `Board` constructor arguments.

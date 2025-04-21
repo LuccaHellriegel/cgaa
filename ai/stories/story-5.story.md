@@ -107,20 +107,16 @@ Story Points: 1.5 (Resize handling adds complexity)
 - **Date/Time Completed:** `<Timestamp>`
 - **Commit Hash:** `<Git Commit Hash of resulting code>`
 - **Change Log**
-  - ...
-
-## Agent Notes & Chat Log Summary
-
-- Agent created `src/core/input.ts` with `InputFrame` interface and input handling logic.
-- Implemented listeners for keydown, keyup, mousemove, mousedown.
-- Added functions `initInputListeners`, `getCurrentInputFrame`, `resetInputFrameState`.
-- Integrated input handling into `Board.ts` constructor and `tick` method.
-- Added CSS (`src/style.css`) and import in `main.ts` to make canvas fullscreen.
-- Added `canvasWidth`/`Height` to `GameData`.
-- Added resize handling logic (`handleResize`, listener) to `Game.ts`.
-- **Refactored resize handling:**
-  - Removed direct resize handling from `Game.ts`.
-  - Added `windowResized` flag to `InputFrame` managed by `input.ts`.
-  - `Board.ts` now checks the flag in `tick()` and calls its own `handleResize()` method.
-  - Updated story ACs and subtasks to reflect the input-driven approach.
+  - Created `src/core/input.ts` with `InputFrame` interface and input handling logic.
+  - Implemented listeners for keydown, keyup, mousemove, mousedown.
+  - Added functions `initInputListeners`, `getCurrentInputFrame`, `resetInputFrameState`.
+  - Integrated input handling into `Board.ts` constructor and `tick` method.
+  - Added CSS (`src/style.css`) and import in `main.ts` to make canvas fullscreen.
+  - Added `canvasWidth`/`Height` to `GameData`.
+  - Added resize handling logic (`handleResize`, listener) to `Game.ts` initially.
+  - **Refactored resize handling:**
+    - Removed direct resize handling from `Game.ts`.
+    - Added `windowResized` flag to `InputFrame` managed by `input.ts`.
+    - Made `Board.ts` check the flag in `tick()` and call its own `handleResize()` method.
+    - Updated story ACs and subtasks to reflect the input-driven approach.
   - Removed the `contextmenu` event listener from `input.ts` per user request.
